@@ -1,0 +1,12 @@
+# Ban ve va ket qua chay thu: khong dua len repo
+*.dwg
+*.dxf
+*.bak
+*.dwl
+*.dwl2
+*.xlsx
+*.png
+*.json
+*_log.txt
+__pycache__/
+*.pyc
