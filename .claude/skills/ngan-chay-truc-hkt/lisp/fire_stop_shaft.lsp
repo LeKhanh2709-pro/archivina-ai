@@ -488,7 +488,9 @@
 )
 
 ;;; ---------- Dò toàn bộ bản vẽ ----------
-;;; Trả về (vung loai ong-le) ; vung: (kieu dinh khung so-ong trang-thai)
+;;; Trả về (vung loai ong-le) ; vung: (kieu dinh khung so-ong trang-thai cac-o)
+;;; cac-o: danh sách khung (x0 y0 x1 y1) các ô X / lỗ mở gốc gộp thành vùng (nil với khung MEP không X),
+;;; lệnh A-MEP (amep_bo_truc.lsp) dùng để bo từng ô
 ;;; Đọc cả xref đang attach đã nạp (chỉ đọc, không bind).
 (defun nc:do (/ ss i d tat x lay tt fl fin dx dy dc ong khung ox truc lomo nhom vung loai co
                 kk dt g p n ong-le pk)
@@ -555,14 +557,14 @@
   (setq vung nil)
   (foreach nh (nc:nhom truc)
     (setq p (nc:bao-chu-nhat nh))
-    (if p (setq vung (cons (list "Dấu X trục / hộp" p (nc:khung p)) vung)))
+    (if p (setq vung (cons (list "Dấu X trục / hộp" p (nc:khung p) nh) vung)))
   )
   (setq loai nil)
   (foreach k lomo
     (cond
       ((vl-some '(lambda (v) (> (nc:giao k (nth 2 v)) (* 0.05 (min (nc:dt-kh k) (nc:dt-kh (nth 2 v)))))) vung))
       ((> (nc:so-ong k ong) 0)
-       (setq vung (cons (list "Lỗ mở có ống đứng" (nc:bao-chu-nhat (list k)) k) vung)))
+       (setq vung (cons (list "Lỗ mở có ống đứng" (nc:bao-chu-nhat (list k)) k (list k)) vung)))
       ((not (vl-some '(lambda (q) (> (nc:giao k q) (* 0.5 (nc:dt-kh k)))) loai))
        (setq loai (cons k loai)))
     )
@@ -572,7 +574,7 @@
     (if (and (>= dt 1e4)
              (not (vl-some '(lambda (v) (> (nc:giao kk (nth 2 v)) (* 0.2 (min (nc:dt-kh kk) (nc:dt-kh (nth 2 v)))))) vung))
              (vl-some '(lambda (q) (nc:trong-dg q p)) ong))
-      (setq vung (cons (list "Khung lỗ mở MEP có ống (không có X)" p kk) vung))
+      (setq vung (cons (list "Khung lỗ mở MEP có ống (không có X)" p kk nil) vung))
     )
   )
   (setq vung
@@ -580,7 +582,8 @@
            '(lambda (v / k)
               (setq k (nth 2 v))
               (list (car v) (cadr v) k (nc:so-ong k ong)
-                    (if (vl-some '(lambda (h) (> (nc:giao k h) (* 0.5 (nc:dt-kh k)))) co) "da_co" "se_hatch")))
+                    (if (vl-some '(lambda (h) (> (nc:giao k h) (* 0.5 (nc:dt-kh k)))) co) "da_co" "se_hatch")
+                    (nth 3 v)))
            vung))
   (setq vung (vl-sort vung '(lambda (a b) (or (> (nth 3 (nth 2 a)) (+ (nth 3 (nth 2 b)) 250.0))
                                               (and (< (abs (- (nth 3 (nth 2 a)) (nth 3 (nth 2 b)))) 250.0)

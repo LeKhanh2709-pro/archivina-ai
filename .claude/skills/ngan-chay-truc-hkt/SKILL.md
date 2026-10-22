@@ -13,7 +13,7 @@ Quy tắc nhận diện, thông số hatch, cách phân biệt thang máy: đọ
 
 **Bản vẽ có xref đang attach (chưa bind):** DXFOUT không chứa nội dung xref nên script Python bên dưới KHÔNG thấy trục / hộp trong xref. Với bản vẽ này dùng lệnh LISP `NCL` (đọc được xref đã nạp, chỉ đọc, không bind) — người dùng tự chạy trong AutoCAD, hoặc Claude chạy qua Core Console trên bản sao đặt **cùng thư mục với file xref** (đường dẫn xref tương đối). Tuyệt đối không bind xref để chạy Python.
 
-**Bản LISP** để người dùng tự chạy trong AutoCAD: `lisp\fire_stop_shaft.lsp` trong gói skill (bản người dùng đang APPLOAD: `D:\AI\scripts\lisp\fire_stop_shaft.lsp` — sửa thì chép đồng bộ cả hai), lệnh `NCL` (vẽ luôn, không hỏi; `KT-NGANCHAY` = hỏi trước khi vẽ), cùng logic với script Python. Sửa quy tắc ở một bên thì sửa cả bên kia.
+**Bản LISP** để người dùng tự chạy trong AutoCAD: `lisp\fire_stop_shaft.lsp` trong gói skill (bản người dùng đang APPLOAD: `D:\AI\scripts\lisp\fire_stop_shaft.lsp` — sửa thì chép đồng bộ cả hai), lệnh `NCL` (vẽ luôn, không hỏi; `KT-NGANCHAY` = hỏi trước khi vẽ), cùng logic với script Python. Sửa quy tắc ở một bên thì sửa cả bên kia. Phần dò trục (`nc:do` và các hàm phụ) được gộp sẵn vào `Lomo.lsp` của skill `truc-lo-mo-mep`: sửa `fire_stop_shaft.lsp` xong thì chạy `..\truc-lo-mo-mep\scripts\gop_lomo.ps1` để `Lomo.lsp` nhận bản mới. Không đổi dòng đánh dấu `;;; NCL: vẽ luôn, không hỏi` vì script gộp cắt file tại dòng này.
 
 ## Công cụ
 - `<python>` = `D:\AI\_tools\venv\Scripts\python.exe`, đặt `PYTHONUTF8=1`. `<skill>` = "Base directory for this skill".
