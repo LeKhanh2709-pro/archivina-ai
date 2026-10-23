@@ -12,7 +12,8 @@
                  Khong co goc (skill dat o %USERPROFILE%\.claude): tam / sao luu o %LOCALAPPDATA%\ARCHIVINA.
       AutoCAD  : $env:ARCHIVINA_ACAD (thu muc cai) -> registry HKLM\SOFTWARE\Autodesk\AutoCAD (AcadLocation)
                  -> <o dia>\Program Files\Autodesk\AutoCAD *, <o dia>\autocad\AutoCAD *, <o dia>\Autodesk\AutoCAD *.
-      Python   : -Python -> $env:ARCHIVINA_PYTHON -> <goc>\_tools\venv -> %LOCALAPPDATA%\ARCHIVINA\venv
+      Python   : -Python -> $env:ARCHIVINA_PYTHON -> goi mang theo <goc | o cung:\AI>\_tools\CHONGTHAM_python
+                 -> <goc>\_tools\venv -> %LOCALAPPDATA%\ARCHIVINA\venv
                  -> py -3 -> python trong PATH. Chi nhan ban import duoc cac goi can dung.
                  Chua co: chay 1 lan cai_dat_python.ps1 (cung thu muc).
 #>
@@ -115,7 +116,10 @@ function Find-Python([string]$Python = '', [string[]]$Goi = @('ezdxf', 'shapely'
     $ung = New-Object System.Collections.Generic.List[string]
     if ($Python) { $ung.Add($Python) }
     if ($env:ARCHIVINA_PYTHON) { $ung.Add($env:ARCHIVINA_PYTHON) }
+    # goi Python mang theo (khong cai): thu muc CHONGTHAM_python chep vao <goc>\_tools hoac <o cung>:\AI\_tools
     $g = Get-GocAI
+    if ($g) { $ung.Add((Join-Path $g '_tools\CHONGTHAM_python\python.exe')) }
+    foreach ($o in @(Get-ODiaCoDinh)) { $ung.Add((Join-Path $o 'AI\_tools\CHONGTHAM_python\python.exe')) }
     if ($g) { $ung.Add((Join-Path $g '_tools\venv\Scripts\python.exe')) }
     if ($env:LOCALAPPDATA) { $ung.Add((Join-Path $env:LOCALAPPDATA 'ARCHIVINA\venv\Scripts\python.exe')) }
     $py = Get-Command py.exe -ErrorAction SilentlyContinue
@@ -130,6 +134,7 @@ function Find-Python([string]$Python = '', [string[]]$Goi = @('ezdxf', 'shapely'
         if (-not (Test-Path -LiteralPath $c -PathType Leaf)) { continue }
         try { & $c -I -c $kiem 2>$null | Out-Null; if ($LASTEXITCODE -eq 0) { return $c } } catch {}
     }
-    throw ("Khong tim thay Python co goi " + ($Goi -join ', ') + ". Chay 1 lan: powershell -NoProfile -ExecutionPolicy Bypass -File `"" +
+    throw ("Khong tim thay Python co goi " + ($Goi -join ', ') + ". Chep thu muc CHONGTHAM_python (goi Python mang theo, khong cai) vao " +
+        "<o>:\AI\_tools\, hoac chay 1 lan: powershell -NoProfile -ExecutionPolicy Bypass -File `"" +
         (Join-Path $PSScriptRoot 'cai_dat_python.ps1') + "`" (hoac dat bien moi truong ARCHIVINA_PYTHON = duong dan python.exe).")
 }

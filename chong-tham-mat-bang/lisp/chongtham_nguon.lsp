@@ -28,8 +28,9 @@
 ;;;   1. SAO LƯU file bản vẽ trước. Lệnh không hỏi lưu: bản vẽ có thay đổi chưa lưu (hoặc chưa lưu lần nào)
 ;;;      thì lệnh tự ghi trạng thái hiện tại ra bản tạm (-WBLOCK *) để nhận diện, không lưu đè file.
 ;;;   2. APPLOAD -> chọn CHONGTHAM.lsp (ở thư mục nào cũng được). Gõ CHONGTHAM.
-;;;      Máy chưa có Python / gói Python: lệnh báo và hỏi cài gói (ezdxf, shapely, matplotlib - cần mạng,
-;;;      1 - 3 phút, mở cửa sổ cài đặt). Máy chưa cài Python thì cài Python 3.12 trước (python.org).
+;;;      KHÔNG CẦN CÀI PYTHON (người dùng chốt 23/10/2026): chép kèm thư mục CHONGTHAM_python (gói Python mang
+;;;      theo: Python nhúng 3.12 + ezdxf, shapely, matplotlib...) vào <ổ>:\AI\_tools\ (vd. D:\AI\_tools\
+;;;      CHONGTHAM_python), lệnh tự tìm. Để chỗ khác thì lần đầu lệnh cho chọn python.exe trong thư mục đó rồi nhớ.
 ;;;   3. Nhận diện chạy ngầm, không hiện cửa sổ (3 - 6 phút với mặt bằng tầng 50 MB, AutoCAD tạm dừng
 ;;;      trong lúc chờ). Xong lệnh vẽ luôn và in:
 ;;;      số phòng theo loại, các vùng "cần xem" (không vẽ), thư mục chứa ảnh xem lại (không tạo Excel).
@@ -40,8 +41,8 @@
 ;;;   - Thư mục gốc: biến môi trường ARCHIVINA_AI, không có thì <ổ cứng>:\AI nếu có thư mục .claude (máy này
 ;;;     D:\AI), không có nữa thì %LOCALAPPDATA%\ARCHIVINA. Giải nén ở <gốc>\_tools\chongtham_<bản>\, file tạm ở
 ;;;     <gốc>\_tmp\ (không xoá sau khi chạy).
-;;;   - Python 3 có ezdxf, shapely, matplotlib (lệnh hỏi cài nếu thiếu: venv <gốc>\_tools\venv hoặc
-;;;     %LOCALAPPDATA%\ARCHIVINA\venv; đặt biến ARCHIVINA_PYTHON = python.exe để chỉ định bản khác).
+;;;   - Python: gói mang theo CHONGTHAM_python (trên); không có thì dùng Python có sẵn trên máy nếu đủ gói
+;;;     (venv <gốc>\_tools\venv, %LOCALAPPDATA%\ARCHIVINA\venv, py / python trong PATH).
 ;;;   - AutoCAD 2021+ (có AutoCAD Architecture để giữ tường / cửa ACA). Core Console tự tìm (registry Autodesk,
 ;;;     <ổ>\Program Files\Autodesk\AutoCAD *, <ổ>\autocad\AutoCAD *; biến ARCHIVINA_ACAD để chỉ định).
 ;;;     LISPSYS = 1, file lưu UTF-8.
@@ -440,42 +441,63 @@
                          (substr d 1 (vl-string-search "|" d))))))
       (close f))))
 
-;;; Chạy bộ nhận diện ngầm (chay_cho_lisp.ps1). Trả về dòng đầu của xong.txt ("OK" / "LOI ...") hoặc nil.
-(defun ct:nhan-dien (sc dwg out / f dong)
+;;; Python cho bộ nhận diện, KHÔNG CẦN CÀI (người dùng chốt 23/10/2026): gói Python mang theo CHONGTHAM_python
+;;; (Python nhúng + thư viện, chỉ việc chép thư mục). Tìm: đã chọn / nhớ lần trước (setenv "ARCHIVINA_PYTHON")
+;;; -> <gốc>\_tools\CHONGTHAM_python -> <ổ cứng>:\AI\_tools\CHONGTHAM_python. Trả về đường dẫn python.exe hoặc nil
+;;; (nil: để chay_cho_lisp.ps1 tự tìm Python khác trên máy).
+(defun ct:tim-python (/ f con)
+  (setq con "\\_tools\\CHONGTHAM_python\\python.exe")
+  (cond
+    ((and (setq f (getenv "ARCHIVINA_PYTHON")) (setq f (findfile f))) f)
+    ((findfile (strcat (ct:goc) con)))
+    ((vl-some '(lambda (o) (findfile (strcat o "\\AI" con))) (ct:o-dia)))
+  )
+)
+
+;;; Chạy bộ nhận diện ngầm (chay_cho_lisp.ps1) với python py (nil = tự tìm).
+;;; Trả về dòng đầu của xong.txt ("OK" / "LOI ...") hoặc nil.
+(defun ct:nhan-dien (sc dwg out py / f dong)
   (if (findfile (strcat out "\\xong.txt")) (vl-file-delete (strcat out "\\xong.txt")))
   (ct:chay-ps (strcat sc "chay_cho_lisp.ps1")
               (strcat "-Dwg \"" dwg "\" -OutDir \"" out "\""
                       ;; thư mục bản vẽ đang mở: tìm xref đường dẫn tương đối (xref đọc riêng, không bind)
-                      " -ThuMucGoc \"" (vl-string-right-trim "\\" (getvar "DWGPREFIX")) "\"")
+                      " -ThuMucGoc \"" (vl-string-right-trim "\\" (getvar "DWGPREFIX")) "\""
+                      (if py (strcat " -Python \"" py "\"") ""))
               nil)
   (setq f (open (strcat out "\\xong.txt") "r") dong (if f (read-line f)))
   (if f (close f))
   dong
 )
 
-;;; Máy chưa có Python / gói Python: hỏi rồi chạy cai_dat_python.ps1 (cửa sổ hiện để xem tiến trình).
-;;; Trả về T nếu cài xong.
-(defun ct:cai-python (sc out / kq f dong)
-  (initget "Co Khong")
-  (setq kq (getkword (strcat "\nMáy chưa có Python hoặc thiếu gói ezdxf / shapely / matplotlib cho bộ nhận diện."
-                             "\nCài gói ngay (cần mạng, 1 - 3 phút, mở cửa sổ cài đặt)? [Co/Khong] <Co>: ")))
-  (if (/= kq "Khong")
-    (progn
-      (ct:chay-ps (strcat sc "cai_dat_python.ps1") (strcat "-Dung -KetQua \"" out "\\cai_dat.txt\"") T)
-      (setq f (open (strcat out "\\cai_dat.txt") "r") dong (if f (read-line f)))
-      (if f (close f))
-      (cond
-        ((= dong "OK") (princ "\nĐã cài gói Python, chạy lại nhận diện...") T)
-        (t (princ (strcat "\nCài gói Python không xong: " (if dong dong "không có kết quả")
-                          ". Máy chưa có Python thì cài Python 3.12 (python.org) rồi gõ lại CHONGTHAM."))
-           nil)
-      )
+;;; Không tìm thấy Python: hướng dẫn chép gói mang theo; cho chọn python.exe (nhớ cho lần sau) hoặc cài gói qua mạng.
+;;; Trả về đường dẫn python.exe đã chọn, T nếu cài gói xong, nil nếu bỏ qua.
+(defun ct:thieu-python (sc out / kq f dong)
+  (princ (strcat "\nKhông tìm thấy Python cho bộ nhận diện. KHÔNG CẦN CÀI: chép thư mục CHONGTHAM_python (gói Python"
+                 " mang theo) vào <ổ>:\\AI\\_tools\\ (vd. D:\\AI\\_tools\\CHONGTHAM_python) rồi gõ lại CHONGTHAM."
+                 "\n  Chon  = chọn python.exe trong thư mục CHONGTHAM_python đang để chỗ khác (lệnh nhớ cho lần sau)"
+                 "\n  Cai   = cài gói Python qua mạng (máy đã có Python 3)"))
+  (initget "Chon Khong Cai")
+  (setq kq (getkword "\n[Chon/Khong/Cai] <Khong>: "))
+  (cond
+    ((= kq "Chon")
+     (if (setq f (getfiled "Chọn python.exe trong thư mục CHONGTHAM_python" "python.exe" "exe" 0))
+       (progn (setenv "ARCHIVINA_PYTHON" f) (princ "\nChạy lại nhận diện...") f)
+     )
+    )
+    ((= kq "Cai")
+     (ct:chay-ps (strcat sc "cai_dat_python.ps1") (strcat "-Dung -KetQua \"" out "\\cai_dat.txt\"") T)
+     (setq f (open (strcat out "\\cai_dat.txt") "r") dong (if f (read-line f)))
+     (if f (close f))
+     (cond
+       ((= dong "OK") (princ "\nĐã cài gói Python, chạy lại nhận diện...") T)
+       (t (princ (strcat "\nCài gói Python không xong: " (if dong dong "không có kết quả"))) nil)
+     )
     )
   )
 )
 
 ;;; ---------- Lệnh ----------
-(defun c:CHONGTHAM (/ dwg tg out goc sc dong n)
+(defun c:CHONGTHAM (/ dwg tg out goc sc dong n py)
   (cond
     ((not (setq sc (ct:giai-nen))))
     (t
@@ -522,10 +544,10 @@
         (princ "\nĐang nhận diện phòng ướt trên bản sao (chạy ngầm, 3 - 6 phút, AutoCAD tạm dừng đến khi xong)...")
         ;; hiện dòng thông báo trước khi AutoCAD chờ tiến trình ngầm
         (if (vl-cmdf "_.DELAY" 1) nil)
-        (setq dong (ct:nhan-dien sc dwg out))
-        ;; thiếu Python: hỏi cài rồi chạy lại một lần
-        (if (and dong (wcmatch dong "*tim thay Python*") (ct:cai-python sc out))
-          (setq dong (ct:nhan-dien sc dwg out))
+        (setq py (ct:tim-python) dong (ct:nhan-dien sc dwg out py))
+        ;; thiếu Python: hướng dẫn chép gói mang theo / chọn python.exe / cài, rồi chạy lại một lần
+        (if (and dong (wcmatch dong "*tim thay Python*") (setq py (ct:thieu-python sc out)))
+          (setq dong (ct:nhan-dien sc dwg out (if (= py T) nil py)))
         )
         (if (and dong (= dong "OK") (findfile (strcat out "\\du_lieu.txt")))
           (progn

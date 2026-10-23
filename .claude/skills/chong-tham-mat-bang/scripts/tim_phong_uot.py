@@ -369,8 +369,45 @@ def doc_cua(ents, chains):
             continue
         n_line = sum(1 for s in flat if s.dxftype() == "LINE")
         loai = "cua_di" if (n_arc > 0 or n_line < 3) else "cua_so"
-        out.append(dict(doan=doan, loai=loai, truot=(loai == "cua_di" and n_arc == 0)))
+        c = dict(doan=doan, loai=loai, truot=(loai == "cua_di" and n_arc == 0))
+        mo = duong_mo_cua(flat, doan)
+        if mo:
+            c["mo"] = mo
+        out.append(c)
     return out
+
+
+def duong_mo_cua(flat, doan):
+    """Duong mo cua (nam trong tuong): ban le -> mep canh khi dong, tu cung quay lon nhat. Ban kinh nao co canh cua
+    (doan song song, sat ban kinh) la canh dang mo; ban kinh con lai la duong mo. Dung de chi cat net ven o phong co
+    canh song song duong mo: canh cua phong ben canh ve o tu the mo nam sat tuong WC khong cat nham (CT2, 23/10/2026)."""
+    arcs = [s for s in flat if s.dxftype() == "ARC" and 300 <= s.dxf.radius <= 1500]
+    if not arcs:
+        return None
+    a = max(arcs, key=lambda s: s.dxf.radius)
+    try:
+        c = a.ocs().to_wcs(a.dxf.center)
+        p1, p2 = a.start_point, a.end_point
+    except Exception:
+        return None
+    c, r = (c.x, c.y), a.dxf.radius
+
+    def do_canh(p):                 # tong chieu dai doan cua song song va sat ban kinh c -> p
+        ux, uy = (p[0] - c[0]) / r, (p[1] - c[1]) / r
+        tong = 0.0
+        for s, e in doan:
+            L = math.dist(s, e)
+            if L < 1:
+                continue
+            if abs(((e[0] - s[0]) * ux + (e[1] - s[1]) * uy) / L) < 0.95:
+                continue
+            ngang = max(abs((q[0] - c[0]) * -uy + (q[1] - c[1]) * ux) for q in (s, e))
+            if ngang <= 120:
+                tong += L
+        return tong
+    p1, p2 = (p1.x, p1.y), (p2.x, p2.y)
+    mo = p2 if do_canh(p1) >= do_canh(p2) else p1
+    return (c, mo)
 
 
 def doc_tuong_no(ents, max_depth=4):
@@ -521,7 +558,7 @@ def cua_quanh(face, cuas, d=250.0):
     for i, c in enumerate(cuas):
         if c["loai"] != "cua_di":
             continue
-        pts = [p for s in c["doan"] for p in s]
+        pts = list(c["mo"]) if c.get("mo") else [p for s in c["doan"] for p in s]
         g = LineString(pts) if len(pts) > 1 else Point(pts[0])
         if g.distance(ext) <= d:
             out.append(i)
@@ -739,18 +776,27 @@ def ve_mat_loi(poly, cay_net, net, tmin=8.0, tmax=22.0):
 
 
 def dai_cat_cua(ring_poly, cua):
-    """Vung cat net ven tai mot cua di: dai doc theo canh phong gan cua nhat, rong bang be rong o cua."""
-    pts = [p for s in cua["doan"] for p in s]
+    """Vung cat net ven tai mot cua di: dai doc theo canh phong gan cua nhat, rong bang be rong o cua.
+    Cua co duong mo (cung quay): chi cat canh song song duong mo (lech <= 20 do), rong bang duong mo."""
+    mo = cua.get("mo")
+    pts = list(mo) if mo else [p for s in cua["doan"] for p in s]
     cx = sum(p[0] for p in pts) / len(pts)
     cy = sum(p[1] for p in pts) / len(pts)
     ext = ring_poly.exterior
     best = None
     coords = list(ext.coords)
     for a, b in zip(coords, coords[1:]):
+        if mo:
+            La, Lm = math.dist(a, b), math.dist(*mo)
+            if La < 1 or Lm < 1 or abs(((b[0] - a[0]) * (mo[1][0] - mo[0][0]) + (b[1] - a[1]) * (mo[1][1] - mo[0][1]))
+                                       / (La * Lm)) < math.cos(math.radians(20)):
+                continue
         seg = LineString([a, b])
         d = seg.distance(LineString(pts) if len(pts) > 1 else Point(pts[0]))
         if best is None or d < best[0]:
             best = (d, a, b)
+    if best is None:
+        return None
     d, a, b = best
     if d > 400:
         return None
@@ -759,7 +805,9 @@ def dai_cat_cua(ring_poly, cua):
     ts = [(p[0] - a[0]) * ux + (p[1] - a[1]) * uy for p in pts]
     t0, t1 = min(ts), max(ts)
     nx, ny = -uy, ux
-    w = 400.0
+    # be ngang vung cat tinh tu canh phong: du phu net ven (cach bo 50) chu khong lan sang net ven canh vuong goc khi
+    # ban le cua sat goc phong (truoc la 400, cat mat ~360 mm net ven canh ben, CT2 23/10/2026)
+    w = 120.0
     q = [(a[0] + ux * t0 + nx * w, a[1] + uy * t0 + ny * w), (a[0] + ux * t1 + nx * w, a[1] + uy * t1 + ny * w),
          (a[0] + ux * t1 - nx * w, a[1] + uy * t1 - ny * w), (a[0] + ux * t0 - nx * w, a[1] + uy * t0 - ny * w)]
     return Polygon(q)
@@ -880,6 +928,9 @@ def main():
         P = Point(p)
         cands = [faces[int(k)] for k in cay_face.query(P, predicate="intersects")]
         cands = [f for f in cands if f.contains(P) or f.distance(P) < 1]
+        # o hep < 500 mm / < 0,5 m2 (khe tuong, dai mep san) khong phai phong: CT2 cuc nong roi vao dai 1400 x 150
+        # thanh "lo gia" 0,21 m2 (23/10/2026)
+        cands = [f for f in cands if f.area >= 0.5e6 and not Polygon(f.exterior).buffer(-250, join_style="mitre").is_empty]
         if not cands:
             khong_vao.append((loai, p, nguon))
             continue
@@ -926,6 +977,8 @@ def main():
     khong_vao = []
     for g in nhom:
         f, br = khep_lai(g["diem"], chains, khung, mat_ngoai, a.gap_max)
+        if f is not None and (f.area < 0.5e6 or Polygon(f.exterior).buffer(-250, join_style="mitre").is_empty):
+            f = None                                    # o hep (khe tuong / dai mep san) khong phai phong
         if f is None:
             khong_vao += list(zip(g["loai"], g["diem"], g["nguon"]))
             continue
@@ -975,6 +1028,10 @@ def main():
         g = don_gian(f)
         g, n_day = ve_mat_loi(g, cay_net, net)
         g = don_gian(g)
+        if g.area < 0.5e6 or Polygon(g.exterior).buffer(-250, join_style="mitre").is_empty:
+            # o hep (khe tuong / dai mep san) khong phai phong -> cho can xem (CT2: dai 1400 x 150, 23/10/2026)
+            khong_vao.append((loai, (f.centroid.x, f.centroid.y), "ô hẹp < 500 mm, không phải phòng"))
+            continue
         # dao: truc / hop ky thuat nam trong phong (>= 80% dien tich dao)
         dao = []
         if cay_dao is not None:
@@ -985,7 +1042,9 @@ def main():
         lo = [Polygon(r) for r in g.interiors if Polygon(r).area >= 0.02e6]
         bo = Polygon(g.exterior)
         # dao cham bien phong (cot, hop sat tuong) -> khac vao duong bo, net ven di theo
-        cham = [q for q in dao if q.distance(bo.exterior) < 10]
+        # khe giua dao va bien < khoang lui net ven (50) thi net ven se cat qua dao -> coi la cham (CT2: hop truc cach
+        # bo 25 mm, nguoi dung bao loi 23/10/2026)
+        cham = [q for q in dao if q.distance(bo.exterior) < a.cach_ven]
         if cham:
             g2 = bo.difference(unary_union(cham))
             # bo dai vun < 60 mm con lai giua dao va tuong (mau CH15: cot cach tuong 50 -> khac lien toi tuong)
@@ -1079,6 +1138,9 @@ def main():
                     ghi.append(s)
         if os.environ.get("CT_DEBUG"):
             print("  [debug]", loai, [r1(v) for v in bo.bounds], "cat:", [[r1(v) for v in c.bounds] for c in cut])
+        if bo.area < 0.5e6 or Polygon(bo.exterior).buffer(-250, join_style="mitre").is_empty:
+            khong_vao.append((loai, (bo.centroid.x, bo.centroid.y), "ô hẹp < 500 mm sau khi khoét, không phải phòng"))
+            continue
         ven = net_ven(bo, unary_union(cut) if cut else None, a.cach_ven)
         dt = bo.area / 1e6
         trang = "se_ve"

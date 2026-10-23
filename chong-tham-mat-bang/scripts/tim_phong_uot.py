@@ -83,6 +83,10 @@ DT_BUONG_DEM = 10.0  # m2: buong dem phong rac lon nhat
 LAYER_MAT_NGOAI = r"^(0|a-line\d*)$"
 # Layer net dao trong phong: truc / hop ky thuat, cot, vach
 RE_LAYER_DAO = r"truc|hkt|hop ky thuat|a-mep|a-column|s-wall|shaft"
+# Nhung bo net ong / cum ong (vd. CT2 'AV-ME-Ống trục đứng', 'AV-ME-Cùm ống'): vong tron ong cat hop thanh manh vun
+# -> mat ca hop (nguoi dung bao loi 23/10/2026)
+RE_LAYER_DAO_BO = r"\bong\b|cum ong|pipe"
+DAO_KIN_DT = (0.02e6, 6e6)   # mm2: polyline kin tren layer truc / A-MEP lay nguyen lam dao neu polygonize bo sot
 TEN_LOAI = {"wc": "WC", "lo_gia": "Lô gia / ban công", "phong_rac": "Phòng rác", "phong_kt_nuoc": "Phòng KT nước",
             "buong_dem_rac": "Buồng đệm phòng rác"}
 UU_TIEN = {"phong_rac": 0, "buong_dem_rac": 1, "phong_kt_nuoc": 2, "wc": 3, "lo_gia": 4}
@@ -244,18 +248,23 @@ def doc_hat_giong(ents, a):
 
 def doc_dao(ents):
     """Net tren layer truc / hop ky thuat / cot / vach (ke ca trong block) -> polygon dao."""
-    rx = re.compile(RE_LAYER_DAO)
-    segs = []
+    rx, rx_bo = re.compile(RE_LAYER_DAO), re.compile(RE_LAYER_DAO_BO)
+    segs, kin = [], []
     for e in tpp.walk(ents, max_depth=4):
         if e.dxftype() not in ("LINE", "LWPOLYLINE"):
             continue
-        if not rx.search(bo_dau(layer_goc(e.dxf.layer))):
+        lay = bo_dau(layer_goc(e.dxf.layer))
+        if not rx.search(lay) or rx_bo.search(lay):
             continue
         if e.dxftype() == "LINE":
             segs.append(LineString([(e.dxf.start.x, e.dxf.start.y), (e.dxf.end.x, e.dxf.end.y)]))
         else:
             pts = [(v[0], v[1]) for v in e.get_points()]
             if e.closed and len(pts) > 2:
+                if len(pts) >= 3:
+                    q = Polygon(pts)
+                    if q.is_valid and DAO_KIN_DT[0] <= q.area <= DAO_KIN_DT[1]:
+                        kin.append(q)
                 pts.append(pts[0])
             if len(pts) >= 2:
                 segs.append(LineString(pts))
@@ -282,6 +291,10 @@ def doc_dao(ents):
     for g in long:                                    # o nam trong o da giu (o chia boi ong, net trong hop) -> bo
         if not any(o.buffer(2).contains(g) for o in out):
             out.append(g)
+    # Du phong: hop ve bang polyline kin (vd. 'A-Mep' CT2) ma polygonize bo sot (bi net trong hop cat vun) -> lay nguyen
+    for k in sorted(kin, key=lambda g: g.area):
+        if not any(o.intersection(k).area >= 0.3 * k.area for o in out):
+            out.append(k.simplify(5))
     return out
 
 
@@ -298,19 +311,103 @@ def tim_can(ents):
     return (shapely.STRtree(pts), pts, ma) if pts else None
 
 
+def cua_net_roi(ents, want, gan=30.0):
+    """Cua / cua so ve bang NET ROI tren layer cua (khong phai block): CT2 xref can ho sau khi no AEC_DOOR chi con
+    LINE / LWPOLYLINE / ARC tren A-Door (nguoi dung bao loi net ven chay qua cua 23/10/2026). Gom cac net cach nhau
+    <= gan (mm) thanh mot cua."""
+    items = []
+
+    def di(es, d):
+        for e in es:
+            t = e.dxftype()
+            if t == "INSERT":           # INSERT tren layer cua da tinh o tpp._nhom_cua
+                if layer_goc(e.dxf.layer) in want or d >= 3 or (
+                        tpp._BO_QUA[0] is not None and tpp._BO_QUA[0].search(e.dxf.name or "")):
+                    continue
+                try:
+                    di(list(e.virtual_entities()), d + 1)
+                except Exception:
+                    pass
+            elif t in ("LINE", "LWPOLYLINE", "ARC") and layer_goc(e.dxf.layer) in want:
+                try:
+                    b = ezbbox.extents([e], fast=True)
+                except Exception:
+                    continue
+                if b.has_data:
+                    items.append((e, box(b.extmin.x, b.extmin.y, b.extmax.x, b.extmax.y).buffer(gan / 2)))
+
+    di(ents, 0)
+    if not items:
+        return []
+    cay = shapely.STRtree([g for _, g in items])
+    cha = list(range(len(items)))
+
+    def goc(i):
+        while cha[i] != i:
+            cha[i] = cha[cha[i]]
+            i = cha[i]
+        return i
+    for i, (_, g) in enumerate(items):
+        for j in cay.query(g, predicate="intersects"):
+            a, b = goc(i), goc(int(j))
+            if a != b:
+                cha[a] = b
+    nhom = defaultdict(list)
+    for i, (e, _) in enumerate(items):
+        nhom[goc(i)].append(e)
+    return list(nhom.values())
+
+
 def doc_cua(ents, chains):
     """Moi cua (INSERT tren layer cua) -> dict(doan, co_cung, loai). loai: 'cua_di' (co cung quay, hoac chi gom polyline
     nhu cua truot) / 'cua_so' (co >= 3 LINE kinh, khong cung quay)."""
     want = {layer_goc(x) for x in LAYER_CUA}
     out = []
-    for flat in tpp._nhom_cua(ents, want):
+    for flat in list(tpp._nhom_cua(ents, want)) + cua_net_roi(ents, want):
         doan, n_arc = tpp._doan_cua(flat)
         if not doan:
             continue
         n_line = sum(1 for s in flat if s.dxftype() == "LINE")
         loai = "cua_di" if (n_arc > 0 or n_line < 3) else "cua_so"
-        out.append(dict(doan=doan, loai=loai, truot=(loai == "cua_di" and n_arc == 0)))
+        c = dict(doan=doan, loai=loai, truot=(loai == "cua_di" and n_arc == 0))
+        mo = duong_mo_cua(flat, doan)
+        if mo:
+            c["mo"] = mo
+        out.append(c)
     return out
+
+
+def duong_mo_cua(flat, doan):
+    """Duong mo cua (nam trong tuong): ban le -> mep canh khi dong, tu cung quay lon nhat. Ban kinh nao co canh cua
+    (doan song song, sat ban kinh) la canh dang mo; ban kinh con lai la duong mo. Dung de chi cat net ven o phong co
+    canh song song duong mo: canh cua phong ben canh ve o tu the mo nam sat tuong WC khong cat nham (CT2, 23/10/2026)."""
+    arcs = [s for s in flat if s.dxftype() == "ARC" and 300 <= s.dxf.radius <= 1500]
+    if not arcs:
+        return None
+    a = max(arcs, key=lambda s: s.dxf.radius)
+    try:
+        c = a.ocs().to_wcs(a.dxf.center)
+        p1, p2 = a.start_point, a.end_point
+    except Exception:
+        return None
+    c, r = (c.x, c.y), a.dxf.radius
+
+    def do_canh(p):                 # tong chieu dai doan cua song song va sat ban kinh c -> p
+        ux, uy = (p[0] - c[0]) / r, (p[1] - c[1]) / r
+        tong = 0.0
+        for s, e in doan:
+            L = math.dist(s, e)
+            if L < 1:
+                continue
+            if abs(((e[0] - s[0]) * ux + (e[1] - s[1]) * uy) / L) < 0.95:
+                continue
+            ngang = max(abs((q[0] - c[0]) * -uy + (q[1] - c[1]) * ux) for q in (s, e))
+            if ngang <= 120:
+                tong += L
+        return tong
+    p1, p2 = (p1.x, p1.y), (p2.x, p2.y)
+    mo = p2 if do_canh(p1) >= do_canh(p2) else p1
+    return (c, mo)
 
 
 def doc_tuong_no(ents, max_depth=4):
@@ -461,7 +558,7 @@ def cua_quanh(face, cuas, d=250.0):
     for i, c in enumerate(cuas):
         if c["loai"] != "cua_di":
             continue
-        pts = [p for s in c["doan"] for p in s]
+        pts = list(c["mo"]) if c.get("mo") else [p for s in c["doan"] for p in s]
         g = LineString(pts) if len(pts) > 1 else Point(pts[0])
         if g.distance(ext) <= d:
             out.append(i)
@@ -679,18 +776,27 @@ def ve_mat_loi(poly, cay_net, net, tmin=8.0, tmax=22.0):
 
 
 def dai_cat_cua(ring_poly, cua):
-    """Vung cat net ven tai mot cua di: dai doc theo canh phong gan cua nhat, rong bang be rong o cua."""
-    pts = [p for s in cua["doan"] for p in s]
+    """Vung cat net ven tai mot cua di: dai doc theo canh phong gan cua nhat, rong bang be rong o cua.
+    Cua co duong mo (cung quay): chi cat canh song song duong mo (lech <= 20 do), rong bang duong mo."""
+    mo = cua.get("mo")
+    pts = list(mo) if mo else [p for s in cua["doan"] for p in s]
     cx = sum(p[0] for p in pts) / len(pts)
     cy = sum(p[1] for p in pts) / len(pts)
     ext = ring_poly.exterior
     best = None
     coords = list(ext.coords)
     for a, b in zip(coords, coords[1:]):
+        if mo:
+            La, Lm = math.dist(a, b), math.dist(*mo)
+            if La < 1 or Lm < 1 or abs(((b[0] - a[0]) * (mo[1][0] - mo[0][0]) + (b[1] - a[1]) * (mo[1][1] - mo[0][1]))
+                                       / (La * Lm)) < math.cos(math.radians(20)):
+                continue
         seg = LineString([a, b])
         d = seg.distance(LineString(pts) if len(pts) > 1 else Point(pts[0]))
         if best is None or d < best[0]:
             best = (d, a, b)
+    if best is None:
+        return None
     d, a, b = best
     if d > 400:
         return None
@@ -699,7 +805,9 @@ def dai_cat_cua(ring_poly, cua):
     ts = [(p[0] - a[0]) * ux + (p[1] - a[1]) * uy for p in pts]
     t0, t1 = min(ts), max(ts)
     nx, ny = -uy, ux
-    w = 400.0
+    # be ngang vung cat tinh tu canh phong: du phu net ven (cach bo 50) chu khong lan sang net ven canh vuong goc khi
+    # ban le cua sat goc phong (truoc la 400, cat mat ~360 mm net ven canh ben, CT2 23/10/2026)
+    w = 120.0
     q = [(a[0] + ux * t0 + nx * w, a[1] + uy * t0 + ny * w), (a[0] + ux * t1 + nx * w, a[1] + uy * t1 + ny * w),
          (a[0] + ux * t1 - nx * w, a[1] + uy * t1 - ny * w), (a[0] + ux * t0 - nx * w, a[1] + uy * t0 - ny * w)]
     return Polygon(q)
@@ -820,6 +928,9 @@ def main():
         P = Point(p)
         cands = [faces[int(k)] for k in cay_face.query(P, predicate="intersects")]
         cands = [f for f in cands if f.contains(P) or f.distance(P) < 1]
+        # o hep < 500 mm / < 0,5 m2 (khe tuong, dai mep san) khong phai phong: CT2 cuc nong roi vao dai 1400 x 150
+        # thanh "lo gia" 0,21 m2 (23/10/2026)
+        cands = [f for f in cands if f.area >= 0.5e6 and not Polygon(f.exterior).buffer(-250, join_style="mitre").is_empty]
         if not cands:
             khong_vao.append((loai, p, nguon))
             continue
@@ -866,6 +977,8 @@ def main():
     khong_vao = []
     for g in nhom:
         f, br = khep_lai(g["diem"], chains, khung, mat_ngoai, a.gap_max)
+        if f is not None and (f.area < 0.5e6 or Polygon(f.exterior).buffer(-250, join_style="mitre").is_empty):
+            f = None                                    # o hep (khe tuong / dai mep san) khong phai phong
         if f is None:
             khong_vao += list(zip(g["loai"], g["diem"], g["nguon"]))
             continue
@@ -915,6 +1028,10 @@ def main():
         g = don_gian(f)
         g, n_day = ve_mat_loi(g, cay_net, net)
         g = don_gian(g)
+        if g.area < 0.5e6 or Polygon(g.exterior).buffer(-250, join_style="mitre").is_empty:
+            # o hep (khe tuong / dai mep san) khong phai phong -> cho can xem (CT2: dai 1400 x 150, 23/10/2026)
+            khong_vao.append((loai, (f.centroid.x, f.centroid.y), "ô hẹp < 500 mm, không phải phòng"))
+            continue
         # dao: truc / hop ky thuat nam trong phong (>= 80% dien tich dao)
         dao = []
         if cay_dao is not None:
@@ -925,7 +1042,9 @@ def main():
         lo = [Polygon(r) for r in g.interiors if Polygon(r).area >= 0.02e6]
         bo = Polygon(g.exterior)
         # dao cham bien phong (cot, hop sat tuong) -> khac vao duong bo, net ven di theo
-        cham = [q for q in dao if q.distance(bo.exterior) < 10]
+        # khe giua dao va bien < khoang lui net ven (50) thi net ven se cat qua dao -> coi la cham (CT2: hop truc cach
+        # bo 25 mm, nguoi dung bao loi 23/10/2026)
+        cham = [q for q in dao if q.distance(bo.exterior) < a.cach_ven]
         if cham:
             g2 = bo.difference(unary_union(cham))
             # bo dai vun < 60 mm con lai giua dao va tuong (mau CH15: cot cach tuong 50 -> khac lien toi tuong)
@@ -1019,6 +1138,9 @@ def main():
                     ghi.append(s)
         if os.environ.get("CT_DEBUG"):
             print("  [debug]", loai, [r1(v) for v in bo.bounds], "cat:", [[r1(v) for v in c.bounds] for c in cut])
+        if bo.area < 0.5e6 or Polygon(bo.exterior).buffer(-250, join_style="mitre").is_empty:
+            khong_vao.append((loai, (bo.centroid.x, bo.centroid.y), "ô hẹp < 500 mm sau khi khoét, không phải phòng"))
+            continue
         ven = net_ven(bo, unary_union(cut) if cut else None, a.cach_ven)
         dt = bo.area / 1e6
         trang = "se_ve"

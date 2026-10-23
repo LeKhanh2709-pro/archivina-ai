@@ -51,6 +51,11 @@ Nhiều hạt cùng một ô: ưu tiên phòng rác > buồng đệm > phòng KT
 - Nét trên layer trục / hộp kỹ thuật (`A- Truc ME`, `*HKT*`, `A-MEP`, `A-Column`, `S-Wall`) → polygonize. Ô có lỗ lớn (vỏ hộp) bỏ, lấy **lòng hộp**; tam giác dấu X gộp lại; ô hẹp < 100 mm (vỏ hộp 80) bỏ — **vỏ hộp vẫn hatch** như mẫu.
 - Đảo nằm trong phòng, **không chạm biên** → lỗ trong hatch, nét vén **không** đi vòng quanh (mẫu: hộp chữ L trong lô gia giặt CH15).
 - Đảo **chạm biên** (cột sát tường) → khấc vào đường bo, nét vén đi theo; dải vụn < 60 mm còn lại giữa cột và tường bị bỏ (mẫu: cột góc lô gia dài CH15).
+- Sửa 23/10/2026 (người dùng báo lỗi trục trên CT2):
+  - Khe giữa đảo và biên **nhỏ hơn khoảng lùi nét vén (50)** cũng tính là chạm biên (CT2: hộp trục cách bo 25 mm, nét vén từng cắt ngang hộp).
+  - Bỏ nét **ống / cùm ống** (layer có chữ `ong`, `cum ong`, `pipe`, vd. `AV-ME-Ống trục đứng`) khi dựng hộp: vòng tròn ống cắt hộp thành mảnh vụn → mất cả hộp.
+  - Dự phòng: polyline kín 0,02–6 m² trên layer trục / `A-MEP` mà polygonize bỏ sót thì lấy nguyên làm đảo.
+- Ô hẹp < 500 mm hoặc < 0,5 m² (khe tường, dải mép sàn) không phải phòng, kể cả khi có thiết bị → "chỗ cần xem" (CT2: cục nóng rơi vào dải 1400 × 150).
 
 ## 5. Nét vén chân tường và cửa
 - Offset đường bo vào trong 50 (`--cach-ven`), góc vuông (mitre).
@@ -61,6 +66,11 @@ Nhiều hạt cùng một ô: ưu tiên phòng rác > buồng đệm > phòng KT
 - Phòng rác / buồng đệm: phần biên giáp thẳng một ô kín khác rộng ≥ 500 (không có bề dày tường) là ô mở → ngắt. Không áp cho WC / lô gia (tầng 4 cắt nhầm 4 chỗ đáy phòng chỉ là 1 nét).
 - **Cửa thang máy** (người dùng xác nhận 23/10/2026): polyline kín ở cấp Model trên layer `A-Wall`, cạnh ngắn ≤ 300, dài ≥ 600, không hatch, cách text tải trọng `…KG` ≤ 2,5 m, nằm sát biên phòng (≤ 50) → ngắt nét vén đúng bề rộng ô đó; ghi chú "cửa thang máy". Tầng 4 Tháp B: cửa thang máy rác 150 × 1000 giữa phòng rác và thang `300KG`, nét vén hở y −52480…−51480.
 - Không có cửa nào: nét vén kín, ghi chú để người dùng xem.
+- Sửa 23/10/2026 (người dùng báo nét vén chạy qua cửa trên CT2):
+  - **Thứ tự nổ AEC**: cửa đi / cửa sổ / ô mở trước, tường sau cùng. Nổ tường trước thì cửa gắn trong tường bị xoá theo (CT2 CH.02: mất cả 10 cửa).
+  - Cửa vẽ bằng **nét rời** trên layer cửa (không phải block) cũng nhận: gom các nét cách nhau ≤ 30 mm thành một cửa.
+  - Cửa có cung quay: lấy **đường mở** (bản lề → mép cánh khi đóng, nằm trong tường); chỉ cắt nét vén ở cạnh phòng song song đường mở (lệch ≤ 20°), rộng đúng đường mở. Cánh cửa phòng bên vẽ ở tư thế mở nằm sát tường WC không cắt nhầm.
+  - Vùng cắt chỉ rộng 120 mm tính từ cạnh phòng (trước là 400): bản lề sát góc không cắt lan sang nét vén cạnh vuông góc.
 
 ## 6. Chỗ chưa tự động được → sheet "Chỗ cần xem"
 - Thiết bị / ký hiệu vẫn không khép được phòng sau bước dựng lại có nét mặt ngoài → không vẽ, liệt kê tọa độ để vẽ tay hoặc `--them`.

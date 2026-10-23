@@ -24,7 +24,9 @@
 param(
     [Parameter(Mandatory = $true)][string]$Dwg,
     [Parameter(Mandatory = $true)][string]$OutDir,
-    [string]$Loai = 'AEC_WALL,AEC_DOOR,AEC_WINDOW,AEC_OPENING,AEC_CURTAIN*,AEC_*ASSEMBLY',
+    # THU TU NO: cua / cua so / o mo truoc, tuong sau cung. No tuong truoc thi cua gan trong tuong bi xoa theo
+    # (CT2 CH.02: 10 cua mat het -> net ven chay qua cua, nguoi dung bao loi 23/10/2026)
+    [string]$Loai = 'AEC_DOOR,AEC_WINDOW,AEC_OPENING,AEC_*ASSEMBLY,AEC_CURTAIN*,AEC_WALL',
     [int]$TimeoutSec = 3600,
     [string]$ThuMucGoc = '',
     [int]$CapXref = 0
@@ -44,6 +46,7 @@ if (Test-Path -LiteralPath $dest) { throw "Da ton tai, khong ghi de: $dest (chuy
 $work = New-ThuMucLam 'chongtham_aec_'
 Copy-Item -LiteralPath $Dwg -Destination (Join-Path $work 'src.dwg')
 $fw = $work.Replace('\', '/')
+$dsLoai = ($Loai -split ',' | ForEach-Object { '"' + $_.Trim() + '"' }) -join ' '
 $lisp = @"
 (defun aec-types ( / ss i d lst c)
   (setq ss (ssget "X" '((0 . "AEC_*"))) lst nil i 0)
@@ -51,9 +54,9 @@ $lisp = @"
   lst)
 (defun write-types (fn tag lst / f) (setq f (open fn "a")) (foreach c lst (write-line (strcat tag " " (car c) " " (itoa (cdr c))) f)) (close f))
 (defun xpl (e) (command "_.EXPLODE" e) (while (= 1 (logand 1 (getvar "CMDACTIVE"))) (command "")))
-(defun expl-all ( / ss i n e)
-  (setq ss (ssget "X" '((0 . "$Loai"))) i 0 n 0)
-  (if ss (repeat (sslength ss) (setq e (ssname ss i)) (if (entget e) (progn (xpl e) (setq n (1+ n)))) (setq i (1+ i))))
+(defun expl-all ( / ss i n e) (setq n 0)
+  (foreach k '($dsLoai) (setq ss (ssget "X" (list (cons 0 k))) i 0)
+    (if ss (repeat (sslength ss) (setq e (ssname ss i)) (if (entget e) (progn (xpl e) (setq n (1+ n)))) (setq i (1+ i)))))
   n)
 (defun blk-aec (nm dep / e d r b) (setq b (tblsearch "BLOCK" nm)) (if (and b (/= 4 (logand 4 (cdr (assoc 70 b))))) (setq e (tblobjname "BLOCK" nm)))
   (if e (setq e (entnext e)))
