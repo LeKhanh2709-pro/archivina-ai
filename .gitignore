@@ -28,3 +28,8 @@ __pycache__/
 
 # Cấu hình riêng máy của Claude Code
 .claude/settings.local.json
+
+# Goi Python mang theo cho CHONGTHAM (146 MB, chep tay sang may khac) va thu muc lenh tu giai nen
+_tools/CHONGTHAM_python/
+_tools/CHONGTHAM_python.zip
+_tools/chongtham_*/

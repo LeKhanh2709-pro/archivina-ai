@@ -38,6 +38,11 @@
 ;;;   File lớn (~50 MB) có thể mất vài phút ở bước đọc bản vẽ.
 ;;;
 ;;; Yêu cầu: AutoCAD 2025 / 2026 (chạy được cả 2021+), LISPSYS = 1, file lưu UTF-8.
+;;;   Một file duy nhất, không cần Python / file khác: chép sang máy nào cũng APPLOAD được.
+;;;   Không phụ thuộc thiết lập máy (sửa 23/10/2026): tự đặt tạm rồi trả lại UCS World, HPANNOTATIVE 0, hatch
+;;;   không nền / trong suốt; UNDO Control None / One thì bỏ nhóm undo. Mẫu NET máy này lấy từ acad.pat, máy khác
+;;;   có thể lấy từ acadiso.pat (lưới to gấp 25,4 lần): lệnh đo lưới thực sau khi hatch, lệch thì tự chỉnh tỉ lệ
+;;;   cho đúng lưới 125 mm như file mẫu 254HQV (NET tỉ lệ 1000 trong acad.pat).
 ;;; Giới hạn: chỉ đúng với mặt bằng có trục nhà song song X, Y (ô X lấy theo khung bao);
 ;;;   block có pháp tuyến khác +Z / -Z bị coi như +Z.
 
@@ -61,6 +66,8 @@
         (block-lo-mo "*LO MO*" "*LOMO*")
         (layer-khung "*LOMO*")
         (layer-ve . "A-Material")
+        ;; hatch NET: tỉ lệ, góc, khoảng cách lưới thực (mm) - file mẫu 254HQV: NET 1000 / 315°, lưới 125 mm
+        (net-ti-le . 1000.0) (net-goc . "315") (net-buoc . 125.0)
         ;; layer nội thất / thiết bị vệ sinh: tắt sau khi hatch (so trên tên đã chuẩn hoá)
         (layer-an "A-INTERIOR*" "*N?ITH?T*" "*NOITHAT*" "*FURN*" "A-WC*" "*GATHU*" "*THIETBIVESINH*" "*TBVS*")
         ;; màu làm mờ mọi layer còn lại
@@ -79,6 +86,54 @@
 (defun nc:khop (s pats)
   (and s (vl-some '(lambda (p) (wcmatch s p)) pats))
 )
+
+;;; ---------- Tiện ích chạy ổn định trên mọi máy ----------
+;;; UNDO Begin / End chỉ khi UNDO đang bật đầy đủ. Máy đặt UNDO Control None / One thì "_BE" không phải lựa
+;;; chọn hợp lệ, lệnh UNDO hỏi lại và hỏng cả chuỗi lệnh phía sau.
+(defun nc:undo-ok () (= 1 (logand 3 (getvar "UNDOCTL"))))
+
+;;; Tên layer đưa vào lệnh -LAYER: thêm ` trước ký tự đại diện (# @ . * ? ~ [ ] , `). Layer ISO hậu tố "@"
+;;; (vd. "A-WC@") nếu không thoát sẽ khớp nhầm cả layer khác.
+(defun nc:esc (s / kq)
+  (setq kq "")
+  (foreach c (vl-string->list s)
+    (setq kq (strcat kq (if (member c '(35 64 46 42 63 126 91 93 44 96)) "`" "") (chr c)))
+  )
+  kq
+)
+
+;;; setvar không dừng lệnh khi biến không có ở bản AutoCAD này / giá trị không hợp lệ
+(defun nc:dat (b v) (if v (vl-catch-all-apply 'setvar (list b v))))
+
+;;; Đặt biến vẽ hatch cố định, không phụ thuộc máy / bản vẽ:
+;;;   HPANNOTATIVE 1 -> hatch chú thích, khoảng cách nhân theo tỉ lệ chú thích;
+;;;   HPBACKGROUNDCOLOR / HPTRANSPARENCY đặt sẵn -> hatch có nền / trong suốt.
+(defun nc:dat-hatch ()
+  (setvar "HPASSOC" 1)
+  (nc:dat "HPLAYER" ".")
+  (nc:dat "HPCOLOR" ".")
+  (nc:dat "HPANNOTATIVE" 0)
+  (nc:dat "HPBACKGROUNDCOLOR" ".")
+  (nc:dat "HPTRANSPARENCY" ".")
+)
+
+;;; Khoảng cách lưới thực (mm) của hatch h: độ dài vectơ offset (mã 45, 46) của dòng mẫu đầu tiên
+(defun nc:buoc-hatch (h / d x y)
+  (setq d (entget h) x (cdr (assoc 45 d)) y (cdr (assoc 46 d)))
+  (if (and x y) (distance '(0.0 0.0) (list x y)))
+)
+
+;;; Biến cần lưu / trả lại khi vẽ (dùng chung NCL, LOMO)
+(setq nc:*bien* '("CLAYER" "CECOLOR" "HPASSOC" "HPLAYER" "HPCOLOR" "OSMODE" "CMDECHO" "TILEMODE"
+                  "HPANNOTATIVE" "HPBACKGROUNDCOLOR" "HPTRANSPARENCY" "UCSFOLLOW"))
+
+;;; UCS khác World: -BLOCK "0,0,0" và hatch lấy theo UCS, block gom bị lệch vị trí -> chuyển World (UCSFOLLOW 0
+;;; để không đổi view). Trả về T nếu đã đổi (gọi nc:ucs-tra để trả lại).
+(defun nc:ucs-world ()
+  (nc:dat "UCSFOLLOW" 0)
+  (if (= 0 (getvar "WORLDUCS")) (progn (command "_.UCS" "_W") T))
+)
+(defun nc:ucs-tra (doi) (if doi (command "_.UCS" "_P")))
 
 ;;; Chuẩn hoá tên layer: "CH19$0$A_MEP" -> "A-MEP", "A- Truc ME" -> "A-TRUCME",
 ;;; "XREF1|XREF2|A-Truc nuoc" -> "A-TRUCNUOC" (xref đang attach, kể cả lồng nhau)
@@ -613,15 +668,35 @@
   )
 )
 
-(defun nc:ve-vung (pts lay / e h)
+;;; nc-tl: tỉ lệ NET đang dùng (biến cục bộ của nc:chay, khởi đầu net-ti-le). Mẫu NET lấy từ acad.pat hay
+;;; acadiso.pat tuỳ cấu hình từng máy (Support File Search Path...): đo lưới thực của hatch, lệch lưới chuẩn
+;;; net-buoc thì xoá hatch VỪA TẠO, hatch lại với tỉ lệ đã chỉnh và dùng tỉ lệ mới cho các vùng sau
+;;; (không dùng -HATCHEDIT: lời nhắc chọn đối tượng khác nhau giữa các bản AutoCAD).
+(defun nc:ve-vung (pts lay / e h b)
+  (if (not (numberp nc-tl)) (setq nc-tl (nc:cfg 'net-ti-le)))
   (entmake (append (list '(0 . "LWPOLYLINE") '(100 . "AcDbEntity") (cons 8 lay) '(62 . 6)
                          '(100 . "AcDbPolyline") (cons 90 (length pts)) '(70 . 1))
                    (mapcar '(lambda (p) (cons 10 p)) pts)))
   (setq e (entlast))
-  (command "_.-HATCH" "_P" "NET" "1000" "315" "_S" e "" "")
+  (command "_.-HATCH" "_P" "NET" (rtos nc-tl 2 6) (nc:cfg 'net-goc) "_S" e "" "")
   (setq h (entlast))
   ;; trả về đối tượng vừa tạo: (polyline hatch) hoặc (polyline) nếu hatch lỗi
-  (if (and (not (eq h e)) (= (cdr (assoc 0 (entget h))) "HATCH")) (list e h) (list e))
+  (if (and (not (eq h e)) (= (cdr (assoc 0 (entget h))) "HATCH"))
+    (progn
+      (if (and (setq b (nc:buoc-hatch h)) (> (abs (- b (nc:cfg 'net-buoc))) 0.5))
+        (progn
+          (setq nc-tl (* nc-tl (/ (nc:cfg 'net-buoc) b)))
+          (entdel h)
+          (command "_.-HATCH" "_P" "NET" (rtos nc-tl 2 6) (nc:cfg 'net-goc) "_S" e "" "")
+          (setq h (entlast))
+          (princ (strcat "\n  Mẫu NET máy này khác acad.pat: chỉnh tỉ lệ " (rtos nc-tl 2 3)
+                         " để lưới đúng " (rtos (nc:cfg 'net-buoc) 2 0) " mm như file mẫu."))
+        )
+      )
+      (if (and (not (eq h e)) (entget h) (= (cdr (assoc 0 (entget h))) "HATCH")) (list e h) (list e))
+    )
+    (list e)
+  )
 )
 
 ;;; Gom đường bo + hatch vừa vẽ vào 1 block, chèn lại tại 0,0 (giữ nguyên vị trí) trên layer lay.
@@ -707,11 +782,13 @@
     (setq c (cadr g) tc (caddr g))
     (if tc
       (command "_.-LAYER" "_C" "_T"
-               (strcat (itoa (/ tc 65536)) "," (itoa (rem (/ tc 256) 256)) "," (itoa (rem tc 256))) (car g) "")
-      (command "_.-LAYER" "_C" (itoa c) (car g) "")
+               (strcat (itoa (/ tc 65536)) "," (itoa (rem (/ tc 256) 256)) "," (itoa (rem tc 256))) (nc:esc (car g)) "")
+      (command "_.-LAYER" "_C" (itoa c) (nc:esc (car g)) "")
     )
   )
-  (foreach n an (command "_.-LAYER" "_OFF" n ""))
+  ;; layer hiện hành không tắt được (lệnh hỏi lại, hỏng chuỗi lệnh): chuyển sang layer vẽ trước
+  (if (tblsearch "LAYER" lay) (setvar "CLAYER" lay))
+  (foreach n an (if (/= (strcase n) (strcase (getvar "CLAYER"))) (command "_.-LAYER" "_OFF" (nc:esc n) "")))
   (princ (strcat "\nĐã tắt " (itoa (length an)) " layer nội thất / thiết bị vệ sinh, đổi các layer khác sang màu "
                  (nc:cfg 'mau-mo) ", giữ màu " (itoa (length giu)) " layer khung tên"
                  (if layerstate-save (strcat ". Layer state cũ: \"" ls "\".") ".")))
@@ -727,19 +804,20 @@
 
 ;;; ---------- Chạy ----------
 ;;; tu-dong = T: không hỏi, vẽ luôn (dùng khi chạy thử bằng Core Console)
-(defun nc:chay (tu-dong / *error* nc-memo nc-co-cache nc-lay-cache bien cu kq vung loai ong-le moi dt
-                          se n-ve n-h chon lay)
+(defun nc:chay (tu-dong / *error* nc-memo nc-co-cache nc-lay-cache nc-tl bien cu kq vung loai ong-le moi dt
+                          se n-ve n-h chon lay ucs undo)
   (defun *error* (msg)
-    (if cu (mapcar '(lambda (b v) (if v (setvar b v))) bien cu))
+    (if ucs (command-s "_.UCS" "_P"))
+    (if cu (mapcar 'nc:dat bien cu))
     (if (and msg (not (wcmatch (strcase msg) "*CANCEL*,*QUIT*,*EXIT*")))
       (princ (strcat "\nLỗi: " msg))
     )
-    (command-s "_.UNDO" "_E")
+    (if undo (command-s "_.UNDO" "_E"))
     (princ)
   )
   ;; TILEMODE: bản vẽ lưu khi đang ở layout thì entmake / -HATCH / -BLOCK rơi vào Paper Space;
   ;; chuyển sang Model để vẽ, xong trả về layout cũ
-  (setq bien '("CLAYER" "CECOLOR" "HPASSOC" "HPLAYER" "HPCOLOR" "OSMODE" "CMDECHO" "TILEMODE")
+  (setq bien nc:*bien*
         cu (mapcar 'getvar bien)
         lay (nc:cfg 'layer-ve))
   (setvar "CMDECHO" 0)
@@ -757,12 +835,11 @@
   )
   (if (and (= chon "Ve") se)
     (progn
-      (command "_.UNDO" "_BE")
+      (if (setq undo (nc:undo-ok)) (command "_.UNDO" "_BE"))
+      (setq ucs (nc:ucs-world))
       (nc:tao-layer lay)
       (setvar "OSMODE" 0)
-      (setvar "HPASSOC" 1)
-      (if (getvar "HPLAYER") (setvar "HPLAYER" "."))
-      (if (getvar "HPCOLOR") (setvar "HPCOLOR" "."))
+      (nc:dat-hatch)
       (setvar "CLAYER" lay)
       (setvar "CECOLOR" "RGB:220,30,30")
       (setq n-ve 0 n-h 0 moi nil)
@@ -772,13 +849,15 @@
       )
       (nc:gom-block moi lay)
       (nc:lam-mo lay)
-      (mapcar '(lambda (b v) (if v (setvar b v))) bien cu)
-      (command "_.UNDO" "_E")
+      (nc:ucs-tra ucs)
+      (setq ucs nil)
+      (mapcar 'nc:dat bien cu)
+      (if undo (command "_.UNDO" "_E"))
       (princ (strcat "\nĐã vẽ " (itoa n-ve) " đường bo và " (itoa n-h) " hatch NET trên layer " lay
                      ". Ctrl+Z một lần để hoàn tác."))
     )
     (progn
-      (mapcar '(lambda (b v) (if v (setvar b v))) bien cu)
+      (mapcar 'nc:dat bien cu)
       (princ (if se "\nKhông vẽ gì." "\nKhông có trục / hộp mới cần hatch."))
     )
   )
@@ -792,6 +871,11 @@
 
 ;;; KT-NGANCHAY: hỏi [Ve/Danhsach/Thoat] trước khi vẽ
 (defun c:KT-NGANCHAY () (nc:chay nil))
+
+;;; LISPSYS khác 1 (bộ LISP cũ): file UTF-8 đọc sai dấu tiếng Việt -> nhắc đổi (thông báo không dấu để đọc được)
+(if (/= 1 (getvar "LISPSYS"))
+  (princ "\nCANH BAO: LISPSYS khac 1 - thong bao tieng Viet se loi font. Go LISPSYS, dat 1, khoi dong lai AutoCAD.")
+)
 
 (princ "\nĐã nạp lệnh NCL: tự vẽ bo + hatch ngăn cháy lan trục / hộp kỹ thuật (KT-NGANCHAY: hỏi trước khi vẽ).")
 (princ)

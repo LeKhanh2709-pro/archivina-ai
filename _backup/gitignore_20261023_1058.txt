@@ -1,0 +1,30 @@
+# Không đẩy lên GitHub: hồ sơ dự án, bản vẽ, file tạm, môi trường Python
+# (đã chốt với người dùng 2026-10-22)
+
+# Hồ sơ mẫu của dự án
+file mau/
+
+# Mọi file bản vẽ / mô hình, ở bất kỳ thư mục nào
+*.dwg
+*.dxf
+*.dwl
+*.dwl2
+*.bak
+*.sv$
+*.rvt
+*.rfa
+*.rte
+*.rft
+*.pdf
+*.plt
+
+# File tạm, môi trường Python, log, báo lỗi
+_tmp/
+_tools/venv/
+ErrorReports/
+*.log
+__pycache__/
+*.pyc
+
+# Cấu hình riêng máy của Claude Code
+.claude/settings.local.json

@@ -30,6 +30,22 @@
 7. Sau khi chèn: `UPDATEFIELD` các block mới để Field diện tích đúng ngay.
 8. Gom mọi A-MEP vừa chèn vào 1 block `LO MO MEP` (số thêm nếu trùng tên) bằng `-BLOCK` gốc 0,0, chèn lại tại 0,0 trên `A-MEP` (người dùng chốt 22/10/2026). A-MEP lồng bên trong giữ định nghĩa `*U..` dynamic. Khi dò "đã có", `amep:co-san` đọc cả A-MEP trong block `LO MO MEP*`, đổi toạ độ theo điểm chèn / tỉ lệ / góc của block gom. Thử trên bản vẽ tự dựng: gom 5, chạy lại thì 6 đã có, 0 chèn.
 
+## Hộp xoay xiên (sửa 23/10/2026, MB Tầng 5 có cánh nhà xoay ~36,87° / 42,6°)
+`nc:do` chỉ ghép dấu X có khung song song X, Y, nên ở cánh xoay nó bỏ sót cả ô X lẫn khung MEP. Phần lỗ mở thêm (chỉ trong `lomo_nguon.lsp`, NCL không đổi):
+1. **Khung xoay** (vùng `nc:do` có diện tích / khung bao < 0.95): nếu là chữ nhật xoay (4 đỉnh, góc vuông, cos < 0.02) → 1 A-MEP theo góc khung (`amep:chu-nhat-xoay`). Nếu là chữ L / T xoay (mọi cạnh song song / vuông góc với cạnh đầu) → xoay về phương thẳng, tách lưới như hộp thẳng, xoay các khung trả lại (`amep:tach-xoay`).
+2. **Ô X xoay** (`amep:do-x-xoay`): đọc lại bản vẽ bằng `nc:doc-ent`, tìm 2 nét chéo dài bằng nhau (≤ 15 mm), chung trung điểm (≤ 15 mm), không song song. Chữ nhật suy ra phải có cạnh lệch trục > 2° và dài 150–4000 mm. Bộ lọc như `nc:do` (thang máy, nội thất, layer bỏ, nét trong ký hiệu ống, A-Material vừa vẽ), bỏ thêm layer `*DIM*`. X của block `lo mo` chỉ nhận khi có ống. Ô nằm trong vùng `nc:do` đã có thì bỏ, ô trùng tâm (≤ 20 mm) chỉ lấy 1.
+3. **Góc chèn**: hướng cạnh dài đưa về [90°, 270°), góc = hướng − 90° (với ô thẳng cho đúng 0° / 90° như cũ). Trục X block theo cạnh ngắn, điểm chèn là đỉnh nhỏ nhất theo 2 trục block, phần lệch làm tròn chia đều 2 đầu.
+4. **Không bo được**: khung hình thang / tứ giác không đều (một cạnh xiên, các cạnh khác thẳng, ở chỗ giao cánh xiên với phần thẳng) → `xem_lai`.
+- Thử trên bản vẽ tự dựng: ô X xoay 500×250 và 300×1200 (36,87°), 850×300 (45°), khung MEP xoay 640×480 có ống → cả 4 bo khít, đỉnh lệch 0,0 mm. Chữ L xoay 36,87° tách thành 500×900 + 1000×600.
+- MB Tầng 5 (`file mau\02_LoMo\MB Tang 5_lo mo_v3.dwg`): 162 ô thẳng + 48 ô X xoay + 13 khung MEP xoay = 223 A-MEP. 5 khung hình thang để xem lại. CSV mã kiểu `X_XOAY`, `KHUNG_ONG_XOAY`; cột `rong` / `dai` của khung xoay là cạnh ngắn / cạnh dài.
+
+## Không có block A-MEP: block tĩnh (sửa 23/10/2026)
+Lỗi trước đây: sang máy khác không có `A-MEP_thu_vien.dwg` (không đẩy lên GitHub, đường dẫn cố định `D:/AI/...`) thì lệnh báo thiếu thư viện và không chèn gì. Bây giờ `amep:nap-block` không bao giờ dừng vì thiếu block: không có A-MEP dynamic thì dựng block tĩnh `A-MEP <rộng>x<dài>` (`amep:block-tinh`).
+- Số đo lấy từ A-MEP gốc: dim đứng cách mép trái 101.5, dim ngang cách đáy 202.6, text diện tích Arial cao 30 tại (20.8, 30.9), X nét `ACAD_ISO03W100`.
+- Dim: AutoCAD dựng hình dim theo kiểu dim **hiện hành lúc tạo**. Đổi `StyleName` hay `ScaleFactor` sau đó không vẽ lại hình dim nằm trong block (thử 23/10/2026: vẫn ra chữ 200 mm của `A 1-100`). Vì vậy phải đặt `_1-10_HKT` làm kiểu hiện hành trong lúc tạo dim, rồi trả lại kiểu cũ.
+- Dò "đã có": tên `A-MEP <...>` được nhận như A-MEP (`amep:khung-o`, `amep:co-san`, `kiem_tra_amep.py`).
+- Thử 23/10/2026 trên bản vẽ không có block / layer A-MEP (nền là bản sao `iso_copy.dwg`): `-KhongThuVien` → `CHE_DO tinh`, chèn 5 khung, gom `LO MO MEP`, đo khung lệch ≤ 2.5 mm (làm tròn), ảnh xem đúng cỡ. Chạy lại thì 5 đã có, 0 chèn. Có thư viện → `CHE_DO dong`, chèn 5 như cũ.
+
 ## Vì sao chạy bằng `acad.exe /b`, không dùng Core Console
 - Core Console 2027: không có `vla-*` và cũng không có `getpropertyvalue` / `dumpallproperties` (thử 22/10/2026: "no function definition"). Vì vậy không gán được `Distance1` / `Distance2`.
 - `acad.exe /nologo <bản sao.dwg> /b <script.scr>` chạy một phiên AutoCAD riêng, có COM. Đã thử: gán 1530 × 640 → khung đúng, Field ra `0.98`.

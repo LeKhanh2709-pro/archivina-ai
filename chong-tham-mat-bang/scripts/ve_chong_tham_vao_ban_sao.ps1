@@ -11,7 +11,7 @@
     Sau do gom toan bo doi tuong vua ve vao 1 block "CHONG THAM" (trung ten -> "CHONG THAM 2"...), chen 0,0 tren A-Material.
     Layer A-Material chua co thi tao (mau 251 nhu file mau). Khong lam mo / tat layer nao.
     Chay bang AutoCAD Core Console (tim_accoreconsole.ps1, kem /product ACA de giu nguyen tuong / cua ACA) tren ban sao
-    dat trong D:\AI\_tmp, roi SAVEAS 2018 ra -OutDwg. Ghi <OutDwg>_log.txt.
+    dat trong thu muc tam (moi_truong.ps1), roi SAVEAS 2018 ra -OutDwg. Ghi <OutDwg>_log.txt.
 
 .EXAMPLE
     powershell -NoProfile -ExecutionPolicy Bypass -File ve_chong_tham_vao_ban_sao.ps1 -Dwg "D:\...\MB tang 4.dwg" -Json "D:\...\MB tang 4_chongtham.json" -OutDwg "D:\...\03_ChongTham\MB tang 4_chong tham.dwg"
@@ -26,10 +26,11 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
+. (Join-Path $PSScriptRoot 'moi_truong.ps1')
 $acc = & (Join-Path $PSScriptRoot 'tim_accoreconsole.ps1')
 foreach ($f in @($Dwg, $Json)) { if (-not (Test-Path -LiteralPath $f)) { throw "Khong thay file: $f" } }
-# D:\AI: khong ghi de file da co (quy tac 2)
-if (Test-Path -LiteralPath $OutDwg) { throw "Da ton tai, khong ghi de: $OutDwg (chuyen ban cu vao D:\AI\_backup truoc)" }
+# khong ghi de file da co (quy tac 2)
+if (Test-Path -LiteralPath $OutDwg) { throw "Da ton tai, khong ghi de: $OutDwg (chuyen ban cu vao _backup truoc)" }
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $OutDwg) | Out-Null
 
 $data = Get-Content -LiteralPath $Json -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -51,9 +52,8 @@ foreach ($v in $vung) {
     }
 }
 
-# D:\AI: thu muc tam dat trong D:\AI\_tmp (quy tac 7), khong xoa sau khi chay (quy tac 1)
-$work = Join-Path 'D:\AI\_tmp' ('chongtham_ve_' + [guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Force -Path $work | Out-Null
+# thu muc tam (moi_truong.ps1, quy tac 7), khong xoa sau khi chay (quy tac 1)
+$work = New-ThuMucLam 'chongtham_ve_'
 Copy-Item -LiteralPath $Dwg -Destination (Join-Path $work 'src.dwg')
 $fw = $work.Replace('\', '/')
 $outF = $OutDwg.Replace('\', '/')
@@ -62,9 +62,10 @@ $lisp = @"
 (defun ct-layer (ten) (if (not (tblsearch "LAYER" ten)) (entmake (list '(0 . "LAYER") '(100 . "AcDbSymbolTableRecord") '(100 . "AcDbLayerTableRecord") (cons 2 ten) '(70 . 0) '(62 . 251) '(6 . "Continuous")))))
 (defun ct-pl (pts kin mau rong / ) (entmake (append (list '(0 . "LWPOLYLINE") '(100 . "AcDbEntity") '(8 . "A-Material") (cons 62 mau) '(6 . "Continuous") '(100 . "AcDbPolyline") (cons 90 (length pts)) (cons 70 kin) (cons 43 rong)) (mapcar '(lambda (p) (cons 10 p)) pts))) (entlast))
 (defun ct-ve ( / old moi nbo nhat nven e ss sl id)
-  (setq old (mapcar 'getvar '("CLAYER" "CECOLOR" "HPASSOC" "HPLAYER" "HPCOLOR" "OSMODE" "CMDECHO" "HPISLANDDETECTION")))
+  (setq old (mapcar 'getvar '("CLAYER" "CECOLOR" "HPASSOC" "HPLAYER" "HPCOLOR" "OSMODE" "CMDECHO" "HPISLANDDETECTION" "HPANNOTATIVE")))
   (ct-layer "A-Material")
-  (setvar "OSMODE" 0) (setvar "CMDECHO" 0) (setvar "HPASSOC" 1) (setvar "HPLAYER" ".") (setvar "HPCOLOR" ".") (setvar "HPISLANDDETECTION" 1)
+  (setvar "OSMODE" 0) (setvar "CMDECHO" 0) (setvar "HPASSOC" 1) (setvar "HPLAYER" ".") (setvar "HPCOLOR" ".") (setvar "HPISLANDDETECTION" 1) (setvar "HPANNOTATIVE" 0)
+  (if (= 0 (getvar "WORLDUCS")) (command "_.UCS" "_W"))
   (setvar "CLAYER" "A-Material") (setvar "CECOLOR" "3")
   (setq moi nil nbo 0 nhat 0 nven 0)
   (foreach b (reverse ct-bo)
@@ -75,7 +76,7 @@ $lisp = @"
     (command "_.-HATCH" "_P" "_U" "45" "400" "_Y" "_S" ss "" "")
     (if (and (not (equal (entlast) sl)) (= (cdr (assoc 0 (entget (entlast)))) "HATCH")) (setq nhat (1+ nhat) moi (cons (entlast) moi))))
   (foreach l (reverse ct-ven) (setq e (ct-pl (caddr l) (cadr l) 1 40.0) nven (1+ nven) moi (cons e moi)))
-  (mapcar 'setvar '("CLAYER" "CECOLOR" "HPASSOC" "HPLAYER" "HPCOLOR" "OSMODE" "CMDECHO" "HPISLANDDETECTION") old)
+  (mapcar 'setvar '("CLAYER" "CECOLOR" "HPASSOC" "HPLAYER" "HPCOLOR" "OSMODE" "CMDECHO" "HPISLANDDETECTION" "HPANNOTATIVE") old)
   (list nbo nhat nven moi))
 (defun ct-gom (ds lay goc / ss ten i n)
   (setq ss (ssadd) ten goc i 1)

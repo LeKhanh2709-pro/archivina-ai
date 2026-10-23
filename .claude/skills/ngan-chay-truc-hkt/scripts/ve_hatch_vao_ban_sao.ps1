@@ -12,8 +12,8 @@
     (ban mau cu de hatch o "A-HATCH- Color" - khong dung nua). Layer chua co thi tao moi (mau 251).
     Sau khi hatch: gom duong bo + hatch vao block "NGAN CHAY LAN" (chen 0,0, layer A-Material);
     tat layer noi that / thiet bi ve sinh, doi moi layer khac sang mau 150,150,150
-    (ham nc:lam-mo trong D:\AI\scripts\lisp\fire_stop_shaft.lsp). Bo buoc nay: them -KhongLamMo.
-    Chay bang AutoCAD Core Console (accoreconsole) tren ban sao dat trong D:\AI\_tmp, roi SAVEAS ra -OutDwg.
+    (ham nc:lam-mo trong lisp\fire_stop_shaft.lsp cua skill). Bo buoc nay: them -KhongLamMo.
+    Chay bang AutoCAD Core Console (tu tim, moi_truong.ps1) tren ban sao dat trong thu muc tam, roi SAVEAS ra -OutDwg.
     Ghi bao cao <OutDwg>_log.txt: so polyline va hatch da tao.
 
 .EXAMPLE
@@ -29,12 +29,11 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
-$acc = Get-ChildItem 'C:\Program Files\Autodesk\AutoCAD *\accoreconsole.exe' -ErrorAction SilentlyContinue |
-    Sort-Object FullName -Descending | Select-Object -First 1
-if (-not $acc) { throw 'Khong tim thay accoreconsole.exe (AutoCAD Core Console).' }
+. (Join-Path $PSScriptRoot 'moi_truong.ps1')
+$acc = Find-AutoCAD -Exe 'accoreconsole.exe'
 foreach ($f in @($Dwg, $Json)) { if (-not (Test-Path -LiteralPath $f)) { throw "Khong thay file: $f" } }
-# D:\AI: khong ghi de file da co (quy tac 2)
-if (Test-Path -LiteralPath $OutDwg) { throw "Da ton tai, khong ghi de: $OutDwg (chuyen ban cu vao D:\AI\_backup truoc)" }
+# khong ghi de file da co (quy tac 2)
+if (Test-Path -LiteralPath $OutDwg) { throw "Da ton tai, khong ghi de: $OutDwg (chuyen ban cu vao _backup truoc)" }
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $OutDwg) | Out-Null
 
 $data = Get-Content -LiteralPath $Json -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -48,27 +47,34 @@ $ds = foreach ($v in $vung) {
     "(setq nc-ds (cons '($pts) nc-ds))"
 }
 
-# D:\AI: thu muc tam dat trong D:\AI\_tmp (quy tac 7), khong xoa sau khi chay (quy tac 1)
-$work = Join-Path 'D:\AI\_tmp' ('nganchay_' + [guid]::NewGuid().ToString('N'))
-New-Item -ItemType Directory -Force -Path $work | Out-Null
+# thu muc tam (moi_truong.ps1, quy tac 7), khong xoa sau khi chay (quy tac 1)
+$work = New-ThuMucLam 'nganchay_'
 Copy-Item -LiteralPath $Dwg -Destination (Join-Path $work 'src.dwg')
 $fw = $work.Replace('\', '/')
 $outF = $OutDwg.Replace('\', '/')
 
-$lisp = @"
-(defun nc-layer (ten mau) (if (not (tblsearch "LAYER" ten)) (entmake (list '(0 . "LAYER") '(100 . "AcDbSymbolTableRecord") '(100 . "AcDbLayerTableRecord") (cons 2 ten) '(70 . 0) (cons 62 mau) '(6 . "Continuous")))))
-(defun nc-pline (pts / ) (entmake (append (list '(0 . "LWPOLYLINE") '(100 . "AcDbEntity") '(8 . "A-Material") '(62 . 6) '(100 . "AcDbPolyline") (cons 90 (length pts)) '(70 . 1)) (mapcar '(lambda (p) (cons 10 p)) pts))) (entlast))
-(defun nc-ve (ds / old e n h sl)
-  (setq old (mapcar 'getvar '("CLAYER" "CECOLOR" "HPASSOC" "HPLAYER" "HPCOLOR" "OSMODE" "CMDECHO")))
-  (nc-layer "A-Material" 251)
-  (setvar "OSMODE" 0) (setvar "CMDECHO" 0) (setvar "HPASSOC" 1) (setvar "HPLAYER" ".") (setvar "HPCOLOR" ".")
+# Ham ve / gom block / lam mo dung chung LISP cua lenh NCL (mot nguon quy tac, ke ca tu chinh ti le NET cho dung
+# luoi 125 mm khi may lay mau tu acadiso.pat). Chep noi dung LISP vao .scr (SECURELOAD chan load ngoai thu muc tin cay).
+# LISP nam trong goi skill (lisp\), khong co thi dung ban tai <goc>\scripts\lisp
+$lsp = Join-Path $PSScriptRoot '..\lisp\fire_stop_shaft.lsp'
+if (-not (Test-Path -LiteralPath $lsp) -and (Get-GocAI)) { $lsp = Join-Path (Get-GocAI) 'scripts\lisp\fire_stop_shaft.lsp' }
+if (-not (Test-Path -LiteralPath $lsp)) { throw "Khong thay LISP: $lsp" }
+$ham = Get-Content -LiteralPath $lsp -Encoding UTF8 | Where-Object { $_.Trim() -ne '' -and -not $_.Trim().StartsWith(';') }
+
+$lisp = ($ham -join "`r`n") + "`r`n" + @"
+(defun nc-ve (ds / old r n h nc-tl)
+  (setq old (mapcar 'getvar nc:*bien*))
+  (nc:tao-layer "A-Material")
+  (setvar "OSMODE" 0) (setvar "CMDECHO" 0)
+  (nc:dat-hatch)
+  (nc:ucs-world)
   (setvar "CLAYER" "A-Material") (setvar "CECOLOR" "RGB:220,30,30")
   (setq n 0 h 0 nc-moi nil)
   (foreach pts ds
-    (setq e (nc-pline pts) n (1+ n) sl (entlast) nc-moi (cons e nc-moi))
-    (command "_.-HATCH" "_P" "NET" "1000" "315" "_S" e "" "")
-    (if (and (not (equal (entlast) sl)) (= (cdr (assoc 0 (entget (entlast)))) "HATCH")) (setq h (1+ h) nc-moi (cons (entlast) nc-moi))))
-  (mapcar 'setvar '("CLAYER" "CECOLOR" "HPASSOC" "HPLAYER" "HPCOLOR" "OSMODE" "CMDECHO") old)
+    (setq r (nc:ve-vung pts "A-Material") n (1+ n) nc-moi (append r nc-moi))
+    (if (cadr r) (setq h (1+ h))))
+  (setq nc-tl-cuoi nc-tl)
+  (mapcar 'nc:dat nc:*bien* old)
   (list n h))
 (setq nc-ds nil)
 $($ds -join "`r`n")
@@ -77,25 +83,22 @@ $($ds -join "`r`n")
 (write-line (strcat "VUNG_YEU_CAU $($vung.Count)") f)
 (write-line (strcat "POLYLINE_DA_TAO " (itoa (car kq))) f)
 (write-line (strcat "HATCH_DA_TAO " (itoa (cadr kq))) f)
+(write-line (strcat "NET_TI_LE " (if nc-tl-cuoi (rtos nc-tl-cuoi 2 4) "-")) f)
+(close f)
+(setq tb (nc:gom-block nc-moi "A-Material"))
+(setq f (open "$fw/log.txt" "a"))
+(write-line (strcat "BLOCK " (if tb tb "(khong tao duoc)")) f)
 (close f)
 "@
 # Sau khi ve: gom duong bo + hatch vao 1 block "NGAN CHAY LAN" (nc:gom-block), roi tat layer noi that /
-# thiet bi ve sinh, doi mau bang layer sang xam (nc:lam-mo). Dung chung ham cua lenh LISP (mot nguon quy tac),
-# chep noi dung LISP vao .scr (SECURELOAD).
-# LISP nam trong goi skill (lisp\), khong co thi dung ban tai D:\AI\scripts\lisp
-$lsp = Join-Path $PSScriptRoot '..\lisp\fire_stop_shaft.lsp'
-if (-not (Test-Path -LiteralPath $lsp)) { $lsp = 'D:\AI\scripts\lisp\fire_stop_shaft.lsp' }
-if (Test-Path -LiteralPath $lsp) {
-    $ham = Get-Content -LiteralPath $lsp -Encoding UTF8 | Where-Object { $_.Trim() -ne '' -and -not $_.Trim().StartsWith(';') }
-    $lisp += "`r`n" + ($ham -join "`r`n") + "`r`n(setq tb (nc:gom-block nc-moi `"A-Material`"))`r`n(setq f (open `"$fw/log.txt`" `"a`"))`r`n(write-line (strcat `"BLOCK `" (if tb tb `"(khong tao duoc)`")) f)`r`n(close f)"
-    if (-not $KhongLamMo) {
-        $lisp += "`r`n(setvar `"CLAYER`" `"A-Material`")`r`n(setq nlm (nc:lam-mo `"A-Material`"))`r`n(setq f (open `"$fw/log.txt`" `"a`"))`r`n(write-line (strcat `"LAYER_DA_TAT `" (itoa nlm)) f)`r`n(close f)"
-    }
-} else { Write-Warning "Khong thay $lsp - bo qua buoc gom block va lam mo layer" }
+# thiet bi ve sinh, doi mau bang layer sang xam (nc:lam-mo).
+if (-not $KhongLamMo) {
+    $lisp += "`r`n(setvar `"CLAYER`" `"A-Material`")`r`n(setq nlm (nc:lam-mo `"A-Material`"))`r`n(setq f (open `"$fw/log.txt`" `"a`"))`r`n(write-line (strcat `"LAYER_DA_TAT `" (itoa nlm)) f)`r`n(close f)"
+}
 $lines = $lisp -split "`r?`n" | Where-Object { $_.Trim() -ne '' }
 $scr = ($lines -join "`r`n") + "`r`nFILEDIA`r`n0`r`n_.SAVEAS`r`n2018`r`n`"$outF`"`r`n_.QUIT`r`n_Y`r`n"
 Set-Content -Path (Join-Path $work 'run.scr') -Value $scr -Encoding UTF8
-$p = Start-Process -FilePath $acc.FullName -WorkingDirectory $work -WindowStyle Hidden -PassThru `
+$p = Start-Process -FilePath $acc.Exe -WorkingDirectory $work -WindowStyle Hidden -PassThru `
     -RedirectStandardOutput (Join-Path $work 'console.txt') `
     -ArgumentList "/i `"$work\src.dwg`" /s `"$work\run.scr`" /l en-US"
 if (-not $p.WaitForExit($TimeoutSec * 1000)) { $p.Kill(); throw "Qua $TimeoutSec giay, da dung AutoCAD Core Console. Thu muc tam: $work" }

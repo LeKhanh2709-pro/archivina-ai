@@ -16,9 +16,26 @@ import tempfile
 from ezdxf.addons import odafc
 
 
+def thu_muc_tam():
+    """<goc>\\_tmp (goc = thu muc cha cua .claude chua skill, vd. D:\\AI), khong co thi %LOCALAPPDATA%\\ARCHIVINA\\_tmp."""
+    goc = os.environ.get("ARCHIVINA_AI", "")
+    if not goc:
+        d = os.path.dirname(os.path.abspath(__file__))
+        while os.path.dirname(d) != d:
+            if os.path.basename(d).lower() == ".claude":
+                g = os.path.dirname(d)
+                if os.path.normcase(g) != os.path.normcase(os.path.expanduser("~")):
+                    goc = g
+                break
+            d = os.path.dirname(d)
+    t = os.path.join(goc, "_tmp") if goc else os.path.join(os.environ.get("LOCALAPPDATA", tempfile.gettempdir()), "ARCHIVINA", "_tmp")
+    os.makedirs(t, exist_ok=True)
+    return t
+
+
 def doc(path):
-    # ODA doc file tren ban sao trong D:\AI\_tmp (khong dong file goc)
-    tmp = tempfile.mkdtemp(prefix="kt_chongtham_", dir=r"D:\AI\_tmp")
+    # ODA doc file tren ban sao trong thu muc tam (khong dong file goc)
+    tmp = tempfile.mkdtemp(prefix="kt_chongtham_", dir=thu_muc_tam())
     cp = os.path.join(tmp, "x.dwg")
     shutil.copy2(path, cp)
     return odafc.readfile(cp)

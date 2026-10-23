@@ -7,6 +7,7 @@ Cách chạy:
     python kiem_tra_amep.py <ban_sao.dxf> [<ket_qua_amep.csv>]
 """
 import csv
+import math
 import sys
 from collections import Counter
 
@@ -20,16 +21,17 @@ def main():
         print(__doc__)
         return
     d = ezdxf.readfile(sys.argv[1])
-    br_amep = d.block_records.get("A-MEP")
-    if br_amep is None:
-        raise SystemExit("Bản vẽ không có block A-MEP")
-    rep = br_amep.dxf.handle
+    # bản vẽ chỉ có A-MEP tĩnh thì không có block record "A-MEP" (ezdxf báo lỗi khi get tên không có)
+    rep = d.block_records.get("A-MEP").dxf.handle if d.block_records.has_entry("A-MEP") else None
 
     def la_amep(ten):
-        # A-MEP đã kéo giãn mang tên *U.., trỏ về A-MEP qua xdata AcDbBlockRepBTag
+        # A-MEP dynamic đã kéo giãn mang tên *U.., trỏ về A-MEP qua xdata AcDbBlockRepBTag;
+        # bản tĩnh (máy không có thư viện block) tên "A-MEP <rộng>x<dài>"
+        if ten == "A-MEP" or ten.upper().startswith("A-MEP "):
+            return True
         br = d.block_records.get(ten)
-        return ten == "A-MEP" or (br is not None and br.has_xdata("AcDbBlockRepBTag")
-                                  and br.get_xdata("AcDbBlockRepBTag")[1].value == rep)
+        return (rep is not None and br is not None and br.has_xdata("AcDbBlockRepBTag")
+                and br.get_xdata("AcDbBlockRepBTag")[1].value == rep)
 
     khung, gom = [], []
 
@@ -57,8 +59,16 @@ def main():
             hang = [h for h in csv.DictReader(f) if h["trang_thai"] == "da_chen"]
         lech_max, khong_khop = 0.0, 0
         for h in hang:
-            cx, cy, w, ht = (float(h[k]) for k in ("cx", "cy", "rong", "dai"))
-            k = (cx - w / 2, cy - ht / 2, cx + w / 2, cy + ht / 2)
+            cx, cy, w, ht, goc = (float(h[k]) for k in ("cx", "cy", "rong", "dai", "goc"))
+            if abs(goc % 90) > 0.5 and abs(goc % 90 - 90) > 0.5:
+                # khung xoay xiên: rong = cạnh ngắn (trục X block), dai = cạnh dài (trục Y block);
+                # so khung bao trục X, Y của khung đã xoay
+                r = math.radians(goc)
+                hx = (w * abs(math.cos(r)) + ht * abs(math.sin(r))) / 2
+                hy = (w * abs(math.sin(r)) + ht * abs(math.cos(r))) / 2
+                k = (cx - hx, cy - hy, cx + hx, cy + hy)
+            else:
+                k = (cx - w / 2, cy - ht / 2, cx + w / 2, cy + ht / 2)
             lech = min((max(abs(a - b) for a, b in zip(k, q[:4])) for q in khung), default=1e9)
             if lech > 10:
                 khong_khop += 1

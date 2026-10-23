@@ -7,18 +7,20 @@
              + phan do truc cua fire_stop_shaft.lsp (skill ngan-chay-truc-hkt; bo chu thich dau file va
                cac lenh NCL / KT-NGANCHAY o cuoi, tu dong ";;; NCL: ve luon, khong hoi")
              + phan con lai cua lomo_nguon.lsp (lenh LOMO).
-    Ghi ra <skill>\lisp\Lomo.lsp va D:\AI\scripts\lisp\Lomo.lsp (UTF-8 khong BOM, nhu file nguon).
-    D:\AI quy tac 2: ban Lomo.lsp cu duoc chep vao D:\AI\_backup truoc khi ghi.
+    Ghi ra <skill>\lisp\Lomo.lsp va <goc>\scripts\lisp\Lomo.lsp neu thu muc do co (UTF-8 khong BOM, nhu file nguon).
+    <goc> tim bang moi_truong.ps1 (may D:\AI: D:\AI). Quy tac 2: ban Lomo.lsp cu duoc chep vao <goc>\_backup truoc khi ghi.
     Sua quy tac do truc -> sua fire_stop_shaft.lsp; sua phan lo mo -> sua lomo_nguon.lsp; roi chay lai script nay.
 
 .EXAMPLE
     powershell -NoProfile -ExecutionPolicy Bypass -File gop_lomo.ps1
 #>
 $ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'moi_truong.ps1')
+$goc = Get-GocAI
 $skill = Split-Path -Parent $PSScriptRoot
 $nguon = Join-Path $skill 'lisp\lomo_nguon.lsp'
 $nc = Join-Path $skill '..\ngan-chay-truc-hkt\lisp\fire_stop_shaft.lsp'
-if (-not (Test-Path -LiteralPath $nc)) { $nc = 'D:\AI\scripts\lisp\fire_stop_shaft.lsp' }
+if (-not (Test-Path -LiteralPath $nc) -and $goc) { $nc = Join-Path $goc 'scripts\lisp\fire_stop_shaft.lsp' }
 foreach ($f in @($nguon, $nc)) { if (-not (Test-Path -LiteralPath $f)) { throw "Khong thay file nguon: $f" } }
 
 $utf8 = New-Object Text.UTF8Encoding($false)
@@ -42,9 +44,12 @@ $noi = @($dau) + '' +
     @($lomo)
 
 $ts = Get-Date -Format 'yyyyMMdd_HHmm'
-foreach ($dich in @((Join-Path $skill 'lisp\Lomo.lsp'), 'D:\AI\scripts\lisp\Lomo.lsp')) {
+$dichs = @(Join-Path $skill 'lisp\Lomo.lsp')
+if ($goc -and (Test-Path -LiteralPath (Join-Path $goc 'scripts\lisp'))) { $dichs += (Join-Path $goc 'scripts\lisp\Lomo.lsp') }
+$bkDir = Get-ThuMucBackup
+foreach ($dich in $dichs) {
     if (Test-Path -LiteralPath $dich) {
-        $bk = "D:\AI\_backup\Lomo_${ts}_truoc_gop.lsp"
+        $bk = Join-Path $bkDir "Lomo_${ts}_truoc_gop.lsp"
         if (-not (Test-Path -LiteralPath $bk)) { Copy-Item -LiteralPath $dich -Destination $bk }
     }
     [IO.File]::WriteAllText($dich, (($noi -join "`r`n") + "`r`n"), $utf8)

@@ -11,9 +11,9 @@ Dau vao: DXF da NO AEC (dwg_to_dxf_aec.ps1). Cach lam:
   4. Dao: truc / hop ky thuat, cot, vach S-Wall nam trong phong -> lo trong hatch (net ven khong di vong).
   5. Net ven chan tuong: offset bien phong vao trong --cach-ven (50), ngat tai cua di (cua co cung quay, cua truot)
      va o mo khong co tuong.
-Xuat: <ten>_chongtham.json (dung cho ve_chong_tham_vao_ban_sao.ps1), .xlsx, .png. Khong sua file dau vao.
+Xuat: <ten>_chongtham.json (dung cho ve_chong_tham_vao_ban_sao.ps1), .png; .xlsx chi khi co --excel (nguoi dung chot 23/10/2026: mac dinh khong tao Excel). Khong sua file dau vao.
 
-    python tim_phong_uot.py <file_aec.dxf> --out-dir <thu muc> [--vung x0,y0,x1,y1] [--khong-anh]
+    python tim_phong_uot.py <file_aec.dxf> --out-dir <thu muc> [--vung x0,y0,x1,y1] [--khong-anh] [--excel]
 """
 import argparse
 import importlib.util
@@ -30,10 +30,26 @@ from ezdxf import bbox as ezbbox
 from shapely.geometry import LineString, MultiLineString, Point, Polygon, box
 from shapely.ops import linemerge, polygonize, unary_union
 
-# Dung lai ham dung luoi net / khung cua / polygonize cua skill dien-tich-ch (cung thu muc .claude\skills)
-_DTCH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "dien-tich-ch", "scripts", "tao_polyline_phong.py")
-if not os.path.exists(_DTCH):
-    sys.exit(f"Khong thay {_DTCH} (skill dien-tich-ch) - can skill nay de dung luoi net tuong.")
+# Dung lai ham dung luoi net / khung cua / polygonize cua skill dien-tich-ch. Tim o: bien ARCHIVINA_DTCH,
+# canh skill nay (.claude\skills\dien-tich-ch), <goc>\.claude\skills (goc = ARCHIVINA_AI hoac cha cua thu muc
+# repo), %USERPROFILE%\.claude\skills -> chay duoc o may khac / repo GitHub dat skill o goc repo.
+def _tim_dtch():
+    ten = os.path.join("dien-tich-ch", "scripts", "tao_polyline_phong.py")
+    skill = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    ung = [os.environ.get("ARCHIVINA_DTCH", ""),
+           os.path.join(os.path.dirname(skill), ten),
+           os.path.join(os.path.dirname(skill), ".claude", "skills", ten),
+           os.path.join(os.environ.get("ARCHIVINA_AI", ""), ".claude", "skills", ten) if os.environ.get("ARCHIVINA_AI") else "",
+           os.path.join(os.path.expanduser("~"), ".claude", "skills", ten)]
+    for c in ung:
+        if c and os.path.isfile(c):
+            return c
+    sys.exit("Khong thay skill dien-tich-ch (tao_polyline_phong.py) - can skill nay de dung luoi net tuong. "
+             "Chep thu muc dien-tich-ch canh thu muc chong-tham-mat-bang, hoac dat bien ARCHIVINA_DTCH. Da tim: "
+             + "; ".join(c for c in ung if c))
+
+
+_DTCH = _tim_dtch()
 _spec = importlib.util.spec_from_file_location("tao_polyline_phong", _DTCH)
 tpp = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(tpp)
@@ -89,6 +105,60 @@ def loc_msp(msp):
             continue
         out.append(e)
     return out
+
+
+_XREF = {}   # duong dan DXF xref -> (doc, doi tuong da gom xref con)
+
+
+def ma_can_xref(name):
+    """'CT2 - CH.05A' -> 'CH05A' (ma can tu ten xref can ho)."""
+    m = re.search(r"\bCH[\s.\-]*(\d+[A-Z]?)\b", name or "", re.I)
+    return ("CH" + m.group(1)).upper() if m else ""
+
+
+def doc_xref(ents, dxf_path, depth=0):
+    """Noi dung xref ngoai, KHONG bind (nguoi dung chot 23/10/2026, ke ca ban tam): dwg_to_dxf_aec.ps1 chuyen rieng moi
+    xref thanh DXF (no AEC tren ban sao) va ghi <ten>_xref.txt "ten|duong dan|dxf". Lay doi tuong Model cua DXF xref,
+    sao ao + bien doi theo INSERT xref trong ban ve chu, chi trong bo nho, khong ghi file nao.
+    Tra ve (doi tuong toa do Model, [(khung bao, ma can)])."""
+    f = os.path.splitext(dxf_path)[0] + "_xref.txt"
+    if depth > 2 or not os.path.exists(f):
+        return [], []
+    bang = {}
+    with open(f, encoding="utf-8-sig") as fi:
+        for dong in fi:
+            p = dong.rstrip("\r\n").split("|")
+            if len(p) >= 3 and p[2] and os.path.exists(p[2]):
+                bang[p[0].lower()] = p[2]
+    out, khung = [], []
+    for e in ents:
+        if e.dxftype() != "INSERT" or e.dxf.name.lower() not in bang:
+            continue
+        x = bang[e.dxf.name.lower()]
+        if x not in _XREF:
+            xd = ezdxf.readfile(x)
+            xe = loc_msp(xd.modelspace())
+            con, _ = doc_xref(xe, x, depth + 1)           # xref long nhau: da o toa do cua xref nay
+            _XREF[x] = (xd, xe + con)
+        m = e.matrix44()
+        moi = []
+        for v in _XREF[x][1]:
+            try:
+                c = v.copy()
+                c.transform(m)
+                moi.append(c)
+            except Exception:
+                pass
+        out += moi
+        can = ma_can_xref(e.dxf.name)
+        if can and moi:
+            try:
+                b = ezbbox.extents(moi, fast=True)
+                if b.has_data:
+                    khung.append((box(b.extmin.x, b.extmin.y, b.extmax.x, b.extmax.y), can))
+            except Exception:
+                pass
+    return out, khung
 
 
 def duyet_insert(entities, depth=0, max_depth=4, par_layer=None):
@@ -679,6 +749,7 @@ def main():
     ap.add_argument("--ky-hieu", default=KY_HIEU,
                     help="text ky hieu phong so khop nguyen van: 'R=phong_rac,N=phong_kt_nuoc'")
     ap.add_argument("--khong-anh", action="store_true")
+    ap.add_argument("--excel", action="store_true", help="xuat them file Excel (mac dinh khong xuat)")
     ap.add_argument("--xuat-lsp", default="",
                     help="ghi them file du lieu cho lenh LISP CHONGTHAM (ASCII, moi dong 1 bieu thuc LISP)")
     a = ap.parse_args()
@@ -689,6 +760,10 @@ def main():
     doc = ezdxf.readfile(a.dxf)
     msp = doc.modelspace()
     ents = loc_msp(msp)
+    xents, xkhung = doc_xref(ents, a.dxf)
+    if xents:
+        print(f"  them {len(xents)} doi tuong tu {len(_XREF)} xref (doc rieng, khong bind)", flush=True)
+        ents = ents + xents
     if a.vung:
         x0, y0, x1, y1 = (float(v) for v in a.vung.split(","))
         khung_xet = box(x0, y0, x1, y1)
@@ -731,6 +806,11 @@ def main():
             sys.exit(f"--them: loai '{loai}' khong hop le, chon trong {list(TEN_LOAI)}")
         x, y = (float(v) for v in xy.split(","))
         seeds.append((loai.strip(), (x, y), "chỉ định tay", ""))
+    if xkhung:   # hat trong xref can ho: ma can lay tu ten xref (khung bao nho nhat chua hat)
+        def can_xref(p):
+            c = [(k.area, ma) for k, ma in xkhung if k.contains(Point(p))]
+            return min(c)[1] if c else ""
+        seeds = [(l, p, n, c or can_xref(p)) for l, p, n, c in seeds]
     if khung_xet is not None:
         seeds = [s for s in seeds if khung_xet.contains(Point(s[1]))]
     # gom hat theo o kin
@@ -977,7 +1057,8 @@ def main():
     jp = os.path.join(a.out_dir, ten + "_chongtham.json")
     with open(jp, "w", encoding="utf-8") as fo:
         json.dump(kq, fo, ensure_ascii=False, indent=1)
-    xuat_excel(vung, lot, os.path.join(a.out_dir, ten + "_chongtham.xlsx"))
+    if a.excel:
+        xuat_excel(vung, lot, os.path.join(a.out_dir, ten + "_chongtham.xlsx"))
     if a.xuat_lsp:
         xuat_lsp(vung, lot, a.xuat_lsp)
     if not a.khong_anh:

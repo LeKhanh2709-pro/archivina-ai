@@ -1,0 +1,47 @@
+# Quy tắc bo A-MEP
+
+## Block A-MEP (đọc từ `FILE MẪU LỖ MỞ.dwg`, 22/10/2026)
+- Dynamic block, điểm chèn (0,0) = góc dưới trái khung.
+- Thành phần: polyline kín (layer 0 → theo layer INSERT), 2 nét chéo X kiểu `ACAD_ISO03W100` (layer 0), 2 dim style `_1-10_HKT` và 1 TEXT Arial cao 30 chứa Field `Object.Area` của khung (đơn vị m², 2 số lẻ), cả ba trên layer `A_K in` (màu 36, không in).
+- Tham số:
+
+| Tên | Hướng (hệ block) | Min | Max | Bước |
+|---|---|---|---|---|
+| `Distance1` | Y (cao) | 100 | 4000 | 10 |
+| `Distance2` | X (rộng) | 100 | 3000 | 10 |
+
+- Định nghĩa gốc 1200 × 2000. Bản đặt sẵn trong mẫu: 700 × 1800, góc 90°, layer `A_MEP` (màu 32, Continuous, nét 0.05).
+- **Layer lỗ mở khi chèn LUÔN là `A-MEP`** (người dùng chốt 22/10/2026), không theo `A_MEP` của bản đặt mẫu; chỉ lấy màu / nét của `A_MEP` mẫu khi phải tạo mới layer `A-MEP`.
+- Layer `A-MEP` (và `A_MEP`) khi chuẩn hoá đều thành `A-MEP`, không nằm trong nhóm layer bị bỏ khi dò X của NCL. Vì thế chạy lại lệnh thì X của chính A-MEP được nhận là một ô, rồi khớp với A-MEP có sẵn → "đã có" (không chèn trùng).
+
+## Quy tắc đặt
+1. **Khung bo theo hình lỗ mở** (người dùng chốt 22/10/2026, sau khi bản đầu bỏ qua 2 hộp chữ L ở tầng 4 Tháp B). Một vùng của `nc:do` thành một hoặc nhiều khung chữ nhật (trục nhà song song X, Y):
+   - Vùng gộp từ ≥ 2 ô X / lỗ mở (phần tử thứ 6 của `nc:do`) mà tổng diện tích các ô ≈ diện tích vùng (lệch < 3%, tức không chồng nhau): mỗi ô một khung.
+   - Vùng chữ nhật (diện tích / khung bao ≥ 0.95): 1 khung = khung bao.
+   - Còn lại, đa giác chỉ có cạnh song song X, Y (khung MEP chữ L, ô chồng nhau): tách lưới theo toạ độ đỉnh, gộp theo hàng rồi theo cột, lấy cách ra ít khung hơn (L → 2, T → 2, U → 3).
+   - Đa giác có cạnh xiên: không chèn, `Cần xác nhận lại`.
+2. Cạnh dài → `Distance1`, cạnh ngắn → `Distance2` (giới hạn block cho cạnh Y dài hơn).
+3. Ô dọc (cao ≥ rộng): góc 0, điểm chèn góc dưới trái. Ô ngang: góc 90° (như bản đặt mẫu), điểm chèn góc **dưới phải** (trục Y block hướng −X thế giới).
+4. Kích thước làm tròn bội 10 mm (bước tham số). Phần lệch chia đều hai đầu (ô 315 × 835 → block 320 × 840, lệch 2.5 mm mỗi bên). Excel ghi cột "Lệch do làm tròn".
+5. Đã có A-MEP: khung bao A-MEP có sẵn chồng > 50% diện tích nhỏ hơn → "đã có".
+6. Không chèn, đánh dấu `Cần xác nhận lại`:
+   - Vùng có cạnh xiên (xem mục 1).
+   - Khung vượt giới hạn: cạnh ngắn > 3000 hoặc cạnh dài > 4000 (hoặc < 100).
+7. Sau khi chèn: `UPDATEFIELD` các block mới để Field diện tích đúng ngay.
+8. Gom mọi A-MEP vừa chèn vào 1 block `LO MO MEP` (số thêm nếu trùng tên) bằng `-BLOCK` gốc 0,0, chèn lại tại 0,0 trên `A-MEP` (người dùng chốt 22/10/2026). A-MEP lồng bên trong giữ định nghĩa `*U..` dynamic. Khi dò "đã có", `amep:co-san` đọc cả A-MEP trong block `LO MO MEP*`, đổi toạ độ theo điểm chèn / tỉ lệ / góc của block gom. Thử trên bản vẽ tự dựng: gom 5, chạy lại thì 6 đã có, 0 chèn.
+
+## Vì sao chạy bằng `acad.exe /b`, không dùng Core Console
+- Core Console 2027: không có `vla-*` và cũng không có `getpropertyvalue` / `dumpallproperties` (thử 22/10/2026: "no function definition"). Vì vậy không gán được `Distance1` / `Distance2`.
+- `acad.exe /nologo <bản sao.dwg> /b <script.scr>` chạy một phiên AutoCAD riêng, có COM. Đã thử: gán 1530 × 640 → khung đúng, Field ra `0.98`.
+- Script `.scr` chép thẳng nội dung LISP (SECURELOAD). Lệnh chính bọc trong `vl-catch-all-apply`: lỗi thì ghi `LOI ...` vào log, script vẫn SAVEAS và QUIT, không treo. LISP thiếu hoặc thừa ngoặc thì AutoCAD chờ nhập tiếp và treo tới hết `-TimeoutSec`. Khi đó phát lại `run.scr` bằng Core Console để xem dòng lỗi (phần nạp hàm chạy được ở cả hai).
+
+## Kết quả chạy thử (bản vẽ thử tự tạo trong `_tmp`, đã xoá 22/10/2026; dựng lại bằng LINE trên layer `A-Hidden` nếu cần thử lại)
+6 ô X dựng tay trên bản sao file mẫu:
+- 600 × 1500 dọc: chèn góc 0, khít.
+- 2200 × 450 ngang: chèn góc 90, khít.
+- 315 × 835: chèn 320 × 840, lệch 2.5 mm mỗi bên.
+- 3500 × 3800: vượt giới hạn, không chèn.
+- Chữ L (1000 × 1000 + 1000 × 600): bản đầu xem lại, không chèn. Từ bản tách khung: 2 A-MEP (1000 × 1000 góc 0, 1000 × 600 góc 90), khít 2 ô.
+- A-MEP có sẵn trong mẫu: đã có.
+
+Chạy lại trên bản kết quả: 0 chèn, 4 đã có. Chưa chạy trên mặt bằng thật (`Cần xác nhận lại`).

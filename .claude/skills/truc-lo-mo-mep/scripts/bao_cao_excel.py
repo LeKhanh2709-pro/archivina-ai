@@ -24,6 +24,9 @@ NHAN_KIEU = {
     "LOMO_ONG": "Lỗ mở có ống đứng",
     "KHUNG_ONG": "Khung lỗ mở MEP có ống (không có X)",
     "KHAC": "Khác",
+    "X_XOAY": "Dấu X trục / hộp, xoay xiên",
+    "LOMO_ONG_XOAY": "Lỗ mở có ống đứng, xoay xiên",
+    "KHUNG_ONG_XOAY": "Khung lỗ mở MEP có ống (không có X), xoay xiên",
 }
 COT = [
     ("stt", "STT"), ("trang_thai", "Trạng thái"), ("cx", "Tâm X"), ("cy", "Tâm Y"),

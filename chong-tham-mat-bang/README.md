@@ -7,7 +7,7 @@ Gồm 2 cách dùng, cùng một bộ nhận diện:
 | Cách dùng | File | Khi nào dùng |
 |---|---|---|
 | Lệnh AutoLISP `CHONGTHAM` | `lisp/CHONGTHAM.lsp` | Người dùng tự chạy trong AutoCAD, vẽ thẳng vào bản vẽ đang mở. |
-| Skill Claude Code | `SKILL.md`, `scripts/`, `references/` | Claude chạy ngầm bằng AutoCAD Core Console trên bản sao, xuất Excel + ảnh duyệt. |
+| Skill Claude Code | `SKILL.md`, `scripts/`, `references/` | Claude chạy ngầm bằng AutoCAD Core Console trên bản sao, xuất ảnh duyệt (Excel chỉ khi yêu cầu, `--excel`). |
 
 ## Thể hiện
 
@@ -34,7 +34,7 @@ Chi tiết quy tắc, số liệu kiểm chứng: `references/nhan-dien.md`.
 
 1. **Sao lưu bản vẽ** (lệnh vẽ thêm vào bản vẽ đang mở). Bản vẽ phải được lưu.
 2. `APPLOAD` → chọn `lisp/CHONGTHAM.lsp`. Gõ **`CHONGTHAM`**.
-3. Nhận diện chạy ngầm trên bản sao file đã lưu (3–6 phút với mặt bằng tầng ~50 MB, AutoCAD tạm dừng chờ). Xong lệnh vẽ luôn và in số phòng theo loại, các chỗ "cần xem", thư mục chứa Excel + ảnh.
+3. Nhận diện chạy ngầm trên bản sao file đã lưu (3–6 phút với mặt bằng tầng ~50 MB, AutoCAD tạm dừng chờ). Xong lệnh vẽ luôn và in số phòng theo loại, các chỗ "cần xem", thư mục chứa ảnh xem lại (không tạo Excel).
 4. Lệnh tắt layer nội thất / thiết bị vệ sinh, đổi các layer khác sang xám 150,150,150, **giữ nguyên màu layer xref khung tên**; trạng thái layer cũ lưu thành layer state `TRUOC CHONG THAM`.
 5. Sai thì **Ctrl+Z một lần** để hoàn tác toàn bộ. Chạy lại: phòng đã có trong block `CHONG THAM*` không vẽ trùng.
 
@@ -51,7 +51,7 @@ Chép cả thư mục vào `.claude/skills/chong-tham-mat-bang/` của dự án.
 
 - `scripts/tim_accoreconsole.ps1` — tìm AutoCAD Core Console.
 - `scripts/dwg_to_dxf_aec.ps1` — DWG → DXF trên bản sao, nổ tường / cửa ACA.
-- `scripts/tim_phong_uot.py` — dò phòng ướt, xuất JSON + Excel + PNG (+ file dữ liệu cho LISP `--xuat-lsp`).
+- `scripts/tim_phong_uot.py` — dò phòng ướt, xuất JSON + PNG (+ Excel khi có `--excel`, + file dữ liệu cho LISP `--xuat-lsp`).
 - `scripts/xem_vung.py` — ảnh duyệt trên nền bản vẽ thật.
 - `scripts/ve_chong_tham_vao_ban_sao.ps1` — vẽ vào bản sao DWG, gom block.
 - `scripts/kiem_tra_block.py` — kiểm tra bản sao (layer, màu, hatch, số đối tượng ACA).

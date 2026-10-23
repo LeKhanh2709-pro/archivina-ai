@@ -13,16 +13,21 @@ Quy tắc nhận diện, thông số hatch, cách phân biệt thang máy: đọ
 
 **Bản vẽ có xref đang attach (chưa bind):** DXFOUT không chứa nội dung xref nên script Python bên dưới KHÔNG thấy trục / hộp trong xref. Với bản vẽ này dùng lệnh LISP `NCL` (đọc được xref đã nạp, chỉ đọc, không bind) — người dùng tự chạy trong AutoCAD, hoặc Claude chạy qua Core Console trên bản sao đặt **cùng thư mục với file xref** (đường dẫn xref tương đối). Tuyệt đối không bind xref để chạy Python.
 
-**Bản LISP** để người dùng tự chạy trong AutoCAD: `lisp\fire_stop_shaft.lsp` trong gói skill (bản người dùng đang APPLOAD: `D:\AI\scripts\lisp\fire_stop_shaft.lsp` — sửa thì chép đồng bộ cả hai), lệnh `NCL` (vẽ luôn, không hỏi; `KT-NGANCHAY` = hỏi trước khi vẽ), cùng logic với script Python. Sửa quy tắc ở một bên thì sửa cả bên kia. Phần dò trục (`nc:do` và các hàm phụ) được gộp sẵn vào `Lomo.lsp` của skill `truc-lo-mo-mep`: sửa `fire_stop_shaft.lsp` xong thì chạy `..\truc-lo-mo-mep\scripts\gop_lomo.ps1` để `Lomo.lsp` nhận bản mới. Không đổi dòng đánh dấu `;;; NCL: vẽ luôn, không hỏi` vì script gộp cắt file tại dòng này.
+**Bản LISP** để người dùng tự chạy trong AutoCAD: `lisp\fire_stop_shaft.lsp` trong gói skill (bản người dùng đang APPLOAD: `<gốc>\scripts\lisp\fire_stop_shaft.lsp`, máy này `D:\AI\scripts\lisp\` — sửa thì chép đồng bộ cả hai), lệnh `NCL` (vẽ luôn, không hỏi; `KT-NGANCHAY` = hỏi trước khi vẽ), cùng logic với script Python. Sửa quy tắc ở một bên thì sửa cả bên kia. Phần dò trục (`nc:do` và các hàm phụ) được gộp sẵn vào `Lomo.lsp` của skill `truc-lo-mo-mep`: sửa `fire_stop_shaft.lsp` xong thì chạy `..\truc-lo-mo-mep\scripts\gop_lomo.ps1` để `Lomo.lsp` nhận bản mới. Không đổi dòng đánh dấu `;;; NCL: vẽ luôn, không hỏi` vì script gộp cắt file tại dòng này.
 
 ## Công cụ
-- `<python>` = `D:\AI\_tools\venv\Scripts\python.exe`, đặt `PYTHONUTF8=1`. `<skill>` = "Base directory for this skill".
-- AutoCAD Core Console tự tìm trong `C:\Program Files\Autodesk\AutoCAD *\` (máy này chọn bản 2027).
+- `<python>` = Python có ezdxf (máy này `D:\AI\_tools\venv\Scripts\python.exe`; máy khác cài bằng `scripts\cai_dat_python.ps1`), đặt `PYTHONUTF8=1`. `<skill>` = "Base directory for this skill".
+- AutoCAD Core Console tự tìm (`scripts\moi_truong.ps1` → `Find-AutoCAD`: biến `ARCHIVINA_ACAD`, registry Autodesk, `<ổ>\Program Files\Autodesk\AutoCAD *`, `<ổ>\autocad\AutoCAD *`; máy này chọn bản 2027). Thư mục tạm `<gốc>\_tmp` (máy này `D:\AI\_tmp`).
+
+## Dùng ở máy khác (chốt 23/10/2026)
+- **LISP `fire_stop_shaft.lsp` là một file độc lập**: không cần Python hay file nào khác, APPLOAD ở máy nào cũng chạy. Lệnh tự đặt tạm rồi trả lại UCS World (bản vẽ ở UCS xoay vẫn gom block đúng 0,0), HPANNOTATIVE 0, hatch không nền / trong suốt; UNDO Control None / One thì bỏ nhóm undo; tên layer có ký tự đại diện (`@ # .`…) được thoát khi tắt / đổi màu; LISPSYS ≠ 1 thì nhắc.
+- **Lưới NET 125 mm như file mẫu**: máy này lấy mẫu NET từ `acad.pat` (NET tỉ lệ 1000 = lưới 125 mm, khớp `254HQV…ngan chay lan.dwg`); máy khác có thể lấy từ `acadiso.pat` (lưới to gấp 25,4 lần). Lệnh đo lưới thực sau hatch đầu tiên, lệch thì xoá hatch vừa tạo, hatch lại với tỉ lệ đã chỉnh và dùng tỉ lệ đó cho các vùng sau (in thông báo; log `NET_TI_LE` ở script bản sao). MEASUREMENT không ảnh hưởng (đã thử 23/10/2026).
+- Script PowerShell dùng `scripts\moi_truong.ps1` (bản giống hệt ở 3 skill chong-tham-mat-bang, ngan-chay-truc-hkt, truc-lo-mo-mep), không gắn cứng đường dẫn.
 - Không đọc script để hiểu cách dùng: chạy `--help` hoặc theo các bước dưới.
 
 ## Các bước
 1. **DWG → DXF** (bản sao, không nổ AEC):
-   `powershell -NoProfile -ExecutionPolicy Bypass -File <skill>\scripts\dwg_to_dxf.ps1 -Dwg "<file.dwg>" -OutDir "D:\AI\_tmp\<việc>"`
+   `powershell -NoProfile -ExecutionPolicy Bypass -File <skill>\scripts\dwg_to_dxf.ps1 -Dwg "<file.dwg>" -OutDir "<gốc>\_tmp\<việc>"`
 2. **Dò trục / hộp:**
    `<python> <skill>\scripts\tim_truc_ky_thuat.py "<file.dxf>" --out-dir "<thư mục kết quả NN_>"`
    Tạo `<tên>_vung.json`, `<tên>_vung.xlsx`, `<tên>_vung.png` (xanh = sẽ hatch, xám = đã có, đỏ = loại).
@@ -38,7 +43,7 @@ Quy tắc nhận diện, thông số hatch, cách phân biệt thang máy: đọ
 - **Layer bo và hatch ngăn cháy lan luôn là `A-Material`, cho mọi bản vẽ** (người dùng chốt 22/10/2026). Không vẽ lên `A-HATCH- Color` như bản mẫu cũ; hatch cũ trên layer đó chỉ được nhận là "đã có".
 - Tuân thủ 7 QUY TẮC BẮT BUỘC trong `D:\AI\CLAUDE.md`.
 - File đầu vào và kết quả trên ổ `D:`; ổ khác phải hỏi trước. Thư mục kết quả đánh số `NN_` (vd. `D:\AI\<dự án>\05_NganChay\`).
-- Script **không ghi đè** file đã có, **không xoá** thư mục tạm (`D:\AI\_tmp\nganchay_*`, `dwg2dxf_*`).
+- Script **không ghi đè** file đã có, **không xoá** thư mục tạm (`<gốc>\_tmp\nganchay_*`, `dwg2dxf_*`; máy này `D:\AI\_tmp`).
 - **Không sửa DWG gốc, không đụng tab AutoCAD đang mở**: mọi việc chạy ngầm bằng Core Console trên bản sao.
 - Không tô SOLID tường bao trục (người dùng chốt 22/10/2026: chỉ NET trong lòng).
 - **Gom vào block** (người dùng chốt 22/10/2026): toàn bộ đường bo + hatch vừa vẽ được gom vào 1 block `NGAN CHAY LAN` (trùng tên thì `NGAN CHAY LAN 2`…, không định nghĩa lại block cũ), chèn tại 0,0 trên `A-Material`. Hatch trong block này được nhận là "đã có" khi chạy lại.
