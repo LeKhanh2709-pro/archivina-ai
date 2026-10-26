@@ -1,0 +1,552 @@
+{
+  "Uuid": "bcc86c30-1120-49ca-af55-3c2b6d5ddcb7",
+  "IsCustomNode": false,
+  "Description": "Tạo lưới trục (Grid) từ bản CAD đã link trong Revit; tên trục đọc từ DWG qua AutoCAD Core Console. Mặc định dry-run. TRẠNG THÁI: CHƯA DUYỆT.",
+  "Name": "ARV_TaoTrucTuCSV_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "61ed699a3b9f496e86c8fec72f33d46a",
+      "Name": "Tên bản CAD (để trống nếu chỉ có 1)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "4504c7d8edd74312a43441e6317a9b15",
+      "Name": "Layer trục (cách nhau dấu phẩy)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "S-Truc",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "c9ff894abdfe455b88b7d8ed6e25f32e",
+      "Name": "Layer ký hiệu tên trục",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "S-Kyhieu",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "2afef3b1f2094a6faf8def75d3d8d95b",
+      "Name": "Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "b61c00cf2a70470092ae67a0b4888375",
+      "Name": "Tiền tố trục đứng (khi tự đặt tên)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "X",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "a93d15015bd04edbb3b3dab24a0c2b70",
+      "Name": "Tiền tố trục ngang (khi tự đặt tên)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Y",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "61ed699a3b9f496e86c8fec72f33d46a",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1ffbe60e41904eb6851d5da861883834",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "4504c7d8edd74312a43441e6317a9b15",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5084c60e39a04f61894798a31cf99a5b",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "S-Truc"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c9ff894abdfe455b88b7d8ed6e25f32e",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5bbc407f1a154473bbeb97f94a492e92",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "S-Kyhieu"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "2afef3b1f2094a6faf8def75d3d8d95b",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "dab91553addb458784497e4769122647",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b61c00cf2a70470092ae67a0b4888375",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "059af52b7d9b456e81d5689628cbc194",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "X"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "a93d15015bd04edbb3b3dab24a0c2b70",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c096833d9f1947a886065c6b2c3710a2",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Y"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoTrucTuCSV_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo lưới trục (Grid) từ bản CAD đã Link/Import trong Revit.\n#   - Đường trục: lấy từ layer trục của bản CAD, gộp các đoạn thẳng hàng, bỏ đoạn ngắn hơn 1 m.\n#   - Tên trục: Revit API không đọc được chữ trong CAD, nên script gọi AutoCAD Core Console trên BẢN SAO\n#     file DWG đang link, đọc attribute / TEXT / MTEXT trên layer ký hiệu trục rồi gán cho trục gần nhất.\n#     Không có Core Console hoặc CAD dạng Import (không có file) → đánh tên tự động theo tiền tố:\n#     trục đứng trái → phải, trục ngang trên → dưới.\n# INPUT\n#   IN[0] (str)  Một phần tên bản CAD (để trống nếu mô hình chỉ có 1 bản CAD)\n#   IN[1] (str)  Layer trục, nhiều layer cách nhau dấu phẩy, khớp theo chuỗi con (mặc định \"S-Truc\")\n#   IN[2] (str)  Layer ký hiệu trục chứa tên trục (mặc định \"S-Kyhieu\"; để trống = mọi layer)\n#   IN[3] (bool) Dry-run: True = chỉ báo cáo, không ghi vào mô hình (mặc định True)\n#   IN[4] (str)  Tiền tố tên trục đứng khi đánh tên tự động (mặc định \"X\")\n#   IN[5] (str)  Tiền tố tên trục ngang khi đánh tên tự động (mặc định \"Y\")\n# OUTPUT\n#   OUT (list[str]) Báo cáo: dòng tóm tắt, nguồn tên trục, đường dẫn log, rồi từng trục:\n#                   Tên | Loại | Điểm đầu | Điểm cuối | Kết quả | ElementId\n\nimport clr\nimport os\nimport io\nimport re\nimport csv\nimport glob\nimport shutil\nimport tempfile\nimport datetime\nimport subprocess\n\nclr.AddReference(\"RevitAPI\")\nfrom Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, Grid, Line, Arc, PolyLine, XYZ,\n                               GeometryInstance, Options, Transaction, UnitUtils, UnitTypeId,\n                               ModelPathUtils, BuiltInParameter, CADLinkType)\nclr.AddReference(\"RevitServices\")\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = \"ARV - Tạo lưới trục từ CAD\"\nMIN_LENGTH_MM = 1000.0       # Bỏ đoạn ngắn hơn giá trị này (nét ký hiệu, nét gạch)\nCOLLINEAR_TOL_MM = 1.0       # Sai số khoảng cách để coi hai đoạn là cùng một trục\nANGLE_TOL = 1e-4             # Sai số góc (rad) khi so sánh phương trục\nLABEL_PERP_TOL_MM = 500.0    # Ký hiệu trục lệch khỏi đường trục tối đa\nLABEL_END_TOL_MM = 3000.0    # Ký hiệu trục cách đầu trục tối đa\nCORE_TIMEOUT_S = 180         # Thời gian chờ AutoCAD Core Console\n\ncad_filter = (IN[0] or \"\").strip()\naxis_layers = [s.strip().lower() for s in (IN[1] or \"S-Truc\").split(\",\") if s.strip()]\nlabel_layer = (IN[2] or \"\").strip().lower()\ndry_run = True if IN[3] is None else bool(IN[3])\nprefix_v = (IN[4] or \"X\").strip()\nprefix_h = (IN[5] or \"Y\").strip()\n\n\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef fmt_xy(p):\n    return \"({:.0f}, {:.0f})\".format(to_mm(p.X), to_mm(p.Y))\n\n\ndef flatten(p):\n    return XYZ(p.X, p.Y, 0)\n\n\ndef canonical_direction(p0, p1):\n    d = p1.Subtract(p0).Normalize()\n    # Chuẩn hoá chiều để hai đoạn ngược chiều vẫn được coi là cùng phương\n    if d.X < -1e-9 or (abs(d.X) <= 1e-9 and d.Y < 0):\n        d = d.Negate()\n    return d\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef model_role(document):\n    # Trường Bộ môn (Role) theo tên file ISO 19650: PRJ-ARV-T1-ZZ-M3-A-0001\n    parts = (document.Title or \"\").split(\"-\")\n    return parts[5].upper() if len(parts) >= 7 else None\n\n\n# --- Bản CAD -------------------------------------------------------------------------\ndef cad_type_name(inst):\n    t = doc.GetElement(inst.GetTypeId())\n    p = t.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME) if t else None\n    return (p.AsString() if p else \"\") or \"\"\n\n\ndef pick_cad():\n    instances = list(FilteredElementCollector(doc).OfClass(ImportInstance).ToElements())\n    if cad_filter:\n        instances = [i for i in instances if cad_filter.lower() in cad_type_name(i).lower()]\n    if len(instances) == 1:\n        return instances[0]\n    if not instances:\n        raise Exception(u\"Không tìm thấy bản CAD nào{}.\".format(\n            u\" khớp '{}'\".format(cad_filter) if cad_filter else u\" được Link/Import trong mô hình\"))\n    raise Exception(u\"Tìm thấy {} bản CAD: {}. Nhập một phần tên vào ô 'Tên bản CAD' để chọn đúng 1 bản.\"\n                    .format(len(instances), u\"; \".join(cad_type_name(i) for i in instances)))\n\n\ndef cad_file_path(inst):\n    link = doc.GetElement(inst.GetTypeId())\n    if not inst.IsLinked or not isinstance(link, CADLinkType):\n        return None\n    try:\n        ref = link.GetExternalFileReference()\n        path = ModelPathUtils.ConvertModelPathToUserVisiblePath(ref.GetAbsolutePath())\n    except Exception:\n        return None\n    return path if path and os.path.isfile(path) else None\n\n\ndef layer_name(geom_obj):\n    style = doc.GetElement(geom_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return style.GraphicsStyleCategory.Name\n    return \"\"\n\n\ndef iter_cad_curves(geom_elem):\n    # Duyệt toàn bộ curve (kể cả trong block lồng nhau), toạ độ mô hình\n    for g in geom_elem:\n        if isinstance(g, GeometryInstance):\n            for item in iter_cad_curves(g.GetInstanceGeometry()):\n                yield item\n        elif isinstance(g, PolyLine):\n            name = layer_name(g)\n            pts = list(g.GetCoordinates())\n            for p0, p1 in zip(pts[:-1], pts[1:]):\n                if p0.DistanceTo(p1) > 1e-6:\n                    yield name, Line.CreateBound(p0, p1)\n        elif isinstance(g, (Line, Arc)):\n            yield layer_name(g), g\n\n\ndef on_axis_layer(name):\n    n = (name or \"\").lower()\n    return any(l in n for l in axis_layers)\n\n\n# --- Gộp đoạn thẳng hàng -----------------------------------------------------------\nclass Axis(object):\n    def __init__(self, d, offset, t0, t1):\n        self.d, self.offset, self.t0, self.t1 = d, offset, t0, t1\n        self.count = 1\n        self.name = None\n        self.note = u\"\"\n\n    @property\n    def n(self):\n        return XYZ(-self.d.Y, self.d.X, 0)\n\n    def point_at(self, t):\n        return self.n.Multiply(self.offset).Add(self.d.Multiply(t))\n\n    @property\n    def start(self):\n        return self.point_at(self.t0)\n\n    @property\n    def end(self):\n        return self.point_at(self.t1)\n\n    @property\n    def mid(self):\n        return self.point_at((self.t0 + self.t1) / 2.0)\n\n    @property\n    def is_vertical(self):\n        return abs(self.d.Y) > abs(self.d.X)\n\n\ndef merge_lines(lines, tol):\n    axes = []\n    for line in lines:\n        p0, p1 = flatten(line.GetEndPoint(0)), flatten(line.GetEndPoint(1))\n        d = canonical_direction(p0, p1)\n        offset = p0.DotProduct(XYZ(-d.Y, d.X, 0))\n        t0, t1 = sorted((p0.DotProduct(d), p1.DotProduct(d)))\n        target = None\n        for ax in axes:\n            if abs(ax.d.CrossProduct(d).Z) < ANGLE_TOL and abs(ax.offset - offset) < tol:\n                target = ax\n                break\n        if target is None:\n            axes.append(Axis(d, offset, t0, t1))\n        else:\n            target.t0, target.t1 = min(target.t0, t0), max(target.t1, t1)\n            target.count += 1\n    return axes\n\n\n# --- Đọc tên trục từ DWG bằng AutoCAD Core Console --------------------------------\ndef find_accoreconsole():\n    found = glob.glob(r\"C:\\Program Files\\Autodesk\\AutoCAD *\\accoreconsole.exe\")\n    return sorted(found)[-1] if found else None\n\n\ndef core_env(core):\n    \"\"\"Môi trường sạch cho AutoCAD Core Console. Gọi từ Revit, tiến trình con kế thừa Path có thư mục Revit 2026\n    → Core Console nạp nhầm DLL của Revit, báo \"Unable to load the Modeler DLLs\" và thoát, không xuất file\n    (đã kiểm 2026-10-19). Chỉ giữ biến hệ thống, Path = thư mục AutoCAD + Windows.\"\"\"\n    keep = (\"SYSTEMROOT\", \"WINDIR\", \"SYSTEMDRIVE\", \"USERPROFILE\", \"APPDATA\", \"LOCALAPPDATA\", \"USERNAME\",\n            \"USERDOMAIN\", \"PROGRAMDATA\", \"PROGRAMFILES\", \"PROGRAMFILES(X86)\", \"PROGRAMW6432\", \"COMMONPROGRAMFILES\",\n            \"COMMONPROGRAMFILES(X86)\", \"COMMONPROGRAMW6432\", \"ALLUSERSPROFILE\", \"COMPUTERNAME\", \"HOMEDRIVE\",\n            \"HOMEPATH\", \"OS\", \"NUMBER_OF_PROCESSORS\", \"PROCESSOR_ARCHITECTURE\", \"PUBLIC\", \"COMSPEC\", \"PATHEXT\")\n    env = dict((k, v) for k, v in os.environ.items() if k.upper() in keep)\n    root = env.get(\"SYSTEMROOT\") or os.environ.get(\"SystemRoot\") or r\"C:\\Windows\"\n    temp = os.path.join(os.environ.get(\"LOCALAPPDATA\") or os.path.expanduser(\"~\"), \"Temp\")\n    env[\"TEMP\"] = env[\"TMP\"] = temp if os.path.isdir(temp) else tempfile.gettempdir()\n    env[\"PATH\"] = u\";\".join([os.path.dirname(core), os.path.join(root, \"System32\"), root,\n                             os.path.join(root, \"System32\", \"Wbem\")])\n    return env\n\n\ndef clean_mtext(s):\n    s = re.sub(r\"\\\\[A-Za-z][^;\\\\{}]*;\", \"\", s)   # \\fArial|b0;  \\H2.5;  \\C1; ...\n    s = re.sub(r\"\\\\[Pp~]\", \" \", s)\n    return s.replace(\"{\", \"\").replace(\"}\", \"\").strip()\n\n\nDUMP_LISP = u\"\"\"(setq f (open \"{out}\" \"w\" \"utf8\"))\n(defun _w (k ly s p) (write-line (strcat k \"|\" ly \"|\" s \"|\" (rtos (car p) 2 3) \",\" (rtos (cadr p) 2 3)) f))\n(if (setq ss (ssget \"_X\" '((0 . \"INSERT,TEXT,MTEXT\") (410 . \"Model\"))))\n  (progn (setq i 0)\n    (repeat (sslength ss)\n      (setq e (ssname ss i) d (entget e) i (1+ i))\n      (cond\n        ((= (cdr (assoc 0 d)) \"INSERT\")\n          (if (= (cdr (assoc 66 d)) 1)\n            (progn (setq a (entnext e))\n              (while (and a (= (cdr (assoc 0 (entget a))) \"ATTRIB\"))\n                (_w \"A\" (cdr (assoc 8 d)) (cdr (assoc 1 (entget a))) (cdr (assoc 10 d)))\n                (setq a (entnext a))))))\n        ((= (cdr (assoc 0 d)) \"TEXT\")\n          (_w \"T\" (cdr (assoc 8 d)) (cdr (assoc 1 d))\n              (if (or (/= 0 (cdr (assoc 72 d))) (/= 0 (cdr (assoc 73 d)))) (cdr (assoc 11 d)) (cdr (assoc 10 d)))))\n        ((= (cdr (assoc 0 d)) \"MTEXT\")\n          (_w \"M\" (cdr (assoc 8 d)) (cdr (assoc 1 d)) (cdr (assoc 10 d))))))))\n(close f)\n\"\"\"\n\n\ndef read_dwg_labels(dwg_path, core):\n    # Chạy trên bản sao trong thư mục tạm – không mở / không ghi file DWG gốc\n    work = tempfile.mkdtemp(prefix=\"ARV_TaoTruc_\")\n    try:\n        copy = os.path.join(work, \"copy.dwg\")\n        shutil.copy2(dwg_path, copy)\n        out = os.path.join(work, \"labels.txt\")\n        scr = os.path.join(work, \"dump.scr\")\n        with io.open(scr, \"w\", encoding=\"utf-8\") as f:\n            f.write(DUMP_LISP.replace(\"{out}\", out.replace(\"\\\\\", \"/\")))\n        subprocess.run([core, \"/i\", copy, \"/s\", scr, \"/l\", \"en-US\"], stdin=subprocess.DEVNULL,\n                       env=core_env(core), cwd=os.path.dirname(core),\n                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,\n                       timeout=CORE_TIMEOUT_S, creationflags=0x08000000)\n        if not os.path.isfile(out):\n            raise Exception(u\"Core Console không xuất được danh sách chữ\")\n        labels = []\n        with io.open(out, \"r\", encoding=\"utf-8-sig\", errors=\"replace\") as f:\n            for line in f.read().splitlines():\n                parts = line.split(\"|\")\n                if len(parts) < 4:\n                    continue\n                kind, layer, xy = parts[0], parts[1], parts[-1]\n                text = u\"|\".join(parts[2:-1])\n                if kind == \"M\":\n                    text = clean_mtext(text)\n                try:\n                    x, y = [float(v) for v in xy.split(\",\")]\n                except ValueError:\n                    continue\n                if text.strip():\n                    labels.append((layer, text.strip(), x, y))\n        return labels\n    finally:\n        shutil.rmtree(work, ignore_errors=True)\n\n\ndef assign_names(axes, labels, transform):\n    perp_tol, end_tol = from_mm(LABEL_PERP_TOL_MM), from_mm(LABEL_END_TOL_MM)\n    pts = []\n    for layer, text, x, y in labels:\n        if label_layer and label_layer not in layer.lower():\n            continue\n        pts.append((text, flatten(transform.OfPoint(XYZ(from_mm(x), from_mm(y), 0)))))\n    for ax in axes:\n        names = []\n        for text, p in pts:\n            if abs(p.DotProduct(ax.n) - ax.offset) > perp_tol:\n                continue\n            t = p.DotProduct(ax.d)\n            if min(abs(t - ax.t0), abs(t - ax.t1)) <= end_tol and text not in names:\n                names.append(text)\n        if len(names) == 1:\n            ax.name = names[0]\n        elif len(names) > 1:\n            ax.note = u\"nhiều tên: \" + u\", \".join(names)\n    return len(pts)\n\n\ndef auto_names(axes):\n    vertical = sorted([a for a in axes if a.is_vertical], key=lambda a: a.mid.X)\n    horizontal = sorted([a for a in axes if not a.is_vertical], key=lambda a: -a.mid.Y)\n    for i, ax in enumerate(vertical):\n        ax.name = u\"{}{}\".format(prefix_v, i + 1)\n    for i, ax in enumerate(horizontal):\n        ax.name = u\"{}{}\".format(prefix_h, i + 1)\n\n\n# --- Log ------------------------------------------------------------------------------\ndef write_log(rows, source):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoTrucTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    # CSV UTF-8 có BOM để Excel đọc đúng tiếng Việt\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# Bản CAD: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow([u\"Tên trục\", u\"Loại\", u\"Điểm đầu (mm)\", u\"Điểm cuối (mm)\", u\"Kết quả\",\n                    u\"ElementId\", u\"Giá trị cũ\", u\"Giá trị mới\"])\n        w.writerows(rows)\n    return path\n\n\ndef main():\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"]\n\n    warnings = []\n    if model_role(doc) == \"A\":\n        warnings.append(u\"CẢNH BÁO: đây có vẻ là mô hình Kiến trúc (A). Grid do Kết cấu (S) làm chủ, \"\n                        u\"Kiến trúc nên dùng Copy/Monitor.\")\n\n    cad = pick_cad()\n    cad_name = cad_type_name(cad)\n    geom = cad.get_Geometry(Options())\n    if geom is None:\n        return [u\"DỪNG: không đọc được hình học của bản CAD '{}'.\".format(cad_name)]\n\n    min_len, tol = from_mm(MIN_LENGTH_MM), from_mm(COLLINEAR_TOL_MM)\n    lines, layers_seen, arcs = [], set(), 0\n    for name, c in iter_cad_curves(geom):\n        layers_seen.add(name)\n        if not on_axis_layer(name):\n            continue\n        if isinstance(c, Line) and c.Length >= min_len:\n            lines.append(c)\n        elif isinstance(c, Arc) and c.IsBound:\n            arcs += 1\n    if not lines:\n        return [u\"DỪNG: không có đường trục nào trên layer '{}' của bản CAD '{}'. Layer có trong bản CAD: {}\"\n                .format(u\", \".join(axis_layers), cad_name, u\", \".join(sorted(layers_seen)))]\n    axes = merge_lines(lines, tol)\n\n    # Tên trục\n    dwg = cad_file_path(cad)\n    core = find_accoreconsole()\n    if dwg and core:\n        try:\n            labels = read_dwg_labels(dwg, core)\n            used = assign_names(axes, labels, cad.GetTotalTransform())\n            source = u\"đọc từ DWG ({} chữ trên layer ký hiệu, Core Console: {})\".format(used, core)\n        except Exception as ex:\n            auto_names(axes)\n            source = u\"tự động theo tiền tố – không đọc được DWG: {}\".format(ex)\n    else:\n        auto_names(axes)\n        source = u\"tự động theo tiền tố ({})\".format(\n            u\"không tìm thấy AutoCAD Core Console\" if not core else u\"bản CAD dạng Import / không thấy file DWG\")\n\n    existing, existing_names = [], set()\n    for g in FilteredElementCollector(doc).OfClass(Grid).ToElements():\n        existing_names.add(g.Name)\n        c = g.Curve\n        if isinstance(c, Line):\n            p0, p1 = flatten(c.GetEndPoint(0)), flatten(c.GetEndPoint(1))\n            d = canonical_direction(p0, p1)\n            existing.append((g, d, p0.DotProduct(XYZ(-d.Y, d.X, 0))))\n\n    vertical = sorted([a for a in axes if a.is_vertical], key=lambda a: a.mid.X)\n    horizontal = sorted([a for a in axes if not a.is_vertical], key=lambda a: -a.mid.Y)\n    rows, to_create, planned = [], [], set()\n    for kind, group in ((u\"Trục đứng\", vertical), (u\"Trục ngang\", horizontal)):\n        for ax in group:\n            match = None\n            for g, gd, goffset in existing:\n                if abs(gd.CrossProduct(ax.d).Z) < ANGLE_TOL and abs(goffset - ax.offset) < tol:\n                    match = g\n                    break\n            name, eid = ax.name, u\"\"\n            if not name:\n                name = u\"?\"\n                result = u\"Bỏ qua – \" + (ax.note or u\"không tìm thấy ký hiệu tên trục\")\n            elif name in planned:\n                result = u\"Bỏ qua – tên '{}' trùng với trục khác trong bản CAD\".format(name)\n            elif match is not None:\n                result = u\"Bỏ qua – trùng trục có sẵn '{}'\".format(match.Name)\n                eid = match.Id.Value\n            elif name in existing_names:\n                result = u\"Bỏ qua – tên '{}' đã có ở vị trí khác\".format(name)\n            else:\n                result = u\"Sẽ tạo\" if dry_run else u\"Chờ tạo\"\n                planned.add(name)\n                to_create.append((name, ax, len(rows)))\n            rows.append([name, kind, fmt_xy(ax.start), fmt_xy(ax.end), result, eid, u\"—\", name])\n\n    if not dry_run and to_create:\n        # Đóng transaction của Dynamo để dùng Transaction có tên riêng (Undo được trong Revit)\n        TransactionManager.Instance.ForceCloseTransaction()\n        t = Transaction(doc, TRANSACTION_NAME)\n        t.Start()\n        try:\n            for name, ax, idx in to_create:\n                grid = Grid.Create(doc, Line.CreateBound(ax.start, ax.end))\n                grid.Name = name\n                rows[idx][4] = u\"Đã tạo\"\n                rows[idx][5] = grid.Id.Value\n            t.Commit()\n        except Exception as ex:\n            t.RollBack()\n            return warnings + [u\"LỖI khi tạo lưới trục, mọi thay đổi đã được hoàn tác: {}\".format(ex)]\n\n    created = sum(1 for r in rows if r[4] in (u\"Sẽ tạo\", u\"Đã tạo\"))\n    summary = u\"{} – {}: bản CAD '{}', {} đoạn → {} trục, {} {}, {} bỏ qua.\".format(\n        TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\",\n        cad_name, len(lines), len(rows), created, u\"sẽ tạo\" if dry_run else u\"đã tạo\", len(rows) - created)\n    if arcs:\n        warnings.append(u\"CẢNH BÁO: {} cung tròn trên layer trục không được xử lý (chỉ hỗ trợ trục thẳng).\".format(arcs))\n    try:\n        log_line = u\"Log: \" + write_log(rows, cad_name)\n    except Exception as ex:\n        log_line = u\"Không ghi được file log: {}\".format(ex)\n    return warnings + [summary, u\"Tên trục: \" + source, log_line] + \\\n        [u\" | \".join(u\"{}\".format(v) for v in r[:6]) for r in rows]\n\n\ntry:\n    OUT = main()\nexcept Exception as ex:\n    OUT = [u\"LỖI: {}\".format(ex)]\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "f093bc13688248e2bad4cfd75e1994bd",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "c57d5c66e89b4f91a67ed951b4053b45",
+          "Name": "IN[0]",
+          "Description": "Tên bản CAD",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "02dc59a606814476943987f08da71db0",
+          "Name": "IN[1]",
+          "Description": "Layer trục",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bf01962849bd4e3eb25b626907aba83a",
+          "Name": "IN[2]",
+          "Description": "Layer ký hiệu trục",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d51e9110a1e04969b0e430f33c446df1",
+          "Name": "IN[3]",
+          "Description": "Dry-run",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8972ff998b8c4e43adbe8b15be720dc6",
+          "Name": "IN[4]",
+          "Description": "Tiền tố trục đứng",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "61c7b0d7e0b847b3a8e1c71363964c9a",
+          "Name": "IN[5]",
+          "Description": "Tiền tố trục ngang",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ccb11f316d2e49b397c95157babf2885",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "75ee37527d3048ee8de5c76e0d567b54",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "bfa69729543947398501096ebc529222",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f838784cbe254743ba9a75540918ae21",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "1ffbe60e41904eb6851d5da861883834",
+      "End": "c57d5c66e89b4f91a67ed951b4053b45",
+      "Id": "b7b6f3a688fe4519853deded0887409b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5084c60e39a04f61894798a31cf99a5b",
+      "End": "02dc59a606814476943987f08da71db0",
+      "Id": "144c95db5d5840d0a223ac89b531a67a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5bbc407f1a154473bbeb97f94a492e92",
+      "End": "bf01962849bd4e3eb25b626907aba83a",
+      "Id": "d00f0a727a4943bca560da5c2d5f143e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "dab91553addb458784497e4769122647",
+      "End": "d51e9110a1e04969b0e430f33c446df1",
+      "Id": "3a67fe3244f64156b631890e4d169ad9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "059af52b7d9b456e81d5689628cbc194",
+      "End": "8972ff998b8c4e43adbe8b15be720dc6",
+      "Id": "9877996305f8473ba980064f9e625e20",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "c096833d9f1947a886065c6b2c3710a2",
+      "End": "61c7b0d7e0b847b3a8e1c71363964c9a",
+      "Id": "244ce371175548e6afd3471db7865cf6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "ccb11f316d2e49b397c95157babf2885",
+      "End": "bfa69729543947398501096ebc529222",
+      "Id": "6cf2e8437b554a5c8266bbee638d0891",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "61ed699a3b9f496e86c8fec72f33d46a",
+        "Name": "Tên bản CAD (để trống nếu chỉ có 1)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "4504c7d8edd74312a43441e6317a9b15",
+        "Name": "Layer trục (cách nhau dấu phẩy)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 130.0
+      },
+      {
+        "Id": "c9ff894abdfe455b88b7d8ed6e25f32e",
+        "Name": "Layer ký hiệu tên trục",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Id": "2afef3b1f2094a6faf8def75d3d8d95b",
+        "Name": "Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 390.0
+      },
+      {
+        "Id": "b61c00cf2a70470092ae67a0b4888375",
+        "Name": "Tiền tố trục đứng (khi tự đặt tên)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Id": "a93d15015bd04edbb3b3dab24a0c2b70",
+        "Name": "Tiền tố trục ngang (khi tự đặt tên)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 650.0
+      },
+      {
+        "Id": "f093bc13688248e2bad4cfd75e1994bd",
+        "Name": "ARV - Tạo lưới trục từ CAD",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 250.0
+      },
+      {
+        "Id": "75ee37527d3048ee8de5c76e0d567b54",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "b485d5b57c5742fc8090c7db0c8edfef",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Bản CAD lưới trục đã Link vào Revit (đơn vị mm). Layer trục và layer ký hiệu theo bản CAD. Giữ Dry-run = True cho lần chạy đầu.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "61ed699a3b9f496e86c8fec72f33d46a",
+          "4504c7d8edd74312a43441e6317a9b15",
+          "c9ff894abdfe455b88b7d8ed6e25f32e",
+          "2afef3b1f2094a6faf8def75d3d8d95b",
+          "b61c00cf2a70470092ae67a0b4888375",
+          "a93d15015bd04edbb3b3dab24a0c2b70"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -96.0,
+        "Width": 356.0,
+        "Height": 878.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 795.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "d9502a4b26d34fe5bc76cdc84ceab656",
+        "Title": "2. Tạo lưới trục (Python)",
+        "DescriptionText": "Gộp đoạn trục thẳng hàng, đọc tên trục từ bản sao DWG bằng AutoCAD Core Console (không có thì tự đặt tên theo tiền tố), bỏ qua trục/tên trùng, chặn file central, log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: CHƯA DUYỆT.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "f093bc13688248e2bad4cfd75e1994bd"
+        ],
+        "HasNestedGroups": false,
+        "Left": 590.0,
+        "Top": 68.0,
+        "Width": 285.0,
+        "Height": 478.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 250.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 172.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "e9123f990e594782b8d16e2bd24013d3",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "Dòng tóm tắt, đường dẫn log và kết quả từng trục.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "75ee37527d3048ee8de5c76e0d567b54"
+        ],
+        "HasNestedGroups": false,
+        "Left": 990.0,
+        "Top": -73.0,
+        "Width": 997.0,
+        "Height": 665.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": -335.69173971392695,
+    "Y": 281.7729596014608,
+    "Zoom": 0.6860433787367104
+  }
+}

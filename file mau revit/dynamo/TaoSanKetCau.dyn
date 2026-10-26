@@ -1,0 +1,554 @@
+{
+  "Uuid": "52bbfa18-d942-47e8-922f-55d60a3a0cbe",
+  "IsCustomNode": false,
+  "Description": "Tạo sàn kết cấu Revit từ đường bao Model/Detail Line khép kín (vòng trong = lỗ mở)",
+  "Name": "TaoSanKetCau",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "e815b471b3ae496bad8f23dce4e68fc6",
+      "Name": "2. Level",
+      "Type": "selection",
+      "Type2": "dropdownSelection",
+      "Value": "TẦNG 2",
+      "Description": "Select a level in the active document",
+      "SelectedIndex": 14
+    },
+    {
+      "Id": "c34afa5868ea4ce582a18cb0caf87d96",
+      "Name": "3. Floor Type",
+      "Type": "selection",
+      "Type2": "dropdownSelection",
+      "Value": "Generic 200",
+      "Description": "All floor types available in the document.",
+      "SelectedIndex": 12
+    },
+    {
+      "Id": "03c5ca312bfd4ae0a27d49be76a85fb0",
+      "Name": "4. Offset mặt sàn (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "0",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "74c498e7f53f4e508c50f94d51ce95d2",
+      "Name": "5. Chạy (False = chỉ kiểm tra)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-000906fe",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-000906ff",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090700",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090701",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090702",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090703",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090704",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090705",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090706",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090707",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090708",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090709",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009070a",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009070b",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009070c",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009070d",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009070e",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009070f",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090710",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090711",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090712",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090713",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090714",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090715",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090716",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090717",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090718",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090719",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009071a",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009071b",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009071c",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009071d",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009071e",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009071f",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090720",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090721",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090722",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090723",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090724",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090725",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090726",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090727",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090728",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090729",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009072a",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009072b",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009072c",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009072d",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009072e",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009072f",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090730",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090731",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090732",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090733",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090734",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090735",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090736",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090737",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090738",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090739",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009073a",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009073b",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009073c",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009073d",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009073e",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009073f",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090740",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090741",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090742",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090743",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090744",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090745",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090746",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090747",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090748",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090749",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009074a",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009074b",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009074c",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009074d",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009074e",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009074f",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090750",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090751",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090752",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090753",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090754",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090755",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090756",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090757",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090758",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090759",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009075a",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009075b",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009075c",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009075d",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009075e",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009075f",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090760",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090761",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090762",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090763",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090764",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090765",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090766",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090767",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090768",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090769",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009076a",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009076b",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009076c",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009076d",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009076e",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009076f",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090770",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090771",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090772",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090773",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090774",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090775",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090776",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090777",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090778",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090779",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009077a",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009077b",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009077c",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009077d",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009077e",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-0009077f",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090780",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090781",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090782",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090783",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090784",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090785",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090786",
+        "eafcb8cc-a8e9-4068-be38-1177e0ff68d1-00090787"
+      ],
+      "Id": "15d644191fb641b38e5bb7ba53aaed60",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5dd64eb5f3d0438cb6a08a5fdce57b8e",
+          "Name": "Elements",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select multiple elements from the Revit document."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.Levels, DSRevitNodesUI",
+      "SelectedIndex": 14,
+      "SelectedString": "TẦNG 2",
+      "Id": "e815b471b3ae496bad8f23dce4e68fc6",
+      "NodeType": "ExtensionNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9fea5f459a8e4fc8a550e9cdc7f9e90f",
+          "Name": "Levels",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a level in the active document"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FloorTypes, DSRevitNodesUI",
+      "SelectedIndex": 12,
+      "SelectedString": "Generic 200",
+      "Id": "c34afa5868ea4ce582a18cb0caf87d96",
+      "NodeType": "ExtensionNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "86c6aad896f545ecbf8812563ab61cc1",
+          "Name": "Floor Type",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All floor types available in the document."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "03c5ca312bfd4ae0a27d49be76a85fb0",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7e04cf07058f4d7b83e1c2b8713fafc6",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 0.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "74c498e7f53f4e508c50f94d51ce95d2",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "404610c80d13460ebe6fc46c80d3e7d5",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TaoSanKetCau — tạo sàn kết cấu (Structural Floor) từ các đường bao vẽ sẵn\n# Revit 2026 / Dynamo 3.6 (CPython3)\n# IN[0] : các Model Line / Detail Line khép kín (có thể nhiều vòng);\n#         để trống -> lấy vùng chọn hiện tại trong Revit\n#         - vòng ngoài cùng  -> biên sàn\n#         - vòng nằm trong   -> lỗ mở (thang, thang máy, hộp KT)\n#         - nhiều vòng ngoài rời nhau -> nhiều tấm sàn\n# IN[1] : Level\n# IN[2] : Floor Type\n# IN[3] : Offset mặt sàn so với Level (mm), VD 0 hoặc -50\n# IN[4] : True = tạo sàn; False = chỉ kiểm tra, báo cáo\nimport clr\nclr.AddReference('RevitAPI')\nclr.AddReference('RevitServices')\nfrom Autodesk.Revit.DB import (CurveLoop, Floor, XYZ, Transform, UnitUtils,\n                               UnitTypeId, BuiltInParameter, CurveElement)\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\nfrom System.Collections.Generic import List\n\ndoc = DocumentManager.Instance.CurrentDBDocument\nTOL = UnitUtils.ConvertToInternalUnits(1.0, UnitTypeId.Millimeters)\n\n\ndef as_list(x):\n    if x is None:\n        return []\n    return list(x) if hasattr(x, '__iter__') and not isinstance(x, str) else [x]\n\n\nelems = [e for e in as_list(UnwrapElement(IN[0])) if e is not None]\nlevel = UnwrapElement(IN[1])\nftype = UnwrapElement(IN[2])\noffset_mm = float(IN[3] or 0)\nrun = bool(IN[4])\nmsgs = []\n\n# Node chọn trống -> lấy vùng chọn hiện tại trong Revit\nsrc = 'node Chọn đường bao'\nif not elems:\n    uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\n    elems = [doc.GetElement(i) for i in uidoc.Selection.GetElementIds()]\n    src = 'vùng chọn trong Revit'\nmsgs.append('Nhận %d đối tượng từ %s' % (len(elems), src))\n\n# 1. Lấy curve, chiếu về cao độ level\ncurves = []\nfor e in elems:\n    if isinstance(e, CurveElement):\n        c = e.GeometryCurve\n        if not c.IsBound:  # vòng tròn kín -> tách 2 cung\n            p0 = 0.0\n            half = c.Period / 2.0\n            parts = []\n            for a, b in ((p0, p0 + half), (p0 + half, p0 + 2 * half)):\n                k = c.Clone()\n                k.MakeBound(a, b)\n                parts.append(k)\n        else:\n            parts = [c]\n        for k in parts:\n            dz = level.Elevation - k.GetEndPoint(0).Z\n            curves.append(k.CreateTransformed(Transform.CreateTranslation(XYZ(0, 0, dz))))\nskipped = len(elems) - len([e for e in elems if isinstance(e, CurveElement)])\nif skipped:\n    names = sorted(set(e.GetType().Name for e in elems if not isinstance(e, CurveElement)))\n    msgs.append('Bỏ qua %d đối tượng không phải Model/Detail Line (%s)' % (skipped, ', '.join(names)))\n\n\n# 2. Nối curve thành các vòng kín\ndef same(p, q):\n    return p.DistanceTo(q) < TOL\n\n\nloops, pool = [], curves[:]\nwhile pool:\n    chain = [pool.pop(0)]\n    start = chain[0].GetEndPoint(0)\n    end = chain[0].GetEndPoint(1)\n    while not same(start, end):\n        nxt = None\n        for i, c in enumerate(pool):\n            if same(c.GetEndPoint(0), end):\n                nxt = pool.pop(i)\n                break\n            if same(c.GetEndPoint(1), end):\n                nxt = pool.pop(i).CreateReversed()\n                break\n        if nxt is None:\n            break\n        chain.append(nxt)\n        end = nxt.GetEndPoint(1)\n    if same(start, end):\n        loops.append(chain)\n    else:\n        msgs.append('Vòng hở tại (%.0f, %.0f) mm — kiểm tra lại nét bao' %\n                    (end.X * 304.8, end.Y * 304.8))\n\n\n# 3. Đa giác 2D để tính diện tích / quan hệ trong–ngoài\ndef poly(chain):\n    pts = []\n    for c in chain:\n        pts.extend([(p.X, p.Y) for p in list(c.Tessellate())[:-1]])\n    return pts\n\n\ndef area(pts):\n    return abs(sum(pts[i][0] * pts[i - 1][1] - pts[i - 1][0] * pts[i][1]\n                   for i in range(len(pts)))) / 2.0\n\n\ndef inside(pt, pts):\n    x, y, res = pt[0], pt[1], False\n    for i in range(len(pts)):\n        x1, y1 = pts[i - 1]\n        x2, y2 = pts[i]\n        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:\n            res = not res\n    return res\n\n\npolys = [poly(l) for l in loops]\ndepth = [sum(1 for j in range(len(loops)) if j != i and inside(polys[i][0], polys[j]))\n         for i in range(len(loops))]\n\n# 4. Gom: vòng chẵn = biên sàn, vòng lẻ nằm ngay trong = lỗ mở\nslabs = []\nfor i in range(len(loops)):\n    if depth[i] % 2:\n        continue\n    holes = [j for j in range(len(loops)) if depth[j] == depth[i] + 1\n             and inside(polys[j][0], polys[i])]\n    slabs.append((i, holes))\n\nft = UnitUtils.ConvertToInternalUnits(1.0, UnitTypeId.Millimeters)\nreport = []\nfor i, holes in slabs:\n    a = (area(polys[i]) - sum(area(polys[j]) for j in holes)) * 0.09290304\n    report.append('Sàn %d: %.2f m², %d lỗ mở' % (len(report) + 1, a, len(holes)))\n\nfloors = []\nif run and slabs:\n    TransactionManager.Instance.EnsureInTransaction(doc)\n    for i, holes in slabs:\n        cls = List[CurveLoop]()\n        outer = CurveLoop()\n        for c in loops[i]:\n            outer.Append(c)\n        if not outer.IsCounterclockwise(XYZ.BasisZ):\n            outer.Flip()\n        cls.Add(outer)\n        for j in holes:\n            h = CurveLoop()\n            for c in loops[j]:\n                h.Append(c)\n            if h.IsCounterclockwise(XYZ.BasisZ):\n                h.Flip()\n            cls.Add(h)\n        fl = Floor.Create(doc, cls, ftype.Id, level.Id, True, None, 0.0)\n        fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).Set(offset_mm * ft)\n        floors.append(fl)\n    TransactionManager.Instance.TransactionTaskDone()\n    msgs.append('ĐÃ TẠO %d sàn kết cấu \"%s\" tại %s, offset %.0f mm'\n                % (len(floors), ftype.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString(),\n                   level.Name, offset_mm))\nelif slabs:\n    msgs.append('Chế độ KIỂM TRA — đổi nút Chạy = True rồi bấm Run để tạo sàn')\nelse:\n    msgs.append('Không tìm thấy vòng bao kín nào — vẽ Model/Detail Line khép kín, '\n                'chọn chúng (node 1: Select → quét → Finish, hoặc chọn sẵn trong Revit) rồi Run')\n\nOUT = report + msgs, floors\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "fd947b44042b42a5a1563f616ea81f00",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "fa20250532154ba7a461cceafbe11f01",
+          "Name": "IN[0]",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1c1df4606f8c4b43b2be12f1154129ff",
+          "Name": "IN[1]",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0a3955b05ef84f69a8288693d2aaeb5d",
+          "Name": "IN[2]",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "21ccacdd911f4e73a25b6a5573934da7",
+          "Name": "IN[3]",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2a0ef32a7e604a12847bce23ef0f1afe",
+          "Name": "IN[4]",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a6351e050be244b3bc9b50eddfb61474",
+          "Name": "OUT",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 420.0,
+      "WatchHeight": 260.0,
+      "Id": "dcc9e6b9a341431d83ab7d9386265246",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "4d0d22965f9643ac95e6aae2c8cf7fce",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "46d39e07c8524ab4bd49c22504c46ffd",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "5dd64eb5f3d0438cb6a08a5fdce57b8e",
+      "End": "fa20250532154ba7a461cceafbe11f01",
+      "Id": "f7baf4137d674fe0b10ce90ffa14b34f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9fea5f459a8e4fc8a550e9cdc7f9e90f",
+      "End": "1c1df4606f8c4b43b2be12f1154129ff",
+      "Id": "60080ffe4147480fbfc5f8e18ebcc6ce",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "86c6aad896f545ecbf8812563ab61cc1",
+      "End": "0a3955b05ef84f69a8288693d2aaeb5d",
+      "Id": "482cdce2cd564ef4ac203b6aad94ad2d",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "7e04cf07058f4d7b83e1c2b8713fafc6",
+      "End": "21ccacdd911f4e73a25b6a5573934da7",
+      "Id": "b805ed438c1e4635822bafc6a5c54f6f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "404610c80d13460ebe6fc46c80d3e7d5",
+      "End": "2a0ef32a7e604a12847bce23ef0f1afe",
+      "Id": "ce0557313dd340a98b89392ff2e48e2b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a6351e050be244b3bc9b50eddfb61474",
+      "End": "4d0d22965f9643ac95e6aae2c8cf7fce",
+      "Id": "ca8a1d64f5034dcab08fddcb1e944173",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "dungbn",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "15d644191fb641b38e5bb7ba53aaed60",
+        "Name": "1. Chọn đường bao sàn (Model/Detail Line)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "e815b471b3ae496bad8f23dce4e68fc6",
+        "Name": "2. Level",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 200.0
+      },
+      {
+        "Id": "c34afa5868ea4ce582a18cb0caf87d96",
+        "Name": "3. Floor Type",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "03c5ca312bfd4ae0a27d49be76a85fb0",
+        "Name": "4. Offset mặt sàn (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 460.0
+      },
+      {
+        "Id": "74c498e7f53f4e508c50f94d51ce95d2",
+        "Name": "5. Chạy (False = chỉ kiểm tra)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 590.0
+      },
+      {
+        "Id": "fd947b44042b42a5a1563f616ea81f00",
+        "Name": "TaoSanKetCau",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 420.0,
+        "Y": 250.0
+      },
+      {
+        "Id": "dcc9e6b9a341431d83ab7d9386265246",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 720.0,
+        "Y": 250.0
+      }
+    ],
+    "Annotations": [],
+    "X": 21.079880606316863,
+    "Y": 89.69224133100454,
+    "Zoom": 0.8381974329722964
+  }
+}

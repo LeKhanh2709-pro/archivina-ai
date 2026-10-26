@@ -1,0 +1,832 @@
+{
+  "Uuid": "45beb5c0-643a-4129-b74b-8141f41e6b57",
+  "IsCustomNode": false,
+  "Description": "Tạo dầm kết cấu từ mặt bằng kết cấu sàn (DWG đã link): mỗi nhãn bxh là một dầm, trục giữa cặp nét song song cách nhau b. Mặc định dry-run. TRẠNG THÁI: CHƯA DUYỆT.",
+  "Name": "ARV_TaoDamTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "cc7bbf65742a46d0aa238aa8d5c4e2a0",
+      "Name": "IN[0] Tên bản CAD (để trống nếu chỉ có 1)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "150_GOC0",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "4b3123e321094198be666d391d19c516",
+      "Name": "IN[1] Layer cạnh dầm (cách nhau bằng ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "S-Khuat;S-Thay",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "8b89752d8f8c40be8500193f3716fac0",
+      "Name": "IN[2] Layer nhãn tiết diện dầm",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "S-Text",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "2bd0ddf7c496465693a9e2dd3a28902a",
+      "Name": "IN[3] Hệ số đổi nhãn ra mm (cm → 10)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "10",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "f1693b48ed5b414eb191b7b9be2d6e0b",
+      "Name": "IN[4] Tên family dầm",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "M_Concrete-Rectangular Beam",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "96d95ce363de4f7b8e6d0b02ead652ae",
+      "Name": "IN[5] Parameter bề rộng (b)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "b",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "0a0c5bace6c44a439db7b121e384da88",
+      "Name": "IN[6] Parameter chiều cao (h)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "h",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "a0854c94c91d43d8aadd5e175a6286e8",
+      "Name": "IN[7] Level tham chiếu",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Tầng 1",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "4383d92ddbe34537bed65631aad811b2",
+      "Name": "IN[8] Đỉnh dầm so với level (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "0",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "13a12750c87f466d99c5a688ac22856c",
+      "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "3693e2d0723d4c20b9be5ae127aec608",
+      "Name": "IN[10] Nối nhịp không nhãn qua cột: khe tối đa mm (0 = tắt)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "2500",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "cc7bbf65742a46d0aa238aa8d5c4e2a0",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ea87dd92b5544ee285c52756f8a060e4",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "150_GOC0"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "4b3123e321094198be666d391d19c516",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b580f0f8a9da46898d48c1aade9aabd7",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "S-Khuat;S-Thay"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "8b89752d8f8c40be8500193f3716fac0",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "374e967fc08d49aa945e4ab0f22509aa",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "S-Text"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "2bd0ddf7c496465693a9e2dd3a28902a",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9c57e8a12d3f4489a55a444075b02756",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 10.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "f1693b48ed5b414eb191b7b9be2d6e0b",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5b9598ca7f9947c8adb72c9256768368",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "M_Concrete-Rectangular Beam"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "96d95ce363de4f7b8e6d0b02ead652ae",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "19f66873006143abbc10315193e4fa0f",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "b"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "0a0c5bace6c44a439db7b121e384da88",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a59be15b92164acdb193148a446fa69e",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "h"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "a0854c94c91d43d8aadd5e175a6286e8",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0d26d187d3a443f9ac3c849ab2006cbf",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Tầng 1"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "4383d92ddbe34537bed65631aad811b2",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3fd826a1fe694ab783463f73f64dc592",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 0.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "13a12750c87f466d99c5a688ac22856c",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5fc368476bad454c87283f5164c298df",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "3693e2d0723d4c20b9be5ae127aec608",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fe289f47cb5e426e9bf8f63e6fd47c30",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 2500.0
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoDamTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo dầm kết cấu từ mặt bằng kết cấu sàn (DWG đã Link vào Revit).\n#   Cách nhận dầm (theo NHÃN, không đoán theo nét):\n#   - Mỗi nhãn tiết diện \"bxh\" (VD \"25X40\", \"D1 (220x500)\") trên layer nhãn là một dầm.\n#   - Phương dầm = phương chữ của nhãn. Tìm cặp nét song song (layer cạnh dầm) cách nhau đúng b,\n#     nằm sát nhãn → trục dầm là đường giữa cặp nét.\n#   - Chiều dài dầm = đoạn hai cạnh cùng có nét; chỗ một cạnh bị ngắt do dầm khác đâm vào (cạnh kia\n#     liền) được nối qua. Đầu dầm chạm cạnh một dầm vuông góc thì kéo tới trục dầm đó.\n#   - Dầm liên tục ghi 1 nhãn: các nhịp tiếp theo của cùng cặp nét (cách nhau qua cột ≤ IN[10]) được tạo\n#     theo nhãn đó cho tới nhịp có nhãn khác.\n#   - Nhãn không tìm được cặp nét → bỏ qua, ghi vào báo cáo để vẽ tay.\n#   Chữ trong bản link Revit không đọc được nên nhãn được đọc từ BẢN SAO file DWG qua AutoCAD Core Console.\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (để trống nếu mô hình chỉ có 1 bản CAD)\n#   IN[1] (str)   Layer cạnh dầm, nhiều chuỗi cách nhau bằng ';' – layer chứa một trong các chuỗi được dùng\n#   IN[2] (str)   Layer nhãn tiết diện dầm (khớp chuỗi con)\n#   IN[3] (float) Hệ số đổi số trong nhãn ra mm (nhãn ghi cm → 10; ghi mm → 1)\n#   IN[4] (str)   Tên family dầm kết cấu tiết diện chữ nhật\n#   IN[5] (str)   Tên parameter type bề rộng (VD \"b\")\n#   IN[6] (str)   Tên parameter type chiều cao (VD \"h\")\n#   IN[7] (str)   Tên level tham chiếu của dầm\n#   IN[8] (float) Cao độ đỉnh dầm so với level (mm), mặc định 0\n#   IN[9] (bool)  Dry-run: True = chỉ báo cáo, không ghi vào mô hình (mặc định True)\n#   IN[10] (float) Nối nhịp không nhãn qua cột: khe tối đa (mm) giữa hai nhịp thẳng hàng cùng cặp nét\n#                 (bề rộng cột / vách / nút dầm). Một nhãn áp cho cả dầm liên tục, mỗi nhịp tạo một dầm.\n#                 0 = tắt (chỉ tạo nhịp có nhãn). Mặc định 2500.\n# OUTPUT\n#   OUT (list[str]) Báo cáo: tóm tắt, layer đã dùng, đường dẫn log, rồi từng dầm:\n#                   Nhãn | Điểm đầu | Điểm cuối | Dài | Type | Kết quả | ElementId\n\nimport os\nimport io\nimport re\nimport csv\nimport glob\nimport math\nimport shutil\nimport tempfile\nimport datetime\nimport subprocess\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, CADLinkType, Options, GeometryInstance,\n                                   PolyLine, Line, XYZ, Transaction, UnitUtils, UnitTypeId, ModelPathUtils,\n                                   BuiltInParameter, BuiltInCategory, Level, LocationCurve, StorageType)\n    from Autodesk.Revit.DB.Structure import StructuralType, YJustification, ZJustification\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo dầm kết cấu từ CAD\"\nWIDTH_TOL_MM = 15.0        # Sai lệch cho phép giữa khoảng cách cặp nét và bề rộng b ghi trên nhãn\nLABEL_TOL_MM = 800.0       # Nhãn cách mép dầm tối đa\nJOIN_TOL_MM = 5.0          # Nối các đoạn nét thẳng hàng sát nhau\nMERGE_GAP_MM = 2000.0      # Một cạnh bị ngắt (cạnh kia liền) tối đa bao nhiêu thì vẫn nối qua\nEND_SNAP_MM = 50.0         # Đầu dầm cách mép dầm vuông góc ≤ giá trị này thì kéo tới trục dầm đó\nMIN_LENGTH_MM = 300.0      # Bỏ dầm ngắn hơn\nDUP_TOL_MM = 5.0\nANGLE_TOL = 1e-3\nCORE_TIMEOUT_S = 180\n# [cần xác nhận] standards chưa quy định tên type dầm; BIM Manager chốt rồi sửa tại đây\nBEAM_TYPE_NAME = u\"{b} x {h}mm\"\n\nLABEL_RE = re.compile(r\"(\\d+(?:[.,]\\d+)?)\\s*[xX×]\\s*(\\d+(?:[.,]\\d+)?)\")\n\n\n# =====================================================================================\n# PHẦN HÌNH HỌC – chỉ dùng tuple (x, y) theo mm, không phụ thuộc Revit (chạy thử được ngoài Dynamo)\n# =====================================================================================\ndef parse_label(text, factor):\n    \"\"\"'25X40' → (250, 400) khi factor = 10. Trả về None nếu không phải nhãn tiết diện.\"\"\"\n    s = re.sub(r\"%%[A-Za-z]\", \"\", text or u\"\")\n    m = LABEL_RE.search(s)\n    if not m:\n        return None\n    b = float(m.group(1).replace(\",\", \".\")) * factor\n    h = float(m.group(2).replace(\",\", \".\")) * factor\n    if b <= 0 or h <= 0:\n        return None\n    return int(round(b)), int(round(h))\n\n\ndef canonical(dx, dy):\n    \"\"\"Vector đơn vị, chiều quy ước (x > 0, hoặc x = 0 và y > 0) để cặp nét ngược chiều vẫn so được.\"\"\"\n    n = math.hypot(dx, dy)\n    ux, uy = dx / n, dy / n\n    if ux < -1e-9 or (abs(ux) <= 1e-9 and uy < 0):\n        ux, uy = -ux, -uy\n    return ux, uy\n\n\ndef union(intervals, tol):\n    out = []\n    for a, b in sorted(intervals):\n        if out and a <= out[-1][1] + tol:\n            out[-1][1] = max(out[-1][1], b)\n        else:\n            out.append([a, b])\n    return out\n\n\ndef covers(intervals, a, b, tol):\n    return any(i0 <= a + tol and i1 >= b - tol for i0, i1 in intervals)\n\n\ndef fill_gaps(side, other, max_gap, tol):\n    \"\"\"Nối khe hở trên một cạnh nếu khe ≤ max_gap và cạnh kia liền suốt khe (dầm khác đâm vào một phía).\"\"\"\n    out = [list(side[0])] if side else []\n    for a, b in side[1:]:\n        g0, g1 = out[-1][1], a\n        if g1 - g0 <= max_gap and covers(other, g0, g1, tol):\n            out[-1][1] = max(out[-1][1], b)\n        else:\n            out.append([a, b])\n    return out\n\n\ndef intersect(xs, ys):\n    out, i, j = [], 0, 0\n    while i < len(xs) and j < len(ys):\n        a, b = max(xs[i][0], ys[j][0]), min(xs[i][1], ys[j][1])\n        if b > a:\n            out.append((a, b))\n        if xs[i][1] < ys[j][1]:\n            i += 1\n        else:\n            j += 1\n    return out\n\n\nclass Beam(object):\n    def __init__(self, label, b, h, u, offset, t0, t1, lp):\n        self.label, self.b, self.h = label, b, h\n        self.u = u                    # phương dầm (đơn vị)\n        self.offset = offset          # toạ độ trục theo pháp tuyến n = (-uy, ux)\n        self.t0, self.t1 = t0, t1     # toạ độ hai đầu theo u\n        self.lp = lp                  # điểm nhãn\n        self.lt = lp[0] * u[0] + lp[1] * u[1]   # vị trí nhãn theo u\n        self.note = u\"\"\n\n    @property\n    def n(self):\n        return -self.u[1], self.u[0]\n\n    def point(self, t):\n        return (self.n[0] * self.offset + self.u[0] * t, self.n[1] * self.offset + self.u[1] * t)\n\n    @property\n    def length(self):\n        return self.t1 - self.t0\n\n\ndef find_beams(segments, labels, opt):\n    \"\"\"segments: [(x0, y0, x1, y1)] mm; labels: [(text, (b, h), (x, y), (dx, dy))].\n\n    Trả về (beams, unmatched) – unmatched: [(text, (x, y), lý do)].\n    \"\"\"\n    wtol, ltol, jtol = opt[\"width_tol\"], opt[\"label_tol\"], opt[\"join_tol\"]\n    segs = []\n    for x0, y0, x1, y1 in segments:\n        if math.hypot(x1 - x0, y1 - y0) > jtol:\n            segs.append((x0, y0, x1, y1, canonical(x1 - x0, y1 - y0)))\n\n    beams, unmatched = [], []\n    for text, (b, h), (lx, ly), (dx, dy) in labels:\n        u = canonical(dx, dy)\n        n = (-u[1], u[0])\n        lt, lo = lx * u[0] + ly * u[1], lx * n[0] + ly * n[1]\n        # Nét song song với chữ, nằm trong dải ± (b + ltol) quanh nhãn → gom theo toạ độ pháp tuyến\n        lines = {}\n        for x0, y0, x1, y1, d in segs:\n            if abs(d[0] * u[1] - d[1] * u[0]) > ANGLE_TOL:\n                continue\n            o = x0 * n[0] + y0 * n[1]\n            if abs(o - lo) > b + ltol:\n                continue\n            ta, tb = sorted((x0 * u[0] + y0 * u[1], x1 * u[0] + y1 * u[1]))\n            key = int(round(o / jtol))\n            lines.setdefault(key, []).append((o, ta, tb))\n        rows = []\n        for key, items in lines.items():\n            o = sum(i[0] for i in items) / len(items)\n            rows.append((o, union([(i[1], i[2]) for i in items], jtol)))\n        rows.sort()\n        best = None\n        for i in range(len(rows)):\n            for j in range(i + 1, len(rows)):\n                (o1, s1), (o2, s2) = rows[i], rows[j]\n                if abs((o2 - o1) - b) > wtol:\n                    continue\n                dist = 0.0 if o1 <= lo <= o2 else min(abs(lo - o1), abs(lo - o2))\n                if dist > ltol:\n                    continue\n                a = fill_gaps(s1, s2, opt[\"merge_gap\"], jtol)\n                c = fill_gaps(s2, s1, opt[\"merge_gap\"], jtol)\n                parts = intersect(a, c)\n                if not parts:\n                    continue\n                # Đoạn chung chứa (hoặc gần nhất với) vị trí nhãn theo phương dầm\n                part = min(parts, key=lambda p: 0.0 if p[0] <= lt <= p[1] else min(abs(lt - p[0]), abs(lt - p[1])))\n                gap = 0.0 if part[0] <= lt <= part[1] else min(abs(lt - part[0]), abs(lt - part[1]))\n                if gap > ltol:\n                    continue\n                # Có nét khác nằm giữa cặp nét tại vị trí nhãn → không phải một dầm\n                inner = any(o1 + jtol < o < o2 - jtol and covers(s, part[0], part[1], 0) for o, s in rows)\n                if inner:\n                    continue\n                score = (dist + gap, dist)\n                if best is None or score < best[0]:\n                    clean = [p for p in parts\n                             if not any(o1 + jtol < o < o2 - jtol and covers(s, p[0], p[1], 0) for o, s in rows)]\n                    best = (score, (o1 + o2) / 2.0, part, chain_parts(clean, part, opt[\"span_gap\"]))\n        if best is None:\n            unmatched.append((text, (lx, ly), u\"không tìm thấy cặp nét song song cách nhau {} mm sát nhãn\".format(b)))\n            continue\n        _, axis, (t0, t1), chain = best\n        bm = Beam(text, b, h, u, axis, t0, t1, (lx, ly))\n        bm.chain = chain\n        beams.append(bm)\n\n    beams = merge_duplicates(beams, unmatched, opt)\n    if opt[\"span_gap\"] > 0:\n        beams = expand_spans(beams, opt)\n    snap_ends(beams, opt)\n    kept = []\n    for bm in beams:\n        if bm.length < opt[\"min_length\"]:\n            unmatched.append((bm.label, bm.lp, u\"dầm dài {:.0f} mm < {:.0f} mm\".format(bm.length, opt[\"min_length\"])))\n        else:\n            kept.append(bm)\n    return kept, unmatched\n\n\ndef chain_parts(parts, own, span_gap):\n    \"\"\"Các nhịp liền nhau của cùng cặp nét, nối từ nhịp có nhãn sang hai phía qua khe ≤ span_gap (cột, vách,\n    nút dầm giao chữ thập). span_gap = 0 → chỉ nhịp có nhãn.\"\"\"\n    parts = sorted(parts)\n    if own not in parts:\n        return [own]\n    i0 = i1 = parts.index(own)\n    if span_gap > 0:\n        while i0 > 0 and parts[i0][0] - parts[i0 - 1][1] <= span_gap:\n            i0 -= 1\n        while i1 < len(parts) - 1 and parts[i1 + 1][0] - parts[i1][1] <= span_gap:\n            i1 += 1\n    return parts[i0:i1 + 1]\n\n\ndef expand_spans(beams, opt):\n    \"\"\"Một nhãn áp cho cả dầm liên tục: các nhịp thẳng hàng cùng bề rộng (cùng cặp nét) không có nhãn riêng\n    được tạo theo nhãn đó, mỗi nhịp một dầm. Nhịp nằm giữa hai nhãn → theo nhãn gần hơn (tính theo số nhịp).\"\"\"\n    tol = opt[\"join_tol\"]\n    groups = []\n    for bm in beams:\n        for g in groups:\n            o = g[0]\n            if abs(o.u[0] * bm.u[1] - o.u[1] * bm.u[0]) < ANGLE_TOL and abs(o.offset - bm.offset) < tol and o.b == bm.b:\n                g.append(bm)\n                break\n        else:\n            groups.append([bm])\n    result = list(beams)\n    for g in groups:\n        owned = [(bm.t0, bm.t1) for bm in g]\n        claims = {}\n        for bm in g:\n            chain = getattr(bm, \"chain\", [])\n            own_idx = [k for k, p in enumerate(chain) if p[0] < bm.t1 - tol and p[1] > bm.t0 + tol]\n            if not own_idx:\n                continue\n            for k, p in enumerate(chain):\n                if any(p[0] < t1 - tol and p[1] > t0 + tol for t0, t1 in owned):\n                    continue        # nhịp đã có nhãn riêng\n                dist = min(abs(k - j) for j in own_idx)\n                key = (int(round(p[0])), int(round(p[1])))\n                claims.setdefault(key, (p, []))[1].append((dist, bm))\n        for key, (p, cl) in sorted(claims.items()):\n            cl.sort(key=lambda x: (x[0], x[1].lt))\n            dist, bm = cl[0]\n            nb = Beam(bm.label, bm.b, bm.h, bm.u, bm.offset, p[0], p[1], bm.lp)\n            nb.note = u\"nhịp nối theo nhãn\"\n            if len(cl) > 1 and cl[1][0] == dist and (cl[1][1].b, cl[1][1].h) != (bm.b, bm.h):\n                nb.note = u\"nhịp giữa hai nhãn khác tiết diện '{}' / '{}' – đã lấy '{}', kiểm tra lại\".format(\n                    bm.label, cl[1][1].label, bm.label)\n            result.append(nb)\n    return result\n\n\ndef split_point(a, c, beams):\n    \"\"\"Vị trí cắt giữa hai nhãn a, c trên cùng một trục: trục của dầm cắt ngang RỘNG NHẤT nằm giữa hai nhãn\n    (dầm chính làm gối – chỗ đổi tiết diện), cùng bề rộng thì lấy dầm gần giữa hai nhãn; không có thì lấy\n    điểm giữa hai nhãn.\"\"\"\n    lo, hi = sorted((a.lt, c.lt))\n    best = None\n    for o in beams:\n        if abs(o.u[0] * a.u[1] - o.u[1] * a.u[0]) < 0.1:\n            continue\n        denom = a.u[0] * o.n[0] + a.u[1] * o.n[1]\n        t = (o.offset - a.offset * (a.n[0] * o.n[0] + a.n[1] * o.n[1])) / denom\n        p = a.point(t)\n        s = p[0] * o.u[0] + p[1] * o.u[1]\n        if lo < t < hi and o.t0 - a.b <= s <= o.t1 + a.b:\n            key = (-o.b, abs(t - (lo + hi) / 2.0))\n            if best is None or key < best[0]:\n                best = (key, t)\n    return best[1] if best is not None else (lo + hi) / 2.0\n\n\ndef merge_duplicates(beams, unmatched, opt):\n    \"\"\"Hai nhãn trên cùng một dầm (cùng trục, chồng chiều dài):\n    - cùng tiết diện → gộp thành một dầm;\n    - khác tiết diện → hai nhịp khác nhau, cắt tại trục dầm cắt ngang giữa hai nhãn.\"\"\"\n    tol = opt[\"join_tol\"]\n    out = []\n    for bm in beams:\n        dup = None\n        for o in out:\n            if abs(o.u[0] * bm.u[1] - o.u[1] * bm.u[0]) < ANGLE_TOL and abs(o.offset - bm.offset) < tol \\\n                    and bm.t0 < o.t1 - tol and bm.t1 > o.t0 + tol:\n                dup = o\n                break\n        if dup is None:\n            out.append(bm)\n        elif (dup.b, dup.h) != (bm.b, bm.h) and abs(dup.lt - bm.lt) > tol:\n            t = split_point(dup, bm, beams)\n            first, second = (dup, bm) if dup.lt < bm.lt else (bm, dup)\n            first.t1, second.t0 = min(first.t1, t), max(second.t0, t)\n            out.append(bm)\n        elif (dup.b, dup.h) != (bm.b, bm.h):\n            dup.note = u\"trùng dầm với nhãn '{}' khác tiết diện – kiểm tra lại\".format(bm.label)\n            unmatched.append((bm.label, bm.lp, u\"trùng vị trí với dầm '{}' – đã bỏ\".format(dup.label)))\n        else:\n            dup.t0, dup.t1 = min(dup.t0, bm.t0), max(dup.t1, bm.t1)\n    return out\n\n\ndef snap_ends(beams, opt):\n    \"\"\"Đầu dầm chạm mép một dầm vuông góc / xiên → kéo tới trục dầm đó để Revit nối dầm.\"\"\"\n    snap = opt[\"end_snap\"]\n    ends = []\n    for bm in beams:\n        for which in (0, 1):\n            t = bm.t0 if which == 0 else bm.t1\n            p = bm.point(t)\n            best = None\n            for o in beams:\n                if o is bm or abs(o.u[0] * bm.u[1] - o.u[1] * bm.u[0]) < 0.1:\n                    continue\n                d = p[0] * o.n[0] + p[1] * o.n[1] - o.offset          # khoảng cách tới trục dầm kia\n                s = p[0] * o.u[0] + p[1] * o.u[1]\n                # Nút góc (chữ L): đầu dầm kia cũng dừng ở mép dầm này → cho phép lệch thêm nửa bề rộng\n                reach = bm.b / 2.0 + snap\n                if abs(d) > o.b / 2.0 + snap or s < o.t0 - reach or s > o.t1 + reach:\n                    continue\n                # Giao của trục dầm này với trục dầm kia\n                denom = bm.u[0] * o.n[0] + bm.u[1] * o.n[1]\n                t_new = t - d / denom\n                # Chỉ kéo dài ra phía ngoài, không rút ngắn vào trong nhịp\n                if (which == 0 and t_new > t + 1) or (which == 1 and t_new < t - 1):\n                    continue\n                if best is None or abs(t_new - t) < abs(best - t):\n                    best = t_new\n            if best is not None:\n                ends.append((bm, which, best))\n    for bm, which, t in ends:\n        if which == 0:\n            bm.t0 = t\n        else:\n            bm.t1 = t\n\n\n# =====================================================================================\n# PHẦN REVIT\n# =====================================================================================\ncad_filter = ((IN[0] if DYNAMO else u\"\") or u\"\").strip()\nedge_filters = [s.strip().lower() for s in ((IN[1] if DYNAMO else u\"\") or u\"\").split(u\";\") if s.strip()]\nlabel_filter = ((IN[2] if DYNAMO else u\"\") or u\"\").strip().lower()\nlabel_factor = float(IN[3]) if DYNAMO and IN[3] else 10.0\nfamily_name = ((IN[4] if DYNAMO else u\"\") or u\"\").strip()\nparam_b = ((IN[5] if DYNAMO else u\"\") or u\"b\").strip()\nparam_h = ((IN[6] if DYNAMO else u\"\") or u\"h\").strip()\nlevel_name = ((IN[7] if DYNAMO else u\"\") or u\"\").strip()\ntop_offset_mm = float(IN[8]) if DYNAMO and IN[8] else 0.0\ndry_run = True if not DYNAMO or IN[9] is None else bool(IN[9])\nspan_gap_mm = max(0.0, float(IN[10])) if DYNAMO and len(IN) > 10 and IN[10] is not None else 2500.0\n\n\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef model_role(document):\n    # Trường Bộ môn (Role) theo tên file ISO 19650: PRJ-ARV-T1-ZZ-M3-S-0001\n    parts = (document.Title or \"\").split(\"-\")\n    return parts[5].upper() if len(parts) >= 7 else None\n\n\n# --- Bản CAD ------------------------------------------------------------------------\ndef pick_cad():\n    instances = list(FilteredElementCollector(doc).OfClass(ImportInstance).ToElements())\n    if cad_filter:\n        instances = [i for i in instances if cad_filter.lower() in get_name(doc.GetElement(i.GetTypeId())).lower()]\n    if len(instances) != 1:\n        names = [get_name(doc.GetElement(i.GetTypeId())) for i in\n                 FilteredElementCollector(doc).OfClass(ImportInstance).ToElements()]\n        raise Exception(u\"Tìm thấy {} bản CAD khớp '{}'. Nhập tên bản CAD vào ô IN[0]. Các bản CAD: {}\".format(\n            len(instances), cad_filter, u\", \".join(names) or u\"không có\"))\n    return instances[0]\n\n\ndef cad_file_path(inst):\n    link = doc.GetElement(inst.GetTypeId())\n    if not inst.IsLinked or not isinstance(link, CADLinkType):\n        return None\n    try:\n        path = ModelPathUtils.ConvertModelPathToUserVisiblePath(link.GetExternalFileReference().GetAbsolutePath())\n    except Exception:\n        return None\n    return path if path and os.path.isfile(path) else None\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return style.GraphicsStyleCategory.Name\n    return None\n\n\ndef cad_segments(cad):\n    \"\"\"Mọi đoạn thẳng của CAD (kể cả trong block lồng nhau), toạ độ mô hình, kèm tên layer.\"\"\"\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    result = []\n\n    def add(layer, p0, p1):\n        result.append((layer, (to_mm(p0.X), to_mm(p0.Y), to_mm(p1.X), to_mm(p1.Y))))\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            elif isinstance(obj, PolyLine):\n                pts = list(obj.GetCoordinates())\n                for p0, p1 in zip(pts[:-1], pts[1:]):\n                    add(layer_of(obj), p0, p1)\n            elif isinstance(obj, Line):\n                add(layer_of(obj), obj.GetEndPoint(0), obj.GetEndPoint(1))\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\n# --- Đọc nhãn dầm từ DWG bằng AutoCAD Core Console ----------------------------------\ndef find_accoreconsole():\n    found = glob.glob(r\"C:\\Program Files\\Autodesk\\AutoCAD *\\accoreconsole.exe\")\n    return sorted(found)[-1] if found else None\n\n\ndef core_env(core):\n    \"\"\"Môi trường sạch cho AutoCAD Core Console. Gọi từ Revit, tiến trình con kế thừa Path có thư mục Revit 2026\n    → Core Console nạp nhầm DLL của Revit, báo \"Unable to load the Modeler DLLs\" và thoát, không xuất file\n    (đã kiểm 2026-10-19). Chỉ giữ biến hệ thống, Path = thư mục AutoCAD + Windows.\"\"\"\n    keep = (\"SYSTEMROOT\", \"WINDIR\", \"SYSTEMDRIVE\", \"USERPROFILE\", \"APPDATA\", \"LOCALAPPDATA\", \"USERNAME\",\n            \"USERDOMAIN\", \"PROGRAMDATA\", \"PROGRAMFILES\", \"PROGRAMFILES(X86)\", \"PROGRAMW6432\", \"COMMONPROGRAMFILES\",\n            \"COMMONPROGRAMFILES(X86)\", \"COMMONPROGRAMW6432\", \"ALLUSERSPROFILE\", \"COMPUTERNAME\", \"HOMEDRIVE\",\n            \"HOMEPATH\", \"OS\", \"NUMBER_OF_PROCESSORS\", \"PROCESSOR_ARCHITECTURE\", \"PUBLIC\", \"COMSPEC\", \"PATHEXT\")\n    env = dict((k, v) for k, v in os.environ.items() if k.upper() in keep)\n    root = env.get(\"SYSTEMROOT\") or os.environ.get(\"SystemRoot\") or r\"C:\\Windows\"\n    temp = os.path.join(os.environ.get(\"LOCALAPPDATA\") or os.path.expanduser(\"~\"), \"Temp\")\n    env[\"TEMP\"] = env[\"TMP\"] = temp if os.path.isdir(temp) else tempfile.gettempdir()\n    env[\"PATH\"] = u\";\".join([os.path.dirname(core), os.path.join(root, \"System32\"), root,\n                             os.path.join(root, \"System32\", \"Wbem\")])\n    return env\n\n\ndef clean_mtext(s):\n    s = re.sub(r\"\\\\[A-Za-z][^;\\\\{}]*;\", \"\", s)   # \\fArial|b0;  \\H2.5;  \\C1; ...\n    s = re.sub(r\"\\\\[Pp~]\", \" \", s)\n    return s.replace(\"{\", \"\").replace(\"}\", \"\").strip()\n\n\n# Đọc TEXT/MTEXT ở model space VÀ trong block (lồng nhau, tối đa 8 cấp): toạ độ + góc chữ đổi về WCS theo\n# ma trận affine (a b c d e f) của từng INSERT (điểm chèn, tỉ lệ, góc xoay, base point của block).\n# Chữ nằm trên layer \"0\" trong block lấy layer của INSERT cha.\n# TEXT căn lề khác Left lấy điểm căn (mã 11), còn lại lấy điểm chèn (mã 10); góc chữ mã 50 (radian)\nDUMP_LISP = u\"\"\"(setq f (open \"{out}\" \"w\" \"utf8\"))\n(defun _ap (m p) (list (+ (* (nth 0 m) (car p)) (* (nth 1 m) (cadr p)) (nth 4 m))\n                       (+ (* (nth 2 m) (car p)) (* (nth 3 m) (cadr p)) (nth 5 m))))\n(defun _mul (p c) (list (+ (* (nth 0 p) (nth 0 c)) (* (nth 1 p) (nth 2 c)))\n                        (+ (* (nth 0 p) (nth 1 c)) (* (nth 1 p) (nth 3 c)))\n                        (+ (* (nth 2 p) (nth 0 c)) (* (nth 3 p) (nth 2 c)))\n                        (+ (* (nth 2 p) (nth 1 c)) (* (nth 3 p) (nth 3 c)))\n                        (+ (* (nth 0 p) (nth 4 c)) (* (nth 1 p) (nth 5 c)) (nth 4 p))\n                        (+ (* (nth 2 p) (nth 4 c)) (* (nth 3 p) (nth 5 c)) (nth 5 p))))\n(defun _ins (d / a sx sy ip bp ca sa m)\n  (setq a (cdr (assoc 50 d)) sx (cdr (assoc 41 d)) sy (cdr (assoc 42 d)) ip (cdr (assoc 10 d))\n        bp (cdr (assoc 10 (tblsearch \"BLOCK\" (cdr (assoc 2 d))))) ca (cos a) sa (sin a))\n  (setq m (list (* ca sx) (- (* sa sy)) (* sa sx) (* ca sy) 0.0 0.0) bp (_ap m bp))\n  (list (nth 0 m) (nth 1 m) (nth 2 m) (nth 3 m) (- (car ip) (car bp)) (- (cadr ip) (cadr bp))))\n(defun _lay (d parent / l) (setq l (cdr (assoc 8 d))) (if (and parent (= l \"0\")) parent l))\n(defun _txt (d m lay / p r q v)\n  (setq p (if (and (= (cdr (assoc 0 d)) \"TEXT\") (or (/= 0 (cdr (assoc 72 d))) (/= 0 (cdr (assoc 73 d)))))\n            (cdr (assoc 11 d)) (cdr (assoc 10 d))))\n  (setq r (if (assoc 50 d) (cdr (assoc 50 d)) 0.0))\n  (setq q (_ap m p) v (_ap (list (nth 0 m) (nth 1 m) (nth 2 m) (nth 3 m) 0.0 0.0) (list (cos r) (sin r))))\n  (write-line (strcat (substr (cdr (assoc 0 d)) 1 1) \"|\" lay \"|\" (rtos (car q) 2 3) \",\" (rtos (cadr q) 2 3) \"|\"\n                      (rtos (atan (cadr v) (car v)) 2 6) \"|\" (cdr (assoc 1 d))) f))\n(defun _walk (name m parent depth / e d)\n  (setq e (cdr (assoc -2 (tblsearch \"BLOCK\" name))))\n  (while e\n    (setq d (entget e))\n    (cond ((member (cdr (assoc 0 d)) '(\"TEXT\" \"MTEXT\")) (_txt d m (_lay d parent)))\n          ((and (= (cdr (assoc 0 d)) \"INSERT\") (< depth 8))\n            (_walk (cdr (assoc 2 d)) (_mul m (_ins d)) (_lay d parent) (1+ depth))))\n    (setq e (entnext e))))\n(if (setq ss (ssget \"_X\" '((0 . \"TEXT,MTEXT,INSERT\") (410 . \"Model\"))))\n  (progn (setq i 0)\n    (repeat (sslength ss)\n      (setq d (entget (ssname ss i)) i (1+ i))\n      (if (= (cdr (assoc 0 d)) \"INSERT\")\n        (_walk (cdr (assoc 2 d)) (_ins d) (cdr (assoc 8 d)) 1)\n        (_txt d '(1.0 0.0 0.0 1.0 0.0 0.0) (cdr (assoc 8 d)))))))\n(close f)\n\"\"\"\n\n\ndef read_dwg_labels(dwg_path, core):\n    \"\"\"[(layer, text, x, y, góc)] theo toạ độ DWG. Chạy trên bản sao trong thư mục tạm – không mở file gốc.\"\"\"\n    work = tempfile.mkdtemp(prefix=\"ARV_TaoDam_\")\n    try:\n        copy = os.path.join(work, \"copy.dwg\")\n        shutil.copy2(dwg_path, copy)\n        out = os.path.join(work, \"labels.txt\")\n        scr = os.path.join(work, \"dump.scr\")\n        with io.open(scr, \"w\", encoding=\"utf-8\") as f:\n            f.write(DUMP_LISP.replace(\"{out}\", out.replace(\"\\\\\", \"/\")))\n        subprocess.run([core, \"/i\", copy, \"/s\", scr, \"/l\", \"en-US\"], stdin=subprocess.DEVNULL,\n                       env=core_env(core), cwd=os.path.dirname(core),\n                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,\n                       timeout=CORE_TIMEOUT_S, creationflags=0x08000000)\n        if not os.path.isfile(out):\n            raise Exception(u\"Core Console không xuất được danh sách chữ\")\n        labels = []\n        with io.open(out, \"r\", encoding=\"utf-8-sig\", errors=\"replace\") as f:\n            for line in f.read().splitlines():\n                parts = line.split(\"|\")\n                if len(parts) < 5:\n                    continue\n                kind, layer, xy, rot = parts[0], parts[1], parts[2], parts[3]\n                text = u\"|\".join(parts[4:])\n                if kind == \"M\":\n                    text = clean_mtext(text)\n                try:\n                    x, y = [float(v) for v in xy.split(\",\")]\n                    a = float(rot)\n                except ValueError:\n                    continue\n                if text.strip():\n                    labels.append((layer, text.strip(), x, y, a))\n        return labels\n    finally:\n        shutil.rmtree(work, ignore_errors=True)\n\n\n# --- Type, level ---------------------------------------------------------------------\ndef find_level(name):\n    for l in FilteredElementCollector(doc).OfClass(Level).ToElements():\n        if l.Name == name:\n            return l\n    names = sorted(l.Name for l in FilteredElementCollector(doc).OfClass(Level).ToElements())\n    raise Exception(u\"Không có level '{}'. Các level: {}\".format(name, u\", \".join(names)))\n\n\ndef beam_symbols():\n    symbols = list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming)\n                   .WhereElementIsElementType().ToElements())\n    result = [s for s in symbols if s.Family.Name == family_name]\n    if not result:\n        names = sorted(set(s.Family.Name for s in symbols))\n        raise Exception(u\"Không có family dầm '{}'. Các family dầm: {}\".format(\n            family_name, u\", \".join(names) or u\"không có\"))\n    for pname in (param_b, param_h):\n        p = result[0].LookupParameter(pname)\n        if p is None or p.StorageType != StorageType.Double:\n            raise Exception(u\"Family '{}' không có parameter type '{}' kiểu chiều dài.\".format(family_name, pname))\n    return result\n\n\n# --- Log -------------------------------------------------------------------------------\nLOG_HEADER = [u\"Nhãn\", u\"Điểm đầu (mm)\", u\"Điểm cuối (mm)\", u\"Dài (mm)\", u\"Type\", u\"Kết quả\",\n              u\"ElementId\", u\"Giá trị cũ\", u\"Giá trị mới\"]\n\n\ndef write_log(rows, source):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoDamTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    # CSV UTF-8 có BOM để Excel đọc đúng tiếng Việt\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# Bản CAD: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\n# --- Chương trình chính -----------------------------------------------------------\ndef main():\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"]\n    warnings = []\n    if model_role(doc) == \"A\":\n        warnings.append(u\"CẢNH BÁO: đây có vẻ là mô hình Kiến trúc (A). Dầm kết cấu thuộc mô hình Kết cấu (S).\")\n\n    cad = pick_cad()\n    cad_name = get_name(doc.GetElement(cad.GetTypeId()))\n    segments = cad_segments(cad)\n    all_layers = sorted(set(l for l, _ in segments if l))\n    edge_layers = set(l for l in all_layers if any(f in l.lower() for f in edge_filters))\n    if not edge_layers:\n        return [u\"DỪNG: không có layer nào chứa '{}'. Các layer nét trong CAD:\".format(u\"; \".join(edge_filters))] \\\n            + all_layers\n\n    path = cad_file_path(cad)\n    if path is None:\n        return [u\"DỪNG: bản CAD phải được LINK (không Import) và file DWG phải còn ở đường dẫn gốc \"\n                u\"để đọc nhãn dầm.\"]\n    core = find_accoreconsole()\n    if core is None:\n        return [u\"DỪNG: không tìm thấy AutoCAD Core Console (C:\\\\Program Files\\\\Autodesk\\\\AutoCAD *\\\\accoreconsole.exe).\"]\n    raw = read_dwg_labels(path, core)\n    raw_layers = sorted(set(r[0] for r in raw))\n    tf = cad.GetTotalTransform()\n    labels = []\n    for layer, text, x, y, a in raw:\n        if label_filter and label_filter not in layer.lower():\n            continue\n        size = parse_label(text, label_factor)\n        if size is None:\n            continue\n        p = tf.OfPoint(XYZ(from_mm(x), from_mm(y), 0))\n        d = tf.OfVector(XYZ(math.cos(a), math.sin(a), 0))\n        labels.append((text, size, (to_mm(p.X), to_mm(p.Y)), (d.X, d.Y)))\n    if not labels:\n        return [u\"DỪNG: không có nhãn dạng 'bxh' trên layer chứa '{}'. Các layer chữ trong DWG:\".format(\n            label_filter)] + raw_layers\n\n    level = find_level(level_name)\n    opt = {\"width_tol\": WIDTH_TOL_MM, \"label_tol\": LABEL_TOL_MM, \"join_tol\": JOIN_TOL_MM,\n           \"merge_gap\": MERGE_GAP_MM, \"end_snap\": END_SNAP_MM, \"min_length\": MIN_LENGTH_MM,\n           \"span_gap\": span_gap_mm}\n    beams, unmatched = find_beams([s for l, s in segments if l in edge_layers], labels, opt)\n\n    # --- Type theo b × h\n    symbols = beam_symbols()\n    types, new_types = {}, {}\n    used_names = set(get_name(s) for s in symbols)\n    for s in symbols:\n        types.setdefault((int(round(to_mm(s.LookupParameter(param_b).AsDouble()))),\n                          int(round(to_mm(s.LookupParameter(param_h).AsDouble())))), s)\n\n    # --- Dầm đã có trên level này: bỏ qua nếu cùng trục (song song, lệch ≤ DUP_TOL) và chồng chiều dài\n    #     (chạy lại sau khi sửa script: đầu dầm có thể xê dịch vài chục mm nhưng vẫn là dầm cũ)\n    existing = []\n    for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralFraming) \\\n            .WhereElementIsNotElementType().ToElements():\n        loc = e.Location\n        ref = e.get_Parameter(BuiltInParameter.INSTANCE_REFERENCE_LEVEL_PARAM)\n        if isinstance(loc, LocationCurve) and isinstance(loc.Curve, Line) and ref and ref.AsElementId() == level.Id:\n            c = loc.Curve\n            a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n            existing.append(((to_mm(a.X), to_mm(a.Y)), (to_mm(b.X), to_mm(b.Y)), e.Id.Value))\n\n    def existing_dup(bm):\n        n = bm.n\n        for a, b, eid in existing:\n            if math.hypot(b[0] - a[0], b[1] - a[1]) < 1.0:\n                continue\n            d = canonical(b[0] - a[0], b[1] - a[1])\n            if abs(d[0] * bm.u[1] - d[1] * bm.u[0]) > ANGLE_TOL:\n                continue\n            if abs(a[0] * n[0] + a[1] * n[1] - bm.offset) > DUP_TOL_MM:\n                continue\n            s0, s1 = sorted((a[0] * bm.u[0] + a[1] * bm.u[1], b[0] * bm.u[0] + b[1] * bm.u[1]))\n            # Chồng > 50% dầm ngắn hơn mới coi là trùng (nhịp liền kề chỉ chạm nhau ở nút thì không tính)\n            if min(s1, bm.t1) - max(s0, bm.t0) > 0.5 * min(s1 - s0, bm.t1 - bm.t0):\n                return eid\n        return None\n\n    z = level.Elevation\n    rows, jobs = [], []\n    for bm in sorted(beams, key=lambda x: (-x.point(x.t0)[1], x.point(x.t0)[0])):\n        k = (bm.b, bm.h)\n        if k in types:\n            type_name = get_name(types[k])\n        elif k in new_types:\n            type_name = new_types[k]\n        else:\n            type_name = BEAM_TYPE_NAME.format(b=k[0], h=k[1])\n            suffix = 1\n            while type_name in used_names:\n                type_name = BEAM_TYPE_NAME.format(b=k[0], h=k[1]) + u\"_{}\".format(suffix)\n                suffix += 1\n            used_names.add(type_name)\n            new_types[k] = type_name\n        p0, p1 = bm.point(bm.t0), bm.point(bm.t1)\n        row = [bm.label, fmt(p0), fmt(p1), u\"{:.0f}\".format(bm.length),\n               type_name + (u\" (mới)\" if k in new_types else u\"\"), u\"\", u\"\", u\"—\", type_name]\n        dup_id = existing_dup(bm)\n        if dup_id is not None:\n            row[5] = u\"Bỏ qua – đã có dầm cùng trục\"\n            row[6] = dup_id\n        else:\n            row[5] = (u\"Sẽ tạo\" if dry_run else u\"Chờ tạo\") + (u\" – \" + bm.note if bm.note else u\"\")\n            jobs.append((p0, p1, k, len(rows)))\n        rows.append(row)\n    for text, p, why in unmatched:\n        rows.append([text, fmt(p), u\"\", u\"\", u\"\", u\"Bỏ qua – \" + why, u\"\", u\"—\", u\"—\"])\n\n    # --- Ghi vào mô hình\n    if not dry_run and jobs:\n        # Đóng transaction của Dynamo để dùng Transaction có tên riêng (Undo được trong Revit)\n        TransactionManager.Instance.ForceCloseTransaction()\n        t = Transaction(doc, TRANSACTION_NAME)\n        t.Start()\n        try:\n            for k, name in new_types.items():\n                sym = symbols[0].Duplicate(name)\n                sym.LookupParameter(param_b).Set(from_mm(k[0]))\n                sym.LookupParameter(param_h).Set(from_mm(k[1]))\n                types[k] = sym\n            offset = from_mm(top_offset_mm)\n            for p0, p1, k, idx in jobs:\n                sym = types[k]\n                if not sym.IsActive:\n                    sym.Activate()\n                    doc.Regenerate()\n                curve = Line.CreateBound(XYZ(from_mm(p0[0]), from_mm(p0[1]), z), XYZ(from_mm(p1[0]), from_mm(p1[1]), z))\n                inst = doc.Create.NewFamilyInstance(curve, sym, level, StructuralType.Beam)\n                # Mặc định dự án có thể để y-justification = Right → ép Center (trục CAD là tim dầm), đỉnh dầm = Top\n                inst.get_Parameter(BuiltInParameter.Y_JUSTIFICATION).Set(int(YJustification.Center))\n                inst.get_Parameter(BuiltInParameter.Z_JUSTIFICATION).Set(int(ZJustification.Top))\n                inst.get_Parameter(BuiltInParameter.STRUCTURAL_BEAM_END0_ELEVATION).Set(offset)\n                inst.get_Parameter(BuiltInParameter.STRUCTURAL_BEAM_END1_ELEVATION).Set(offset)\n                rows[idx][5] = u\"Đã tạo\"\n                rows[idx][6] = inst.Id.Value\n            t.Commit()\n        except Exception as ex:\n            if t.HasStarted() and not t.HasEnded():\n                t.RollBack()\n            return warnings + [u\"LỖI khi tạo dầm, mọi thay đổi đã được hoàn tác: {}\".format(ex)]\n\n    summary = (u\"{} – {}: {} nhãn tiết diện, {} dầm ({} nhịp nối theo nhãn), {} nhãn/dầm bỏ qua. \"\n               u\"Nối nhịp qua cột: {}. Level {} {:+.0f} mm. Type mới: {}.\").format(\n        TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\",\n        len(labels), len(beams), sum(1 for bm in beams if bm.note.startswith(u\"nhịp\")), len(unmatched),\n        u\"khe ≤ {:.0f} mm\".format(span_gap_mm) if span_gap_mm > 0 else u\"tắt\", level.Name, top_offset_mm,\n        u\", \".join(sorted(new_types.values())) or u\"không có\")\n    try:\n        log_line = u\"Log: \" + write_log(rows, cad_name)\n    except Exception as ex:\n        log_line = u\"Không ghi được file log: {}\".format(ex)\n    return warnings + [summary, u\"Layer cạnh dầm: \" + u\"; \".join(sorted(edge_layers)), log_line] \\\n        + [u\" | \".join(u\"{}\".format(v) for v in r[:7]) for r in rows]\n\n\nif DYNAMO:\n    try:\n        OUT = main()\n    except Exception as ex:\n        OUT = [u\"LỖI: {}\".format(ex)]\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "2a89bc8e59ce4376a5d0d6d4e447499a",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "a600e587f08f44fc9877bb014fe29648",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tên bản CAD (để trống nếu chỉ có 1)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3bda9eb5a61345ae833e3bedea81f6f4",
+          "Name": "IN[1]",
+          "Description": "IN[1] Layer cạnh dầm (cách nhau bằng ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "176eac7050e34d9588910a4488ce2de9",
+          "Name": "IN[2]",
+          "Description": "IN[2] Layer nhãn tiết diện dầm",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1809351fb5e94ec6ac85343c0771c0d6",
+          "Name": "IN[3]",
+          "Description": "IN[3] Hệ số đổi nhãn ra mm (cm → 10)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6fce3d27a8cd4e179c4ba70f7e5b335f",
+          "Name": "IN[4]",
+          "Description": "IN[4] Tên family dầm",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "aa7800d0b4aa4602ab287540f08461a5",
+          "Name": "IN[5]",
+          "Description": "IN[5] Parameter bề rộng (b)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "284e283fc077437182106837ebbee8d8",
+          "Name": "IN[6]",
+          "Description": "IN[6] Parameter chiều cao (h)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c543f5fd225e4dd891b2c3ad55d1de19",
+          "Name": "IN[7]",
+          "Description": "IN[7] Level tham chiếu",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2d12ad92153b44a99defba51970dc031",
+          "Name": "IN[8]",
+          "Description": "IN[8] Đỉnh dầm so với level (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "051ad575eec9499189bd0e2f9019ce90",
+          "Name": "IN[9]",
+          "Description": "IN[9] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f0caa5c5a1e442cabe945d0431ab1e85",
+          "Name": "IN[10]",
+          "Description": "IN[10] Nối nhịp không nhãn qua cột: khe tối đa mm (0 = tắt)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "70e2da301db44fe398d7fd741749716a",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "782f9932145a4939b1b92105ecad69b3",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "e736d2846523465cbfa2620f825ceabe",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4309ec8d14044d0cb66d4150468491db",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "ea87dd92b5544ee285c52756f8a060e4",
+      "End": "a600e587f08f44fc9877bb014fe29648",
+      "Id": "402f4ea1a4a94afc9fa6c58fd938c108",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b580f0f8a9da46898d48c1aade9aabd7",
+      "End": "3bda9eb5a61345ae833e3bedea81f6f4",
+      "Id": "e78761d5d3504bedb9a0a73005980b63",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "374e967fc08d49aa945e4ab0f22509aa",
+      "End": "176eac7050e34d9588910a4488ce2de9",
+      "Id": "a9197de6ef3f47438425c7222708f773",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9c57e8a12d3f4489a55a444075b02756",
+      "End": "1809351fb5e94ec6ac85343c0771c0d6",
+      "Id": "393e0e836bbf49cba625800d7e8bcea6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5b9598ca7f9947c8adb72c9256768368",
+      "End": "6fce3d27a8cd4e179c4ba70f7e5b335f",
+      "Id": "c708d3ee489e42b1b8250028565f9684",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "19f66873006143abbc10315193e4fa0f",
+      "End": "aa7800d0b4aa4602ab287540f08461a5",
+      "Id": "6947c6023b3f4d3eaecd28ca4cb09d52",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a59be15b92164acdb193148a446fa69e",
+      "End": "284e283fc077437182106837ebbee8d8",
+      "Id": "a64c6dc2a7ca4382ba90e7202f0a55cf",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0d26d187d3a443f9ac3c849ab2006cbf",
+      "End": "c543f5fd225e4dd891b2c3ad55d1de19",
+      "Id": "1f35f9ac9ced4178b0d015725998b5eb",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "3fd826a1fe694ab783463f73f64dc592",
+      "End": "2d12ad92153b44a99defba51970dc031",
+      "Id": "257ac70725c94fefb563b81fb012ae74",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5fc368476bad454c87283f5164c298df",
+      "End": "051ad575eec9499189bd0e2f9019ce90",
+      "Id": "5846cb8071944c42994c4cce2d7d6f41",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fe289f47cb5e426e9bf8f63e6fd47c30",
+      "End": "f0caa5c5a1e442cabe945d0431ab1e85",
+      "Id": "b5089ee066354c4fb2cb7fbe53a26e0d",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "70e2da301db44fe398d7fd741749716a",
+      "End": "e736d2846523465cbfa2620f825ceabe",
+      "Id": "e48ad0447cf14eb192d5543626b339eb",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "cc7bbf65742a46d0aa238aa8d5c4e2a0",
+        "Name": "IN[0] Tên bản CAD (để trống nếu chỉ có 1)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "4b3123e321094198be666d391d19c516",
+        "Name": "IN[1] Layer cạnh dầm (cách nhau bằng ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "8b89752d8f8c40be8500193f3716fac0",
+        "Name": "IN[2] Layer nhãn tiết diện dầm",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "2bd0ddf7c496465693a9e2dd3a28902a",
+        "Name": "IN[3] Hệ số đổi nhãn ra mm (cm → 10)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "f1693b48ed5b414eb191b7b9be2d6e0b",
+        "Name": "IN[4] Tên family dầm",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "96d95ce363de4f7b8e6d0b02ead652ae",
+        "Name": "IN[5] Parameter bề rộng (b)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "0a0c5bace6c44a439db7b121e384da88",
+        "Name": "IN[6] Parameter chiều cao (h)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "a0854c94c91d43d8aadd5e175a6286e8",
+        "Name": "IN[7] Level tham chiếu",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "4383d92ddbe34537bed65631aad811b2",
+        "Name": "IN[8] Đỉnh dầm so với level (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "13a12750c87f466d99c5a688ac22856c",
+        "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "3693e2d0723d4c20b9be5ae127aec608",
+        "Name": "IN[10] Nối nhịp không nhãn qua cột: khe tối đa mm (0 = tắt)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "2a89bc8e59ce4376a5d0d6d4e447499a",
+        "Name": "ARV - Tạo dầm kết cấu từ CAD",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 650.0,
+        "Y": 400.0
+      },
+      {
+        "Id": "782f9932145a4939b1b92105ecad69b3",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1050.0,
+        "Y": 70.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "b0b607fcf1354cb4abf3d4d2c3ab5ed2",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Điền layer cạnh dầm / nhãn, family dầm, level. Ô sai hoặc trống thì node Báo cáo liệt kê giá trị hợp lệ. Giữ Dry-run = True cho lần chạy đầu.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "cc7bbf65742a46d0aa238aa8d5c4e2a0",
+          "4b3123e321094198be666d391d19c516",
+          "8b89752d8f8c40be8500193f3716fac0",
+          "2bd0ddf7c496465693a9e2dd3a28902a",
+          "f1693b48ed5b414eb191b7b9be2d6e0b",
+          "96d95ce363de4f7b8e6d0b02ead652ae",
+          "0a0c5bace6c44a439db7b121e384da88",
+          "a0854c94c91d43d8aadd5e175a6286e8",
+          "4383d92ddbe34537bed65631aad811b2",
+          "13a12750c87f466d99c5a688ac22856c",
+          "3693e2d0723d4c20b9be5ae127aec608"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 542.0,
+        "Height": 1314.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1245.0,
+        "TextblockHeight": 72.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "feef3565cb004a67bf09ea221b94a445",
+        "Title": "2. Tạo dầm (Python)",
+        "DescriptionText": "Đọc nhãn bxh từ bản sao DWG (Core Console), tìm cặp nét song song cách nhau b, nối đầu dầm vào trục dầm vuông góc, bỏ qua dầm trùng, ghi log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: CHƯA DUYỆT.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "2a89bc8e59ce4376a5d0d6d4e447499a"
+        ],
+        "HasNestedGroups": false,
+        "Left": 640.0,
+        "Top": 232.0,
+        "Width": 312.0,
+        "Height": 634.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 400.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 158.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "82f54d5d2a80437f95987865bca9129b",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "Tóm tắt, layer đã dùng, đường dẫn log và kết quả từng dầm / nhãn bỏ qua.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "782f9932145a4939b1b92105ecad69b3"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1040.0,
+        "Top": -3.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 70.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 126.89396353364617,
+    "Y": 132.97415194716837,
+    "Zoom": 0.5141359475766543
+  }
+}

@@ -1,0 +1,832 @@
+{
+  "Uuid": "d161e0d9-4fa6-4710-9e82-ab61ec824b7d",
+  "IsCustomNode": false,
+  "Description": "Tạo sàn hoàn thiện cho căn hộ đã chọn từ DWG mặt bằng lát sàn đã link: bo phòng = biên sàn, loại phòng theo hatch (khô 0 / WC −15 / logia −30), đá chân cửa theo hatch AR-CONC, ô cửa đo trên tường Revit. Dry-run mặc định.",
+  "Name": "ARV_TaoSanHoanThien_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "120588eb9cdc4ea09ce657d50f19db70",
+      "Name": "IN[0] Tên bản CAD (trống = bản CAD duy nhất)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "G19",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "5ebbacfcb34646baa3fc4807d0d49522",
+      "Name": "IN[1] Id phần tử trong căn (trống = đang chọn trong Revit)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "14b52f50959b4dee802730984280f881",
+      "Name": "IN[2] Lọc layer đường bo phòng",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "A-duong bo phong",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "51470503597a416a965f037fa4be2fdb",
+      "Name": "IN[3] Lọc layer polyline căn hộ (trống = lan theo cửa)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "A-Area",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "dcfdbb09a63b44898bc5597d99a6e736",
+      "Name": "IN[4] Lọc layer hatch lát sàn",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "A-Hoan thien san",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "e8038d3f117345ecb9a4f71f65f0f427",
+      "Name": "IN[5] Mẫu hatch = loại (KHO/WC/LOGIA/CHANCUA)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "WOODS_BOARD_WIDE=KHO;300X600=WC;2X4=LOGIA;AR-CONC=CHANCUA",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "92eb916991e249558444442a7f6f4b98",
+      "Name": "IN[6] Floor type theo loại",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "KHO=;WC=;LOGIA=;CHANCUA=FF-Đá Granite tự nhiên",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "b802ad05efdf4afda32e7c2add93d361",
+      "Name": "IN[7] Cao độ mặt sàn so với Level (mm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "KHO=0;WC=-15;LOGIA=-30;CHANCUA=0",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "48f603f294f349eca42436c34c961a21",
+      "Name": "IN[8] Nhận cửa vào căn theo tên family/type",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "khóa thông minh;DW03",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "e62e8bdd8a4c4a148c872e80a36471ab",
+      "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "b35e46751fb744368c4b23dc7784f96c",
+      "Name": "IN[10] Floor type kiến trúc mẫu để nhân bản type thiếu",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "SHT-Gach Lat-600x600",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "120588eb9cdc4ea09ce657d50f19db70",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "89e1594584f4427e8f06ccb93af09962",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "G19"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "5ebbacfcb34646baa3fc4807d0d49522",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "60d6ffa6f62d420c9d848e2bb2c50880",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "14b52f50959b4dee802730984280f881",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cbca0c2db2754aaf82f7d32445a1ab38",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "A-duong bo phong"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "51470503597a416a965f037fa4be2fdb",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4622870813c64bc8869e9addd9c4ca92",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "A-Area"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "dcfdbb09a63b44898bc5597d99a6e736",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cd572ff4c5ae45888f048378dd3a0c68",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "A-Hoan thien san"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "e8038d3f117345ecb9a4f71f65f0f427",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e2b2e9c5a0714f068e368009d42166b3",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "WOODS_BOARD_WIDE=KHO;300X600=WC;2X4=LOGIA;AR-CONC=CHANCUA"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "92eb916991e249558444442a7f6f4b98",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2dae0448a9df44e4adfc9a9c6934a2f8",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "KHO=;WC=;LOGIA=;CHANCUA=FF-Đá Granite tự nhiên"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b802ad05efdf4afda32e7c2add93d361",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9ccc10e7738c459eba52f70df3c6eab6",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "KHO=0;WC=-15;LOGIA=-30;CHANCUA=0"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "48f603f294f349eca42436c34c961a21",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f6cc86ead6b644e6b32b5b1a6fac495a",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "khóa thông minh;DW03"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "e62e8bdd8a4c4a148c872e80a36471ab",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9a216c9b98ba4fc680c5851f128f31ec",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b35e46751fb744368c4b23dc7784f96c",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "14fe9c89da8b4b3da4aecc186a1294c1",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "SHT-Gach Lat-600x600"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoSanHoanThien_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo sàn hoàn thiện (Floor) cho từng CĂN HỘ theo bản CAD mặt bằng lát sàn đã Link (chuẩn CAD công ty):\n#   1. Đọc bản sao DWG qua AutoCAD Core Console (model space + block lồng nhau):\n#        - polyline kín layer bo phòng (IN[2], mặc định \"A-duong bo phong\") = biên sàn hoàn thiện từng phòng;\n#        - polyline kín layer căn hộ (IN[3], mặc định \"A-Area\") = phạm vi căn;\n#        - hatch layer lát sàn (IN[4], mặc định \"A-Hoan thien san\"): mẫu hatch → loại phòng (IN[5]),\n#          hatch AR-CONC = đá chân cửa FP-06 (cửa WC, cửa vào căn).\n#   2. Phạm vi: phần tử đang chọn trong Revit (hoặc Id ở IN[1]) – thường chọn CỬA VÀO CĂN. Căn = polyline IN[3]\n#      chứa phía trong cửa (hoặc chứa điểm của phần tử). Không có layer căn → lan từ phòng chứa điểm qua các cửa\n#      Revit, không đi qua cửa vào căn (IN[8]).\n#   3. Mỗi phòng một tấm sàn: type + cao độ theo loại (IN[6], IN[7]; mặc định khô 0 / WC −15 / logia −30).\n#      Phòng không có hatch trong IN[5] → \"chưa rõ loại\", không tạo.\n#   4. Ô cửa (đo trên hình khối tường Revit, không theo tham số family):\n#        - hai bên đều phòng khô (cửa phòng ngủ) → sàn mỗi bên kéo vào ô cửa tới tim tường;\n#        - một bên logia, một bên phòng khô       → sàn trong nhà phủ hết ô tường, sàn logia dừng ở bo phòng;\n#        - cửa WC / cửa vào căn                    → không kéo sàn; tấm đá chân cửa lấy theo hatch AR-CONC của CAD\n#          (thiếu hatch → báo \"thiếu đá chân cửa\").\n#   5. Bỏ qua phòng / ô đá đã có sàn (cùng level). Comments = \"ARV-SanHoanThien\".\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (để trống = bản CAD duy nhất trong mô hình)\n#   IN[1] (str)   Id phần tử trong căn, cách nhau ';' (để trống = các phần tử đang chọn trong Revit)\n#   IN[2] (str)   Lọc layer đường bo phòng (khớp chuỗi con, VD \"A-duong bo phong\")\n#   IN[3] (str)   Lọc layer polyline căn hộ (VD \"A-Area\"; để trống = lan theo cửa)\n#   IN[4] (str)   Lọc layer hatch lát sàn (VD \"A-Hoan thien san\")\n#   IN[5] (str)   Mẫu hatch = loại: \"WOODS_BOARD_WIDE=KHO;300X600=WC;2X4=LOGIA;AR-CONC=CHANCUA\"\n#   IN[6] (str)   Floor type theo loại: \"KHO=…;WC=…;LOGIA=…;CHANCUA=FF-Đá Granite tự nhiên\"\n#   IN[7] (str)   Cao độ mặt sàn so với Level (mm) theo loại: \"KHO=0;WC=-15;LOGIA=-30;CHANCUA=0\"\n#   IN[8] (str)   Nhận cửa vào căn theo tên family/type, cách nhau ';' (VD \"khóa thông minh;DW03\")\n#   IN[9] (bool)  Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)\n#   IN[10] (str)  Floor type kiến trúc mẫu: type ở IN[6] chưa có → nhân bản từ type này (giữ cấu tạo lớp; đá chân\n#                 cửa đổi vật liệu lớp hoàn thiện sang vật liệu có tên chứa \"granite\" nếu mô hình có). Trống = dừng.\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, đường dẫn log, rồi từng phòng / ô cửa\n#   OUT[1] (list[Line]) Xem trước: biên các tấm sàn sẽ tạo (mm, tại cao độ Level)\n\nimport os\nimport io\nimport csv\nimport glob\nimport math\nimport shutil\nimport tempfile\nimport datetime\nimport subprocess\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, CADLinkType, XYZ, Line, CurveLoop,\n                                   Transaction, UnitUtils, UnitTypeId, ModelPathUtils, BuiltInParameter,\n                                   BuiltInCategory, Floor, FloorType, Wall, LocationCurve, LocationPoint,\n                                   FamilyInstance, Options, ViewDetailLevel, Solid, GeometryInstance, ElementId,\n                                   SolidCurveIntersectionOptions, SolidCurveIntersectionMode, PlanarFace,\n                                   GeometryCreationUtilities, BooleanOperationsUtils, BooleanOperationsType,\n                                   HostObjectUtils, Face, ViewType, Material, MaterialFunctionAssignment)\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    from System.Collections.Generic import List\n    doc = DocumentManager.Instance.CurrentDBDocument\n    uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo sàn hoàn thiện\"\nSCRIPT_TAG = u\"ARV_TaoSanHoanThien_v1\"\nCOMMENT_TAG = u\"ARV-SanHoanThien\"\nKINDS = (\"KHO\", \"WC\", \"LOGIA\", \"CHANCUA\")\nKIND_LABEL = {\"KHO\": u\"Phòng khô\", \"WC\": u\"WC\", \"LOGIA\": u\"Logia\", \"CHANCUA\": u\"Đá chân cửa\"}\nARC_STEP_DEG = 10.0\nCORE_TIMEOUT_S = 180\nDUP_PT_MM = 1.0           # Đỉnh polyline trùng\nINNER_MM = 20.0           # Điểm đại diện phòng: lùi vào trong từ trung điểm cạnh\nSIDE_PROBE_MM = 300.0     # Điểm dò hai bên cửa cách mặt tường\nSTRIP_OVERLAP_MM = 30.0   # Dải ô cửa chồng vào phòng (bù lệch giữa mặt tường Revit và bo phòng CAD)\nTHRESHOLD_NEAR_MM = 100.0 # Ô đá chân cửa cách bo phòng của căn ≤ giá trị này → thuộc căn\nPROBE_Z_MM = 300.0        # Cao độ tia dò ô cửa (trên Level)\nMIN_OPENING_MM = 300.0\nMAX_OPENING_MM = 4000.0\nSCAN_MM = 5000.0          # Nửa chiều dài tia dò dọc tường\nTOL_MM = 1.0\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef signed_area(pts):\n    return sum(pts[i][0] * pts[(i + 1) % len(pts)][1] - pts[(i + 1) % len(pts)][0] * pts[i][1]\n               for i in range(len(pts))) / 2.0\n\n\ndef point_in(pt, pts):\n    x, y = pt\n    inside = False\n    j = len(pts) - 1\n    for i in range(len(pts)):\n        xi, yi = pts[i]\n        xj, yj = pts[j]\n        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi:\n            inside = not inside\n        j = i\n    return inside\n\n\ndef point_in_evenodd(pt, loops):\n    return sum(1 for l in loops if point_in(pt, l)) % 2 == 1\n\n\ndef seg_dist(p, a, b):\n    dx, dy = b[0] - a[0], b[1] - a[1]\n    l2 = dx * dx + dy * dy\n    t = 0.0 if l2 == 0 else max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l2))\n    return math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy)\n\n\ndef poly_dist(p1, p2):\n    \"\"\"Khoảng cách nhỏ nhất giữa hai đa giác (0 nếu chồng nhau).\"\"\"\n    if point_in(p1[0], p2) or point_in(p2[0], p1):\n        return 0.0\n    best = float(\"inf\")\n    for a, b in ((p1, p2), (p2, p1)):\n        for p in a:\n            for i in range(len(b)):\n                best = min(best, seg_dist(p, b[i], b[(i + 1) % len(b)]))\n    return best\n\n\ndef clean_poly(pts):\n    \"\"\"Bỏ đỉnh trùng / thẳng hàng, đưa về ngược chiều kim đồng hồ.\"\"\"\n    out = []\n    for p in pts:\n        if not out or math.hypot(p[0] - out[-1][0], p[1] - out[-1][1]) > DUP_PT_MM:\n            out.append(p)\n    if len(out) > 1 and math.hypot(out[0][0] - out[-1][0], out[0][1] - out[-1][1]) <= DUP_PT_MM:\n        out.pop()\n    changed = True\n    while changed and len(out) > 3:\n        changed = False\n        for i in range(len(out)):\n            a, b, c = out[i - 1], out[i], out[(i + 1) % len(out)]\n            ab = math.hypot(b[0] - a[0], b[1] - a[1])\n            if ab > 0 and abs((b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])) / ab < 0.1:\n                if (b[0] - a[0]) * (c[0] - b[0]) + (b[1] - a[1]) * (c[1] - b[1]) > 0:\n                    out.pop(i)\n                    changed = True\n                    break\n    if len(out) >= 3 and signed_area(out) < 0:\n        out.reverse()\n    return out\n\n\ndef interior_point(pts):\n    \"\"\"Điểm chắc chắn nằm trong đa giác (CCW): trung điểm cạnh dài nhất lùi vào trong INNER_MM.\"\"\"\n    edges = sorted(range(len(pts)), key=lambda i: -math.hypot(pts[(i + 1) % len(pts)][0] - pts[i][0],\n                                                              pts[(i + 1) % len(pts)][1] - pts[i][1]))\n    for i in edges:\n        a, b = pts[i], pts[(i + 1) % len(pts)]\n        l = math.hypot(b[0] - a[0], b[1] - a[1])\n        if l < 3 * INNER_MM:\n            continue\n        p = ((a[0] + b[0]) / 2.0 - (b[1] - a[1]) / l * INNER_MM, (a[1] + b[1]) / 2.0 + (b[0] - a[0]) / l * INNER_MM)\n        if point_in(p, pts):\n            return p\n    return (sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts))\n\n\ndef parse_map(text, upper_key=True):\n    result = {}\n    for part in (text or u\"\").split(u\";\"):\n        if u\"=\" in part:\n            k, v = part.split(u\"=\", 1)\n            k = k.strip().upper() if upper_key else k.strip()\n            if k:\n                result[k] = v.strip()\n    return result\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef split_filters(text):\n    return [s.strip() for s in (text or u\"\").split(u\";\") if s.strip()]\n\n\ndef matches(layer, filters):\n    l = (layer or u\"\").lower()\n    return any(f.lower() in l for f in filters)\n\n\n# --- Đọc DWG qua Core Console ---------------------------------------------------------\ndef _xy(v):\n    parts = v.split(\",\")\n    return float(parts[0]), float(parts[1])\n\n\ndef _arc(c, r, s, e, ccw):\n    \"\"\"Cung tròn biên hatch (độ) → các điểm. Cung thuận chiều kim đồng hồ: góc lưu dạng đảo (360 - góc).\"\"\"\n    if ccw:\n        while e <= s:\n            e += 360.0\n    else:\n        s, e = 360.0 - s, 360.0 - e\n        while e >= s:\n            e -= 360.0\n    n = max(2, int(math.ceil(abs(e - s) / ARC_STEP_DEG)))\n    return [(c[0] + r * math.cos(math.radians(s + (e - s) * i / n)), c[1] + r * math.sin(math.radians(s + (e - s) * i / n)))\n            for i in range(n + 1)]\n\n\ndef _bulge(p, q, b):\n    \"\"\"Đoạn polyline có bulge → các điểm từ p tới q (không gồm q).\"\"\"\n    if abs(b) < 1e-9:\n        return [p]\n    sweep = 4.0 * math.atan(b)\n    d = math.hypot(q[0] - p[0], q[1] - p[1])\n    if d < 1e-9:\n        return [p]\n    r = d / (2.0 * math.sin(abs(sweep) / 2.0))\n    mx, my = (p[0] + q[0]) / 2.0, (p[1] + q[1]) / 2.0\n    h = math.sqrt(max(r * r - d * d / 4.0, 0.0)) * (1 if abs(sweep) <= math.pi else -1)\n    nx, ny = -(q[1] - p[1]) / d, (q[0] - p[0]) / d\n    s = 1 if b > 0 else -1\n    cx, cy = mx + s * nx * h, my + s * ny * h\n    a0 = math.atan2(p[1] - cy, p[0] - cx)\n    n = max(2, int(math.ceil(math.degrees(abs(sweep)) / ARC_STEP_DEG)))\n    return [(cx + r * math.cos(a0 + sweep * i / n), cy + r * math.sin(a0 + sweep * i / n)) for i in range(n)]\n\n\ndef _mirrored(codes):\n    for k, v in codes:\n        if k == 210:\n            parts = v.split(\",\")\n            return len(parts) > 2 and float(parts[2]) < 0\n    return False\n\n\ndef parse_hatch(codes):\n    \"\"\"codes: [(mã, chuỗi)] của HATCH. Trả về (pattern, [vòng [(x, y)]] theo OCS).\"\"\"\n    pattern, i = None, 0\n    mirror = _mirrored(codes)\n    while i < len(codes) and codes[i][0] != 91:\n        if codes[i][0] == 2 and pattern is None:\n            pattern = codes[i][1]\n        i += 1\n    if i >= len(codes):\n        raise ValueError(u\"không có biên\")\n    npath = int(codes[i][1])\n    i += 1\n    loops = []\n    for _ in range(npath):\n        flag = int(codes[i][1])\n        i += 1\n        pts = []\n        if flag & 2:\n            hasb = int(codes[i][1])\n            n = int(codes[i + 2][1])\n            i += 3\n            verts = []\n            for _ in range(n):\n                p = _xy(codes[i][1])\n                i += 1\n                b = 0.0\n                if hasb and i < len(codes) and codes[i][0] == 42:\n                    b = float(codes[i][1])\n                    i += 1\n                verts.append((p, b))\n            for k in range(len(verts)):\n                pts += _bulge(verts[k][0], verts[(k + 1) % len(verts)][0], verts[k][1])\n        else:\n            n = int(codes[i][1])\n            i += 1\n            for _ in range(n):\n                t = int(codes[i][1])\n                i += 1\n                if t == 1:\n                    pts.append(_xy(codes[i][1]))\n                    i += 2\n                elif t == 2:\n                    c, r = _xy(codes[i][1]), float(codes[i + 1][1])\n                    s, e, ccw = float(codes[i + 2][1]), float(codes[i + 3][1]), int(codes[i + 4][1])\n                    pts += _arc(c, r, s, e, ccw)[:-1]\n                    i += 5\n                else:\n                    raise ValueError(u\"biên hatch có cạnh {} (ellipse/spline) chưa hỗ trợ\".format(\n                        u\"ellipse\" if t == 3 else u\"spline\"))\n        while i < len(codes) and codes[i][0] == 97:\n            i += 1\n        if mirror:\n            pts = [(-x, y) for x, y in pts]\n        if len(pts) >= 3:\n            loops.append(pts)\n    return pattern, loops\n\n\ndef parse_lwpolyline(codes):\n    \"\"\"codes của LWPOLYLINE → ([(x, y)] theo OCS, kín?).\"\"\"\n    closed = False\n    verts = []\n    for k, v in codes:\n        if k == 70:\n            closed = bool(int(v) & 1)\n        elif k == 10:\n            verts.append([_xy(v), 0.0])\n        elif k == 42 and verts:\n            verts[-1][1] = float(v)\n    pts = []\n    for i in range(len(verts)):\n        if not closed and i == len(verts) - 1:\n            pts.append(verts[i][0])\n            break\n        pts += _bulge(verts[i][0], verts[(i + 1) % len(verts)][0], verts[i][1])\n    if not closed and len(pts) > 2 and math.hypot(pts[0][0] - pts[-1][0], pts[0][1] - pts[-1][1]) <= DUP_PT_MM:\n        closed = True\n    if _mirrored(codes):\n        pts = [(-x, y) for x, y in pts]\n    return pts, closed\n\n\n# Đọc HATCH + LWPOLYLINE (lọc layer bằng wcmatch) ở model space VÀ trong block (lồng nhau, tối đa 8 cấp),\n# kèm ma trận affine (a b c d e f) của INSERT cha. Đối tượng trên layer \"0\" trong block lấy layer INSERT cha.\nDUMP_LISP = u\"\"\"(setq f (open \"{out}\" \"w\" \"utf8\") pat \"{pat}\")\n(defun _ap (m p) (list (+ (* (nth 0 m) (car p)) (* (nth 1 m) (cadr p)) (nth 4 m))\n                       (+ (* (nth 2 m) (car p)) (* (nth 3 m) (cadr p)) (nth 5 m))))\n(defun _mul (p c) (list (+ (* (nth 0 p) (nth 0 c)) (* (nth 1 p) (nth 2 c)))\n                        (+ (* (nth 0 p) (nth 1 c)) (* (nth 1 p) (nth 3 c)))\n                        (+ (* (nth 2 p) (nth 0 c)) (* (nth 3 p) (nth 2 c)))\n                        (+ (* (nth 2 p) (nth 1 c)) (* (nth 3 p) (nth 3 c)))\n                        (+ (* (nth 0 p) (nth 4 c)) (* (nth 1 p) (nth 5 c)) (nth 4 p))\n                        (+ (* (nth 2 p) (nth 4 c)) (* (nth 3 p) (nth 5 c)) (nth 5 p))))\n(defun _ins (d / a sx sy ip bp ca sa m)\n  (setq a (cdr (assoc 50 d)) sx (cdr (assoc 41 d)) sy (cdr (assoc 42 d)) ip (cdr (assoc 10 d))\n        bp (cdr (assoc 10 (tblsearch \"BLOCK\" (cdr (assoc 2 d))))) ca (cos a) sa (sin a))\n  (setq m (list (* ca sx) (- (* sa sy)) (* sa sx) (* ca sy) 0.0 0.0) bp (_ap m bp))\n  (list (nth 0 m) (nth 1 m) (nth 2 m) (nth 3 m) (- (car ip) (car bp)) (- (cadr ip) (cadr bp))))\n(defun _lay (d parent / l) (setq l (cdr (assoc 8 d))) (if (and parent (= l \"0\")) parent l))\n(defun _v (x) (cond ((= (type x) 'REAL) (rtos x 2 6)) ((= (type x) 'INT) (itoa x)) ((= (type x) 'STR) x)\n                    ((and (= (type x) 'LIST) (numberp (car x)))\n                      (strcat (rtos (car x) 2 6) \",\" (rtos (cadr x) 2 6) (if (caddr x) (strcat \",\" (rtos (caddr x) 2 6)) \"\")))\n                    (T \"?\")))\n(defun _out (tag keys d m lay / s)\n  (if (wcmatch (strcase lay) pat)\n    (progn\n      (setq s (strcat tag \"|\" lay \"|\" (rtos (nth 0 m) 2 9) \",\" (rtos (nth 1 m) 2 9) \",\" (rtos (nth 2 m) 2 9) \",\"\n                      (rtos (nth 3 m) 2 9) \",\" (rtos (nth 4 m) 2 6) \",\" (rtos (nth 5 m) 2 6) \"|\"))\n      (foreach g d (if (member (car g) keys) (setq s (strcat s (itoa (car g)) \"=\" (_v (cdr g)) \";\"))))\n      (write-line s f))))\n(defun _ent (d m parent depth / typ)\n  (setq typ (cdr (assoc 0 d)))\n  (cond ((= typ \"HATCH\") (_out \"H\" '(2 91 92 93 72 73 10 11 40 42 50 51 97 210) d m (_lay d parent)))\n        ((= typ \"LWPOLYLINE\") (_out \"P\" '(70 10 42 210) d m (_lay d parent)))\n        ((and (= typ \"INSERT\") (< depth 8))\n          (_walk (cdr (assoc 2 d)) (_mul m (_ins d)) (_lay d parent) (1+ depth)))))\n(defun _walk (name m parent depth / e)\n  (setq e (cdr (assoc -2 (tblsearch \"BLOCK\" name))))\n  (while e (_ent (entget e) m parent depth) (setq e (entnext e))))\n(if (setq ss (ssget \"_X\" '((0 . \"HATCH,LWPOLYLINE,INSERT\") (410 . \"Model\"))))\n  (progn (setq i 0)\n    (repeat (sslength ss)\n      (_ent (entget (ssname ss i)) '(1.0 0.0 0.0 1.0 0.0 0.0) nil 0)\n      (setq i (1+ i)))))\n(close f)\n\"\"\"\n\n\ndef wc_escape(text):\n    return u\"\".join(u\"`\" + ch if ch in u\"#@.*?~[],\" else ch for ch in text.upper())\n\n\ndef find_accoreconsole():\n    found = glob.glob(r\"C:\\Program Files\\Autodesk\\AutoCAD *\\accoreconsole.exe\")\n    return sorted(found)[-1] if found else None\n\n\ndef core_env(core):\n    \"\"\"Môi trường sạch cho AutoCAD Core Console. Gọi từ Revit, tiến trình con kế thừa Path có thư mục Revit 2026\n    → Core Console nạp nhầm DLL của Revit, báo \"Unable to load the Modeler DLLs\" và thoát, không xuất file\n    (đã kiểm 2026-10-19). Chỉ giữ biến hệ thống, Path = thư mục AutoCAD + Windows.\"\"\"\n    keep = (\"SYSTEMROOT\", \"WINDIR\", \"SYSTEMDRIVE\", \"USERPROFILE\", \"APPDATA\", \"LOCALAPPDATA\", \"USERNAME\",\n            \"USERDOMAIN\", \"PROGRAMDATA\", \"PROGRAMFILES\", \"PROGRAMFILES(X86)\", \"PROGRAMW6432\", \"COMMONPROGRAMFILES\",\n            \"COMMONPROGRAMFILES(X86)\", \"COMMONPROGRAMW6432\", \"ALLUSERSPROFILE\", \"COMPUTERNAME\", \"HOMEDRIVE\",\n            \"HOMEPATH\", \"OS\", \"NUMBER_OF_PROCESSORS\", \"PROCESSOR_ARCHITECTURE\", \"PUBLIC\", \"COMSPEC\", \"PATHEXT\")\n    env = dict((k, v) for k, v in os.environ.items() if k.upper() in keep)\n    root = env.get(\"SYSTEMROOT\") or os.environ.get(\"SystemRoot\") or r\"C:\\Windows\"\n    temp = os.path.join(os.environ.get(\"LOCALAPPDATA\") or os.path.expanduser(\"~\"), \"Temp\")\n    env[\"TEMP\"] = env[\"TMP\"] = temp if os.path.isdir(temp) else tempfile.gettempdir()\n    env[\"PATH\"] = u\";\".join([os.path.dirname(core), os.path.join(root, \"System32\"), root,\n                             os.path.join(root, \"System32\", \"Wbem\")])\n    return env\n\n\ndef read_dwg(dwg_path, core, layer_filters):\n    \"\"\"Đọc hatch + polyline của các layer khớp chuỗi con. Trả về (hatches, polylines, lỗi), toạ độ DWG:\n    hatches = [(layer, pattern, [vòng])], polylines = [(layer, [(x, y)])] (chỉ polyline kín).\"\"\"\n    work = tempfile.mkdtemp(prefix=\"ARV_SanHT_\")\n    try:\n        copy = os.path.join(work, \"copy.dwg\")\n        shutil.copy2(dwg_path, copy)\n        out = os.path.join(work, \"dump.txt\")\n        scr = os.path.join(work, \"dump.scr\")\n        pat = u\",\".join(u\"*\" + wc_escape(f) + u\"*\" for f in layer_filters)\n        with io.open(scr, \"w\", encoding=\"utf-8\") as f:\n            f.write(DUMP_LISP.replace(\"{out}\", out.replace(\"\\\\\", \"/\")).replace(\"{pat}\", pat))\n        subprocess.run([core, \"/i\", copy, \"/s\", scr, \"/l\", \"en-US\"], stdin=subprocess.DEVNULL,\n                       env=core_env(core), cwd=os.path.dirname(core),\n                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,\n                       timeout=CORE_TIMEOUT_S, creationflags=0x08000000)\n        if not os.path.isfile(out):\n            raise Exception(u\"Core Console không xuất được dữ liệu bản vẽ\")\n        with io.open(out, \"r\", encoding=\"utf-8-sig\", errors=\"replace\") as f:\n            return parse_dump(f.read().splitlines())\n    finally:\n        shutil.rmtree(work, ignore_errors=True)\n\n\ndef parse_dump(lines):\n    hatches, polys, errors = [], [], []\n    for line in lines:\n        parts = line.split(\"|\", 3)\n        if len(parts) < 4 or parts[0] not in (\"H\", \"P\"):\n            continue\n        layer = parts[1]\n        try:\n            a, b, c, d, e, g = [float(v) for v in parts[2].split(\",\")]\n            codes = []\n            for kv in parts[3].split(\";\"):\n                if \"=\" in kv:\n                    k, v = kv.split(\"=\", 1)\n                    codes.append((int(k), v))\n            if parts[0] == \"H\":\n                pattern, loops = parse_hatch(codes)\n                loops = [[(a * x + b * y + e, c * x + d * y + g) for x, y in l] for l in loops]\n                hatches.append((layer, (pattern or u\"\").upper(), loops))\n            else:\n                pts, closed = parse_lwpolyline(codes)\n                if closed and len(pts) >= 3:\n                    polys.append((layer, [(a * x + b * y + e, c * x + d * y + g) for x, y in pts]))\n        except Exception as ex:\n            errors.append((layer, u\"{}\".format(ex)))\n    return hatches, polys, errors\n\n\n# --- Phân tích căn hộ (thuần, mm) -----------------------------------------------------\nclass Room(object):\n    def __init__(self, idx, pts):\n        self.idx = idx\n        self.pts = clean_poly(pts)\n        self.area = abs(signed_area(self.pts)) / 1e6\n        self.ip = interior_point(self.pts)\n        self.kind = None\n        self.pattern = u\"\"\n        self.note = u\"\"\n        self.strips = []      # dải ô cửa (feet, do phần Revit thêm)\n        self.status = u\"\"\n        self.ids = []\n        self.floor_area = 0.0\n\n\ndef classify_rooms(rooms, hatches, pattern_map):\n    \"\"\"Gán loại phòng theo mẫu hatch phủ điểm đại diện. Trả về danh sách ô đá chân cửa [(pts, pattern)].\"\"\"\n    thresholds = []\n    floor_hatches = []\n    for layer, pattern, loops in hatches:\n        kind = pattern_map.get(pattern)\n        if kind == \"CHANCUA\":\n            for l in loops:\n                thresholds.append(clean_poly(l))\n        elif kind in KINDS:\n            floor_hatches.append((pattern, kind, loops))\n    for r in rooms:\n        found = [(p, k) for p, k, loops in floor_hatches if point_in_evenodd(r.ip, loops)]\n        kinds = sorted(set(k for _, k in found))\n        if len(kinds) == 1:\n            r.kind, r.pattern = kinds[0], found[0][0]\n        elif len(kinds) > 1:\n            r.note = u\"Nhiều mẫu hatch khác loại: {}\".format(u\", \".join(sorted(set(p for p, _ in found))))\n        else:\n            r.note = u\"Không có hatch lát sàn trong IN[5]\"\n    return [t for t in thresholds if len(t) >= 3]\n\n\ndef apartment_rooms(rooms, areas, seeds, door_links):\n    \"\"\"rooms: [Room]; areas: [[(x, y)]] polyline căn; seeds: [[(x, y)]] các điểm dò của từng phần tử chọn;\n    door_links: [(i, j)] cặp phòng nối bởi cửa (không gồm cửa vào căn).\n    Trả về (danh sách chỉ số phòng thuộc căn, cách xác định, cảnh báo).\"\"\"\n    chosen, how, warn = set(), [], []\n    for pts in seeds:\n        area = None\n        for p in pts:\n            hit = [a for a in areas if point_in(p, a)]\n            if hit:\n                area = min(hit, key=lambda a: abs(signed_area(a)))\n                break\n        if area is not None:\n            got = [r.idx for r in rooms if point_in(r.ip, area)]\n            chosen.update(got)\n            how.append(u\"polyline căn ({} phòng)\".format(len(got)))\n            continue\n        start = [r.idx for r in rooms for p in pts if point_in(p, r.pts)]\n        if not start:\n            warn.append(u\"Điểm {} không nằm trong căn / phòng nào\".format(fmt(pts[0])))\n            continue\n        adj = {}\n        for i, j in door_links:\n            adj.setdefault(i, set()).add(j)\n            adj.setdefault(j, set()).add(i)\n        seen, stack = set(start[:1]), list(start[:1])\n        while stack:\n            i = stack.pop()\n            for j in adj.get(i, ()):\n                if j not in seen:\n                    seen.add(j)\n                    stack.append(j)\n        chosen.update(seen)\n        how.append(u\"lan theo cửa ({} phòng)\".format(len(seen)))\n    return sorted(chosen), how, warn\n\n\ndef door_action(kind_a, kind_b, is_entry):\n    \"\"\"Cách xử lý ô cửa theo loại hai bên (None = vùng ngoài căn / chưa rõ).\n    Trả về (mã, mô tả): STRIP_BOTH / STRIP_A / STRIP_B / THRESHOLD / NONE.\"\"\"\n    kinds = (kind_a, kind_b)\n    if \"WC\" in kinds or is_entry:\n        return \"THRESHOLD\", u\"Cửa WC / cửa vào căn – đá chân cửa theo hatch CAD, sàn hai bên dừng ở bo phòng\"\n    if kind_a is not None and kind_a == kind_b:\n        return \"STRIP_BOTH\", u\"Sàn hai bên kéo vào ô cửa tới tim tường\"\n    if set(kinds) == set([\"KHO\", \"LOGIA\"]):\n        return (\"STRIP_A\" if kind_a == \"KHO\" else \"STRIP_B\"), \\\n            u\"Sàn trong nhà phủ hết ô tường, sàn logia dừng ở bo phòng\"\n    return \"NONE\", u\"Không xử lý – một bên ngoài căn hoặc chưa rõ loại\"\n\n\n# =====================================================================================\n# PHẦN REVIT\n# =====================================================================================\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef type_name(t):\n    p = t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)\n    return p.AsString() if p else get_name(t)\n\n\ndef id_value(eid):\n    v = getattr(eid, \"Value\", None)\n    return v if v is not None else eid.IntegerValue\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef pick_cad(cad_filter):\n    all_cad = list(FilteredElementCollector(doc).OfClass(ImportInstance).ToElements())\n    instances = all_cad\n    if cad_filter:\n        instances = [i for i in all_cad if cad_filter.lower() in get_name(doc.GetElement(i.GetTypeId())).lower()]\n    if len(instances) != 1:\n        names = [get_name(doc.GetElement(i.GetTypeId())) for i in all_cad]\n        raise StopReport([u\"DỪNG: tìm thấy {} bản CAD khớp '{}'. Nhập tên bản CAD vào ô IN[0]. Các bản CAD: {}\".format(\n            len(instances), cad_filter, u\", \".join(names) or u\"không có\")])\n    return instances[0]\n\n\ndef cad_file_path(inst):\n    link = doc.GetElement(inst.GetTypeId())\n    if not inst.IsLinked or not isinstance(link, CADLinkType):\n        return None\n    try:\n        path = ModelPathUtils.ConvertModelPathToUserVisiblePath(link.GetExternalFileReference().GetAbsolutePath())\n    except Exception:\n        return None\n    return path if path and os.path.isfile(path) else None\n\n\ndef floor_types_by_name():\n    return dict((norm(type_name(t)), t) for t in FilteredElementCollector(doc).OfClass(FloorType).ToElements())\n\n\nMATERIAL_HINT = {\"CHANCUA\": u\"granite\"}   # Loại → chuỗi con tên vật liệu gán cho lớp hoàn thiện của type nhân bản\n\n\ndef hint_material(kind):\n    hint = MATERIAL_HINT.get(kind)\n    if not hint:\n        return None\n    mats = [m for m in FilteredElementCollector(doc).OfClass(Material).ToElements() if hint in norm(m.Name).lower()]\n    return sorted(mats, key=lambda m: len(m.Name))[0] if mats else None\n\n\ndef duplicate_floor_type(template, name, kind):\n    \"\"\"Nhân bản floor type kiến trúc mẫu thành `name`, giữ cấu tạo lớp; đổi vật liệu lớp hoàn thiện theo MATERIAL_HINT.\n    Gọi trong Transaction.\"\"\"\n    new = template.Duplicate(name)\n    mat = hint_material(kind)\n    if mat is not None:\n        cs = new.GetCompoundStructure()\n        if cs is not None and cs.LayerCount > 0:\n            finish = [i for i in range(cs.LayerCount) if cs.GetLayerFunction(i) in (\n                MaterialFunctionAssignment.Finish1, MaterialFunctionAssignment.Finish2)]\n            cs.SetMaterialId(finish[0] if finish else 0, mat.Id)\n            new.SetCompoundStructure(cs)\n    return new\n\n\n# --- Ô cửa (Revit) ----------------------------------------------------------------\nSCI_OPT = None\n\n\ndef element_solids(element):\n    opt = Options()\n    opt.DetailLevel = ViewDetailLevel.Fine\n    result = []\n\n    def walk(geo):\n        for g in geo:\n            if isinstance(g, Solid) and g.Volume > 0:\n                result.append(g)\n            elif isinstance(g, GeometryInstance):\n                walk(g.GetInstanceGeometry())\n\n    geo = element.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef ray_hits(solids, a, b):\n    \"\"\"Các đoạn [t0, t1] (feet, tính từ a) của tia a→b nằm trong khối, đã gộp.\"\"\"\n    global SCI_OPT\n    if SCI_OPT is None:\n        SCI_OPT = SolidCurveIntersectionOptions()\n        SCI_OPT.ResultType = SolidCurveIntersectionMode.CurveSegmentsInside\n    line = Line.CreateBound(a, b)\n    spans = []\n    for s in solids:\n        try:\n            res = s.IntersectWithCurve(line, SCI_OPT)\n        except Exception:\n            continue\n        for i in range(res.SegmentCount):\n            c = res.GetCurveSegment(i)\n            t0, t1 = c.GetEndPoint(0).DistanceTo(a), c.GetEndPoint(1).DistanceTo(a)\n            spans.append((min(t0, t1), max(t0, t1)))\n    spans.sort()\n    tol = from_mm(TOL_MM)\n    merged = []\n    for s in spans:\n        if merged and s[0] <= merged[-1][1] + tol:\n            merged[-1] = (merged[-1][0], max(merged[-1][1], s[1]))\n        else:\n            merged.append(s)\n    return merged\n\n\nclass Opening(object):\n    \"\"\"Ô cửa: tim (giữa ô, trên tim tường), u dọc tường, n pháp tuyến, nửa dày h, ô s0..s1 (feet).\"\"\"\n\n    def __init__(self, door):\n        self.door = door\n        self.center = self.u = self.n = None\n        self.h = self.s0 = self.s1 = 0.0\n        self.note = u\"\"\n        self.sides = [None, None]   # chỉ số phòng phía +n, phía -n\n\n    def label(self):\n        sym = self.door.Symbol\n        return u\"{} : {}\".format(sym.FamilyName, type_name(sym))\n\n    def side_points_mm(self):\n        pts = []\n        for sign in (1.0, -1.0):\n            p = self.center.Add(self.n.Multiply(sign * (self.h + from_mm(SIDE_PROBE_MM))))\n            pts.append((to_mm(p.X), to_mm(p.Y)))\n        return pts\n\n\ndef measure_opening(door, level):\n    \"\"\"Đo ô cửa trên hình khối tường chủ. Trả về Opening hoặc None.\"\"\"\n    op = Opening(door)\n    wall = door.Host\n    if not isinstance(wall, Wall):\n        return None\n    loc = wall.Location\n    if not isinstance(loc, LocationCurve) or not isinstance(loc.Curve, Line):\n        return None\n    d = loc.Curve.Direction\n    u = XYZ(d.X, d.Y, 0).Normalize()\n    n = XYZ(-u.Y, u.X, 0)\n    p = door.Location.Point\n    solids = element_solids(wall)\n    head_p = door.get_Parameter(BuiltInParameter.INSTANCE_HEAD_HEIGHT_PARAM)\n    head = head_p.AsDouble() if head_p else from_mm(2200.0)\n\n    # Hai mặt tường: tia ngang tường phía trên đầu cửa (lanh tô)\n    big = from_mm(1000.0)\n    a = XYZ(p.X, p.Y, level.Elevation + head + from_mm(100.0)).Subtract(n.Multiply(big))\n    perp = ray_hits(solids, a, a.Add(n.Multiply(2 * big)))\n    if perp:\n        f0, f1 = perp[0][0] - big, perp[-1][1] - big\n    else:\n        f0, f1 = -wall.Width / 2.0, wall.Width / 2.0\n        op.note = u\"Không có lanh tô – lấy chiều dày type\"\n    c = (f0 + f1) / 2.0\n    op.h = (f1 - f0) / 2.0\n    op.u, op.n = u, n\n\n    # Ô cửa: tia dọc tim tường, cao 300 trên Level\n    scan = from_mm(SCAN_MM)\n    q = XYZ(p.X, p.Y, level.Elevation + from_mm(PROBE_Z_MM)).Add(n.Multiply(c))\n    a = q.Subtract(u.Multiply(scan))\n    spans = ray_hits(solids, a, a.Add(u.Multiply(2 * scan)))\n    before = [s[1] for s in spans if s[1] <= scan]\n    after = [s[0] for s in spans if s[0] >= scan]\n    inside = any(s[0] < scan < s[1] for s in spans)\n    g0 = max(before) if before else None\n    g1 = min(after) if after else None\n    width = None if (inside or g0 is None or g1 is None) else g1 - g0\n    if width is None or not (from_mm(MIN_OPENING_MM) <= width <= from_mm(MAX_OPENING_MM)):\n        wp = door.Symbol.get_Parameter(BuiltInParameter.DOOR_WIDTH) or door.get_Parameter(BuiltInParameter.DOOR_WIDTH)\n        if wp is None or wp.AsDouble() <= 0:\n            return None\n        g0, g1 = scan - wp.AsDouble() / 2.0, scan + wp.AsDouble() / 2.0\n        op.note = (op.note + u\"; \" if op.note else u\"\") + u\"Không đo được ô tường – lấy Width family\"\n    op.s0, op.s1 = g0 - scan, g1 - scan\n    op.center = XYZ(p.X, p.Y, 0).Add(n.Multiply(c))\n    return op\n\n\ndef element_points_mm(el, level):\n    \"\"\"Các điểm dò (mm) của một phần tử chọn: cửa → hai bên cửa; khác → điểm đặt / tâm hộp bao.\"\"\"\n    if isinstance(el, FamilyInstance) and el.Category is not None and \\\n            el.Category.Id.Equals(ElementId(BuiltInCategory.OST_Doors)):\n        op = measure_opening(el, level)\n        if op is not None:\n            return op.side_points_mm()\n    loc = el.Location\n    if isinstance(loc, LocationPoint):\n        p = loc.Point\n    elif isinstance(loc, LocationCurve):\n        p = loc.Curve.Evaluate(0.5, True)\n    else:\n        bb = el.get_BoundingBox(None)\n        if bb is None:\n            return []\n        p = bb.Min.Add(bb.Max).Divide(2.0)\n    return [(to_mm(p.X), to_mm(p.Y))]\n\n\n# --- Dựng biên sàn (Revit) -----------------------------------------------------------\ndef loop_area(loop):\n    pts = []\n    for c in loop:\n        pts.extend(list(c.Tessellate())[:-1])\n    return signed_area([(p.X, p.Y) for p in pts])\n\n\ndef orient_loops(loops):\n    \"\"\"Vòng ngoài (diện tích lớn nhất) ngược chiều kim đồng hồ, vòng lỗ cùng chiều.\"\"\"\n    if not loops:\n        return loops\n    areas = [loop_area(l) for l in loops]\n    outer = max(range(len(loops)), key=lambda i: abs(areas[i]))\n    for i, l in enumerate(loops):\n        if (areas[i] > 0) != (i == outer):\n            l.Flip()\n    return loops\n\n\ndef poly_loop(pts_mm, z):\n    loop = CurveLoop()\n    ps = [XYZ(from_mm(x), from_mm(y), z) for x, y in pts_mm]\n    for i in range(len(ps)):\n        loop.Append(Line.CreateBound(ps[i], ps[(i + 1) % len(ps)]))\n    return loop\n\n\ndef make_strip(op, k, far, z):\n    \"\"\"Dải ô cửa phía k (0: +n, 1: -n): từ mặt tường phía đó (chồng STRIP_OVERLAP_MM vào phòng) tới far (theo n,\n    tính từ tim tường, cùng dấu phía k: 0 = tim tường, -h = mặt tường phía bên kia).\"\"\"\n    sign = 1.0 if k == 0 else -1.0\n    a, b = sign * far, sign * (op.h + from_mm(STRIP_OVERLAP_MM))\n    lo, hi = min(a, b), max(a, b)\n    base = XYZ(op.center.X, op.center.Y, z)\n    ps = [base.Add(op.u.Multiply(s)).Add(op.n.Multiply(t)) for s, t in\n          ((op.s0, lo), (op.s1, lo), (op.s1, hi), (op.s0, hi))]\n    loop = CurveLoop()\n    for i in range(4):\n        loop.Append(Line.CreateBound(ps[i], ps[(i + 1) % 4]))\n    if not loop.IsCounterclockwise(XYZ.BasisZ):\n        loop.Flip()\n    return loop\n\n\ndef floor_profiles(room, z):\n    \"\"\"Hợp bo phòng với các dải ô cửa → danh sách profile (mỗi profile là list CurveLoop).\"\"\"\n    base = poly_loop(room.pts, z)\n    if not room.strips:\n        return [orient_loops([base])]\n    h = from_mm(100.0)\n    solid = GeometryCreationUtilities.CreateExtrusionGeometry(List[CurveLoop]([base]), XYZ.BasisZ, h)\n    for s in room.strips:\n        rs = GeometryCreationUtilities.CreateExtrusionGeometry(List[CurveLoop]([s]), XYZ.BasisZ, h)\n        solid = BooleanOperationsUtils.ExecuteBooleanOperation(solid, rs, BooleanOperationsType.Union)\n    profiles = []\n    tol = from_mm(TOL_MM)\n    for f in solid.Faces:\n        if isinstance(f, PlanarFace) and f.FaceNormal.Z < -0.99 and abs(f.Origin.Z - z) < tol:\n            profiles.append(orient_loops(list(f.GetEdgesAsCurveLoops())))\n    return profiles\n\n\ndef profile_area_m2(profile):\n    return abs(sum(loop_area(l) for l in profile)) * 0.09290304\n\n\ndef existing_floor_at(level, p_mm):\n    p = XYZ(from_mm(p_mm[0]), from_mm(p_mm[1]), 0)\n    for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        if fl.LevelId != level.Id:\n            continue\n        bb = fl.get_BoundingBox(None)\n        if bb is None or not (bb.Min.X <= p.X <= bb.Max.X and bb.Min.Y <= p.Y <= bb.Max.Y):\n            continue\n        for ref in HostObjectUtils.GetTopFaces(fl):\n            face = fl.GetGeometryObjectFromReference(ref)\n            # Face.Project trả về None khi hình chiếu nằm ngoài mặt\n            if isinstance(face, Face) and face.Project(XYZ(p.X, p.Y, bb.Max.Z)) is not None:\n                return fl\n    return None\n\n\ndef create_floor(profile, ftype, level, offset_mm):\n    fl = Floor.Create(doc, List[CurveLoop](profile), ftype.Id, level.Id)\n    fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).Set(from_mm(offset_mm))\n    cm = fl.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    if cm is not None and not cm.IsReadOnly:\n        cm.Set(COMMENT_TAG)\n    return fl\n\n\ndef preview_lines(profiles, z_mm):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n        out = []\n        for prof in profiles:\n            for loop in prof:\n                for c in loop:\n                    a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n                    out.append(DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(to_mm(a.X), to_mm(a.Y), z_mm),\n                                                           DSPoint.ByCoordinates(to_mm(b.X), to_mm(b.Y), z_mm)))\n        return out\n    except Exception:\n        return []\n\n\nROOM_HEADER = [u\"STT\", u\"Điểm trong phòng (mm)\", u\"Loại\", u\"Mẫu hatch\", u\"Floor type\", u\"Cao độ (mm)\",\n               u\"DT bo phòng (m²)\", u\"DT sàn (m²)\", u\"Số ô cửa ghép\", u\"Kết quả\", u\"ElementId\"]\nDOOR_HEADER = [u\"Id cửa\", u\"Family : Type\", u\"Rộng ô (mm)\", u\"Dày tường (mm)\", u\"Hai bên\", u\"Xử lý\", u\"Ghi chú\"]\n\n\ndef write_log(room_rows, door_rows, source, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoSanHoanThien_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# File nguồn: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm, m²\\n\")\n        w = csv.writer(f)\n        w.writerow(ROOM_HEADER)\n        w.writerows(room_rows)\n        w.writerow([])\n        w.writerow(DOOR_HEADER)\n        w.writerows(door_rows)\n    return path\n\n\ndef main(cad_filter, id_text, room_filters, area_filters, hatch_filters, pattern_text, type_text, offset_text,\n         entry_keys, dry_run, template_name=u\"\"):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    view = doc.ActiveView\n    level = view.GenLevel if view.ViewType in (ViewType.FloorPlan, ViewType.EngineeringPlan) else None\n    if level is None:\n        return [u\"DỪNG: hãy mở view mặt bằng (Floor Plan) của tầng cần tạo sàn rồi Run lại.\"], []\n\n    # Phần tử chọn → phạm vi căn\n    if id_text:\n        elems = [doc.GetElement(ElementId(int(s))) for s in id_text.replace(u\",\", u\";\").split(u\";\") if s.strip()]\n    else:\n        elems = [doc.GetElement(i) for i in uidoc.Selection.GetElementIds()]\n    elems = [e for e in elems if e is not None]\n    if not elems:\n        return [u\"DỪNG: chưa chọn căn hộ. Trong Revit chọn CỬA VÀO CĂN (hoặc phần tử bất kỳ nằm trong căn; chọn \"\n                u\"nhiều căn được) rồi Run lại, hoặc nhập Id vào ô IN[1].\"], []\n\n    pattern_map = dict((k, v.upper()) for k, v in parse_map(pattern_text).items())\n    bad = [k for k, v in pattern_map.items() if v not in KINDS]\n    if bad:\n        raise StopReport([u\"DỪNG: IN[5] có loại không hợp lệ ở mẫu {} (chỉ dùng {}).\".format(\n            u\", \".join(bad), u\"/\".join(KINDS))])\n    type_names = dict((k, norm(v)) for k, v in parse_map(type_text).items())\n    offsets = {}\n    for k, v in parse_map(offset_text).items():\n        try:\n            offsets[k] = float(v)\n        except ValueError:\n            raise StopReport([u\"DỪNG: IN[7] cao độ '{}={}' không phải số.\".format(k, v)])\n    all_types = floor_types_by_name()\n    template = all_types.get(norm(template_name)) if template_name else None\n    if template_name and template is None:\n        raise StopReport([u\"DỪNG: không có floor type mẫu '{}' (IN[10]). Các floor type: {}\".format(\n            template_name, u\", \".join(sorted(all_types.keys())))])\n    ftypes, missing, pending = {}, [], {}\n    for k in KINDS:\n        name = type_names.get(k, u\"\")\n        if name and name in all_types:\n            ftypes[k] = all_types[name]\n        elif name and template is not None:\n            # Chưa có → nhân bản từ type mẫu khi ghi; dry-run tạm dùng type mẫu để tính\n            pending[k] = name\n            ftypes[k] = template\n        elif name:\n            missing.append(u\"{}='{}'\".format(k, name))\n    if missing:\n        raise StopReport([u\"DỪNG: không có floor type {} (IN[6]) và chưa có type mẫu để nhân bản (IN[10]). \"\n                          u\"Các floor type: {}\".format(u\", \".join(missing), u\", \".join(sorted(all_types.keys())))])\n\n    def ft_label(k):\n        if k in pending:\n            return u\"{} (sẽ nhân bản từ {})\".format(pending[k], type_name(template))\n        return type_name(ftypes[k])\n\n    # Đọc CAD\n    cad = pick_cad(cad_filter)\n    cad_name = get_name(doc.GetElement(cad.GetTypeId()))\n    path = cad_file_path(cad)\n    if not path:\n        return [u\"DỪNG: bản CAD '{}' phải là Link (không Import) và file DWG còn ở đường dẫn gốc.\".format(cad_name)], []\n    core = find_accoreconsole()\n    if not core:\n        return [u\"DỪNG: không tìm thấy AutoCAD Core Console (C:\\\\Program Files\\\\Autodesk\\\\AutoCAD *\\\\accoreconsole.exe).\"], []\n    hatches, polys, errors = read_dwg(path, core, room_filters + area_filters + hatch_filters)\n    tf = cad.GetTotalTransform()\n\n    def to_model(pts):\n        out = []\n        for x, y in pts:\n            p = tf.OfPoint(XYZ(from_mm(x), from_mm(y), 0))\n            out.append((to_mm(p.X), to_mm(p.Y)))\n        return out\n\n    room_polys = [to_model(p) for l, p in polys if matches(l, room_filters)]\n    area_polys = [clean_poly(to_model(p)) for l, p in polys if area_filters and matches(l, area_filters)]\n    hatches = [(l, pat, [to_model(lp) for lp in loops]) for l, pat, loops in hatches if matches(l, hatch_filters)]\n    rooms = [Room(i, p) for i, p in enumerate(room_polys)]\n    rooms = [r for r in rooms if len(r.pts) >= 3 and r.area > 0.05]\n    for i, r in enumerate(rooms):\n        r.idx = i\n    if not rooms:\n        raise StopReport([u\"DỪNG: bản CAD không có polyline kín nào trên layer chứa '{}' (IN[2]).\".format(\n            u\"; \".join(room_filters))])\n    thresholds = classify_rooms(rooms, hatches, pattern_map)\n\n    # Cửa trên level: đo ô, tìm phòng hai bên\n    openings = []\n    for door in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Doors).WhereElementIsNotElementType() \\\n            .ToElements():\n        if door.LevelId != level.Id or not isinstance(door, FamilyInstance):\n            continue\n        op = measure_opening(door, level)\n        if op is None:\n            continue\n        for k, p in enumerate(op.side_points_mm()):\n            hit = [r.idx for r in rooms if point_in(p, r.pts)]\n            op.sides[k] = hit[0] if hit else None\n        if op.sides[0] is not None or op.sides[1] is not None:\n            openings.append(op)\n\n    def is_entry(op):\n        text = op.label().lower()\n        return any(k.lower() in text for k in entry_keys)\n\n    links = [tuple(op.sides) for op in openings if None not in op.sides and op.sides[0] != op.sides[1]\n             and not is_entry(op)]\n    seeds = [element_points_mm(e, level) for e in elems]\n    chosen, how, warns = apartment_rooms(rooms, area_polys, [s for s in seeds if s], links)\n    if not chosen:\n        raise StopReport([u\"DỪNG: không xác định được căn hộ từ phần tử đã chọn.\"] + warns)\n    in_apt = set(chosen)\n    apt_rooms = [rooms[i] for i in chosen]\n\n    # Ô cửa → dải ghép vào phòng\n    z = level.Elevation\n    door_rows, wc_doors = [], []\n    for op in openings:\n        if not any(i in in_apt for i in op.sides if i is not None):\n            continue\n        kinds = [rooms[i].kind if i is not None and i in in_apt else None for i in op.sides]\n        code, text = door_action(kinds[0], kinds[1], is_entry(op))\n        if code == \"STRIP_BOTH\":\n            rooms[op.sides[0]].strips.append(make_strip(op, 0, 0.0, z))\n            rooms[op.sides[1]].strips.append(make_strip(op, 1, 0.0, z))\n        elif code in (\"STRIP_A\", \"STRIP_B\"):\n            k = 0 if code == \"STRIP_A\" else 1\n            rooms[op.sides[k]].strips.append(make_strip(op, k, -op.h, z))\n        elif code == \"THRESHOLD\":\n            wc_doors.append((op, len(door_rows)))\n        side_txt = u\" | \".join(u\"#{} {}\".format(chosen.index(i) + 1, KIND_LABEL.get(rooms[i].kind, u\"chưa rõ\"))\n                               if i is not None and i in in_apt else u\"ngoài căn\" for i in op.sides)\n        door_rows.append([id_value(op.door.Id), op.label(), u\"{:.0f}\".format(to_mm(op.s1 - op.s0)),\n                          u\"{:.0f}\".format(to_mm(2 * op.h)), side_txt, text, op.note])\n\n    # Đá chân cửa: hatch AR-CONC sát bo phòng của căn\n    apt_thresholds = [t for t in thresholds if any(poly_dist(t, r.pts) <= THRESHOLD_NEAR_MM for r in apt_rooms)]\n    for op, ri in wc_doors:\n        c = (to_mm(op.center.X), to_mm(op.center.Y))\n        if not any(point_in(c, t) for t in apt_thresholds):\n            door_rows[ri][6] = (door_rows[ri][6] + u\"; \" if door_rows[ri][6] else u\"\") + \\\n                u\"THIẾU đá chân cửa (không có hatch CHANCUA tại ô cửa)\"\n\n    # Lập kế hoạch\n    room_jobs, th_jobs, all_profiles = [], [], []\n    for r in apt_rooms:\n        if r.kind is None:\n            r.status = u\"Bỏ qua – chưa rõ loại ({})\".format(r.note)\n            continue\n        if r.kind not in ftypes:\n            r.status = u\"Bỏ qua – chưa gán floor type cho {} (IN[6])\".format(r.kind)\n            continue\n        old = existing_floor_at(level, r.ip)\n        if old is not None:\n            r.status = u\"Bỏ qua – đã có sàn Id {} ({})\".format(id_value(old.Id), type_name(doc.GetElement(old.GetTypeId())))\n            continue\n        try:\n            profs = floor_profiles(r, z)\n        except Exception as ex:\n            r.status = u\"Lỗi hình học: {}\".format(ex)\n            continue\n        if not profs:\n            r.status = u\"Lỗi – không dựng được biên sàn\"\n            continue\n        r.floor_area = sum(profile_area_m2(p) for p in profs)\n        r.status = u\"Sẽ tạo\" if dry_run else u\"Chờ tạo\"\n        room_jobs.append((r, profs))\n        all_profiles += profs\n    th_rows = []\n    for t in apt_thresholds:\n        ip = interior_point(t)\n        old = existing_floor_at(level, ip)\n        status = u\"Bỏ qua – đã có sàn Id {}\".format(id_value(old.Id)) if old is not None else \\\n            (u\"Bỏ qua – chưa gán floor type CHANCUA (IN[6])\" if \"CHANCUA\" not in ftypes else\n             (u\"Sẽ tạo\" if dry_run else u\"Chờ tạo\"))\n        row = [u\"Đá\", fmt(ip), KIND_LABEL[\"CHANCUA\"], u\"\", ft_label(\"CHANCUA\") if \"CHANCUA\" in ftypes else u\"—\",\n               u\"{:.0f}\".format(offsets.get(\"CHANCUA\", 0.0)), u\"{:.2f}\".format(abs(signed_area(t)) / 1e6),\n               u\"{:.2f}\".format(abs(signed_area(t)) / 1e6), 0, status, u\"\"]\n        th_rows.append(row)\n        if status.startswith(u\"Sẽ\") or status.startswith(u\"Chờ\"):\n            prof = orient_loops([poly_loop(t, z)])\n            th_jobs.append((prof, row))\n            all_profiles.append(prof)\n\n    # Ghi vào mô hình\n    created_types = []\n    if not dry_run and (room_jobs or th_jobs):\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            used = set(r.kind for r, _ in room_jobs) | (set([\"CHANCUA\"]) if th_jobs else set())\n            for k in sorted(set(pending) & used):\n                ftypes[k] = duplicate_floor_type(template, pending.pop(k), k)\n                mat = hint_material(k)\n                created_types.append(u\"{} = '{}' (nhân bản từ '{}'{})\".format(\n                    k, type_name(ftypes[k]), type_name(template),\n                    u\", vật liệu hoàn thiện '{}'\".format(mat.Name) if mat is not None else\n                    (u\", CHƯA có vật liệu chứa '{}' – giữ vật liệu type mẫu\".format(MATERIAL_HINT[k])\n                     if k in MATERIAL_HINT else u\"\")))\n            for r, profs in room_jobs:\n                for prof in profs:\n                    fl = create_floor(prof, ftypes[r.kind], level, offsets.get(r.kind, 0.0))\n                    r.ids.append(id_value(fl.Id))\n                r.status = u\"Đã tạo\"\n            for prof, row in th_jobs:\n                fl = create_floor(prof, ftypes[\"CHANCUA\"], level, offsets.get(\"CHANCUA\", 0.0))\n                row[9], row[10] = u\"Đã tạo\", id_value(fl.Id)\n            tx.Commit()\n        except Exception as ex:\n            tx.RollBack()\n            return [u\"LỖI khi tạo sàn, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n\n    # Báo cáo\n    room_rows = []\n    for n, r in enumerate(apt_rooms, 1):\n        room_rows.append([n, fmt(r.ip), KIND_LABEL.get(r.kind, u\"chưa rõ\"), r.pattern or u\"—\",\n                          ft_label(r.kind) if r.kind in ftypes else u\"—\",\n                          u\"{:.0f}\".format(offsets.get(r.kind, 0.0)) if r.kind else u\"—\",\n                          u\"{:.2f}\".format(r.area), u\"{:.2f}\".format(r.floor_area) if r.floor_area else u\"—\",\n                          len(r.strips), r.status, u\", \".join(str(i) for i in r.ids)])\n    room_rows += th_rows\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\")]\n    report.append(u\"CAD: {} – level: {} – căn xác định theo: {}\".format(cad_name, level.Name, u\"; \".join(how)))\n    counts = {}\n    for r in apt_rooms:\n        counts[r.kind] = counts.get(r.kind, 0) + 1\n    report.append(u\"Phòng trong căn: {} ({}) – đá chân cửa: {} – ô cửa liên quan: {}\".format(\n        len(apt_rooms), u\", \".join(u\"{} {}\".format(KIND_LABEL.get(k, u\"chưa rõ\"), v) for k, v in sorted(\n            counts.items(), key=lambda x: str(x[0]))), len(apt_thresholds), len(door_rows)))\n    report.append(u\"Tấm sàn {}: {} phòng + {} đá chân cửa\".format(\n        u\"sẽ tạo\" if dry_run else u\"đã tạo\", len(room_jobs), len(th_jobs)))\n    for line in created_types:\n        report.append(u\"ĐÃ NHÂN BẢN floor type: \" + line)\n    for k in sorted(pending):\n        report.append(u\"Floor type {} = '{}' chưa có → {} từ '{}'\".format(\n            k, pending[k], u\"sẽ nhân bản khi chạy thật\" if dry_run else u\"không dùng, không nhân bản\",\n            type_name(template)))\n    missing_th = [r for r in door_rows if u\"THIẾU\" in r[6]]\n    if missing_th:\n        report.append(u\"CẢNH BÁO: {} cửa WC / cửa vào căn chưa có hatch đá chân cửa trong CAD\".format(len(missing_th)))\n    for w in warns:\n        report.append(u\"CẢNH BÁO: \" + w)\n    if errors:\n        report.append(u\"Bỏ qua {} đối tượng CAD đọc lỗi (VD: {})\".format(len(errors), errors[0][1]))\n    try:\n        report.append(u\"Log: \" + write_log(room_rows, door_rows, cad_name, dry_run))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra biên sàn (OUT[1]) + log. Đúng thì đổi Dry-run = False và Run lại. \"\n                      u\"Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(ROOM_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in room_rows]\n    report.append(u\" | \".join(DOOR_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in door_rows]\n    return report, preview_lines(all_profiles, to_mm(z))\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\nif DYNAMO:\n    import traceback\n    try:\n        OUT = list(main(\n            (IN[0] or u\"\").strip(),\n            (IN[1] or u\"\").strip(),\n            split_filters(IN[2] or u\"A-duong bo phong\"),\n            split_filters(IN[3] if IN[3] is not None else u\"A-Area\"),\n            split_filters(IN[4] or u\"A-Hoan thien san\"),\n            IN[5] or u\"WOODS_BOARD_WIDE=KHO;300X600=WC;2X4=LOGIA;AR-CONC=CHANCUA\",\n            IN[6] or u\"CHANCUA=FF-Đá Granite tự nhiên\",\n            IN[7] or u\"KHO=0;WC=-15;LOGIA=-30;CHANCUA=0\",\n            split_filters(IN[8] or u\"khóa thông minh;DW03\"),\n            True if IN[9] is None else bool(IN[9]),\n            (IN[10] if len(IN) > 10 and IN[10] is not None else u\"SHT-Gach Lat-600x600\").strip(),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoSanHoanThien_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "8e74f72ed5c94837a7f0e3b421d33fc4",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "96ea12fa1c0f40518d72b8d5ec789b3c",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tên bản CAD (trống = bản CAD duy nhất)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ad8d2d1927e74d60b3ba770cf6beb764",
+          "Name": "IN[1]",
+          "Description": "IN[1] Id phần tử trong căn (trống = đang chọn trong Revit)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2033089e8e104ff9a0a21fb1cd37bf70",
+          "Name": "IN[2]",
+          "Description": "IN[2] Lọc layer đường bo phòng",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4d0f417fbba549739de0ae041b00d241",
+          "Name": "IN[3]",
+          "Description": "IN[3] Lọc layer polyline căn hộ (trống = lan theo cửa)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "74c341f96b1b44d1a18e753ab4cdd85d",
+          "Name": "IN[4]",
+          "Description": "IN[4] Lọc layer hatch lát sàn",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6afba00d6ede48848f5f77c9ef71b812",
+          "Name": "IN[5]",
+          "Description": "IN[5] Mẫu hatch = loại (KHO/WC/LOGIA/CHANCUA)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "eee49aa9ac334a2f9a29fa443b9cfb51",
+          "Name": "IN[6]",
+          "Description": "IN[6] Floor type theo loại",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "34a260d56f13496e80a77bb0f51c5557",
+          "Name": "IN[7]",
+          "Description": "IN[7] Cao độ mặt sàn so với Level (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9a7058c56a1a44888e8d79f6f542c2f3",
+          "Name": "IN[8]",
+          "Description": "IN[8] Nhận cửa vào căn theo tên family/type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "022d87ea473d4cf08aeebefa06a7bc06",
+          "Name": "IN[9]",
+          "Description": "IN[9] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5ba6f6089fc64daebe6639e9440111ca",
+          "Name": "IN[10]",
+          "Description": "IN[10] Floor type kiến trúc mẫu để nhân bản type thiếu",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6b765fca0ad945268d340450735b8b85",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "8352f2ea473142ed9054af12e3cca2ad",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "3517bb54712a41d09e992a2f5407f19d",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c697878323d5471090615ddbe4217def",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "89e1594584f4427e8f06ccb93af09962",
+      "End": "96ea12fa1c0f40518d72b8d5ec789b3c",
+      "Id": "e1c756c2231f4d32bea80a4881dc8ef5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "60d6ffa6f62d420c9d848e2bb2c50880",
+      "End": "ad8d2d1927e74d60b3ba770cf6beb764",
+      "Id": "9c69a495d34c451eb9fd1b6e1b05b0a7",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "cbca0c2db2754aaf82f7d32445a1ab38",
+      "End": "2033089e8e104ff9a0a21fb1cd37bf70",
+      "Id": "fafb9bf9a764469a899456ba977c623d",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "4622870813c64bc8869e9addd9c4ca92",
+      "End": "4d0f417fbba549739de0ae041b00d241",
+      "Id": "373c8dcbfcf44589a428bad733302822",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "cd572ff4c5ae45888f048378dd3a0c68",
+      "End": "74c341f96b1b44d1a18e753ab4cdd85d",
+      "Id": "68f0827322f44d37bf1d2b3524594001",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e2b2e9c5a0714f068e368009d42166b3",
+      "End": "6afba00d6ede48848f5f77c9ef71b812",
+      "Id": "9c45fb40035f45fdb8da47d57f3a05c8",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2dae0448a9df44e4adfc9a9c6934a2f8",
+      "End": "eee49aa9ac334a2f9a29fa443b9cfb51",
+      "Id": "f5146fe65aeb4656810d5c143cdbc8b5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9ccc10e7738c459eba52f70df3c6eab6",
+      "End": "34a260d56f13496e80a77bb0f51c5557",
+      "Id": "63f12f3d39864ac699d3c02df673b595",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f6cc86ead6b644e6b32b5b1a6fac495a",
+      "End": "9a7058c56a1a44888e8d79f6f542c2f3",
+      "Id": "cf6822c5b5324df6ae9a8473e88f31db",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9a216c9b98ba4fc680c5851f128f31ec",
+      "End": "022d87ea473d4cf08aeebefa06a7bc06",
+      "Id": "533f130bec3f4ac383cf4d53e9de4b86",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6b765fca0ad945268d340450735b8b85",
+      "End": "3517bb54712a41d09e992a2f5407f19d",
+      "Id": "7f2178ef2563430689abf884387effb8",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "14fe9c89da8b4b3da4aecc186a1294c1",
+      "End": "5ba6f6089fc64daebe6639e9440111ca",
+      "Id": "09bad51d7dc54449a686b4692e54297b",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "120588eb9cdc4ea09ce657d50f19db70",
+        "Name": "IN[0] Tên bản CAD (trống = bản CAD duy nhất)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "5ebbacfcb34646baa3fc4807d0d49522",
+        "Name": "IN[1] Id phần tử trong căn (trống = đang chọn trong Revit)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "14b52f50959b4dee802730984280f881",
+        "Name": "IN[2] Lọc layer đường bo phòng",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "51470503597a416a965f037fa4be2fdb",
+        "Name": "IN[3] Lọc layer polyline căn hộ (trống = lan theo cửa)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "dcfdbb09a63b44898bc5597d99a6e736",
+        "Name": "IN[4] Lọc layer hatch lát sàn",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "e8038d3f117345ecb9a4f71f65f0f427",
+        "Name": "IN[5] Mẫu hatch = loại (KHO/WC/LOGIA/CHANCUA)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "92eb916991e249558444442a7f6f4b98",
+        "Name": "IN[6] Floor type theo loại",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "b802ad05efdf4afda32e7c2add93d361",
+        "Name": "IN[7] Cao độ mặt sàn so với Level (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "48f603f294f349eca42436c34c961a21",
+        "Name": "IN[8] Nhận cửa vào căn theo tên family/type",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "e62e8bdd8a4c4a148c872e80a36471ab",
+        "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "b35e46751fb744368c4b23dc7784f96c",
+        "Name": "IN[10] Floor type kiến trúc mẫu để nhân bản type thiếu",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "8e74f72ed5c94837a7f0e3b421d33fc4",
+        "Name": "Tạo sàn hoàn thiện (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 750.0,
+        "Y": 450.0
+      },
+      {
+        "Id": "8352f2ea473142ed9054af12e3cca2ad",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1150.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "492625c90da445a7bcbc2885410fca33",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Mở view mặt bằng tầng cần làm, CHỌN CỬA VÀO CĂN trong Revit (chọn nhiều căn được) rồi Run. IN[6]: điền floor type cho KHO / WC / LOGIA (type có sẵn, tool không tạo type). Giữ Dry-run = True cho lần chạy đầu. IN[10]: floor type ở IN[6] chưa có → tự nhân bản từ type kiến trúc mẫu này khi chạy thật.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "120588eb9cdc4ea09ce657d50f19db70",
+          "5ebbacfcb34646baa3fc4807d0d49522",
+          "14b52f50959b4dee802730984280f881",
+          "51470503597a416a965f037fa4be2fdb",
+          "dcfdbb09a63b44898bc5597d99a6e736",
+          "e8038d3f117345ecb9a4f71f65f0f427",
+          "92eb916991e249558444442a7f6f4b98",
+          "b802ad05efdf4afda32e7c2add93d361",
+          "48f603f294f349eca42436c34c961a21",
+          "e62e8bdd8a4c4a148c872e80a36471ab",
+          "b35e46751fb744368c4b23dc7784f96c"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -96.0,
+        "Width": 532.0,
+        "Height": 1328.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1245.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "61d401f722fd4fd485142b1d0d279535",
+        "Title": "2. Tạo sàn (Python)",
+        "DescriptionText": "Bo phòng CAD = biên sàn; loại phòng theo mẫu hatch; đá chân cửa theo hatch AR-CONC; cửa phòng ngủ kéo sàn tới tim tường, cửa logia sàn trong nhà phủ hết ô tường (ô cửa đo trên tường Revit); đọc DWG qua AutoCAD Core Console; chặn file central, log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: CHƯA DUYỆT.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "8e74f72ed5c94837a7f0e3b421d33fc4"
+        ],
+        "HasNestedGroups": false,
+        "Left": 740.0,
+        "Top": 253.0,
+        "Width": 305.0,
+        "Height": 629.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 450.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 187.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "a3ceadc59b024d6686e43066765b2604",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "Tóm tắt, đường dẫn log, từng phòng / ô cửa. Biên sàn xem trước hiện trên nền 3D Dynamo.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "8352f2ea473142ed9054af12e3cca2ad"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1140.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 227.24583570429235,
+    "Y": 169.02678577366373,
+    "Zoom": 0.8407897306672052
+  }
+}

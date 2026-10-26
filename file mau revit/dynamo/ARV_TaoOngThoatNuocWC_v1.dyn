@@ -1,0 +1,808 @@
+{
+  "Uuid": "20723ccb-579c-47fd-8a5c-2f9969af97e8",
+  "IsCustomNode": false,
+  "Description": "Dựng ống thoát nước WC (uPVC) theo tuyến đã duyệt: ống đứng HKT + tê, nhánh dốc, Y 45°, co, phễu thu.",
+  "Name": "ARV_TaoOngThoatNuocWC_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "b8b054fd38774541836b294fefdd5de9",
+      "Name": "IN[0] Tuyến nhánh: Tên|System|DN|Đầu|x,y;… (mỗi dòng 1 tuyến)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "WC-1043712 Xí|AV_P_Nước Thải Xí|110|@|15364,1459;15150,850|Vào=-560\nWC-1043712 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|15450,300;16000,300;16100,400;16100,850;16000,950;15750,950;15600,800\nWC-1043712 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|15600,2100;15600,1750;15600,1500;15600,800;15600,600;15350,350;15150,350|TT=15600,600\nWC-1043712 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|15364,1459;15364,1100;15364,600;15150,600\nWC-1043712 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|15600,2100;15600,1100;15364,1100\nWC-1043712 Lavabo|AV_P_Nước Thải Rửa|60|465|15025,2325;15600,1750\nWC-1043712 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|15200,1150;15200,1550;15300,1650;15450,1650;15600,1500\nWC-1043721 Xí|AV_P_Nước Thải Xí|110|@|49286,1439;49500,850|Vào=-560\nWC-1043721 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|49200,300;48650,300;48550,400;48550,850;48650,950;48900,950;49050,800\nWC-1043721 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|49050,2100;49050,1750;49050,1500;49050,800;49050,600;49300,350;49500,350|TT=49050,600\nWC-1043721 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|49286,1439;49286,1100;49286,600;49500,600\nWC-1043721 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|49050,2100;49050,1100;49286,1100\nWC-1043721 Lavabo|AV_P_Nước Thải Rửa|60|465|49625,2325;49050,1750\nWC-1043721 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|49450,1150;49450,1550;49350,1650;49200,1650;49050,1500\nWC-1044664 Xí|AV_P_Nước Thải Xí|110|@|15364,30111;15150,30700|Vào=-560\nWC-1044664 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|15450,31250;16000,31250;16100,31150;16100,30700;16000,30600;15750,30600;15600,30750\nWC-1044664 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|15600,29450;15600,29800;15600,30050;15600,30750;15600,30950;15350,31200;15150,31200|TT=15600,30950\nWC-1044664 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|15364,30111;15364,30450;15364,30950;15150,30950\nWC-1044664 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|15600,29450;15600,30450;15364,30450\nWC-1044664 Lavabo|AV_P_Nước Thải Rửa|60|465|15025,29225;15600,29800\nWC-1044664 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|15200,30400;15200,30000;15300,29900;15450,29900;15600,30050\nWC-CH04 Xí|AV_P_Nước Thải Xí|110|@|49296,30091;49500,30700|Vào=-560\nWC-CH04 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|49200,31250;48650,31250;48550,31150;48550,30700;48650,30600;48900,30600;49050,30750\nWC-CH04 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|49050,29450;49050,29800;49050,30050;49050,30750;49050,30950;49300,31200;49500,31200|TT=49050,30950\nWC-CH04 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|49296,30091;49296,30450;49296,30950;49500,30950\nWC-CH04 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|49050,29450;49050,30450;49296,30450\nWC-CH04 Lavabo|AV_P_Nước Thải Rửa|60|465|49625,29215;49050,29800\nWC-CH04 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|49450,30400;49450,30000;49350,29900;49200,29900;49050,30050\nWC-1043703 Xí|AV_P_Nước Thải Xí|110|@|6536,1540;7000,1350|Vào=-600\nWC-1043703 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|6960,265;6960,650;6960,800;6700,1060;6700,1335;6700,1550;7000,1850|TT=6700,1550\nWC-1043703 Rửa chính|AV_P_Nước Thải Rửa|60|TT|5400,450;5925,450;6760,450;6960,650\nWC-1043703 Lavabo|AV_P_Nước Thải Rửa|60|465|5550,75;5925,450\nWC-1043703 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|6700,1185;6700,1335\nWC-1043703 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|6536,1540;6800,1540;7000,1540\nWC-1043703 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|5400,450;5400,1300;6800,1300;6800,1540\nWC-1043730 Xí|AV_P_Nước Thải Xí|110|@|58114,1560;57650,1350|Vào=-600\nWC-1043730 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|57690,265;57690,650;57690,800;57950,1060;57950,1335;57950,1550;57650,1850|TT=57950,1550\nWC-1043730 Rửa chính|AV_P_Nước Thải Rửa|60|TT|59250,450;58725,450;57890,450;57690,650\nWC-1043730 Lavabo|AV_P_Nước Thải Rửa|60|465|59100,75;58725,450\nWC-1043730 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|57950,1185;57950,1335\nWC-1043730 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|58114,1560;57850,1560;57650,1560\nWC-1043730 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|59250,450;59250,1300;57850,1300;57850,1560\nWC-1044655 Xí|AV_P_Nước Thải Xí|110|@|6536,29990;7000,30200|Vào=-600\nWC-1044655 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|6960,31285;6960,30900;6960,30750;6700,30490;6700,30215;6700,30000;7000,29700|TT=6700,30000\nWC-1044655 Rửa chính|AV_P_Nước Thải Rửa|60|TT|5400,31100;5925,31100;6760,31100;6960,30900\nWC-1044655 Lavabo|AV_P_Nước Thải Rửa|60|465|5550,31475;5925,31100\nWC-1044655 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|6700,30365;6700,30215\nWC-1044655 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|6536,29990;6800,29990;7000,29990\nWC-1044655 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|5400,31100;5400,30250;6800,30250;6800,29990\nWC-1044673 Xí|AV_P_Nước Thải Xí|110|@|58114,30010;57650,30200|Vào=-600\nWC-1044673 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|57690,31285;57690,30900;57690,30750;57950,30490;57950,30215;57950,30000;57650,29700|TT=57950,30000\nWC-1044673 Rửa chính|AV_P_Nước Thải Rửa|60|TT|59250,31100;58725,31100;57890,31100;57690,30900\nWC-1044673 Lavabo|AV_P_Nước Thải Rửa|60|465|59100,31475;58725,31100\nWC-1044673 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|57950,30365;57950,30215\nWC-1044673 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|58114,30010;57850,30010;57650,30010\nWC-1044673 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|59250,31100;59250,30250;57850,30250;57850,30010\nWC-1044323 Xí|AV_P_Nước Thải Xí|110|@|30858,13711;31600,13850|Vào=-560\nWC-1044323 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|30400,13300;30715,13300;31430,13300;31665,13300;31850,13300;32100,13550;32100,13850|TT=31850,13300\nWC-1044323 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|30400,13300;30858,13300;31850,13300;31850,13850\nWC-1044323 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|30858,13711;30858,13300\nWC-1044323 Lavabo|AV_P_Nước Thải Rửa|60|465|29940,14075;30715,13300\nWC-1044323 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|31250,13850;31250,13480;31430,13300\nWC-1044323 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|31480,13485;31665,13300\nWC-1044314 Xí|AV_P_Nước Thải Xí|110|@|33811,13711;33050,13850|Vào=-560\nWC-1044314 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|34250,13300;33935,13300;33220,13300;32985,13300;32800,13300;32550,13550;32550,13850|TT=32800,13300\nWC-1044314 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|34250,13300;33811,13300;32800,13300;32800,13850\nWC-1044314 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|33811,13711;33811,13300\nWC-1044314 Lavabo|AV_P_Nước Thải Rửa|60|465|34710,14075;33935,13300\nWC-1044314 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|33400,13850;33400,13480;33220,13300\nWC-1044314 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|33170,13485;32985,13300\nWC-1044346 Xí|AV_P_Nước Thải Xí|110|@|26514,17269;26325,16600|Vào=-560\nWC-1044346 Rửa chính|AV_P_Nước Thải Rửa|60/60/75/75/75/75|TT|26980,18000;26980,17370;26980,16800;26980,16115;26880,16015;26530,16015;26325,16015|TT=26880,16015\nWC-1044346 Lavabo|AV_P_Nước Thải Rửa|60|465|26150,18200;26980,17370\nWC-1044346 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|26340,17000;26780,17000;26980,16800\nWC-1044346 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEUD=-15|26680,16015;26530,16015\nWC-1044346 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|26514,17269;26514,17000;26514,16300;26325,16300\nWC-1044346 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|26980,18000;26980,17000;26514,17000",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "629449e9bf8c412494f563d5805359e1",
+      "Name": "IN[1] Ống đứng: Tên|System|DN|x,y (mỗi dòng 1 ống)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "WC-1043712 Ống đứng xí|AV_P_Nước Thải Xí|110|15150,850\nWC-1043712 Thông hơi|AV_P_Thông hơi Xí|75|15150,600\nWC-1043712 Ống đứng rửa|AV_P_Nước Thải Rửa|90|15150,350\nWC-1043721 Ống đứng xí|AV_P_Nước Thải Xí|110|49500,850\nWC-1043721 Thông hơi|AV_P_Thông hơi Xí|75|49500,600\nWC-1043721 Ống đứng rửa|AV_P_Nước Thải Rửa|90|49500,350\nWC-1044664 Ống đứng xí|AV_P_Nước Thải Xí|110|15150,30700\nWC-1044664 Thông hơi|AV_P_Thông hơi Xí|75|15150,30950\nWC-1044664 Ống đứng rửa|AV_P_Nước Thải Rửa|90|15150,31200\nWC-CH04 Ống đứng xí|AV_P_Nước Thải Xí|110|49500,30700\nWC-CH04 Thông hơi|AV_P_Thông hơi Xí|75|49500,30950\nWC-CH04 Ống đứng rửa|AV_P_Nước Thải Rửa|90|49500,31200\nWC-1043703 Ống đứng rửa|AV_P_Nước Thải Rửa|90|7000,1850\nWC-1043703 Thông hơi|AV_P_Thông hơi Xí|75|7000,1540\nWC-1043703 Ống đứng xí|AV_P_Nước Thải Xí|110|7000,1350\nWC-1043730 Ống đứng rửa|AV_P_Nước Thải Rửa|90|57650,1850\nWC-1043730 Thông hơi|AV_P_Thông hơi Xí|75|57650,1560\nWC-1043730 Ống đứng xí|AV_P_Nước Thải Xí|110|57650,1350\nWC-1044655 Ống đứng rửa|AV_P_Nước Thải Rửa|90|7000,29700\nWC-1044655 Thông hơi|AV_P_Thông hơi Xí|75|7000,29990\nWC-1044655 Ống đứng xí|AV_P_Nước Thải Xí|110|7000,30200\nWC-1044673 Ống đứng rửa|AV_P_Nước Thải Rửa|90|57650,29700\nWC-1044673 Thông hơi|AV_P_Thông hơi Xí|75|57650,30010\nWC-1044673 Ống đứng xí|AV_P_Nước Thải Xí|110|57650,30200\nWC-1044323 Ống đứng xí|AV_P_Nước Thải Xí|110|31600,13850\nWC-1044323 Thông hơi|AV_P_Thông hơi Xí|75|31850,13850\nWC-1044323 Ống đứng rửa|AV_P_Nước Thải Rửa|90|32100,13850\nWC-1044314 Ống đứng xí|AV_P_Nước Thải Xí|110|33050,13850\nWC-1044314 Thông hơi|AV_P_Thông hơi Xí|75|32800,13850\nWC-1044314 Ống đứng rửa|AV_P_Nước Thải Rửa|90|32550,13850\nWC-1044346 Ống đứng xí|AV_P_Nước Thải Xí|110|26325,16600\nWC-1044346 Thông hơi|AV_P_Thông hơi Xí|75|26325,16300\nWC-1044346 Ống đứng rửa|AV_P_Nước Thải Rửa|90|26325,16015",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "d309d0fd355e49bda540cd17143fd2f9",
+      "Name": "IN[2] Ống đứng so với level: dưới>trên (mm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "-3300>3300",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "10261ed54ffc4e2789a4a4ad796b3fdf",
+      "Name": "IN[3] Level → tâm ống điểm cao nhất (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "400.0",
+      "Description": "Creates a number.",
+      "NumberType": "Double"
+    },
+    {
+      "Id": "eabfa251246f494792b69d711c45929f",
+      "Name": "IN[4] Độ dốc nhánh (%)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "2.0",
+      "Description": "Creates a number.",
+      "NumberType": "Double"
+    },
+    {
+      "Id": "ee79363d38e142d2823db37126a27e08",
+      "Name": "IN[5] Pipe type (có sẵn)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV_u.PVC PN6",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "5ea10cb742f042be8a718e61b6d5cf00",
+      "Name": "IN[6] Level (trống = level của view đang mở)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "ba64e2a00e8b450f93e52c9f270219dc",
+      "Name": "IN[7] Màu theo tên system (R,G,B)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Thông hơi=128,0,128;Xí=255,255,0;Rửa=0,0,255",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "1c7cbc6e149649d3af6c4f89403ff3e6",
+      "Name": "IN[8] Phễu thu Family : Type",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV-Phễu thoát sàn : 100",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "976361bbfc984c5e9da86f2b66036f0b",
+      "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "9d2989bf948c458bb392644d8d7f1e1b",
+      "Name": "IN[10] Thay lần chạy trước (xoá ống ARV-THOATWC rồi dựng lại)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "67cf4426af624b82bb3dcc44b8a7af6b",
+      "Name": "IN[11] Cao độ thông hơi ngang (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "-220.0",
+      "Description": "Creates a number.",
+      "NumberType": "Double"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b8b054fd38774541836b294fefdd5de9",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ea41e82026b2426f90ba8b94c949b3bf",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "WC-1043712 Xí|AV_P_Nước Thải Xí|110|@|15364,1459;15150,850|Vào=-560\nWC-1043712 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|15450,300;16000,300;16100,400;16100,850;16000,950;15750,950;15600,800\nWC-1043712 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|15600,2100;15600,1750;15600,1500;15600,800;15600,600;15350,350;15150,350|TT=15600,600\nWC-1043712 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|15364,1459;15364,1100;15364,600;15150,600\nWC-1043712 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|15600,2100;15600,1100;15364,1100\nWC-1043712 Lavabo|AV_P_Nước Thải Rửa|60|465|15025,2325;15600,1750\nWC-1043712 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|15200,1150;15200,1550;15300,1650;15450,1650;15600,1500\nWC-1043721 Xí|AV_P_Nước Thải Xí|110|@|49286,1439;49500,850|Vào=-560\nWC-1043721 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|49200,300;48650,300;48550,400;48550,850;48650,950;48900,950;49050,800\nWC-1043721 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|49050,2100;49050,1750;49050,1500;49050,800;49050,600;49300,350;49500,350|TT=49050,600\nWC-1043721 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|49286,1439;49286,1100;49286,600;49500,600\nWC-1043721 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|49050,2100;49050,1100;49286,1100\nWC-1043721 Lavabo|AV_P_Nước Thải Rửa|60|465|49625,2325;49050,1750\nWC-1043721 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|49450,1150;49450,1550;49350,1650;49200,1650;49050,1500\nWC-1044664 Xí|AV_P_Nước Thải Xí|110|@|15364,30111;15150,30700|Vào=-560\nWC-1044664 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|15450,31250;16000,31250;16100,31150;16100,30700;16000,30600;15750,30600;15600,30750\nWC-1044664 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|15600,29450;15600,29800;15600,30050;15600,30750;15600,30950;15350,31200;15150,31200|TT=15600,30950\nWC-1044664 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|15364,30111;15364,30450;15364,30950;15150,30950\nWC-1044664 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|15600,29450;15600,30450;15364,30450\nWC-1044664 Lavabo|AV_P_Nước Thải Rửa|60|465|15025,29225;15600,29800\nWC-1044664 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|15200,30400;15200,30000;15300,29900;15450,29900;15600,30050\nWC-CH04 Xí|AV_P_Nước Thải Xí|110|@|49296,30091;49500,30700|Vào=-560\nWC-CH04 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|49200,31250;48650,31250;48550,31150;48550,30700;48650,30600;48900,30600;49050,30750\nWC-CH04 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|49050,29450;49050,29800;49050,30050;49050,30750;49050,30950;49300,31200;49500,31200|TT=49050,30950\nWC-CH04 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|49296,30091;49296,30450;49296,30950;49500,30950\nWC-CH04 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|49050,29450;49050,30450;49296,30450\nWC-CH04 Lavabo|AV_P_Nước Thải Rửa|60|465|49625,29215;49050,29800\nWC-CH04 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|49450,30400;49450,30000;49350,29900;49200,29900;49050,30050\nWC-1043703 Xí|AV_P_Nước Thải Xí|110|@|6536,1540;7000,1350|Vào=-600\nWC-1043703 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|6960,265;6960,650;6960,800;6700,1060;6700,1335;6700,1550;7000,1850|TT=6700,1550\nWC-1043703 Rửa chính|AV_P_Nước Thải Rửa|60|TT|5400,450;5925,450;6760,450;6960,650\nWC-1043703 Lavabo|AV_P_Nước Thải Rửa|60|465|5550,75;5925,450\nWC-1043703 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|6700,1185;6700,1335\nWC-1043703 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|6536,1540;6800,1540;7000,1540\nWC-1043703 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|5400,450;5400,1300;6800,1300;6800,1540\nWC-1043730 Xí|AV_P_Nước Thải Xí|110|@|58114,1560;57650,1350|Vào=-600\nWC-1043730 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|57690,265;57690,650;57690,800;57950,1060;57950,1335;57950,1550;57650,1850|TT=57950,1550\nWC-1043730 Rửa chính|AV_P_Nước Thải Rửa|60|TT|59250,450;58725,450;57890,450;57690,650\nWC-1043730 Lavabo|AV_P_Nước Thải Rửa|60|465|59100,75;58725,450\nWC-1043730 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|57950,1185;57950,1335\nWC-1043730 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|58114,1560;57850,1560;57650,1560\nWC-1043730 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|59250,450;59250,1300;57850,1300;57850,1560\nWC-1044655 Xí|AV_P_Nước Thải Xí|110|@|6536,29990;7000,30200|Vào=-600\nWC-1044655 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|6960,31285;6960,30900;6960,30750;6700,30490;6700,30215;6700,30000;7000,29700|TT=6700,30000\nWC-1044655 Rửa chính|AV_P_Nước Thải Rửa|60|TT|5400,31100;5925,31100;6760,31100;6960,30900\nWC-1044655 Lavabo|AV_P_Nước Thải Rửa|60|465|5550,31475;5925,31100\nWC-1044655 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|6700,30365;6700,30215\nWC-1044655 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|6536,29990;6800,29990;7000,29990\nWC-1044655 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|5400,31100;5400,30250;6800,30250;6800,29990\nWC-1044673 Xí|AV_P_Nước Thải Xí|110|@|58114,30010;57650,30200|Vào=-600\nWC-1044673 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|57690,31285;57690,30900;57690,30750;57950,30490;57950,30215;57950,30000;57650,29700|TT=57950,30000\nWC-1044673 Rửa chính|AV_P_Nước Thải Rửa|60|TT|59250,31100;58725,31100;57890,31100;57690,30900\nWC-1044673 Lavabo|AV_P_Nước Thải Rửa|60|465|59100,31475;58725,31100\nWC-1044673 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|57950,30365;57950,30215\nWC-1044673 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|58114,30010;57850,30010;57650,30010\nWC-1044673 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|59250,31100;59250,30250;57850,30250;57850,30010\nWC-1044323 Xí|AV_P_Nước Thải Xí|110|@|30858,13711;31600,13850|Vào=-560\nWC-1044323 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|30400,13300;30715,13300;31430,13300;31665,13300;31850,13300;32100,13550;32100,13850|TT=31850,13300\nWC-1044323 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|30400,13300;30858,13300;31850,13300;31850,13850\nWC-1044323 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|30858,13711;30858,13300\nWC-1044323 Lavabo|AV_P_Nước Thải Rửa|60|465|29940,14075;30715,13300\nWC-1044323 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|31250,13850;31250,13480;31430,13300\nWC-1044323 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|31480,13485;31665,13300\nWC-1044314 Xí|AV_P_Nước Thải Xí|110|@|33811,13711;33050,13850|Vào=-560\nWC-1044314 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|34250,13300;33935,13300;33220,13300;32985,13300;32800,13300;32550,13550;32550,13850|TT=32800,13300\nWC-1044314 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|34250,13300;33811,13300;32800,13300;32800,13850\nWC-1044314 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|33811,13711;33811,13300\nWC-1044314 Lavabo|AV_P_Nước Thải Rửa|60|465|34710,14075;33935,13300\nWC-1044314 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|33400,13850;33400,13480;33220,13300\nWC-1044314 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|33170,13485;32985,13300\nWC-1044346 Xí|AV_P_Nước Thải Xí|110|@|26514,17269;26325,16600|Vào=-560\nWC-1044346 Rửa chính|AV_P_Nước Thải Rửa|60/60/75/75/75/75|TT|26980,18000;26980,17370;26980,16800;26980,16115;26880,16015;26530,16015;26325,16015|TT=26880,16015\nWC-1044346 Lavabo|AV_P_Nước Thải Rửa|60|465|26150,18200;26980,17370\nWC-1044346 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|26340,17000;26780,17000;26980,16800\nWC-1044346 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEUD=-15|26680,16015;26530,16015\nWC-1044346 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|26514,17269;26514,17000;26514,16300;26325,16300\nWC-1044346 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|26980,18000;26980,17000;26514,17000"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "629449e9bf8c412494f563d5805359e1",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fcd068833cf141f5bf6bf7a97ecec3ae",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "WC-1043712 Ống đứng xí|AV_P_Nước Thải Xí|110|15150,850\nWC-1043712 Thông hơi|AV_P_Thông hơi Xí|75|15150,600\nWC-1043712 Ống đứng rửa|AV_P_Nước Thải Rửa|90|15150,350\nWC-1043721 Ống đứng xí|AV_P_Nước Thải Xí|110|49500,850\nWC-1043721 Thông hơi|AV_P_Thông hơi Xí|75|49500,600\nWC-1043721 Ống đứng rửa|AV_P_Nước Thải Rửa|90|49500,350\nWC-1044664 Ống đứng xí|AV_P_Nước Thải Xí|110|15150,30700\nWC-1044664 Thông hơi|AV_P_Thông hơi Xí|75|15150,30950\nWC-1044664 Ống đứng rửa|AV_P_Nước Thải Rửa|90|15150,31200\nWC-CH04 Ống đứng xí|AV_P_Nước Thải Xí|110|49500,30700\nWC-CH04 Thông hơi|AV_P_Thông hơi Xí|75|49500,30950\nWC-CH04 Ống đứng rửa|AV_P_Nước Thải Rửa|90|49500,31200\nWC-1043703 Ống đứng rửa|AV_P_Nước Thải Rửa|90|7000,1850\nWC-1043703 Thông hơi|AV_P_Thông hơi Xí|75|7000,1540\nWC-1043703 Ống đứng xí|AV_P_Nước Thải Xí|110|7000,1350\nWC-1043730 Ống đứng rửa|AV_P_Nước Thải Rửa|90|57650,1850\nWC-1043730 Thông hơi|AV_P_Thông hơi Xí|75|57650,1560\nWC-1043730 Ống đứng xí|AV_P_Nước Thải Xí|110|57650,1350\nWC-1044655 Ống đứng rửa|AV_P_Nước Thải Rửa|90|7000,29700\nWC-1044655 Thông hơi|AV_P_Thông hơi Xí|75|7000,29990\nWC-1044655 Ống đứng xí|AV_P_Nước Thải Xí|110|7000,30200\nWC-1044673 Ống đứng rửa|AV_P_Nước Thải Rửa|90|57650,29700\nWC-1044673 Thông hơi|AV_P_Thông hơi Xí|75|57650,30010\nWC-1044673 Ống đứng xí|AV_P_Nước Thải Xí|110|57650,30200\nWC-1044323 Ống đứng xí|AV_P_Nước Thải Xí|110|31600,13850\nWC-1044323 Thông hơi|AV_P_Thông hơi Xí|75|31850,13850\nWC-1044323 Ống đứng rửa|AV_P_Nước Thải Rửa|90|32100,13850\nWC-1044314 Ống đứng xí|AV_P_Nước Thải Xí|110|33050,13850\nWC-1044314 Thông hơi|AV_P_Thông hơi Xí|75|32800,13850\nWC-1044314 Ống đứng rửa|AV_P_Nước Thải Rửa|90|32550,13850\nWC-1044346 Ống đứng xí|AV_P_Nước Thải Xí|110|26325,16600\nWC-1044346 Thông hơi|AV_P_Thông hơi Xí|75|26325,16300\nWC-1044346 Ống đứng rửa|AV_P_Nước Thải Rửa|90|26325,16015"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "d309d0fd355e49bda540cd17143fd2f9",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "92db6098024b41609e477f6433c8a48d",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "-3300>3300"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "10261ed54ffc4e2789a4a4ad796b3fdf",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8a9381cd53564931a1db5a05de4b487a",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 400.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "eabfa251246f494792b69d711c45929f",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "abf33abf15e44b9b9a28ba184312db09",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 2.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "ee79363d38e142d2823db37126a27e08",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2289cb02341a40d9ac6762aa55ed9a36",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV_u.PVC PN6"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "5ea10cb742f042be8a718e61b6d5cf00",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8bfd1f8fc3294052a5b7a1ccad537aa8",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "ba64e2a00e8b450f93e52c9f270219dc",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "184f9f6c47fc4484814d4e4c7c9f5bec",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Thông hơi=128,0,128;Xí=255,255,0;Rửa=0,0,255"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "1c7cbc6e149649d3af6c4f89403ff3e6",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "197623af4f70464c9864700f21eab320",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV-Phễu thoát sàn : 100"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "976361bbfc984c5e9da86f2b66036f0b",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cc6df675676348c78c8dd49cf169d46f",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "9d2989bf948c458bb392644d8d7f1e1b",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4718a8258f244f919f765d845aa78891",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "67cf4426af624b82bb3dcc44b8a7af6b",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1005346c8ac34cc9971af1a9ed711ceb",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": -220.0
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoOngThoatNuocWC_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Dựng ống thoát nước WC (uPVC) theo TUYẾN ĐÃ DUYỆT nhập dạng toạ độ – không đọc CAD:\n#   - Ống đứng (IN[1]): xí / rửa / thông hơi trong HKT, từ level + IN[2] (dưới) tới level + IN[2] (trên),\n#     cắt tại chỗ nhánh vào, đặt tê u.PVC_BEND TEE 90 (rule Junctions của pipe type).\n#   - Tuyến nhánh (IN[0]): polyline mặt bằng x,y (mm, toạ độ Revit của mô hình đang mở), điểm cuối là tâm một ống\n#     đứng hoặc một đỉnh của tuyến khác (→ Y 45°, tuyến kia phải đi thẳng qua đỉnh đó).\n#     Đầu tuyến: '@' = ống xuống từ connector Sanitary của thiết bị (kể cả trong file link) gần điểm đầu ≤ 150 mm;\n#     số = cao độ (mm so với level) đỉnh ống xuống tại điểm đầu; 'PHEU=-15' = đặt phễu thu IN[8] tại điểm đầu,\n#     chân ở cao độ −15, ống nối vào connector phễu; 'PHEUD=-15' = phễu ĐẤU TỪ TRÊN XUỐNG: tuyến 2 điểm\n#     \"phễu;điểm Y\", phễu nằm ngay trên ống chính, thượng lưu điểm Y ≥ 137 mm – ống xuống → co 45° → nhánh nghiêng\n#     45° theo phương đứng vào Y (cho phễu đặt sát góc tường, KTS 2026-10-21); 'TT' = thông tắc: nút bịt (Caps của pipe type) ở điểm đầu;\n#     trống = không có ống xuống.\n#   - Cao độ: dốc IN[4] % về ống đứng; điểm cao nhất của mỗi cây nhánh có tâm ống = level − IN[3].\n#   - Co 45° / 90° bằng NewElbowFitting (rule Elbows); Y / tê đặt thủ công, mỗi phụ kiện một SubTransaction.\n#   Không nối được với thiết bị trong file link (Revit không cho) → đầu ống đặt trùng connector thiết bị.\n#\n#   IN[0] (str)   Tuyến nhánh, mỗi dòng: \"Tên|System|DN|Đầu|x,y;x,y;…[|Vào=z]\" – DN theo từng đoạn: \"60/75\" (thiếu = lặp\n#                 số cuối); 'Vào=-700' = tuyến vào ống đứng bằng tê riêng ở cao độ −700 (không theo cao độ chung)\n#   IN[1] (str)   Ống đứng, mỗi dòng: \"Tên|System|DN|x,y\"\n#   IN[2] (str)   Đoạn ống đứng so với level: \"-3300>3300\" (dưới>trên, mm)\n#   IN[3] (float) Level → tâm ống tại điểm cao nhất của nhánh (mm), mặc định 400\n#   IN[4] (float) Độ dốc nhánh (%), mặc định 2\n#   IN[5] (str)   Pipe type (phải có sẵn), mặc định \"AV_u.PVC PN6\"\n#   IN[6] (str)   Level (trống = level của view đang mở)\n#   IN[7] (str)   Màu trong view đang mở theo chuỗi con tên system: \"Thông hơi=128,0,128;Xí=255,255,0;Rửa=0,0,255\"\n#   IN[8] (str)   Phễu thu \"Family : Type\" – chưa có trong mô hình thì chép từ file link\n#   IN[9] (bool)  Dry-run: True = chỉ báo cáo (mặc định True)\n#   IN[11] (float) Cao độ tâm ống thông hơi ngang (mm so với level), mặc định −220 – đầu tuyến 'THX' = thông hơi\n#                 từ ống xuống bệt (tê cắt vào ống xuống), 'THR' = thông hơi từ đầu ống rửa (tê + ống đứng lên, thông tắc\n#                 lùi ra sau tê); thông hơi gấp 90° được, nhập nhau bằng tê, 1 tê vào ống đứng TH (mẫu HN Garden City).\n#                 Trường 'TT=x,y' của tuyến = thông tắc ở chỗ gấp x,y: Y + ống chạy thẳng tới nút bịt, nhánh rẽ vào trục.\n#   IN[10] (bool) Thay lần chạy trước: True = xoá ống / phễu có Comments ARV-THOATWC + phụ kiện nối vào chúng rồi\n#                 dựng lại (cùng một Undo); False = gặp lần chạy trước thì dừng\n# Đầu ra: OUT = danh sách dòng báo cáo.\n# Tác giả: Claude (cho dungbn@archivina.com) – 2026-10-21 – Revit 2026, Dynamo CPython3.\n\nimport math\nimport collections\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, Line, Transaction, SubTransaction, BuiltInParameter,\n                                   Level, FamilySymbol, FamilyInstance, ElementTransformUtils, Color,\n                                   OverrideGraphicSettings, FillPatternElement, RoutingPreferenceRuleGroupType,\n                                   RevitLinkInstance, Transform, CopyPasteOptions, ElementId, Domain,\n                                   IFailuresPreprocessor, FailureProcessingResult, FailureSeverity, TransactionStatus,\n                                   BuiltInCategory)\n    from Autodesk.Revit.DB.Plumbing import Pipe, PipeType, PipingSystemType, PipeSystemType, PlumbingUtils\n    from Autodesk.Revit.DB.Structure import StructuralType\n    from System.Collections.Generic import List\n\n    import uuid\n    # Dynamo giữ phiên Python giữa các lần Run → tên kiểu .NET phải khác nhau mỗi lần\n    _NS = \"ARV_TaoOngThoatNuocWC_\" + uuid.uuid4().hex\n\n    class CommitFailures(IFailuresPreprocessor):\n        \"\"\"Lỗi lúc commit → cách xử lý mặc định của Revit; cảnh báo thì xoá và trả Continue\n        (trả ProceedWithCommit sau khi chỉ xoá cảnh báo sẽ lặp rồi Revit hủy transaction).\"\"\"\n        __namespace__ = _NS\n\n        def __init__(self):\n            self.resolved = collections.Counter()\n            self.all = collections.Counter()\n            self.warnings = collections.Counter()\n            self.calls = 0\n\n        def PreprocessFailures(self, fa):\n            self.calls += 1\n            resolved_any = False\n            for f in list(fa.GetFailureMessages()):\n                text = f.GetDescriptionText()\n                if f.GetSeverity() == FailureSeverity.Warning:\n                    self.warnings[text[:100]] += 1\n                    fa.DeleteWarning(f)\n                    continue\n                self.all[(str(f.GetSeverity()), text[:120])] += 1\n                if f.HasResolutions():\n                    self.resolved[text[:80]] += 1\n                    fa.ResolveFailure(f)\n                    resolved_any = True\n            if resolved_any and self.calls < 20:\n                return FailureProcessingResult.ProceedWithCommit\n            return FailureProcessingResult.Continue\n\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo ống thoát nước WC\"\nCOMMENT = u\"ARV-THOATWC\"\nSNAP_MM = 5.0          # điểm cuối tuyến trùng tâm ống đứng / đỉnh tuyến khác\nFIX_SNAP_MM = 150.0    # điểm đầu '@' tìm connector thiết bị\nMIN_LEN_MM = 20.0      # ống còn lại sau khi đặt phụ kiện\nDRAINV_MIN_H = 137.0   # PHEUD: phễu cách điểm Y (mặt bằng) – nhánh Y 60 dài 136 + co 45° 38 + ống 20, nghiêng 45°\nDRAINV_MAX_TOP = -215.0  # PHEUD: co 45° dưới phễu phải thấp hơn thân phễu (đáy −165) + bán kính co\nTT_END_STUB = 200.0    # thông tắc cuối: ống chính chạy thẳng quá chỗ gấp tới nút bịt (Y 75 nhánh thẳng 169 + 20 + dư;\n                       # 220 thì nút bịt WC mẫu chạm ống phễu tắm y 300 – MCP 2026-10-22)\nTT_END_MIN_OUT = 302.0  # thông tắc cuối: đoạn sau chỗ gấp ≥ nhánh Y 75 (161) + tê ống đứng (121) + 20\nTHR_STUB = 150.0       # THR: đoạn thông tắc lùi sau tê đầu ống rửa (tê 60 nhánh thẳng 66/92 + 20)\nVENT_MIN_RISE_X = 150.0  # THX: tê 110/60 trên ống xuống bệt cách nhánh xí (chân 117 + co)\nVENT_MIN_RISE_R = 165.0  # THR: ống đứng thông hơi từ đầu ống rửa (tê 60 nhánh 94 + co 90° D60 + 20)\n\n# Mặc định = WC mẫu G19 (CH, bệt tại x 15364, y 1459 – KTS duyệt tuyến 2026-10-21). Mỗi ống đứng chỉ 1 tê (KTS: vị trí\n# đấu nối chỉ dùng 1 Y); KTS bỏ phương án đổi trục xí ↔ rửa, giữ trục cũ.\n# WC mẫu (sàn 1043712) – các quy tắc KTS chốt:\n#   Xí: đấu thẳng vào trục đứng gần nhất, hạ cao độ (Vào=-560) chui dưới co ống thoát sàn cạnh xí (tâm cách 52).\n#   Phễu thu tắm: ở góc khu tắm (thoát nhanh), ống đi vòng ra khu tắm (KTS phác), Y vào rửa chính; đoạn chéo cuối\n#     ≥ 212 vì nhánh Y 60 chiếm 136.\n#   Rửa chính: bắt đầu bằng thông tắc (nút bịt); Y lavabo / thoát sàn cạnh xí / phễu tắm; sau Y phễu tắm lên D75;\n#     1 tê vào ống đứng rửa.\n#   Lavabo: ống xuống trong tường (tim tường 100). Thoát sàn cạnh xí: vào hệ rửa, vòng lên bắc qua sau đầu ống xí.\n# Nhóm A = WC lật đối xứng của WC mẫu (HKT 150×800 cạnh khu tắm): 1043721 (lật x), 1044664 (lật y), CH04 (chưa có sàn,\n#   lật x + y) – tuyến lật theo mẫu, đầu ống xí = connector bệt thật, ống xuống lavabo theo y connector lavabo thật\n#   (sinh bằng scratchpad gen_wc.py 2026-10-21).\n# Nhóm B / C / D – Claude phác theo quy tắc WC mẫu, KTS duyệt 2026-10-21 (sinh bằng 03_DU-AN\\G19\\thoat-nuoc-WC\\\n#   gen_nhom-BCD.py, lật trong nhóm):\n#   Phễu thoát sàn LUÔN ở góc tường, cách mặt tường ~100 (KTS sửa 2026-10-21) → khi góc sát ống đứng không đủ chỗ Y\n#   ngang thì đấu từ trên xuống (PHEUD): ống chính đi ngay dưới phễu.\n#   B (HKT sau két bệt): 1043703, 1043730, 1044655, 1044673 – ống chính bắt đầu từ phễu tắm góc ĐN khu tắm, đi bắc,\n#     ngay dưới thoát sàn cạnh xí (góc tường két / vách kính, PHEUD), vào ống đứng rửa ở ĐẦU BẮC HKT; ống đứng xí đầu\n#     nam, xí hạ vào tê −600 chui dưới ống rửa.\n#   C (HKT 800×300 ngang): 1044323, 1044314 – ống đứng xí / thông hơi / rửa theo phương x; phễu tắm góc vách kính /\n#     tường HKT; xí hạ vào tê −560.\n#   D (HKT 200×900): 1044346 – ống đứng xí phía bắc, rửa xuống y 16015; rửa chính dọc x 26900 rồi chạy dọc y 16015\n#     ngay dưới phễu tắm góc TN khu tắm (PHEUD); xí hạ vào tê −560.\n# WC không có HKT trong WC (20 WC): KTS hướng dẫn sau.\nDEF_ROUTES = u\"\\n\".join([\n    u\"WC-1043712 Xí|AV_P_Nước Thải Xí|110|@|15364,1459;15150,850|Vào=-560\",\n    u\"WC-1043712 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|15450,300;16000,300;16100,400;16100,850;16000,950;15750,950;15600,800\",\n    u\"WC-1043712 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|15600,2100;15600,1750;15600,1500;15600,800;15600,600;15350,350;15150,350|TT=15600,600\",\n    u\"WC-1043712 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|15364,1459;15364,1100;15364,600;15150,600\",\n    u\"WC-1043712 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|15600,2100;15600,1100;15364,1100\",\n    u\"WC-1043712 Lavabo|AV_P_Nước Thải Rửa|60|465|15025,2325;15600,1750\",\n    u\"WC-1043712 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|15200,1150;15200,1550;15300,1650;15450,1650;15600,1500\",\n    u\"WC-1043721 Xí|AV_P_Nước Thải Xí|110|@|49286,1439;49500,850|Vào=-560\",\n    u\"WC-1043721 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|49200,300;48650,300;48550,400;48550,850;48650,950;48900,950;49050,800\",\n    u\"WC-1043721 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|49050,2100;49050,1750;49050,1500;49050,800;49050,600;49300,350;49500,350|TT=49050,600\",\n    u\"WC-1043721 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|49286,1439;49286,1100;49286,600;49500,600\",\n    u\"WC-1043721 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|49050,2100;49050,1100;49286,1100\",\n    u\"WC-1043721 Lavabo|AV_P_Nước Thải Rửa|60|465|49625,2325;49050,1750\",\n    u\"WC-1043721 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|49450,1150;49450,1550;49350,1650;49200,1650;49050,1500\",\n    u\"WC-1044664 Xí|AV_P_Nước Thải Xí|110|@|15364,30111;15150,30700|Vào=-560\",\n    u\"WC-1044664 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|15450,31250;16000,31250;16100,31150;16100,30700;16000,30600;15750,30600;15600,30750\",\n    u\"WC-1044664 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|15600,29450;15600,29800;15600,30050;15600,30750;15600,30950;15350,31200;15150,31200|TT=15600,30950\",\n    u\"WC-1044664 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|15364,30111;15364,30450;15364,30950;15150,30950\",\n    u\"WC-1044664 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|15600,29450;15600,30450;15364,30450\",\n    u\"WC-1044664 Lavabo|AV_P_Nước Thải Rửa|60|465|15025,29225;15600,29800\",\n    u\"WC-1044664 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|15200,30400;15200,30000;15300,29900;15450,29900;15600,30050\",\n    u\"WC-CH04 Xí|AV_P_Nước Thải Xí|110|@|49296,30091;49500,30700|Vào=-560\",\n    u\"WC-CH04 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|49200,31250;48650,31250;48550,31150;48550,30700;48650,30600;48900,30600;49050,30750\",\n    u\"WC-CH04 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|49050,29450;49050,29800;49050,30050;49050,30750;49050,30950;49300,31200;49500,31200|TT=49050,30950\",\n    u\"WC-CH04 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|49296,30091;49296,30450;49296,30950;49500,30950\",\n    u\"WC-CH04 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|49050,29450;49050,30450;49296,30450\",\n    u\"WC-CH04 Lavabo|AV_P_Nước Thải Rửa|60|465|49625,29215;49050,29800\",\n    u\"WC-CH04 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|49450,30400;49450,30000;49350,29900;49200,29900;49050,30050\",\n    u\"WC-1043703 Xí|AV_P_Nước Thải Xí|110|@|6536,1540;7000,1350|Vào=-600\",\n    u\"WC-1043703 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|6960,265;6960,650;6960,800;6700,1060;6700,1335;6700,1550;7000,1850|TT=6700,1550\",\n    u\"WC-1043703 Rửa chính|AV_P_Nước Thải Rửa|60|TT|5400,450;5925,450;6760,450;6960,650\",\n    u\"WC-1043703 Lavabo|AV_P_Nước Thải Rửa|60|465|5550,75;5925,450\",\n    u\"WC-1043703 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|6700,1185;6700,1335\",\n    u\"WC-1043703 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|6536,1540;6800,1540;7000,1540\",\n    u\"WC-1043703 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|5400,450;5400,1300;6800,1300;6800,1540\",\n    u\"WC-1043730 Xí|AV_P_Nước Thải Xí|110|@|58114,1560;57650,1350|Vào=-600\",\n    u\"WC-1043730 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|57690,265;57690,650;57690,800;57950,1060;57950,1335;57950,1550;57650,1850|TT=57950,1550\",\n    u\"WC-1043730 Rửa chính|AV_P_Nước Thải Rửa|60|TT|59250,450;58725,450;57890,450;57690,650\",\n    u\"WC-1043730 Lavabo|AV_P_Nước Thải Rửa|60|465|59100,75;58725,450\",\n    u\"WC-1043730 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|57950,1185;57950,1335\",\n    u\"WC-1043730 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|58114,1560;57850,1560;57650,1560\",\n    u\"WC-1043730 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|59250,450;59250,1300;57850,1300;57850,1560\",\n    u\"WC-1044655 Xí|AV_P_Nước Thải Xí|110|@|6536,29990;7000,30200|Vào=-600\",\n    u\"WC-1044655 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|6960,31285;6960,30900;6960,30750;6700,30490;6700,30215;6700,30000;7000,29700|TT=6700,30000\",\n    u\"WC-1044655 Rửa chính|AV_P_Nước Thải Rửa|60|TT|5400,31100;5925,31100;6760,31100;6960,30900\",\n    u\"WC-1044655 Lavabo|AV_P_Nước Thải Rửa|60|465|5550,31475;5925,31100\",\n    u\"WC-1044655 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|6700,30365;6700,30215\",\n    u\"WC-1044655 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|6536,29990;6800,29990;7000,29990\",\n    u\"WC-1044655 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|5400,31100;5400,30250;6800,30250;6800,29990\",\n    u\"WC-1044673 Xí|AV_P_Nước Thải Xí|110|@|58114,30010;57650,30200|Vào=-600\",\n    u\"WC-1044673 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|57690,31285;57690,30900;57690,30750;57950,30490;57950,30215;57950,30000;57650,29700|TT=57950,30000\",\n    u\"WC-1044673 Rửa chính|AV_P_Nước Thải Rửa|60|TT|59250,31100;58725,31100;57890,31100;57690,30900\",\n    u\"WC-1044673 Lavabo|AV_P_Nước Thải Rửa|60|465|59100,31475;58725,31100\",\n    u\"WC-1044673 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|57950,30365;57950,30215\",\n    u\"WC-1044673 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|58114,30010;57850,30010;57650,30010\",\n    u\"WC-1044673 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|59250,31100;59250,30250;57850,30250;57850,30010\",\n    u\"WC-1044323 Xí|AV_P_Nước Thải Xí|110|@|30858,13711;31600,13850|Vào=-560\",\n    u\"WC-1044323 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|30400,13300;30715,13300;31430,13300;31665,13300;31850,13300;32100,13550;32100,13850|TT=31850,13300\",\n    u\"WC-1044323 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|30400,13300;30858,13300;31850,13300;31850,13850\",\n    u\"WC-1044323 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|30858,13711;30858,13300\",\n    u\"WC-1044323 Lavabo|AV_P_Nước Thải Rửa|60|465|29940,14075;30715,13300\",\n    u\"WC-1044323 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|31250,13850;31250,13480;31430,13300\",\n    u\"WC-1044323 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|31480,13485;31665,13300\",\n    u\"WC-1044314 Xí|AV_P_Nước Thải Xí|110|@|33811,13711;33050,13850|Vào=-560\",\n    u\"WC-1044314 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|34250,13300;33935,13300;33220,13300;32985,13300;32800,13300;32550,13550;32550,13850|TT=32800,13300\",\n    u\"WC-1044314 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|34250,13300;33811,13300;32800,13300;32800,13850\",\n    u\"WC-1044314 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|33811,13711;33811,13300\",\n    u\"WC-1044314 Lavabo|AV_P_Nước Thải Rửa|60|465|34710,14075;33935,13300\",\n    u\"WC-1044314 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|33400,13850;33400,13480;33220,13300\",\n    u\"WC-1044314 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|33170,13485;32985,13300\",\n    u\"WC-1044346 Xí|AV_P_Nước Thải Xí|110|@|26514,17269;26325,16600|Vào=-560\",\n    u\"WC-1044346 Rửa chính|AV_P_Nước Thải Rửa|60/60/75/75/75/75|TT|26980,18000;26980,17370;26980,16800;26980,16115;26880,16015;26530,16015;26325,16015|TT=26880,16015\",\n    u\"WC-1044346 Lavabo|AV_P_Nước Thải Rửa|60|465|26150,18200;26980,17370\",\n    u\"WC-1044346 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|26340,17000;26780,17000;26980,16800\",\n    u\"WC-1044346 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEUD=-15|26680,16015;26530,16015\",\n    u\"WC-1044346 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|26514,17269;26514,17000;26514,16300;26325,16300\",\n    u\"WC-1044346 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|26980,18000;26980,17000;26514,17000\",\n])\n# Thông hơi ở giữa xí và rửa (KTS sửa 2026-10-21), cách đều 250 trong HKT lòng 150×800\nDEF_STACKS = u\"\\n\".join([\n    u\"WC-1043712 Ống đứng xí|AV_P_Nước Thải Xí|110|15150,850\",\n    u\"WC-1043712 Thông hơi|AV_P_Thông hơi Xí|75|15150,600\",\n    u\"WC-1043712 Ống đứng rửa|AV_P_Nước Thải Rửa|90|15150,350\",\n    u\"WC-1043721 Ống đứng xí|AV_P_Nước Thải Xí|110|49500,850\",\n    u\"WC-1043721 Thông hơi|AV_P_Thông hơi Xí|75|49500,600\",\n    u\"WC-1043721 Ống đứng rửa|AV_P_Nước Thải Rửa|90|49500,350\",\n    u\"WC-1044664 Ống đứng xí|AV_P_Nước Thải Xí|110|15150,30700\",\n    u\"WC-1044664 Thông hơi|AV_P_Thông hơi Xí|75|15150,30950\",\n    u\"WC-1044664 Ống đứng rửa|AV_P_Nước Thải Rửa|90|15150,31200\",\n    u\"WC-CH04 Ống đứng xí|AV_P_Nước Thải Xí|110|49500,30700\",\n    u\"WC-CH04 Thông hơi|AV_P_Thông hơi Xí|75|49500,30950\",\n    u\"WC-CH04 Ống đứng rửa|AV_P_Nước Thải Rửa|90|49500,31200\",\n    u\"WC-1043703 Ống đứng rửa|AV_P_Nước Thải Rửa|90|7000,1850\",\n    u\"WC-1043703 Thông hơi|AV_P_Thông hơi Xí|75|7000,1540\",\n    u\"WC-1043703 Ống đứng xí|AV_P_Nước Thải Xí|110|7000,1350\",\n    u\"WC-1043730 Ống đứng rửa|AV_P_Nước Thải Rửa|90|57650,1850\",\n    u\"WC-1043730 Thông hơi|AV_P_Thông hơi Xí|75|57650,1560\",\n    u\"WC-1043730 Ống đứng xí|AV_P_Nước Thải Xí|110|57650,1350\",\n    u\"WC-1044655 Ống đứng rửa|AV_P_Nước Thải Rửa|90|7000,29700\",\n    u\"WC-1044655 Thông hơi|AV_P_Thông hơi Xí|75|7000,29990\",\n    u\"WC-1044655 Ống đứng xí|AV_P_Nước Thải Xí|110|7000,30200\",\n    u\"WC-1044673 Ống đứng rửa|AV_P_Nước Thải Rửa|90|57650,29700\",\n    u\"WC-1044673 Thông hơi|AV_P_Thông hơi Xí|75|57650,30010\",\n    u\"WC-1044673 Ống đứng xí|AV_P_Nước Thải Xí|110|57650,30200\",\n    u\"WC-1044323 Ống đứng xí|AV_P_Nước Thải Xí|110|31600,13850\",\n    u\"WC-1044323 Thông hơi|AV_P_Thông hơi Xí|75|31850,13850\",\n    u\"WC-1044323 Ống đứng rửa|AV_P_Nước Thải Rửa|90|32100,13850\",\n    u\"WC-1044314 Ống đứng xí|AV_P_Nước Thải Xí|110|33050,13850\",\n    u\"WC-1044314 Thông hơi|AV_P_Thông hơi Xí|75|32800,13850\",\n    u\"WC-1044314 Ống đứng rửa|AV_P_Nước Thải Rửa|90|32550,13850\",\n    u\"WC-1044346 Ống đứng xí|AV_P_Nước Thải Xí|110|26325,16600\",\n    u\"WC-1044346 Thông hơi|AV_P_Thông hơi Xí|75|26325,16300\",\n    u\"WC-1044346 Ống đứng rửa|AV_P_Nước Thải Rửa|90|26325,16015\",\n])\n\n\ndef arg(i, default):\n    if not DYNAMO or len(IN) <= i or IN[i] is None or (isinstance(IN[i], str) and not IN[i].strip()):\n        return default\n    return IN[i]\n\n\nroutes_txt = arg(0, DEF_ROUTES)\nstacks_txt = arg(1, DEF_STACKS)\nstack_range = arg(2, u\"-3300>3300\")\nh_top_mm = float(arg(3, 400.0))\nslope = float(arg(4, 2.0)) / 100.0\npipe_type_name = arg(5, u\"AV_u.PVC PN6\").strip()\nlevel_name = (arg(6, u\"\") or u\"\").strip()\ncolor_txt = arg(7, u\"Thông hơi=128,0,128;Xí=255,255,0;Rửa=0,0,255\")\ndrain_name = arg(8, u\"AV-Phễu thoát sàn : 100\").strip()\ndry_run = bool(arg(9, True))\nreplace = bool(arg(10, False))\nz_vent = float(arg(11, -220.0))      # cao độ tâm ống thông hơi ngang (THX / THR), mm so với level\n\n\ndef is_vent(r):\n    return bool(r[\"head\"] and r[\"head\"][0] in (\"thx\", \"thr\"))\n\n\n# ---------------------------------------------------------------- phần hình học (chạy được ngoài Revit)\n\ndef lines_of(txt):\n    return [l.strip() for l in txt.replace(u\"\\r\", u\"\\n\").split(u\"\\n\") if l.strip() and not l.strip().startswith(u\"#\")]\n\n\ndef pt(s):\n    a = s.split(u\",\")\n    return float(a[0]), float(a[1])\n\n\ndef d2(a, b):\n    return math.hypot(a[0] - b[0], a[1] - b[1])\n\n\ndef parse(routes_txt, stacks_txt):\n    stacks = []\n    for l in lines_of(stacks_txt):\n        f = [x.strip() for x in l.split(u\"|\")]\n        if len(f) != 4:\n            raise Exception(u\"Ống đứng sai định dạng 'Tên|System|DN|x,y': \" + l)\n        stacks.append({\"name\": f[0], \"system\": f[1], \"dn\": float(f[2]), \"xy\": pt(f[3]), \"joins\": []})\n    routes = []\n    for l in lines_of(routes_txt):\n        f = [x.strip() for x in l.split(u\"|\")]\n        if len(f) < 5:\n            raise Exception(u\"Tuyến sai định dạng 'Tên|System|DN|Đầu|x,y;…[|Vào=z][|TT=x,y]': \" + l)\n        zend, tt_end = None, None\n        for opt in f[5:]:\n            k, _, v = opt.partition(u\"=\")\n            if k.strip().upper() == u\"TT\":\n                tt_end = pt(v)\n            elif opt.strip():\n                zend = float(v if u\"=\" in opt else opt)\n        pts = [pt(q) for q in f[4].split(u\";\") if q.strip()]\n        if len(pts) < 2:\n            raise Exception(u\"Tuyến '{}' cần ≥ 2 điểm\".format(f[0]))\n        head = f[3]\n        if head.upper().startswith(u\"PHEUD\"):\n            head = (\"drainv\", float(head.partition(u\"=\")[2] or 0))\n        elif head.upper().startswith(u\"PHEU\"):\n            head = (\"drain\", float(head.partition(u\"=\")[2] or 0))\n        elif head == u\"@\":\n            head = (\"fixture\", None)\n        elif head.upper() == u\"TT\":\n            head = (\"cap\", None)\n        elif head.upper() in (u\"THX\", u\"THR\"):\n            head = (head.lower(), None)      # thông hơi từ ống xuống bệt / từ đầu ống rửa (cùng điểm đầu)\n        elif head:\n            head = (\"z\", float(head))\n        else:\n            head = None\n        dns = [float(x) for x in f[2].split(u\"/\") if x.strip()]\n        dns += [dns[-1]] * (len(pts) - 1 - len(dns))\n        routes.append({\"name\": f[0], \"system\": f[1], \"dn\": dns[0], \"dns\": dns[:len(pts) - 1], \"head\": head, \"pts\": pts,\n                       \"zend\": zend, \"tt_end\": tt_end})\n    return routes, stacks\n\n\ndef turn_deg(a, b, c):\n    u = (b[0] - a[0], b[1] - a[1])\n    v = (c[0] - b[0], c[1] - b[1])\n    cos = (u[0] * v[0] + u[1] * v[1]) / (math.hypot(*u) * math.hypot(*v))\n    return math.degrees(math.acos(max(-1.0, min(1.0, cos))))\n\n\ndef plan(routes, stacks):\n    \"\"\"Nơi xả của mỗi tuyến + cao độ tương đối (mm so với level) của mọi đỉnh. Trả về danh sách cảnh báo.\"\"\"\n    notes = []\n    for r in routes:\n        end = r[\"pts\"][-1]\n        st = [s for s in stacks if d2(s[\"xy\"], end) <= SNAP_MM]\n        if st:\n            r[\"to\"] = (\"stack\", st[0])\n            r[\"pts\"][-1] = st[0][\"xy\"]\n            if st[0][\"system\"] != r[\"system\"]:\n                notes.append(u\"Tuyến '{}' ({}) xả vào ống đứng '{}' ({}) – khác system\".format(\n                    r[\"name\"], r[\"system\"], st[0][\"name\"], st[0][\"system\"]))\n            continue\n        hit = None\n        for o in routes:\n            if o is r:\n                continue\n            for i, q in enumerate(o[\"pts\"][1:-1], 1):\n                if d2(q, end) <= SNAP_MM:\n                    hit = (o, i)\n        if hit is None:\n            raise Exception(u\"Tuyến '{}': điểm cuối {:.0f},{:.0f} không trùng tâm ống đứng hay đỉnh giữa tuyến khác\".format(\n                r[\"name\"], end[0], end[1]))\n        o, i = hit\n        if turn_deg(o[\"pts\"][i - 1], o[\"pts\"][i], o[\"pts\"][i + 1]) > 1.0:\n            raise Exception(u\"Tuyến '{}' nhập vào '{}' tại đỉnh có gấp khúc – Y cần tuyến chính đi thẳng\".format(\n                r[\"name\"], o[\"name\"]))\n        if r[\"head\"] and r[\"head\"][0] == \"drainv\":\n            # phễu đấu từ trên xuống: phễu nằm trên đoạn ống chính ngay thượng lưu đỉnh i, cách ≥ DRAINV_MIN_H\n            a, b = o[\"pts\"][i - 1], o[\"pts\"][i]\n            p = r[\"pts\"][0]\n            L = d2(a, b)\n            t = ((p[0] - a[0]) * (b[0] - a[0]) + (p[1] - a[1]) * (b[1] - a[1])) / (L * L)\n            off = abs((p[0] - a[0]) * (b[1] - a[1]) - (p[1] - a[1]) * (b[0] - a[0])) / L\n            if len(r[\"pts\"]) != 2 or off > SNAP_MM or t < -1e-6 or t > 1:\n                raise Exception(u\"Tuyến '{}' (PHEUD): phễu phải nằm trên đoạn ống '{}' ngay trước đỉnh {:.0f},{:.0f}\".format(\n                    r[\"name\"], o[\"name\"], b[0], b[1]))\n            if d2(p, b) < DRAINV_MIN_H:\n                raise Exception(u\"Tuyến '{}' (PHEUD): phễu cách điểm Y {:.0f} mm < {:.0f} (nhánh Y 136 + co 45°)\".format(\n                    r[\"name\"], d2(p, b), DRAINV_MIN_H))\n        else:\n            ang = turn_deg(r[\"pts\"][-2], end, o[\"pts\"][i + 1])\n        if not (r[\"head\"] and r[\"head\"][0] == \"drainv\") and not is_vent(r) and abs(ang - 45) > 1.0:\n            notes.append(u\"Tuyến '{}' nhập vào '{}' lệch {:.0f}° (Y cần 45°)\".format(r[\"name\"], o[\"name\"], ang))\n        r[\"to\"] = (\"route\", o, i)\n        r[\"pts\"][-1] = o[\"pts\"][i]\n        if o[\"system\"] != r[\"system\"]:\n            notes.append(u\"Tuyến '{}' nhập vào '{}' khác system\".format(r[\"name\"], o[\"name\"]))\n    for r in routes:\n        for i, (a, b, c) in enumerate(zip(r[\"pts\"], r[\"pts\"][1:], r[\"pts\"][2:]), 1):\n            t = turn_deg(a, b, c)\n            if t > 1.0 and abs(t - 45) > 1.0 and not is_vent(r):     # thông hơi được gấp 90° (như mẫu CTN)\n                notes.append(u\"Tuyến '{}' gấp {:.0f}° tại {:.0f},{:.0f} (quy định gấp 45°)\".format(r[\"name\"], t, b[0], b[1]))\n            if t <= 1.0 and not any(o[\"to\"][0] == \"route\" and o[\"to\"][1] is r and o[\"to\"][2] == i for o in routes):\n                # đỉnh thẳng hàng không có nhánh nhập → hai ống không có gì nối (không co, không Y)\n                raise Exception(u\"Tuyến '{}': đỉnh {:.0f},{:.0f} thẳng hàng mà không có tuyến nào nhập vào – bỏ đỉnh này\".format(\n                    r[\"name\"], b[0], b[1]))\n\n    # khoảng cách tới ống đứng theo đường ống (mm) tại mỗi đỉnh\n    def dist_to_stack(r, depth=0):\n        if depth > len(routes):\n            raise Exception(u\"Tuyến nối vòng\")\n        if \"dist\" in r:\n            return r[\"dist\"]\n        segs = [d2(a, b) for a, b in zip(r[\"pts\"], r[\"pts\"][1:])]\n        if r[\"to\"][0] == \"stack\":\n            base, stack, root = 0.0, r[\"to\"][1], r\n        else:\n            o, i = r[\"to\"][1], r[\"to\"][2]\n            base, stack, root = dist_to_stack(o, depth + 1)[i], o[\"stack\"], o[\"root\"]\n        r[\"stack\"], r[\"root\"] = stack, root\n        out = [base]\n        for L in reversed(segs):\n            out.insert(0, out[0] + L)\n        r[\"dist\"] = out\n        return out\n\n    for r in routes:\n        dist_to_stack(r)\n    # mỗi ống đứng: điểm xa nhất của các nhánh vào nó có tâm = −h_top; tuyến có 'Vào=z' (trường 6) vào ống đứng\n    # ở đúng cao độ z (tê riêng, VD thoát sàn thả sâu dưới tê nhánh xí) – cả cây nhánh của nó tính từ z đó\n    for s in stacks:\n        rs = [r for r in routes if r[\"stack\"] is s]\n        if not rs:\n            continue\n        free = [r for r in rs if r[\"root\"][\"zend\"] is None and not (r[\"head\"] and r[\"head\"][0] == \"drainv\")]\n        if free:\n            s[\"entry_z\"] = -h_top_mm - slope * max(r[\"dist\"][0] for r in free)\n        for r in rs:\n            if is_vent(r):\n                r[\"z\"] = [z_vent] * len(r[\"pts\"])        # thông hơi ngang phẳng ở z_vent\n            else:\n                base = s[\"entry_z\"] if r[\"root\"][\"zend\"] is None else r[\"root\"][\"zend\"]\n                r[\"z\"] = [base + slope * d for d in r[\"dist\"]]\n            if r[\"to\"][0] == \"stack\":\n                s[\"joins\"].append(r)\n        zs = sorted(r[\"z\"][-1] for r in s[\"joins\"])\n        for z1, z2 in zip(zs, zs[1:]):\n            if z2 - z1 < 250:\n                notes.append(u\"Ống đứng '{}': hai tê ở {:+.0f} và {:+.0f} cách {:.0f} mm – dễ chồng phụ kiện (nên ≥ 280)\".format(\n                    s[\"name\"], z1, z2, z2 - z1))\n    for r in routes:\n        if r[\"head\"] and r[\"head\"][0] == \"drainv\":\n            # nhánh nghiêng 45° theo phương đứng: co 45° ngay dưới phễu cao hơn điểm Y đúng bằng khoảng cách mặt bằng\n            o, i = r[\"to\"][1], r[\"to\"][2]\n            h = d2(r[\"pts\"][0], o[\"pts\"][i])\n            r[\"z\"] = [o[\"z\"][i] + h, o[\"z\"][i]]\n            if r[\"z\"][0] > DRAINV_MAX_TOP:\n                notes.append(u\"Tuyến '{}' (PHEUD): co dưới phễu ở {:+.0f} – sát thân phễu (đáy ≈ −165)\".format(r[\"name\"], r[\"z\"][0]))\n    for r in routes:\n        h = r[\"head\"]\n        if h and h[0] == \"z\" and h[1] < r[\"z\"][0] + MIN_LEN_MM:\n            raise Exception(u\"Tuyến '{}': đầu ống xuống {:.0f} thấp hơn tâm nhánh {:.0f}\".format(r[\"name\"], h[1], r[\"z\"][0]))\n        if is_vent(r):\n            # THX: tuyến xí cùng điểm đầu (tê trên ống xuống bệt); THR: tuyến có thông tắc đầu (TT) cùng điểm đầu\n            want = \"fixture\" if h[0] == \"thx\" else \"cap\"\n            src = [o for o in routes if o is not r and o[\"head\"] and o[\"head\"][0] == want and d2(o[\"pts\"][0], r[\"pts\"][0]) <= SNAP_MM]\n            if not src:\n                raise Exception(u\"Tuyến '{}' ({}): không có tuyến {} cùng điểm đầu {:.0f},{:.0f}\".format(\n                    r[\"name\"], h[0].upper(), u\"xí '@'\" if want == \"fixture\" else u\"thông tắc 'TT'\", r[\"pts\"][0][0], r[\"pts\"][0][1]))\n            r[\"src\"] = src[0]\n            src[0][\"vent\"] = r\n            gap = z_vent - src[0][\"z\"][0]\n            if h[0] == \"thx\" and gap < VENT_MIN_RISE_X:\n                notes.append(u\"Tuyến '{}': tê thông hơi trên ống xuống bệt chỉ cao hơn nhánh xí {:.0f} mm (nên ≥ {:.0f})\".format(\n                    r[\"name\"], gap, VENT_MIN_RISE_X))\n            if h[0] == \"thr\" and gap < VENT_MIN_RISE_R:\n                notes.append(u\"Tuyến '{}': ống đứng thông hơi ở đầu ống rửa chỉ cao {:.0f} mm (tê 94 + co 90° + 20 ≈ {:.0f})\".format(\n                    r[\"name\"], gap, VENT_MIN_RISE_R))\n        if r[\"tt_end\"] is not None:\n            ks = [k for k in range(1, len(r[\"pts\"]) - 1) if d2(r[\"pts\"][k], r[\"tt_end\"]) <= SNAP_MM]\n            if not ks or turn_deg(r[\"pts\"][ks[0] - 1], r[\"pts\"][ks[0]], r[\"pts\"][ks[0] + 1]) < 1.0:\n                raise Exception(u\"Tuyến '{}': TT={:.0f},{:.0f} phải là một đỉnh gấp khúc của tuyến\".format(\n                    r[\"name\"], r[\"tt_end\"][0], r[\"tt_end\"][1]))\n            r[\"tt_k\"] = ks[0]\n            out_len = d2(r[\"pts\"][ks[0]], r[\"pts\"][ks[0] + 1])\n            if out_len < TT_END_MIN_OUT:\n                notes.append(u\"Tuyến '{}': sau thông tắc cuối chỉ còn {:.0f} mm ống (nhánh Y 75 dài 161 + phụ kiện kế tiếp)\".format(\n                    r[\"name\"], out_len))\n    return notes\n\n\ndef describe(routes, stacks):\n    out = []\n    for s in stacks:\n        out.append(u\"Ống đứng '{}' D{:.0f} tại {:.0f},{:.0f} ({}){}\".format(\n            s[\"name\"], s[\"dn\"], s[\"xy\"][0], s[\"xy\"][1], s[\"system\"],\n            u\" – tê ở \" + u\", \".join(u\"{:+.0f}\".format(r[\"z\"][-1]) for r in s[\"joins\"]) if s[\"joins\"] else u\" – không có nhánh\"))\n    for r in routes:\n        L = sum(d2(a, b) for a, b in zip(r[\"pts\"], r[\"pts\"][1:]))\n        to = r[\"to\"][1][\"name\"]\n        head = {None: u\"không ống xuống\", \"fixture\": u\"ống xuống từ thiết bị\", \"z\": u\"ống xuống từ {:+.0f}\",\n                \"drain\": u\"phễu thu (chân {:+.0f})\", \"drainv\": u\"phễu thu đấu từ trên xuống (chân {:+.0f})\",\n                \"cap\": u\"thông tắc (nút bịt)\", \"thx\": u\"thông hơi từ ống xuống bệt (tê)\",\n                \"thr\": u\"thông hơi từ đầu ống rửa (ống đứng + tê)\"}[r[\"head\"][0] if r[\"head\"] else None]\n        if r.get(\"tt_k\"):\n            head += u\", thông tắc cuối tại {:.0f},{:.0f}\".format(*r[\"pts\"][r[\"tt_k\"]])\n        if r[\"head\"] and r[\"head\"][1] is not None:\n            head = head.format(r[\"head\"][1])\n        out.append(u\"Tuyến '{}' D{} dài {:.0f} mm, tâm {:+.0f} → {:+.0f}, {} → '{}' ({})\".format(\n            r[\"name\"], u\"/\".join(u\"{:.0f}\".format(d) for d in r[\"dns\"]), L, r[\"z\"][0], r[\"z\"][-1], head, to, u\"Y 45°\" if r[\"to\"][0] == \"route\" else u\"tê\"))\n    return out\n\n\n# ---------------------------------------------------------------- phần Revit\n\ndef mm2ft(v):\n    return v / 304.8\n\n\ndef ft2mm(v):\n    return v * 304.8\n\n\ndef get_name(e):\n    \"\"\"CPython3 (Python.NET) không đọc được e.Name của PipeType / PipingSystemType ('property cannot be read')\n    → đọc qua reflection của Element.Name, cuối cùng mới lấy tham số tên type (Dynamo 2026-10-21).\"\"\"\n    try:\n        return e.Name\n    except Exception:\n        pass\n    try:\n        from Autodesk.Revit.DB import Element\n        return clr.GetClrType(Element).GetProperty(\"Name\").GetValue(e, None)\n    except Exception:\n        pass\n    for bip in (BuiltInParameter.ALL_MODEL_TYPE_NAME, BuiltInParameter.SYMBOL_NAME_PARAM):\n        p = e.get_Parameter(bip)\n        if p is not None and p.AsString():\n            return p.AsString()\n    return u\"\"\n\n\nclass Builder(object):\n    def __init__(self, level, pipe_type, systems, fits):\n        self.level, self.pt, self.systems, self.fits = level, pipe_type, systems, fits\n        self.z0 = level.Elevation\n        self.made = []          # (element, system)\n        self.min_len = mm2ft(MIN_LEN_MM)\n\n    def xyz(self, p, z):\n        return XYZ(mm2ft(p[0]), mm2ft(p[1]), self.z0 + mm2ft(z))\n\n    def pipe(self, sysname, dn, a, b, name):\n        p = Pipe.Create(doc, self.systems[sysname].Id, self.pt.Id, self.level.Id, a, b)\n        p.get_Parameter(BuiltInParameter.RBS_PIPE_DIAMETER_PARAM).Set(mm2ft(dn))\n        p.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set(u\"{} | {}\".format(COMMENT, name))\n        self.made.append((p, sysname))\n        return p\n\n    @staticmethod\n    def con(p, q):\n        return min(list(p.ConnectorManager.Connectors), key=lambda c: c.Origin.DistanceTo(q))\n\n    @staticmethod\n    def far(p, q):\n        return max(list(p.ConnectorManager.Connectors), key=lambda c: c.Origin.DistanceTo(q)).Origin\n\n    def ok(self, pipes, dirs):\n        for p, d in zip(pipes, dirs):\n            if not p.IsValidObject:\n                return False\n            c = p.Location.Curve\n            if c.Length < self.min_len or c.GetEndPoint(1).Subtract(c.GetEndPoint(0)).Normalize().DotProduct(d) < 0.99:\n                return False\n        return True\n\n    def guarded(self, pipes, fn):\n        \"\"\"Phụ kiện trong SubTransaction: ống bị cắt lẹm / đổi chiều → hoàn tác. Trả về lý do lỗi hoặc None.\"\"\"\n        dirs = [p.Location.Curve.GetEndPoint(1).Subtract(p.Location.Curve.GetEndPoint(0)).Normalize() for p in pipes]\n        st = SubTransaction(doc)\n        st.Start()\n        why, fi = None, None\n        try:\n            fi = fn()\n            doc.Regenerate()\n            if not self.ok(pipes, dirs):\n                why = u\"ống quá ngắn / đổi chiều\"\n        except Exception as ex:\n            why = u\"{}\".format(ex)\n        if why is None:\n            cm = fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS) if fi is not None else None\n            if cm is not None and not cm.IsReadOnly:\n                cm.Set(u\"{} | phụ kiện\".format(COMMENT))\n            st.Commit()\n            self.made.append((fi, self.sys_of(pipes[0])))\n        else:\n            st.RollBack()\n        return why\n\n    def sys_of(self, p):\n        for e, s in self.made:\n            if e.Id == p.Id:\n                return s\n        return u\"\"\n\n    def elbow(self, p1, p2, q):\n        return self.guarded([p1, p2], lambda: doc.Create.NewElbowFitting(self.con(p1, q), self.con(p2, q)))\n\n    def place3(self, sym, N, legA, legB, br):\n        \"\"\"Y / tê: legA → +X (C2), legB → −X (C1), nhánh → C3 (giống ARV_TaoOngThoatNuocTuCAD_v1).\"\"\"\n        def run():\n            uA = self.far(legA, N).Subtract(N).Normalize()\n            uB = self.far(legB, N).Subtract(N).Normalize()\n            ub = self.far(br, N).Subtract(N).Normalize()\n            X = uA.Subtract(uB).Normalize()\n            Yp = ub.Subtract(X.Multiply(ub.DotProduct(X)))\n            if Yp.GetLength() < 0.05:\n                raise Exception(u\"nhánh thẳng hàng ống chính\")\n            Y = Yp.Normalize().Negate()\n            Z = X.CrossProduct(Y)\n            fi = doc.Create.NewFamilyInstance(N, sym, self.level, StructuralType.NonStructural)\n            for k, p in ((u\"Nominal Radius 1\", legB), (u\"Nominal Radius 2\", legA), (u\"Nominal Radius 3\", br)):\n                if fi.LookupParameter(k) is not None:\n                    fi.LookupParameter(k).Set(p.Diameter / 2)\n            if fi.LookupParameter(u\"Nominal Radius 1\") is None and fi.LookupParameter(u\"Nominal Radius\") is not None:\n                fi.LookupParameter(u\"Nominal Radius\").Set(legB.Diameter / 2)\n            tr = X.X + Y.Y + Z.Z\n            ang = math.acos(max(-1.0, min(1.0, (tr - 1) / 2)))\n            if ang > 1e-9:\n                if math.pi - ang < 1e-6:\n                    k = 0 if (X.X >= Y.Y and X.X >= Z.Z) else (1 if Y.Y >= Z.Z else 2)\n                    ax = [XYZ(X.X + 1, X.Y, X.Z), XYZ(Y.X, Y.Y + 1, Y.Z), XYZ(Z.X, Z.Y, Z.Z + 1)][k]\n                else:\n                    ax = XYZ(Y.Z - Z.Y, Z.X - X.Z, X.Y - Y.X)\n                ElementTransformUtils.RotateElement(doc, fi.Id, Line.CreateUnbound(N, ax.Normalize()), ang)\n            doc.Regenerate()\n            lp = fi.Location.Point\n            if lp.DistanceTo(N) > 1e-6:\n                ElementTransformUtils.MoveElement(doc, fi.Id, N.Subtract(lp))\n                doc.Regenerate()\n            cs = list(fi.MEPModel.ConnectorManager.Connectors)\n            todo = []\n            for p, u in ((legA, uA), (legB, uB), (br, ub)):\n                c = max(cs, key=lambda k: k.CoordinateSystem.BasisZ.DotProduct(u))\n                f = self.far(p, N)\n                if f.Subtract(c.Origin).DotProduct(u) < self.min_len:\n                    raise Exception(u\"ống quá ngắn cho phụ kiện\")\n                todo.append((p, c, f))\n            for p, c, f in todo:\n                end1 = p.Location.Curve.GetEndPoint(1).IsAlmostEqualTo(f)\n                p.Location.Curve = Line.CreateBound(c.Origin, f) if end1 else Line.CreateBound(f, c.Origin)\n                self.con(p, c.Origin).ConnectTo(c)\n            return fi\n        return self.guarded([legA, legB, br], run)\n\n\ndef sanitary_connectors():\n    \"\"\"Connector Sanitary của thiết bị vệ sinh trong mô hình + mọi file link (toạ độ mô hình đang mở).\"\"\"\n    out = []\n    srcs = [(doc, Transform.Identity)]\n    for li in FilteredElementCollector(doc).OfClass(RevitLinkInstance).ToElements():\n        ld = li.GetLinkDocument()\n        if ld is not None:\n            srcs.append((ld, li.GetTotalTransform()))\n    for d, tf in srcs:\n        # OfClass(FamilyInstance): Python.NET trả đúng kiểu FamilyInstance → có MEPModel (2026-10-21 bệt trong link\n        # không được nhận khi lọc theo category)\n        for e in FilteredElementCollector(d).OfClass(FamilyInstance).OfCategory(BuiltInCategory.OST_PlumbingFixtures).ToElements():\n            mep = getattr(e, \"MEPModel\", None)\n            if mep is None or mep.ConnectorManager is None:\n                continue\n            for c in mep.ConnectorManager.Connectors:\n                if c.Domain == Domain.DomainPiping and is_sanitary(c):\n                    out.append((tf.OfPoint(c.Origin), e, d.Title))\n    return out\n\n\ndef previous_run():\n    \"\"\"Id phần tử của lần chạy trước: ống / phễu / phụ kiện có Comments ARV-THOATWC + phụ kiện nối vào ống đó\n    (bản trước 2026-10-21 chưa ghi Comments cho phụ kiện).\"\"\"\n    def tagged(e):\n        p = e.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n        return p is not None and (p.AsString() or u\"\").startswith(COMMENT)\n    fit_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_PipeFitting).Id.Value\n    ids = {}\n    for cat in (BuiltInCategory.OST_PipeCurves, BuiltInCategory.OST_PipeFitting, BuiltInCategory.OST_PlumbingFixtures):\n        for e in FilteredElementCollector(doc).OfCategory(cat).WhereElementIsNotElementType().ToElements():\n            if not tagged(e):\n                continue\n            ids[e.Id.Value] = e.Id\n            if isinstance(e, Pipe):\n                for c in e.ConnectorManager.Connectors:\n                    for r in c.AllRefs:\n                        o = r.Owner\n                        if o is not None and o.Category is not None and o.Category.Id.Value == fit_cat:\n                            ids[o.Id.Value] = o.Id\n    return [ids[k] for k in sorted(ids)]\n\n\ndef is_sanitary(c):\n    # str(enum) trên Python.NET không chắc ra \"Sanitary\" (Dynamo 2026-10-21: bệt trong link không được nhận) → so enum\n    try:\n        if c.PipeSystemType == PipeSystemType.Sanitary:\n            return True\n    except Exception:\n        pass\n    return u\"Sanitary\" in u\"{}\".format(c.PipeSystemType)\n\n\ndef drain_symbol():\n    fam, _, typ = [s.strip() for s in drain_name.partition(u\":\")]\n    def find(d):\n        for s in FilteredElementCollector(d).OfClass(FamilySymbol).ToElements():\n            if s.FamilyName == fam and (not typ or get_name(s) == typ):\n                return s\n        return None\n    s = find(doc)\n    if s is not None:\n        return s, u\"có sẵn\"\n    for li in FilteredElementCollector(doc).OfClass(RevitLinkInstance).ToElements():\n        ld = li.GetLinkDocument()\n        src = find(ld) if ld is not None else None\n        if src is not None:\n            ids = List[ElementId]()\n            ids.Add(src.Id)\n            new = ElementTransformUtils.CopyElements(ld, ids, doc, Transform.Identity, CopyPasteOptions())\n            return doc.GetElement(list(new)[0]), u\"chép từ \" + ld.Title\n    raise Exception(u\"Không có phễu thu '{}' trong mô hình hay file link\".format(drain_name))\n\n\ndef junctions(pt):\n    rpm = pt.RoutingPreferenceManager\n    wye = tee = None\n    for i in range(rpm.GetNumberOfRules(RoutingPreferenceRuleGroupType.Junctions)):\n        s = doc.GetElement(rpm.GetRule(RoutingPreferenceRuleGroupType.Junctions, i).MEPPartId)\n        if not isinstance(s, FamilySymbol):\n            continue\n        if u\"WYE\" in s.FamilyName.upper():\n            wye = wye or s\n        else:\n            tee = tee or s\n    for s in (wye, tee):\n        if s is not None and not s.IsActive:\n            s.Activate()\n    return wye, tee\n\n\ndef apply_colors(made):\n    rules = []\n    for item in color_txt.split(u\";\"):\n        k, _, v = item.partition(u\"=\")\n        try:\n            r, g, b = [int(x) for x in v.split(u\",\")]\n        except ValueError:\n            continue\n        rules.append((k.strip().lower(), Color(r, g, b)))\n    if not rules:\n        return u\"không tô màu\"\n    view = doc.ActiveView\n    solid = [f for f in FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements() if f.GetFillPattern().IsSolidFill]\n    n = 0\n    for e, sysname in made:\n        if e is None or not e.IsValidObject:\n            continue\n        for k, col in rules:\n            if k in sysname.lower():\n                og = OverrideGraphicSettings()\n                og.SetProjectionLineColor(col)\n                og.SetCutLineColor(col)\n                if solid:\n                    og.SetSurfaceForegroundPatternId(solid[0].Id)\n                    og.SetSurfaceForegroundPatternColor(col)\n                view.SetElementOverrides(e.Id, og)\n                n += 1\n                break\n    return u\"tô màu {} phần tử trong view '{}'\".format(n, get_name(view))\n\n\ndef build(routes, stacks, level, ptype, systems, fits, lines):\n    b = Builder(level, ptype, systems, fits)\n    fail = []\n    fixtures = sanitary_connectors()\n    route_pipes = {}\n    # 1. nhánh: ống xuống + các đoạn ngang\n    for r in routes:\n        nodes = [b.xyz(p, z) for p, z in zip(r[\"pts\"], r[\"z\"])]\n        segs = [b.pipe(r[\"system\"], dn, a, c, r[\"name\"]) for a, c, dn in zip(nodes, nodes[1:], r[\"dns\"])]\n        route_pipes[id(r)] = (nodes, segs)\n        h = r[\"head\"]\n        top, drain_conn = None, None\n        if h and h[0] == \"z\":\n            top = b.xyz(r[\"pts\"][0], h[1])\n        elif h and h[0] == \"fixture\":\n            near = [f for f in fixtures if d2((ft2mm(f[0].X), ft2mm(f[0].Y)), r[\"pts\"][0]) <= FIX_SNAP_MM]\n            if not near:\n                dmin = min([d2((ft2mm(f[0].X), ft2mm(f[0].Y)), r[\"pts\"][0]) for f in fixtures] or [-1])\n                fail.append(u\"Tuyến '{}': không thấy connector thiết bị ≤ {:.0f} mm quanh điểm đầu \"\n                            u\"({} connector Sanitary trong mô hình + link, gần nhất {:.0f} mm)\".format(\n                                r[\"name\"], FIX_SNAP_MM, len(fixtures), dmin))\n            else:\n                c = min(near, key=lambda f: d2((ft2mm(f[0].X), ft2mm(f[0].Y)), r[\"pts\"][0]))\n                top = XYZ(nodes[0].X, nodes[0].Y, c[0].Z)\n                lines.append(u\"Tuyến '{}': connector {} Id {} ({}) z {:+.0f}, lệch {:.0f} mm\".format(\n                    r[\"name\"], c[1].Symbol.FamilyName, c[1].Id.Value, c[2], ft2mm(c[0].Z - b.z0),\n                    d2((ft2mm(c[0].X), ft2mm(c[0].Y)), r[\"pts\"][0])))\n        elif h and h[0] in (\"drain\", \"drainv\"):     # drainv: nodes[0] đã ở cao độ co 45° dưới phễu (plan)\n            sym, how = drain_symbol()\n            if not sym.IsActive:\n                sym.Activate()\n            fi = doc.Create.NewFamilyInstance(b.xyz(r[\"pts\"][0], h[1]), sym, level, StructuralType.NonStructural)\n            fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set(u\"{} | {}\".format(COMMENT, r[\"name\"]))\n            doc.Regenerate()\n            b.made.append((fi, r[\"system\"]))\n            cs = [c for c in fi.MEPModel.ConnectorManager.Connectors if c.Domain == Domain.DomainPiping]\n            drain_conn = cs[0]\n            top = XYZ(nodes[0].X, nodes[0].Y, drain_conn.Origin.Z)\n            lines.append(u\"Phễu thu '{}' ({}) tại {:.0f},{:.0f}, chân {:+.0f}\".format(drain_name, how, r[\"pts\"][0][0], r[\"pts\"][0][1], h[1]))\n        elif h and h[0] == \"thr\":\n            # ống đứng thông hơi: từ đầu ống rửa (tuyến TT cùng điểm đầu) lên cao độ thông hơi\n            src = r[\"src\"]\n            top = b.xyz(src[\"pts\"][0], src[\"z\"][0])\n        if top is not None:\n            if abs(top.Z - nodes[0].Z) < b.min_len:\n                fail.append(u\"Tuyến '{}': đầu ống xuống không cao hơn nhánh\".format(r[\"name\"]))\n            elif h[0] == \"fixture\" and r.get(\"vent\") is not None:\n                # THX: ống xuống bệt cắt đôi tại cao độ thông hơi để đặt tê\n                pv = XYZ(top.X, top.Y, b.z0 + mm2ft(z_vent))\n                upper = b.pipe(r[\"system\"], r[\"dn\"], top, pv, r[\"name\"])\n                lower = b.pipe(r[\"system\"], r[\"dn\"], pv, nodes[0], r[\"name\"])\n                r[\"thx_upper\"], r[\"thx_pv\"] = upper, pv\n                route_pipes[id(r)] = (nodes, [lower] + segs)\n                r[\"has_drop\"] = True\n            else:\n                drop = b.pipe(r[\"system\"], r[\"dn\"], top, nodes[0], r[\"name\"])\n                if drain_conn is not None:\n                    b.con(drop, drain_conn.Origin).ConnectTo(drain_conn)\n                route_pipes[id(r)] = (nodes, [drop] + segs)\n                r[\"has_drop\"] = True\n    # 1b. THR: đoạn thông tắc lùi sau đầu ống rửa (nút bịt ở đây thay cho đầu ống)\n    for r in routes:\n        if r[\"head\"] and r[\"head\"][0] == \"cap\" and r.get(\"vent\") is not None:\n            nodes, segs = route_pipes[id(r)]\n            a, c = r[\"pts\"][0], r[\"pts\"][1]\n            L = d2(a, c)\n            back = (a[0] + (a[0] - c[0]) / L * THR_STUB, a[1] + (a[1] - c[1]) / L * THR_STUB)\n            r[\"thr_stub\"] = b.pipe(r[\"system\"], r[\"dns\"][0], nodes[0], b.xyz(back, r[\"z\"][0]), r[\"name\"])\n    # 2. ống đứng, cắt tại các cao độ nhánh vào\n    stack_pipes = {}\n    rng = [float(x) for x in stack_range.split(u\">\")]\n    for s in stacks:\n        zs = sorted(set([rng[0], rng[1]] + [r[\"z\"][-1] for r in s[\"joins\"]]))\n        ps = [b.pipe(s[\"system\"], s[\"dn\"], b.xyz(s[\"xy\"], z1), b.xyz(s[\"xy\"], z2), s[\"name\"]) for z1, z2 in zip(zs, zs[1:])]\n        stack_pipes[id(s)] = (zs, ps)\n    doc.Regenerate()\n    # 3. Y + tê trước (cần nhiều chỗ), co sau\n    for r in routes:\n        nodes, segs = route_pipes[id(r)]\n        last = segs[-1]\n        if r[\"to\"][0] == \"stack\":\n            s = r[\"to\"][1]\n            zs, ps = stack_pipes[id(s)]\n            i = zs.index(r[\"z\"][-1])\n            why = b.place3(fits[\"tee\"], nodes[-1], ps[i], ps[i - 1], last)    # trên = +X, dưới = −X\n            kind = u\"tê vào ống đứng '{}'\".format(s[\"name\"])\n        else:\n            o, i = r[\"to\"][1], r[\"to\"][2]\n            onodes, osegs = route_pipes[id(o)]\n            k = i + (1 if o.get(\"has_drop\") else 0)    # đoạn sau đỉnh i trong danh sách ống của o\n            fit = fits[\"tee\"] if is_vent(r) else fits[\"wye\"]     # thông hơi nhập nhau bằng tê (gấp 90°)\n            why = b.place3(fit, onodes[i], osegs[k - 1], osegs[k], last)\n            kind = u\"{} vào tuyến '{}'\".format(u\"tê\" if is_vent(r) else u\"Y\", o[\"name\"])\n        if why:\n            fail.append(u\"Tuyến '{}': {} – {}\".format(r[\"name\"], kind, why))\n    # 3b. tê thông hơi: trên ống xuống bệt (THX) và ở đầu ống rửa (THR)\n    for r in routes:\n        if not is_vent(r):\n            continue\n        nodes, segs = route_pipes[id(r)]\n        src = r[\"src\"]\n        if r[\"head\"][0] == \"thx\":\n            if \"thx_upper\" not in src:\n                fail.append(u\"Tuyến '{}': ống xuống bệt chưa dựng, không đặt tê thông hơi\".format(r[\"name\"]))\n                continue\n            _, ssegs = route_pipes[id(src)]\n            why = b.place3(fits[\"tee\"], src[\"thx_pv\"], src[\"thx_upper\"], ssegs[0], segs[0])\n        else:\n            snodes, ssegs = route_pipes[id(src)]\n            why = b.place3(fits[\"tee\"], snodes[0], src[\"thr_stub\"], ssegs[0], segs[0])\n        if why:\n            fail.append(u\"Tuyến '{}': tê thông hơi – {}\".format(r[\"name\"], why))\n    for r in routes:\n        nodes, segs = route_pipes[id(r)]\n        off = 1 if r.get(\"has_drop\") else 0\n        pts = ([None] if off else []) + nodes     # điểm đầu của từng ống trong segs\n        for j, (p1, p2) in enumerate(zip(segs, segs[1:])):\n            q = pts[j + 1]\n            k = j + 1 - off                       # chỉ số đỉnh trên tuyến gốc\n            if k >= 1 and turn_deg(r[\"pts\"][k - 1], r[\"pts\"][k], r[\"pts\"][k + 1]) < 1.0:\n                continue                          # thẳng hàng theo tuyến gốc (đỉnh có Y) – không co; xét theo ống\n                                                  # sau khi Y cắt bị lệch số → từng cố đặt co (Dynamo 2026-10-21)\n            if k >= 1 and k == r.get(\"tt_k\"):\n                # thông tắc ở chỗ gấp cuối trước trục (mẫu HN Garden City): ống chính chạy thẳng tới nút bịt,\n                # nhánh Y rẽ vào trục – Y: chân thẳng phía nút bịt (+X), nhánh nghiêng về phía nút bịt\n                a = r[\"pts\"][k - 1]\n                L = d2(a, r[\"pts\"][k])\n                ahead = (r[\"pts\"][k][0] + (r[\"pts\"][k][0] - a[0]) / L * TT_END_STUB,\n                         r[\"pts\"][k][1] + (r[\"pts\"][k][1] - a[1]) / L * TT_END_STUB)\n                stub = b.pipe(r[\"system\"], r[\"dns\"][k - 1], q, b.xyz(ahead, r[\"z\"][k]), r[\"name\"])\n                r[\"tt_stub\"] = stub\n                doc.Regenerate()\n                why = b.place3(fits[\"wye\"], q, stub, p1, p2)\n                if why:\n                    fail.append(u\"Tuyến '{}': thông tắc cuối tại {:.0f},{:.0f} – {}\".format(r[\"name\"], ft2mm(q.X), ft2mm(q.Y), why))\n                continue\n            why = b.elbow(p1, p2, q)\n            if why:\n                fail.append(u\"Tuyến '{}': co tại {:.0f},{:.0f} – {}\".format(r[\"name\"], ft2mm(q.X), ft2mm(q.Y), why))\n    # 4. thông tắc: nút bịt theo rule Caps của pipe type – đặt sau Y / tê / co để chỉ còn đầu thông tắc hở\n    fit_cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_PipeFitting).Id.Value\n\n    def cap_on(p, r, what):\n        opened = [c for c in p.ConnectorManager.Connectors if not c.IsConnected]\n        if len(opened) != 1:\n            fail.append(u\"Tuyến '{}': {} – ống có {} đầu hở (cần 1), không đặt nút bịt\".format(r[\"name\"], what, len(opened)))\n            return\n        st = SubTransaction(doc)\n        st.Start()\n        try:\n            PlumbingUtils.PlaceCapOnOpenEnds(doc, p.Id, b.pt.Id)\n            doc.Regenerate()\n            caps = [x.Owner for x in opened[0].AllRefs\n                    if x.Owner.Id != p.Id and x.Owner.Category is not None and x.Owner.Category.Id.Value == fit_cat]\n            if not caps:\n                raise Exception(u\"Revit không đặt nút bịt (kiểm tra rule Caps của pipe type)\")\n            caps[0].get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set(u\"{} | thông tắc\".format(COMMENT))\n            st.Commit()\n            b.made.append((caps[0], r[\"system\"]))\n        except Exception as ex:\n            st.RollBack()\n            fail.append(u\"Tuyến '{}': {} – {}\".format(r[\"name\"], what, ex))\n\n    for r in routes:\n        if r[\"head\"] and r[\"head\"][0] == \"cap\":\n            cap_on(r[\"thr_stub\"] if r.get(\"vent\") is not None else route_pipes[id(r)][1][0], r, u\"thông tắc đầu\")\n        if r.get(\"tt_stub\") is not None:\n            cap_on(r[\"tt_stub\"], r, u\"thông tắc cuối\")\n    return b, fail\n\n\ndef main():\n    routes, stacks = parse(routes_txt, stacks_txt)\n    notes = plan(routes, stacks)\n    lines = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"THỰC HIỆN\"),\n             u\"Dốc {:.1f} %, tâm nhánh cao nhất = level − {:.0f}; ống đứng {} so với level\".format(slope * 100, h_top_mm, stack_range)]\n    lines += describe(routes, stacks) + [u\"LƯU Ý: \" + n for n in notes]\n    if not DYNAMO:\n        return lines\n\n    levels = dict((get_name(l), l) for l in FilteredElementCollector(doc).OfClass(Level).ToElements())\n    level = levels.get(level_name) if level_name else getattr(doc.ActiveView, \"GenLevel\", None)\n    if level is None:\n        return lines + [u\"DỪNG: không xác định được level ('{}'). Mở mặt bằng của tầng hoặc nhập IN[6]. Các level: {}\".format(\n            level_name, u\", \".join(sorted(levels)))]\n    ptype = [p for p in FilteredElementCollector(doc).OfClass(PipeType).ToElements() if get_name(p) == pipe_type_name]\n    if not ptype:\n        return lines + [u\"DỪNG: không có pipe type '{}' (tool không tạo type).\".format(pipe_type_name)]\n    ptype = ptype[0]\n    systems = dict((get_name(s), s) for s in FilteredElementCollector(doc).OfClass(PipingSystemType).ToElements())\n    bad = sorted(set(x[\"system\"] for x in routes + stacks if x[\"system\"] not in systems))\n    if bad:\n        return lines + [u\"DỪNG: không có piping system {}. Các system: {}\".format(u\", \".join(bad), u\", \".join(sorted(systems)))]\n    wye, tee = junctions(ptype)\n    if wye is None or tee is None:\n        return lines + [u\"DỪNG: pipe type '{}' thiếu Y / tê trong rule Junctions.\".format(pipe_type_name)]\n    lines.append(u\"Level '{}' ({:+.0f}); pipe type '{}', Y '{}', tê '{}'\".format(\n        get_name(level), ft2mm(level.Elevation), pipe_type_name, wye.FamilyName, tee.FamilyName))\n    old = previous_run()\n    if old and not replace:\n        return lines + [u\"DỪNG: mô hình đã có {} phần tử '{}' của lần chạy trước. Đặt IN[10] = True để xoá và dựng lại, \"\n                        u\"hoặc tự xoá (lọc Comments) rồi chạy lại.\".format(len(old), COMMENT)]\n    if old:\n        lines.append(u\"Thay lần chạy trước: xoá {} phần tử (ống / phụ kiện / phễu)\".format(len(old)))\n    if dry_run:\n        return lines + [u\"Dry-run: đổi IN[9] = False để dựng.\"]\n\n    TransactionManager.Instance.ForceCloseTransaction()\n    t = Transaction(doc, TRANSACTION_NAME)\n    handler = CommitFailures()\n    opts = t.GetFailureHandlingOptions()\n    opts.SetFailuresPreprocessor(handler)\n    opts.SetClearAfterRollback(True)\n    t.SetFailureHandlingOptions(opts)\n    t.Start()\n    try:\n        if old:\n            ids = List[ElementId]()\n            for i in old:\n                ids.Add(i)\n            doc.Delete(ids)\n            doc.Regenerate()\n        b, fail = build(routes, stacks, level, ptype, systems, {\"wye\": wye, \"tee\": tee}, lines)\n        lines.append(apply_colors(b.made))\n        status = t.Commit()\n    except Exception as ex:\n        if t.HasStarted() and not t.HasEnded():\n            t.RollBack()\n        import traceback\n        return lines + [u\"LỖI, mọi thay đổi đã được hoàn tác: {}\".format(ex), traceback.format_exc()]\n    if status != TransactionStatus.Committed:\n        return lines + [u\"LỖI: Revit không commit được ({}), đã hoàn tác.\".format(status)] + \\\n            [u\"  [{}] {} ×{}\".format(s, x, n) for (s, x), n in handler.all.most_common()]\n    cnt = collections.Counter(e.Category.Name for e, s in b.made if e is not None and e.IsValidObject)\n    lines.append(u\"Đã tạo: \" + u\", \".join(u\"{} {}\".format(k, v) for k, v in sorted(cnt.items())))\n    lines.append(u\"Không đặt được (nối tay): \" + (u\"; \".join(fail) if fail else u\"0\"))\n    if handler.resolved:\n        lines.append(u\"Revit tự xử lý lúc commit (kiểm tra lại): \" + u\"; \".join(u\"{} ×{}\".format(k, v) for k, v in handler.resolved.items()))\n    lines.append(u\"Undo: mục '{}'\".format(TRANSACTION_NAME))\n    return lines\n\n\nif DYNAMO:\n    try:\n        OUT = main()\n    except Exception as ex:\n        import traceback\n        OUT = [u\"LỖI: {}\".format(ex), traceback.format_exc()]\nelse:\n    print(u\"\\n\".join(main()))\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "4605b925d338493093de0fc1be34fdce",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "3eb9561f8b5b432eb9eb3de50243f959",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tuyến nhánh: Tên|System|DN|Đầu|x,y;… (mỗi dòng 1 tuyến)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "78af3f2970184c34b452aba1a2c7b39b",
+          "Name": "IN[1]",
+          "Description": "IN[1] Ống đứng: Tên|System|DN|x,y (mỗi dòng 1 ống)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "177fa241c67b49d195bd82c0635f4c99",
+          "Name": "IN[2]",
+          "Description": "IN[2] Ống đứng so với level: dưới>trên (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3a90823fc6e6476d8b5cfaf15838e400",
+          "Name": "IN[3]",
+          "Description": "IN[3] Level → tâm ống điểm cao nhất (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7479da3aadb8474192e51a5fd564025f",
+          "Name": "IN[4]",
+          "Description": "IN[4] Độ dốc nhánh (%)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "541af0fd54d542058da0e84889293f1b",
+          "Name": "IN[5]",
+          "Description": "IN[5] Pipe type (có sẵn)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6c67dadad90b465c9b1263e227f2db2e",
+          "Name": "IN[6]",
+          "Description": "IN[6] Level (trống = level của view đang mở)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "32215e9d9e7947caba6a1604dbb6ea33",
+          "Name": "IN[7]",
+          "Description": "IN[7] Màu theo tên system (R,G,B)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a242cce3451144aebc262f7bac8c3262",
+          "Name": "IN[8]",
+          "Description": "IN[8] Phễu thu Family : Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1e6b5fd6ab37498299da700606a0ea4e",
+          "Name": "IN[9]",
+          "Description": "IN[9] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8ee5ca5272144bc68c77c8b944437622",
+          "Name": "IN[10]",
+          "Description": "IN[10] Thay lần chạy trước (xoá ống ARV-THOATWC rồi dựng lại)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "53f50ea3fda64c0ebe8f98ee6bf67069",
+          "Name": "IN[11]",
+          "Description": "IN[11] Cao độ thông hơi ngang (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d194af0a95f8467db36b9941c7640eb6",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "392c434be4274445a78c1b3123549c26",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "f32829b846044498b5ad53c09413292e",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "05569cab1d3245c5a50d5bfaf95d8189",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "ea41e82026b2426f90ba8b94c949b3bf",
+      "End": "3eb9561f8b5b432eb9eb3de50243f959",
+      "Id": "3cda80b913e549aabba27bfa2450d22e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fcd068833cf141f5bf6bf7a97ecec3ae",
+      "End": "78af3f2970184c34b452aba1a2c7b39b",
+      "Id": "1a58004c2f02452db0ad6f51aaf7c53d",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "92db6098024b41609e477f6433c8a48d",
+      "End": "177fa241c67b49d195bd82c0635f4c99",
+      "Id": "7c64a3d0d2514f2999b73d86fb5d5656",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8a9381cd53564931a1db5a05de4b487a",
+      "End": "3a90823fc6e6476d8b5cfaf15838e400",
+      "Id": "675c15a88b5a462684048be0962c3a6c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "abf33abf15e44b9b9a28ba184312db09",
+      "End": "7479da3aadb8474192e51a5fd564025f",
+      "Id": "21bcfd5e5f03486f8ed00ebf947f3af0",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2289cb02341a40d9ac6762aa55ed9a36",
+      "End": "541af0fd54d542058da0e84889293f1b",
+      "Id": "d9678b3b807d4935a58ca3615086b702",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8bfd1f8fc3294052a5b7a1ccad537aa8",
+      "End": "6c67dadad90b465c9b1263e227f2db2e",
+      "Id": "10385f5c78f14f8f8b7bfb26ab5cf928",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "184f9f6c47fc4484814d4e4c7c9f5bec",
+      "End": "32215e9d9e7947caba6a1604dbb6ea33",
+      "Id": "4cdc0d3cd23e4cff80dbb9ddd8ab200a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "197623af4f70464c9864700f21eab320",
+      "End": "a242cce3451144aebc262f7bac8c3262",
+      "Id": "2a20c1c7b77f49b9aaa319491894db59",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "cc6df675676348c78c8dd49cf169d46f",
+      "End": "1e6b5fd6ab37498299da700606a0ea4e",
+      "Id": "f895885244624263992febb43d178340",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "4718a8258f244f919f765d845aa78891",
+      "End": "8ee5ca5272144bc68c77c8b944437622",
+      "Id": "2a9481aa4dc44cb49dd7f1e549d5810c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1005346c8ac34cc9971af1a9ed711ceb",
+      "End": "53f50ea3fda64c0ebe8f98ee6bf67069",
+      "Id": "9290430daea24a48ad030600856a325f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d194af0a95f8467db36b9941c7640eb6",
+      "End": "f32829b846044498b5ad53c09413292e",
+      "Id": "005bebcdaa2c4f3b801da70df8b5c870",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "b8b054fd38774541836b294fefdd5de9",
+        "Name": "IN[0] Tuyến nhánh: Tên|System|DN|Đầu|x,y;… (mỗi dòng 1 tuyến)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "629449e9bf8c412494f563d5805359e1",
+        "Name": "IN[1] Ống đứng: Tên|System|DN|x,y (mỗi dòng 1 ống)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "d309d0fd355e49bda540cd17143fd2f9",
+        "Name": "IN[2] Ống đứng so với level: dưới>trên (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "10261ed54ffc4e2789a4a4ad796b3fdf",
+        "Name": "IN[3] Level → tâm ống điểm cao nhất (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "eabfa251246f494792b69d711c45929f",
+        "Name": "IN[4] Độ dốc nhánh (%)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "ee79363d38e142d2823db37126a27e08",
+        "Name": "IN[5] Pipe type (có sẵn)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "5ea10cb742f042be8a718e61b6d5cf00",
+        "Name": "IN[6] Level (trống = level của view đang mở)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "ba64e2a00e8b450f93e52c9f270219dc",
+        "Name": "IN[7] Màu theo tên system (R,G,B)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "1c7cbc6e149649d3af6c4f89403ff3e6",
+        "Name": "IN[8] Phễu thu Family : Type",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "976361bbfc984c5e9da86f2b66036f0b",
+        "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "9d2989bf948c458bb392644d8d7f1e1b",
+        "Name": "IN[10] Thay lần chạy trước (xoá ống ARV-THOATWC rồi dựng lại)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "67cf4426af624b82bb3dcc44b8a7af6b",
+        "Name": "IN[11] Cao độ thông hơi ngang (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1210.0
+      },
+      {
+        "Id": "4605b925d338493093de0fc1be34fdce",
+        "Name": "Tạo ống thoát nước WC",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 700.0,
+        "Y": 400.0
+      },
+      {
+        "Id": "392c434be4274445a78c1b3123549c26",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1100.0,
+        "Y": 400.0
+      }
+    ],
+    "Annotations": [],
+    "X": 275.01122799999996,
+    "Y": 169.82738700000004,
+    "Zoom": 0.9063352
+  }
+}

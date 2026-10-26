@@ -1,0 +1,784 @@
+{
+  "Uuid": "01e92eb8-3a70-4757-a03c-607aa52cdf55",
+  "IsCustomNode": false,
+  "Description": "Vẽ đường bao ngoài, lỗ mở X và vùng hatch (Detail Line) từ bản CAD mặt bằng kết cấu đã link, rồi tạo sàn kết cấu theo chiều dày / hạ cốt của ghi chú hatch. Mặc định dry-run. TRẠNG THÁI: CHƯA DUYỆT.",
+  "Name": "ARV_VeBaoSanTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "4712bd970a394447aa7d45af3a0405ba",
+      "Name": "Tên bản CAD (để trống nếu chỉ có 1)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "150_goc0",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "1603dc0057764f649ca1a29f7128c1e0",
+      "Name": "Layer mép sàn (cách nhau ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "S-Thay;S-Cot vach;S-Wall",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "602331f00e5c45f9a6e53560b8d4d83b",
+      "Name": "Layer dấu X lỗ mở",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "S-Manh",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "114a4408939c4ee2bb193ae15cb65484",
+      "Name": "Layer hatch vùng sàn",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "S-Hatch;S-Hach",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "d3a34471349f4247a9519495cbe20447",
+      "Name": "Ghi chú hatch: MẪU=dày[/cốt] (mm, cốt âm = hạ cốt)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "ANGLE=120/-30;ANSI37=200;ANSI37+ANGLE=170/-30;ANSI31=250;ANSI31+ANGLE=220/-30;STARS=300;CROSS=400;CROSS+ANGLE=370/-30",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "6ed489ef5d2d4832baf0b0a8631af344",
+      "Name": "Sàn nền không hatch: dày[/cốt]",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "150",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "8606a0d80a9d4f0b89a7a6360fd1145a",
+      "Name": "Type sàn mẫu để nhân bản",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "SBT-200",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "ca8cdff669fc45cca57877a1d69f80c4",
+      "Name": "Line style đường bao (trống = mặc định)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "135331f6bbcb4e70a850d33f7f54ba00",
+      "Name": "Diện tích bao ngoài tối thiểu (m²)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "10",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "ecf4bf0c2d124e6d818975e3f2e1d746",
+      "Name": "Dry-run (True = chỉ báo cáo; False = vẽ + tạo sàn)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "cfa5ac8f6eb9465d95b9ca1475a4fff9",
+      "Name": "Báo cáo",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "4712bd970a394447aa7d45af3a0405ba",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7b092dde88f6459b8254b916b6519319",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "150_goc0"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "1603dc0057764f649ca1a29f7128c1e0",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "925a7f01f2ad41e9a965df9e709ac8da",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "S-Thay;S-Cot vach;S-Wall"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "602331f00e5c45f9a6e53560b8d4d83b",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3c321dc9f8c8405db0123af43b27e3a5",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "S-Manh"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "114a4408939c4ee2bb193ae15cb65484",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c81f6a32f8f54703a296137be2f1b5b5",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "S-Hatch;S-Hach"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "d3a34471349f4247a9519495cbe20447",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "62eae5704fba4b5db3a0753f051cd32f",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "ANGLE=120/-30;ANSI37=200;ANSI37+ANGLE=170/-30;ANSI31=250;ANSI31+ANGLE=220/-30;STARS=300;CROSS=400;CROSS+ANGLE=370/-30"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "6ed489ef5d2d4832baf0b0a8631af344",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "026081ecc37842a5ada16ecbc0e7424b",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "150"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "8606a0d80a9d4f0b89a7a6360fd1145a",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "527af55ac4a843df81b682e2c14ead93",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "SBT-200"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "ca8cdff669fc45cca57877a1d69f80c4",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d141c4af68424b3ba2ab27b2653637da",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "135331f6bbcb4e70a850d33f7f54ba00",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2376976f27974fc88593b4451abd4452",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 10.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "ecf4bf0c2d124e6d818975e3f2e1d746",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0cd1dd4d6f9543cab154daf0fe3279e1",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_VeBaoSanTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Vẽ đường bao sàn kết cấu (Detail Line) và tạo sàn (Floor) theo vùng hatch của ghi chú, từ mặt bằng\n# kết cấu sàn (DWG đã Link vào Revit).\n#   Đường bao vẽ (Detail Line, trong view mặt bằng đang mở):\n#   - BAO NGOÀI: mép ngoài cùng của mặt bằng (mép ngoài dầm biên / mép sàn) – bỏ mọi nét bên trong.\n#   - BAO LỖ MỞ: quanh từng lỗ mở có gạch chéo X (hai ô lỗ chung cạnh gộp một).\n#   - BAO VÙNG HATCH: quanh từng vùng hatch có trong ghi chú (VD ANSI31 = sàn DƯL dày 230).\n#     Nét chung giữa các đường bao chỉ vẽ một lần.\n#   Sàn tạo (Floor kết cấu, level của view):\n#   - Mỗi vùng hatch một tấm sàn, chiều dày / hạ cốt theo ghi chú (IN[4]).\n#   - Sàn nền (phần không hatch, IN[5]) = bao ngoài − lỗ mở − vùng hatch (khoét, không chồng khối lượng).\n#   - Type sàn: dùng type có sẵn đúng chiều dày (ưu tiên tên FLOOR_TYPE_NAME); chưa có → nhân bản type mẫu\n#     (IN[6]) và chỉnh lớp kết cấu cho đúng chiều dày.\n#   Cách dò:\n#   - Nét trên layer mép sàn (mặc định S-Thay + S-Cot vach) tách tại giao điểm, dò ô kín nhỏ nhất.\n#     Bao ngoài = biên ngoài của cụm nét không nằm lọt trong ô nào. Lỗ mở = ô chứa tâm dấu X.\n#   - Hatch không đọc được trong bản link Revit nên được đọc từ BẢN SAO file DWG qua AutoCAD Core Console\n#     (model space + trong block lồng nhau). Biên hatch được hút về nét mép sàn gần nhất (≤ HATCH_SNAP_MM),\n#     rồi chia mặt bằng thành ô: ô trong lỗ mở → lỗ; ô trong hatch có ghi chú → vùng đó; còn lại → sàn nền.\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (để trống nếu mô hình chỉ có 1 bản CAD)\n#   IN[1] (str)   Layer mép sàn, nhiều chuỗi cách nhau ';' (khớp chuỗi con). Mặc định \"S-Thay;S-Cot vach\"\n#   IN[2] (str)   Layer dấu X lỗ mở. Mặc định \"S-Manh\"\n#   IN[3] (str)   Layer hatch vùng sàn (khớp chuỗi con). Mặc định \"S-Hatch\"\n#   IN[4] (str)   Ghi chú hatch: \"MẪU=dày[/cốt];...\" mm, cốt âm = hạ cốt.\n#                 Vùng hai hatch chồng nhau: \"A+B=dày[/cốt]\" (VD ANSI37+ANGLE=170/-30).\n#                 Mặc định \"ANSI31=230;STARS=250;TRIANG=500;ANSI37=450/-50\"\n#   IN[5] (str)   Sàn nền (khu vực không hatch): \"dày[/cốt]\". Mặc định \"230/-50\"\n#   IN[6] (str)   Tên type sàn mẫu để nhân bản khi thiếu type đúng chiều dày. Mặc định \"Generic 200\"\n#   IN[7] (str)   Line style của đường bao (phải có sẵn; để trống = mặc định của view)\n#   IN[8] (float) Diện tích bao ngoài tối thiểu (m²). Mặc định 10\n#   IN[9] (bool)  Dry-run: True = chỉ báo cáo, không ghi vào mô hình (mặc định True)\n#                 False = vẽ đường bao + tạo sàn.\n# OUTPUT\n#   OUT[0] (list[str])   Báo cáo: tóm tắt, cảnh báo, rồi từng đường bao / tấm sàn\n#   OUT[1] (list[Elem])  Detail Line đã vẽ\n#   OUT[2] (list[Elem])  Sàn đã tạo\n\nimport os\nimport io\nimport re\nimport csv\nimport glob\nimport math\nimport shutil\nimport tempfile\nimport datetime\nimport subprocess\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, CADLinkType, Options, GeometryInstance,\n                                   PolyLine, Line, Arc, XYZ, UnitUtils, UnitTypeId, ModelPathUtils, BuiltInParameter,\n                                   BuiltInCategory, ViewPlan, CurveElement, CurveElementType, GraphicsStyleType,\n                                   CurveLoop, Floor, FloorType)\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    from System.Collections.Generic import List\n\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Vẽ đường bao sàn từ CAD\"\nSNAP_MM = 5.0          # Đầu nét cách nhau / cách nét khác ≤ giá trị này thì coi là chạm\nHATCH_SNAP_MM = 10.0   # Đỉnh biên hatch cách nét mép sàn ≤ giá trị này → hút về nét đó\nSLIVER_M2 = 0.01       # Ô nhỏ hơn (khe giữa biên hatch và nét) → nhập vào ô bên cạnh\nINNER_MM = 1.0         # Điểm đại diện của ô: lùi vào trong từ trung điểm cạnh dài nhất\nARC_STEP_DEG = 10.0    # Cung tròn trong biên hatch chia đoạn mỗi ≤ 10°\nDUP_TOL_MM = 1.0       # Nét mới trùng Detail Line đã có trong view → bỏ qua\nCELL_MM = 3000.0       # Ô lưới tra cứu nhanh khi tìm giao điểm\nCOLLINEAR_SIN = 1e-6\nCORE_TIMEOUT_S = 180\n# [cần xác nhận] standards chưa quy định tên type sàn; BIM Manager chốt rồi sửa tại đây\nFLOOR_TYPE_NAME = u\"S-DUL {t}mm\"\n\n\n# =====================================================================================\n# PHẦN HÌNH HỌC – chỉ dùng tuple (x, y) theo mm, không phụ thuộc Revit (chạy thử được ngoài Dynamo)\n# =====================================================================================\ndef split_filters(text):\n    return [f.strip().lower() for f in (text or u\"\").split(\";\") if f.strip()]\n\n\ndef matches(layer, filters):\n    return bool(layer) and any(f in layer.lower() for f in filters)\n\n\ndef parse_spec(text):\n    \"\"\"'450/-50' → (450.0, -50.0); '230' → (230.0, 0.0).\"\"\"\n    parts = [p.strip() for p in (text or u\"\").replace(\",\", \".\").split(\"/\")]\n    t = float(parts[0])\n    off = float(parts[1]) if len(parts) > 1 and parts[1] else 0.0\n    if t <= 0:\n        raise ValueError(text)\n    return t, off\n\n\ndef combo_key(patterns):\n    \"\"\"Tên vùng hatch chồng: các mẫu xếp theo ABC nối bằng '+' (VD ANGLE+ANSI37).\"\"\"\n    return u\"+\".join(sorted(set(p.strip().upper() for p in patterns if p.strip())))\n\n\ndef parse_legend(text):\n    \"\"\"'ANSI31=230;ANSI37=450/-50;ANSI37+ANGLE=170/-30' → {'ANSI31': (230, 0), 'ANSI37': (450, -50),\n    'ANGLE+ANSI37': (170, -30)}. Khoá có '+' = vùng hai hatch chồng lên nhau.\"\"\"\n    out = {}\n    for item in (text or u\"\").split(\";\"):\n        if \"=\" not in item:\n            continue\n        k, v = item.split(\"=\", 1)\n        try:\n            out[combo_key(k.split(\"+\"))] = parse_spec(v)\n        except ValueError:\n            raise Exception(u\"Ghi chú hatch sai định dạng ở '{}' (đúng: MẪU=dày[/cốt])\".format(item.strip()))\n    return out\n\n\ndef spec_text(spec):\n    t, off = spec\n    return u\"dày {:g}{}\".format(t, u\", hạ cốt {:g}\".format(-off) if off < 0 else\n                                (u\", nâng cốt {:g}\".format(off) if off > 0 else u\"\"))\n\n\ndef signed_area(pts):\n    return sum(pts[i - 1][0] * pts[i][1] - pts[i][0] * pts[i - 1][1] for i in range(len(pts))) / 2.0\n\n\ndef point_in(pt, pts):\n    x, y, res = pt[0], pt[1], False\n    for i in range(len(pts)):\n        x1, y1 = pts[i - 1]\n        x2, y2 = pts[i]\n        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:\n            res = not res\n    return res\n\n\ndef point_in_evenodd(pt, loops):\n    return sum(1 for l in loops if point_in(pt, l)) % 2 == 1\n\n\nclass Snapper(object):\n    \"\"\"Gom điểm gần nhau (≤ tol) về một đỉnh.\"\"\"\n\n    def __init__(self, tol):\n        self.tol, self.pts, self.grid = tol, [], {}\n\n    def get(self, x, y):\n        cx, cy = int(math.floor(x / self.tol)), int(math.floor(y / self.tol))\n        for i in (cx - 1, cx, cx + 1):\n            for j in (cy - 1, cy, cy + 1):\n                for k in self.grid.get((i, j), ()):\n                    px, py = self.pts[k]\n                    if math.hypot(px - x, py - y) <= self.tol:\n                        return k\n        k = len(self.pts)\n        self.pts.append((x, y))\n        self.grid.setdefault((cx, cy), []).append(k)\n        return k\n\n\ndef _cells(x0, y0, x1, y1, pad):\n    for i in range(int(math.floor((min(x0, x1) - pad) / CELL_MM)), int(math.floor((max(x0, x1) + pad) / CELL_MM)) + 1):\n        for j in range(int(math.floor((min(y0, y1) - pad) / CELL_MM)), int(math.floor((max(y0, y1) + pad) / CELL_MM)) + 1):\n            yield i, j\n\n\ndef _near_params(ax0, ay0, ax1, ay1, pts, tol):\n    \"\"\"Tham số t trên đoạn A của các điểm nằm sát đoạn A (≤ tol).\"\"\"\n    rx, ry = ax1 - ax0, ay1 - ay0\n    l2 = rx * rx + ry * ry\n    la = math.sqrt(l2)\n    out = []\n    for px, py in pts:\n        t = ((px - ax0) * rx + (py - ay0) * ry) / l2\n        if -tol / la <= t <= 1 + tol / la:\n            qx, qy = ax0 + rx * t, ay0 + ry * t\n            if math.hypot(px - qx, py - qy) <= tol:\n                out.append(min(max(t, 0.0), 1.0))\n    return out\n\n\ndef split_segments(segs, tol):\n    \"\"\"segs: [(x0, y0, x1, y1)]. Tách tại giao điểm, chỗ chạm chữ T và đoạn chồng thẳng hàng.\n\n    Trả về (points, edges): points[i] = (x, y); edges = set((i, j)) với i < j.\n    \"\"\"\n    segs = [s for s in segs if math.hypot(s[2] - s[0], s[3] - s[1]) > tol]\n    params = [[0.0, 1.0] for _ in segs]\n    grid = {}\n    for k, s in enumerate(segs):\n        for c in _cells(s[0], s[1], s[2], s[3], tol):\n            grid.setdefault(c, []).append(k)\n    done = set()\n    for cell in grid.values():\n        for ia in range(len(cell)):\n            for ib in range(ia + 1, len(cell)):\n                a, b = cell[ia], cell[ib]\n                if (a, b) in done:\n                    continue\n                done.add((a, b))\n                ax0, ay0, ax1, ay1 = segs[a]\n                bx0, by0, bx1, by1 = segs[b]\n                if (max(ax0, ax1) < min(bx0, bx1) - tol or max(bx0, bx1) < min(ax0, ax1) - tol or\n                        max(ay0, ay1) < min(by0, by1) - tol or max(by0, by1) < min(ay0, ay1) - tol):\n                    continue\n                params[a] += _near_params(ax0, ay0, ax1, ay1, [(bx0, by0), (bx1, by1)], tol)\n                params[b] += _near_params(bx0, by0, bx1, by1, [(ax0, ay0), (ax1, ay1)], tol)\n                rx, ry, sx, sy = ax1 - ax0, ay1 - ay0, bx1 - bx0, by1 - by0\n                la, lb = math.hypot(rx, ry), math.hypot(sx, sy)\n                den = rx * sy - ry * sx\n                if abs(den) <= COLLINEAR_SIN * la * lb:\n                    continue\n                t = ((bx0 - ax0) * sy - (by0 - ay0) * sx) / den\n                u = ((bx0 - ax0) * ry - (by0 - ay0) * rx) / den\n                if -tol / la <= t <= 1 + tol / la and -tol / lb <= u <= 1 + tol / lb:\n                    params[a].append(min(max(t, 0.0), 1.0))\n                    params[b].append(min(max(u, 0.0), 1.0))\n    snap = Snapper(tol)\n    edges = set()\n    for (x0, y0, x1, y1), ts in zip(segs, params):\n        ids = []\n        for t in sorted(set(ts)):\n            k = snap.get(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t)\n            if not ids or ids[-1] != k:\n                ids.append(k)\n        for p, q in zip(ids[:-1], ids[1:]):\n            edges.add((min(p, q), max(p, q)))\n    return snap.pts, edges\n\n\ndef prune(edges):\n    \"\"\"Bỏ nét cụt (đỉnh bậc 1) lặp lại tới khi hết. Trả về (edges còn lại, đỉnh cụt ban đầu).\"\"\"\n    adj = {}\n    for p, q in edges:\n        adj.setdefault(p, set()).add(q)\n        adj.setdefault(q, set()).add(p)\n    loose = [v for v, n in adj.items() if len(n) == 1]\n    stack = list(loose)\n    while stack:\n        v = stack.pop()\n        if v not in adj or len(adj[v]) != 1:\n            continue\n        w = adj.pop(v).pop()\n        adj[w].discard(v)\n        if not adj[w]:\n            del adj[w]\n        elif len(adj[w]) == 1:\n            stack.append(w)\n    kept = set((p, q) for p, q in edges if p in adj and q in adj.get(p, ()))\n    return kept, loose\n\n\ndef faces_of(points, edges):\n    \"\"\"Dò các vòng theo nửa cạnh (mặt bên trái). Trả về (cycles, he_cycle, comp_of_vertex).\n\n    cycles[i] = list nửa cạnh (u, v); diện tích > 0 → ô kín, < 0 → biên ngoài của một cụm nét.\n    \"\"\"\n    out = {}\n    for p, q in edges:\n        out.setdefault(p, []).append(q)\n        out.setdefault(q, []).append(p)\n    ang = lambda v, w: math.atan2(points[w][1] - points[v][1], points[w][0] - points[v][0])\n    order = {}\n    for v, ns in out.items():\n        ns.sort(key=lambda w: ang(v, w))\n        order[v] = dict((w, i) for i, w in enumerate(ns))\n    comp, cid = {}, 0\n    for v in out:\n        if v in comp:\n            continue\n        stack = [v]\n        comp[v] = cid\n        while stack:\n            a = stack.pop()\n            for b in out[a]:\n                if b not in comp:\n                    comp[b] = cid\n                    stack.append(b)\n        cid += 1\n    he_cycle, cycles = {}, []\n    for p, q in edges:\n        for start in ((p, q), (q, p)):\n            if start in he_cycle:\n                continue\n            cyc, h = [], start\n            while h not in he_cycle:\n                he_cycle[h] = len(cycles)\n                cyc.append(h)\n                u, v = h\n                ns = out[v]\n                w = ns[(order[v][u] - 1) % len(ns)]\n                h = (v, w)\n            cycles.append(cyc)\n    return cycles, he_cycle, comp\n\n\ndef merge_collinear(pts):\n    \"\"\"Bỏ đỉnh nằm giữa hai cạnh thẳng hàng cùng chiều.\"\"\"\n    pts = list(pts)\n    changed = True\n    while changed and len(pts) > 3:\n        changed = False\n        for i in range(len(pts)):\n            a, b, c = pts[i - 1], pts[i], pts[(i + 1) % len(pts)]\n            ux, uy, vx, vy = b[0] - a[0], b[1] - a[1], c[0] - b[0], c[1] - b[1]\n            lu, lv = math.hypot(ux, uy), math.hypot(vx, vy)\n            if lu < 1e-9 or lv < 1e-9 or (abs(ux * vy - uy * vx) <= 1e-4 * lu * lv and ux * vx + uy * vy > 0):\n                del pts[i]\n                changed = True\n                break\n    return pts\n\n\nX_FILL = 2.0           # Ô lỗ mở được lớn tối đa X_FILL × khung bao dấu X (dấu X vẽ góc–góc ô)\n\n\ndef x_centers(marks, tol):\n    \"\"\"Dấu X: hai nét chéo cắt nhau gần trung điểm của cả hai. Trả về [(tâm, diện tích khung bao dấu X mm²)].\"\"\"\n    centers = []\n    for i in range(len(marks)):\n        ax0, ay0, ax1, ay1 = marks[i]\n        for j in range(i + 1, len(marks)):\n            bx0, by0, bx1, by1 = marks[j]\n            ma = ((ax0 + ax1) / 2.0, (ay0 + ay1) / 2.0)\n            mb = ((bx0 + bx1) / 2.0, (by0 + by1) / 2.0)\n            if math.hypot(ma[0] - mb[0], ma[1] - mb[1]) > tol * 4:\n                continue\n            rx, ry, sx, sy = ax1 - ax0, ay1 - ay0, bx1 - bx0, by1 - by0\n            if abs(rx * sy - ry * sx) <= 0.1 * math.hypot(rx, ry) * math.hypot(sx, sy):\n                continue\n            xs, ys = (ax0, ax1, bx0, bx1), (ay0, ay1, by0, by1)\n            centers.append((ma, (max(xs) - min(xs)) * (max(ys) - min(ys))))\n    return centers\n\n\ndef chain(points, hes):\n    \"\"\"Nối các nửa cạnh biên thành vòng kín (danh sách id đỉnh). Đỉnh có nhiều lựa chọn → rẽ phải gấp nhất.\"\"\"\n    starts = {}\n    for h in hes:\n        starts.setdefault(h[0], []).append(h)\n    used, loops = set(), []\n    for h0 in hes:\n        if h0 in used:\n            continue\n        loop, h = [], h0\n        while h not in used:\n            used.add(h)\n            loop.append(h[0])\n            u, v = h\n            cands = [c for c in starts.get(v, ()) if c not in used]\n            if not cands:\n                break\n            back = math.atan2(points[u][1] - points[v][1], points[u][0] - points[v][0])\n\n            def turn(c):\n                a = math.atan2(points[c[1]][1] - points[v][1], points[c[1]][0] - points[v][0])\n                d = (back - a) % (2 * math.pi)\n                return d if d > 1e-12 else 2 * math.pi\n            h = min(cands, key=turn)\n        loops.append(loop)\n    return loops\n\n\nclass Arrangement(object):\n    \"\"\"Mặt phẳng chia bởi các nét: ô kín, cụm nét, đảo (cụm nằm lọt trong ô của cụm khác).\"\"\"\n\n    def __init__(self, segs, tol):\n        self.points, edges = split_segments(segs, tol)\n        self.kept, self.loose = prune(edges)\n        self.cycles, self.he_cycle, self.comp = faces_of(self.points, self.kept)\n        self.poly = [[self.points[u] for u, _ in c] for c in self.cycles]\n        self.area = [signed_area(p) for p in self.poly]\n        self.bounded = [i for i in range(len(self.cycles)) if self.area[i] > 1e-6]\n        self.owner = dict((i, i) for i in self.bounded)\n        self.islands = dict((i, []) for i in self.bounded)\n        for i in range(len(self.cycles)):\n            if self.area[i] > 1e-6:\n                continue\n            c = self.comp[self.cycles[i][0][0]]\n            best = None\n            for f in self.bounded:\n                if self.comp[self.cycles[f][0][0]] != c and point_in(self.poly[i][0], self.poly[f]) and \\\n                        (best is None or self.area[f] < self.area[best]):\n                    best = f\n            self.owner[i] = best     # None = mặt ngoài cùng\n            if best is not None:\n                self.islands[best].append(i)\n\n    def face_of(self, h):\n        return self.owner.get(self.he_cycle[h])\n\n    def comp_of(self, i):\n        return self.comp[self.cycles[i][0][0]]\n\n    def inside_face(self, pt, f):\n        return point_in(pt, self.poly[f]) and not any(point_in(pt, self.poly[h]) for h in self.islands[f])\n\n    def rep_point(self, f):\n        pts = self.poly[f]\n        k = max(range(len(pts)), key=lambda i: math.hypot(pts[(i + 1) % len(pts)][0] - pts[i][0],\n                                                          pts[(i + 1) % len(pts)][1] - pts[i][1]))\n        a, b = pts[k], pts[(k + 1) % len(pts)]\n        l = math.hypot(b[0] - a[0], b[1] - a[1])\n        return ((a[0] + b[0]) / 2.0 - (b[1] - a[1]) / l * INNER_MM, (a[1] + b[1]) / 2.0 + (b[0] - a[0]) / l * INNER_MM)\n\n    def boundary(self, fs, with_islands):\n        \"\"\"Vòng biên của hợp các ô fs → (vòng ngoài CCW, vòng lỗ CW, nửa cạnh biên), toạ độ đã gộp thẳng hàng.\"\"\"\n        fset = set(fs)\n        cyc = [i for f in fs for i in ([f] + self.islands[f] if with_islands else [f])]\n        bnd = [h for i in cyc for h in self.cycles[i] if self.face_of((h[1], h[0])) not in fset]\n        loops = [merge_collinear([self.points[v] for v in l]) for l in chain(self.points, bnd)]\n        loops = [l for l in loops if len(l) >= 3 and abs(signed_area(l)) > 1e-6]\n        return [l for l in loops if signed_area(l) > 0], [l for l in loops if signed_area(l) < 0], bnd\n\n\ndef find_outlines(edge_segs, marks, opt):\n    \"\"\"edge_segs: [(x0, y0, x1, y1)] mm trên layer mép sàn; marks: [(x0, y0, x1, y1)] nét dấu lỗ mở.\n\n    Trả về (blocks, info):\n      blocks = [{\"outer\": [(x, y)], \"area\": m², \"openings\": [{\"loop\": [(x, y)], \"area\": m², \"n\": số ô, \"edge\": bool}]}]\n               (edge = lỗ mở chạm bao ngoài – Revit không tạo được lỗ chạm mép sàn)\n      info   = {\"loose\": [(x, y)], \"small\": [(area, (x, y), lý do)], \"stray\": [(x, y)] dấu X ngoài ô kín / ngoài bao,\n                \"xmarks\": số dấu X}\n    \"\"\"\n    tol = opt[\"snap\"]\n    A = Arrangement(edge_segs, tol)\n\n    # --- Bao ngoài: mỗi cụm nét nằm ở mặt ngoài cùng → hợp mọi ô kín của cụm\n    blocks, small = [], []\n    for i in range(len(A.cycles)):\n        if A.area[i] > 1e-6 or A.owner[i] is not None:\n            continue\n        c = A.comp_of(i)\n        fs = [f for f in A.bounded if A.comp_of(f) == c]\n        if not fs:\n            continue\n        outers, _, _ = A.boundary(fs, False)\n        if len(outers) != 1:\n            small.append((0.0, A.poly[i][0], u\"bao ngoài không đơn ({} vòng) – kiểm tra lại nét\".format(len(outers))))\n            continue\n        a = signed_area(outers[0]) / 1e6\n        if a < opt[\"min_area\"]:\n            small.append((a, outers[0][0], u\"vòng kín {:.2f} m² < {:.2f} m²\".format(a, opt[\"min_area\"])))\n            continue\n        blocks.append({\"outer\": outers[0], \"area\": a, \"openings\": []})\n\n    # --- Lỗ mở: ô kín nhỏ nhất chứa tâm dấu X; ô lỗ mở chung cạnh gộp làm một\n    centers = x_centers(marks, tol)\n    holes, stray, loose_x = set(), [], []\n    for pt, xarea in centers:\n        cands = [f for f in A.bounded if A.inside_face(pt, f)]\n        if not cands:\n            stray.append(pt)\n            continue\n        f = min(cands, key=lambda f: A.area[f])\n        if A.area[f] > X_FILL * xarea + 1e4:\n            loose_x.append((pt, A.area[f] / 1e6))   # ô quanh dấu X chưa kín → không khoét cả ô lớn\n            continue\n        holes.add(f)\n    parent = dict((f, f) for f in holes)\n\n    def root(f):\n        while parent[f] != f:\n            parent[f] = parent[parent[f]]\n            f = parent[f]\n        return f\n    for f in holes:\n        for u, v in A.cycles[f]:\n            g = A.face_of((v, u))\n            if g in holes:\n                parent[root(g)] = root(f)\n    groups = {}\n    for f in holes:\n        groups.setdefault(root(f), []).append(f)\n\n    for fs in groups.values():\n        loops, _, bnd = A.boundary(fs, False)\n        touch = any(A.face_of((h[1], h[0])) is None for h in bnd)\n        for loop in loops:\n            blk = block_of(loop[0], blocks, tol)\n            if blk is None:\n                stray.append(loop[0])\n                continue\n            blk[\"openings\"].append({\"loop\": loop, \"area\": signed_area(loop) / 1e6, \"n\": len(fs), \"edge\": touch})\n\n    blocks.sort(key=lambda b: (-max(p[1] for p in b[\"outer\"]), min(p[0] for p in b[\"outer\"])))\n    for b in blocks:\n        b[\"openings\"].sort(key=lambda o: (-max(p[1] for p in o[\"loop\"]), min(p[0] for p in o[\"loop\"])))\n    info = {\"loose\": [A.points[v] for v in A.loose], \"small\": small, \"stray\": stray, \"xmarks\": len(centers),\n            \"loose_x\": loose_x}\n    return blocks, info\n\n\ndef block_of(pt, blocks, tol):\n    best = None\n    for b in blocks:\n        if point_in(pt, b[\"outer\"]) or any(math.hypot(pt[0] - q[0], pt[1] - q[1]) <= tol for q in b[\"outer\"]):\n            if best is None or b[\"area\"] < best[\"area\"]:\n                best = b\n    return best\n\n\ndef snap_points(pts, segs, tol):\n    \"\"\"Hút đỉnh về đầu nét gần nhất (≤ tol), không có thì về điểm chiếu lên nét gần nhất (≤ tol).\"\"\"\n    grid = {}\n    for k, s in enumerate(segs):\n        for c in _cells(s[0], s[1], s[2], s[3], tol):\n            grid.setdefault(c, []).append(k)\n    out = []\n    for x, y in pts:\n        cand = set(grid.get((int(math.floor(x / CELL_MM)), int(math.floor(y / CELL_MM))), ()))\n        best, bd = None, tol\n        for k in cand:\n            for px, py in ((segs[k][0], segs[k][1]), (segs[k][2], segs[k][3])):\n                d = math.hypot(px - x, py - y)\n                if d <= bd:\n                    best, bd = (px, py), d\n        if best is None:\n            for k in cand:\n                x0, y0, x1, y1 = segs[k]\n                rx, ry = x1 - x0, y1 - y0\n                l2 = rx * rx + ry * ry\n                if l2 < 1e-9:\n                    continue\n                t = ((x - x0) * rx + (y - y0) * ry) / l2\n                if 0.0 <= t <= 1.0:\n                    qx, qy = x0 + rx * t, y0 + ry * t\n                    d = math.hypot(qx - x, qy - y)\n                    if d <= bd:\n                        best, bd = (qx, qy), d\n        p = best or (x, y)\n        if not out or math.hypot(out[-1][0] - p[0], out[-1][1] - p[1]) > 1e-6:\n            out.append(p)\n    if len(out) > 1 and math.hypot(out[0][0] - out[-1][0], out[0][1] - out[-1][1]) <= 1e-6:\n        out.pop()\n    return out\n\n\ndef find_regions(edge_segs, marks, zones, base_spec, opt, legend=None):\n    \"\"\"Chia mặt bằng thành vùng sàn.\n\n    zones: [{\"pattern\": str, \"spec\": (dày, cốt) | None, \"loops\": [[(x, y)]]}] – hatch có trong ghi chú (toạ độ mô\n           hình, mm); spec None = mẫu chỉ dùng trong ghi chú hatch chồng (khoá 'A+B' của legend).\n    Ô nằm trong nhiều hatch: tra legend theo khoá 'A+B'; không có khoá thì lấy hatch vẽ sau (đếm conflict).\n    Trả về (blocks, regions, info) với regions = [{\"block\": i, \"pattern\": str | None, \"spec\": (dày, cốt),\n             \"outer\": [(x, y)], \"holes\": [[(x, y)]], \"area\": m²}] (pattern None = sàn nền).\n    \"\"\"\n    tol = opt[\"snap\"]\n    blocks, info = find_outlines(edge_segs, marks, opt)\n    zsegs, zloops = [], []\n    for z in zones:\n        loops = []\n        for l in z[\"loops\"]:\n            s = snap_points(l, edge_segs, opt[\"hatch_snap\"])\n            if len(s) >= 3 and abs(signed_area(s)) > 1e-6:\n                loops.append(s)\n                zsegs += [(p[0], p[1], q[0], q[1]) for p, q in zip(s, s[1:] + s[:1])]\n        zloops.append(loops)\n    A = Arrangement(edge_segs + zsegs, tol)\n\n    key = {}\n    conflict = 0\n    for f in A.bounded:\n        rp = A.rep_point(f)\n        blk = None\n        for bi, b in enumerate(blocks):\n            if point_in(rp, b[\"outer\"]):\n                blk = bi\n                break\n        if blk is None:\n            continue\n        if any(point_in(rp, o[\"loop\"]) for o in blocks[blk][\"openings\"]):\n            key[f] = (blk, \"lo\", None)\n            continue\n        hit = [zi for zi, loops in enumerate(zloops) if loops and point_in_evenodd(rp, loops)]\n        pats = combo_key(zones[zi][\"pattern\"] for zi in hit)\n        if u\"+\" in pats and legend and pats in legend:\n            key[f] = (blk, \"vung\", (pats, legend[pats]))\n            continue\n        hit = [zi for zi in hit if zones[zi][\"spec\"] is not None]\n        if hit:\n            conflict += 1 if u\"+\" in pats else 0\n            z = zones[hit[-1]]\n            key[f] = (blk, \"vung\", (z[\"pattern\"], z[\"spec\"]))\n        else:\n            conflict += 1 if pats else 0\n            key[f] = (blk, \"nen\", None)\n\n    # Ô vụn (khe giữa biên hatch và nét) → theo ô bên cạnh có cạnh chung dài nhất\n    slivers = 0\n    for f in sorted(key, key=lambda f: A.area[f]):\n        if A.area[f] / 1e6 >= SLIVER_M2 or key[f][1] == \"lo\":\n            continue\n        shared = {}\n        for i in [f] + A.islands[f]:\n            for u, v in A.cycles[i]:\n                g = A.face_of((v, u))\n                if g in key and g != f and key[g][0] == key[f][0]:\n                    shared[key[g]] = shared.get(key[g], 0.0) + math.hypot(\n                        A.points[v][0] - A.points[u][0], A.points[v][1] - A.points[u][1])\n        shared.pop((key[f][0], \"lo\", None), None)\n        if shared:\n            best = max(shared, key=shared.get)\n            if best != key[f]:\n                key[f] = best\n                slivers += 1\n\n    # Gom ô liền kề cùng loại thành vùng\n    parent = dict((f, f) for f in key)\n\n    def root(f):\n        while parent[f] != f:\n            parent[f] = parent[parent[f]]\n            f = parent[f]\n        return f\n    for f in key:\n        for i in [f] + A.islands[f]:\n            for u, v in A.cycles[i]:\n                g = A.face_of((v, u))\n                if g in key and key[g] == key[f]:\n                    parent[root(g)] = root(f)\n    groups = {}\n    for f in key:\n        if key[f][1] != \"lo\":\n            groups.setdefault(root(f), []).append(f)\n\n    regions, bad = [], []\n    for fs in groups.values():\n        blk, kind, zs = key[fs[0]]\n        outers, holes, _ = A.boundary(fs, True)\n        if len(outers) != 1:\n            bad.append((A.rep_point(fs[0]), u\"vùng {} không đơn ({} vòng ngoài)\".format(\n                zs[0] if zs else u\"sàn nền\", len(outers))))\n            continue\n        a = (signed_area(outers[0]) + sum(signed_area(h) for h in holes)) / 1e6\n        regions.append({\"block\": blk, \"pattern\": zs[0] if zs else None, \"spec\": zs[1] if zs else base_spec,\n                        \"outer\": outers[0], \"holes\": holes, \"area\": a})\n    regions.sort(key=lambda r: (r[\"block\"], r[\"pattern\"] is not None, r[\"pattern\"] or u\"\",\n                                -max(p[1] for p in r[\"outer\"]), min(p[0] for p in r[\"outer\"])))\n    info.update({\"slivers\": slivers, \"conflict\": conflict, \"bad\": bad,\n                 \"zone_loops\": sum(len(l) for l in zloops)})\n    return blocks, regions, info\n\n\nclass LineSet(object):\n    \"\"\"Gom các đoạn cần vẽ, bỏ phần chồng thẳng hàng với đoạn đã có → mỗi nét chỉ vẽ một lần.\"\"\"\n\n    def __init__(self, tol):\n        self.tol, self.rows, self.out = tol, {}, []\n\n    def add(self, a, b):\n        dx, dy = b[0] - a[0], b[1] - a[1]\n        l = math.hypot(dx, dy)\n        if l <= self.tol:\n            return 0\n        ux, uy = dx / l, dy / l\n        if ux < -1e-9 or (abs(ux) <= 1e-9 and uy < 0):\n            ux, uy = -ux, -uy\n        off = -uy * a[0] + ux * a[1]\n        k = (int(round(math.degrees(math.atan2(uy, ux)) * 100)), int(round(off / self.tol)))\n        ta, tb = sorted((ux * a[0] + uy * a[1], ux * b[0] + uy * b[1]))\n        have = self.rows.setdefault(k, [])\n        pieces = [(ta, tb)]\n        for h0, h1 in have:\n            nxt = []\n            for p0, p1 in pieces:\n                if h1 <= p0 + self.tol or h0 >= p1 - self.tol:\n                    nxt.append((p0, p1))\n                    continue\n                if h0 > p0 + self.tol:\n                    nxt.append((p0, h0))\n                if h1 < p1 - self.tol:\n                    nxt.append((h1, p1))\n            pieces = nxt\n        n = 0\n        for p0, p1 in pieces:\n            have.append((p0, p1))\n            self.out.append(((ux * p0 - uy * off, uy * p0 + ux * off), (ux * p1 - uy * off, uy * p1 + ux * off)))\n            n += 1\n        return n\n\n    def add_loop(self, loop):\n        return sum(self.add(a, b) for a, b in zip(loop, loop[1:] + loop[:1]))\n\n\n# --- Hatch trong DWG -----------------------------------------------------------------\ndef _xy(v):\n    parts = v.split(\",\")\n    return float(parts[0]), float(parts[1])\n\n\ndef _arc(c, r, s, e, ccw):\n    \"\"\"Cung tròn biên hatch (độ) → các điểm. Cung thuận chiều kim đồng hồ: góc lưu dạng đảo (360 - góc).\"\"\"\n    if ccw:\n        while e <= s:\n            e += 360.0\n    else:\n        s, e = 360.0 - s, 360.0 - e\n        while e >= s:\n            e -= 360.0\n    n = max(2, int(math.ceil(abs(e - s) / ARC_STEP_DEG)))\n    return [(c[0] + r * math.cos(math.radians(s + (e - s) * i / n)), c[1] + r * math.sin(math.radians(s + (e - s) * i / n)))\n            for i in range(n + 1)]\n\n\ndef _bulge(p, q, b):\n    \"\"\"Đoạn polyline có bulge → các điểm từ p tới q (không gồm q).\"\"\"\n    if abs(b) < 1e-9:\n        return [p]\n    sweep = 4.0 * math.atan(b)\n    d = math.hypot(q[0] - p[0], q[1] - p[1])\n    r = d / (2.0 * math.sin(abs(sweep) / 2.0))\n    mx, my = (p[0] + q[0]) / 2.0, (p[1] + q[1]) / 2.0\n    h = math.sqrt(max(r * r - d * d / 4.0, 0.0)) * (1 if abs(sweep) <= math.pi else -1)\n    nx, ny = -(q[1] - p[1]) / d, (q[0] - p[0]) / d\n    s = 1 if b > 0 else -1\n    cx, cy = mx + s * nx * h, my + s * ny * h\n    a0 = math.atan2(p[1] - cy, p[0] - cx)\n    n = max(2, int(math.ceil(math.degrees(abs(sweep)) / ARC_STEP_DEG)))\n    return [(cx + r * math.cos(a0 + sweep * i / n), cy + r * math.sin(a0 + sweep * i / n)) for i in range(n)]\n\n\ndef parse_hatch(codes):\n    \"\"\"codes: [(mã, chuỗi)] của HATCH. Trả về (pattern, [vòng [(x, y)]] theo OCS).\"\"\"\n    pattern, mirror, i = None, False, 0\n    while i < len(codes) and codes[i][0] != 91:\n        k, v = codes[i]\n        if k == 2 and pattern is None:\n            pattern = v\n        if k == 210:\n            parts = v.split(\",\")\n            mirror = len(parts) > 2 and float(parts[2]) < 0\n        i += 1\n    if i >= len(codes):\n        raise ValueError(u\"không có biên\")\n    npath = int(codes[i][1])\n    i += 1\n    loops = []\n    for _ in range(npath):\n        flag = int(codes[i][1])\n        i += 1\n        pts = []\n        if flag & 2:\n            hasb = int(codes[i][1])\n            n = int(codes[i + 2][1])\n            i += 3\n            verts = []\n            for _ in range(n):\n                p = _xy(codes[i][1])\n                i += 1\n                b = 0.0\n                if hasb and i < len(codes) and codes[i][0] == 42:\n                    b = float(codes[i][1])\n                    i += 1\n                verts.append((p, b))\n            for k in range(len(verts)):\n                pts += _bulge(verts[k][0], verts[(k + 1) % len(verts)][0], verts[k][1])\n        else:\n            n = int(codes[i][1])\n            i += 1\n            for _ in range(n):\n                t = int(codes[i][1])\n                i += 1\n                if t == 1:\n                    pts.append(_xy(codes[i][1]))\n                    i += 2\n                elif t == 2:\n                    c, r = _xy(codes[i][1]), float(codes[i + 1][1])\n                    s, e, ccw = float(codes[i + 2][1]), float(codes[i + 3][1]), int(codes[i + 4][1])\n                    pts += _arc(c, r, s, e, ccw)[:-1]\n                    i += 5\n                else:\n                    raise ValueError(u\"biên hatch có cạnh {} (ellipse/spline) chưa hỗ trợ\".format(\n                        u\"ellipse\" if t == 3 else u\"spline\"))\n        while i < len(codes) and codes[i][0] == 97:\n            i += 1\n        if mirror:\n            pts = [(-x, y) for x, y in pts]\n        if len(pts) >= 3:\n            loops.append(pts)\n    return pattern, loops\n\n\n# Đọc HATCH ở model space VÀ trong block (lồng nhau, tối đa 8 cấp), kèm ma trận affine (a b c d e f) của\n# INSERT cha (x' = a x + b y + e; y' = c x + d y + f). Hatch nằm trên layer \"0\" trong block lấy layer INSERT cha.\nDUMP_LISP = u\"\"\"(setq f (open \"{out}\" \"w\" \"utf8\"))\n(defun _ap (m p) (list (+ (* (nth 0 m) (car p)) (* (nth 1 m) (cadr p)) (nth 4 m))\n                       (+ (* (nth 2 m) (car p)) (* (nth 3 m) (cadr p)) (nth 5 m))))\n(defun _mul (p c) (list (+ (* (nth 0 p) (nth 0 c)) (* (nth 1 p) (nth 2 c)))\n                        (+ (* (nth 0 p) (nth 1 c)) (* (nth 1 p) (nth 3 c)))\n                        (+ (* (nth 2 p) (nth 0 c)) (* (nth 3 p) (nth 2 c)))\n                        (+ (* (nth 2 p) (nth 1 c)) (* (nth 3 p) (nth 3 c)))\n                        (+ (* (nth 0 p) (nth 4 c)) (* (nth 1 p) (nth 5 c)) (nth 4 p))\n                        (+ (* (nth 2 p) (nth 4 c)) (* (nth 3 p) (nth 5 c)) (nth 5 p))))\n(defun _ins (d / a sx sy ip bp ca sa m)\n  (setq a (cdr (assoc 50 d)) sx (cdr (assoc 41 d)) sy (cdr (assoc 42 d)) ip (cdr (assoc 10 d))\n        bp (cdr (assoc 10 (tblsearch \"BLOCK\" (cdr (assoc 2 d))))) ca (cos a) sa (sin a))\n  (setq m (list (* ca sx) (- (* sa sy)) (* sa sx) (* ca sy) 0.0 0.0) bp (_ap m bp))\n  (list (nth 0 m) (nth 1 m) (nth 2 m) (nth 3 m) (- (car ip) (car bp)) (- (cadr ip) (cadr bp))))\n(defun _lay (d parent / l) (setq l (cdr (assoc 8 d))) (if (and parent (= l \"0\")) parent l))\n(defun _v (x) (cond ((= (type x) 'REAL) (rtos x 2 6)) ((= (type x) 'INT) (itoa x)) ((= (type x) 'STR) x)\n                    ((and (= (type x) 'LIST) (numberp (car x)))\n                      (strcat (rtos (car x) 2 6) \",\" (rtos (cadr x) 2 6) (if (caddr x) (strcat \",\" (rtos (caddr x) 2 6)) \"\")))\n                    (T \"?\")))\n(defun _h (d m lay / s)\n  (setq s (strcat \"H|\" lay \"|\" (rtos (nth 0 m) 2 9) \",\" (rtos (nth 1 m) 2 9) \",\" (rtos (nth 2 m) 2 9) \",\"\n                  (rtos (nth 3 m) 2 9) \",\" (rtos (nth 4 m) 2 6) \",\" (rtos (nth 5 m) 2 6) \"|\"))\n  (foreach g d (if (member (car g) '(2 91 92 93 72 73 10 11 40 42 50 51 97 210))\n                 (setq s (strcat s (itoa (car g)) \"=\" (_v (cdr g)) \";\"))))\n  (write-line s f))\n(defun _walk (name m parent depth / e d)\n  (setq e (cdr (assoc -2 (tblsearch \"BLOCK\" name))))\n  (while e\n    (setq d (entget e))\n    (cond ((= (cdr (assoc 0 d)) \"HATCH\") (_h d m (_lay d parent)))\n          ((and (= (cdr (assoc 0 d)) \"INSERT\") (< depth 8))\n            (_walk (cdr (assoc 2 d)) (_mul m (_ins d)) (_lay d parent) (1+ depth))))\n    (setq e (entnext e))))\n(if (setq ss (ssget \"_X\" '((0 . \"HATCH,INSERT\") (410 . \"Model\"))))\n  (progn (setq i 0)\n    (repeat (sslength ss)\n      (setq d (entget (ssname ss i)) i (1+ i))\n      (if (= (cdr (assoc 0 d)) \"INSERT\")\n        (_walk (cdr (assoc 2 d)) (_ins d) (cdr (assoc 8 d)) 1)\n        (_h d '(1.0 0.0 0.0 1.0 0.0 0.0) (cdr (assoc 8 d)))))))\n(close f)\n\"\"\"\n\n\ndef find_accoreconsole():\n    found = glob.glob(r\"C:\\Program Files\\Autodesk\\AutoCAD *\\accoreconsole.exe\")\n    return sorted(found)[-1] if found else None\n\n\ndef core_env(core):\n    \"\"\"Môi trường sạch cho AutoCAD Core Console. Gọi từ Revit, tiến trình con kế thừa Path có thư mục Revit 2026\n    → Core Console nạp nhầm DLL của Revit, báo \"Unable to load the Modeler DLLs\" và thoát, không xuất file\n    (đã kiểm 2026-10-19). Chỉ giữ biến hệ thống, Path = thư mục AutoCAD + Windows.\"\"\"\n    keep = (\"SYSTEMROOT\", \"WINDIR\", \"SYSTEMDRIVE\", \"USERPROFILE\", \"APPDATA\", \"LOCALAPPDATA\", \"USERNAME\",\n            \"USERDOMAIN\", \"PROGRAMDATA\", \"PROGRAMFILES\", \"PROGRAMFILES(X86)\", \"PROGRAMW6432\", \"COMMONPROGRAMFILES\",\n            \"COMMONPROGRAMFILES(X86)\", \"COMMONPROGRAMW6432\", \"ALLUSERSPROFILE\", \"COMPUTERNAME\", \"HOMEDRIVE\",\n            \"HOMEPATH\", \"OS\", \"NUMBER_OF_PROCESSORS\", \"PROCESSOR_ARCHITECTURE\", \"PUBLIC\", \"COMSPEC\", \"PATHEXT\")\n    env = dict((k, v) for k, v in os.environ.items() if k.upper() in keep)\n    root = env.get(\"SYSTEMROOT\") or os.environ.get(\"SystemRoot\") or r\"C:\\Windows\"\n    temp = os.path.join(os.environ.get(\"LOCALAPPDATA\") or os.path.expanduser(\"~\"), \"Temp\")\n    env[\"TEMP\"] = env[\"TMP\"] = temp if os.path.isdir(temp) else tempfile.gettempdir()\n    env[\"PATH\"] = u\";\".join([os.path.dirname(core), os.path.join(root, \"System32\"), root,\n                             os.path.join(root, \"System32\", \"Wbem\")])\n    return env\n\n\ndef read_dwg_hatches(dwg_path, core):\n    \"\"\"[(layer, pattern, [vòng [(x, y)]] toạ độ DWG)], [(layer, lỗi)]. Chạy trên bản sao trong thư mục tạm.\"\"\"\n    work = tempfile.mkdtemp(prefix=\"ARV_BaoSan_\")\n    try:\n        copy = os.path.join(work, \"copy.dwg\")\n        shutil.copy2(dwg_path, copy)\n        out = os.path.join(work, \"hatch.txt\")\n        scr = os.path.join(work, \"dump.scr\")\n        with io.open(scr, \"w\", encoding=\"utf-8\") as f:\n            f.write(DUMP_LISP.replace(\"{out}\", out.replace(\"\\\\\", \"/\")))\n        subprocess.run([core, \"/i\", copy, \"/s\", scr, \"/l\", \"en-US\"], stdin=subprocess.DEVNULL,\n                       env=core_env(core), cwd=os.path.dirname(core),\n                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,\n                       timeout=CORE_TIMEOUT_S, creationflags=0x08000000)\n        if not os.path.isfile(out):\n            raise Exception(u\"Core Console không xuất được danh sách hatch\")\n        hatches, errors = [], []\n        with io.open(out, \"r\", encoding=\"utf-8-sig\", errors=\"replace\") as f:\n            for line in f.read().splitlines():\n                parts = line.split(\"|\", 3)\n                if len(parts) < 4 or parts[0] != \"H\":\n                    continue\n                layer = parts[1]\n                try:\n                    a, b, c, d, e, g = [float(v) for v in parts[2].split(\",\")]\n                    codes = []\n                    for kv in parts[3].split(\";\"):\n                        if \"=\" in kv:\n                            k, v = kv.split(\"=\", 1)\n                            codes.append((int(k), v))\n                    pattern, loops = parse_hatch(codes)\n                except Exception as ex:\n                    errors.append((layer, u\"{}\".format(ex)))\n                    continue\n                loops = [[(a * x + b * y + e, c * x + d * y + g) for x, y in l] for l in loops]\n                hatches.append((layer, (pattern or u\"\").upper(), loops))\n        return hatches, errors\n    finally:\n        shutil.rmtree(work, ignore_errors=True)\n\n\n# =====================================================================================\n# PHẦN REVIT\n# =====================================================================================\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef type_name(t):\n    p = t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)\n    return p.AsString() if p else get_name(t)\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef pick_cad(cad_filter):\n    all_cad = list(FilteredElementCollector(doc).OfClass(ImportInstance).ToElements())\n    instances = all_cad\n    if cad_filter:\n        instances = [i for i in all_cad if cad_filter.lower() in get_name(doc.GetElement(i.GetTypeId())).lower()]\n    if len(instances) != 1:\n        names = [get_name(doc.GetElement(i.GetTypeId())) for i in all_cad]\n        raise Exception(u\"Tìm thấy {} bản CAD khớp '{}'. Nhập tên bản CAD vào ô IN[0]. Các bản CAD: {}\".format(\n            len(instances), cad_filter, u\", \".join(names) or u\"không có\"))\n    return instances[0]\n\n\ndef cad_file_path(inst):\n    link = doc.GetElement(inst.GetTypeId())\n    if not inst.IsLinked or not isinstance(link, CADLinkType):\n        return None\n    try:\n        path = ModelPathUtils.ConvertModelPathToUserVisiblePath(link.GetExternalFileReference().GetAbsolutePath())\n    except Exception:\n        return None\n    return path if path and os.path.isfile(path) else None\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return style.GraphicsStyleCategory.Name\n    return None\n\n\ndef cad_items(cad):\n    \"\"\"[(layer, [(x, y)], là cung)] của CAD (kể cả trong block lồng nhau), toạ độ mô hình (mm).\"\"\"\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    items, other = [], {}\n\n    def pts_of(coords):\n        return [(to_mm(p.X), to_mm(p.Y)) for p in coords]\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            elif isinstance(obj, PolyLine):\n                items.append((layer_of(obj), pts_of(obj.GetCoordinates()), False))\n            elif isinstance(obj, Line):\n                items.append((layer_of(obj), pts_of([obj.GetEndPoint(0), obj.GetEndPoint(1)]), False))\n            elif isinstance(obj, Arc):\n                items.append((layer_of(obj), pts_of(obj.Tessellate()), True))\n            else:\n                n = obj.GetType().Name\n                other[n] = other.get(n, 0) + 1\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return items, other\n\n\ndef find_line_style(name):\n    if not name:\n        return None\n    cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines)\n    subs = list(cat.SubCategories)\n    for c in subs:\n        if c.Name == name:\n            return c.GetGraphicsStyle(GraphicsStyleType.Projection)\n    raise Exception(u\"Không có line style '{}' trong dự án (không tự tạo). Các line style: {}\".format(\n        name, u\", \".join(sorted(c.Name for c in subs))))\n\n\ndef existing_lines(view):\n    out = []\n    for e in FilteredElementCollector(doc, view.Id).OfClass(CurveElement).ToElements():\n        if e.CurveElementType != CurveElementType.DetailCurve:\n            continue\n        c = e.GeometryCurve\n        if isinstance(c, Line):\n            p, q = c.GetEndPoint(0), c.GetEndPoint(1)\n            out.append(((to_mm(p.X), to_mm(p.Y)), (to_mm(q.X), to_mm(q.Y))))\n    return out\n\n\ndef is_dup(a, b, lines):\n    def same(p, q):\n        return math.hypot(p[0] - q[0], p[1] - q[1]) <= DUP_TOL_MM\n    return any((same(a, p) and same(b, q)) or (same(a, q) and same(b, p)) for p, q in lines)\n\n\n# --- Type sàn --------------------------------------------------------------------------\ndef floor_width_mm(ft):\n    cs = ft.GetCompoundStructure()\n    return round(to_mm(cs.GetWidth()), 1) if cs is not None else None\n\n\nclass FloorTypes(object):\n    \"\"\"Tìm / tạo type sàn theo chiều dày. Ưu tiên tên FLOOR_TYPE_NAME, sau đó type thường bất kỳ đúng chiều dày.\"\"\"\n\n    def __init__(self, template_name):\n        self.types = [t for t in FilteredElementCollector(doc).OfClass(FloorType).ToElements() if not t.IsFoundationSlab]\n        self.template_name = template_name\n        self.cache = {}\n\n    def template(self):\n        for t in self.types:\n            if type_name(t) == self.template_name:\n                return t\n        raise Exception(u\"Không có type sàn mẫu '{}'. Các type sàn: {}\".format(\n            self.template_name, u\", \".join(sorted(type_name(t) for t in self.types))))\n\n    def plan(self, t_mm):\n        \"\"\"(type có sẵn hoặc None, tên type).\"\"\"\n        name = FLOOR_TYPE_NAME.format(t=int(round(t_mm)))\n        for t in self.types:\n            if type_name(t) == name:\n                if floor_width_mm(t) != round(t_mm, 1):\n                    raise Exception(u\"Type '{}' đã có nhưng dày {} mm (cần {:g} mm) – sửa type hoặc đổi tên.\".format(\n                        name, floor_width_mm(t), t_mm))\n                return t, name\n        same = [t for t in self.types if floor_width_mm(t) == round(t_mm, 1)]\n        if same:\n            return sorted(same, key=type_name)[0], type_name(sorted(same, key=type_name)[0])\n        return None, name\n\n    def get(self, t_mm):\n        \"\"\"Type đúng chiều dày; chưa có thì nhân bản type mẫu (phải đang trong Transaction).\"\"\"\n        if t_mm in self.cache:\n            return self.cache[t_mm]\n        ft, name = self.plan(t_mm)\n        if ft is None:\n            src = self.template()\n            ft = doc.GetElement(src.Duplicate(name).Id)\n            cs = ft.GetCompoundStructure()\n            idx = cs.StructuralMaterialIndex\n            if idx < 0:\n                idx = max(range(cs.LayerCount), key=lambda i: cs.GetLayerWidth(i))\n            rest = to_mm(cs.GetWidth()) - to_mm(cs.GetLayerWidth(idx))\n            if t_mm - rest <= 0:\n                raise Exception(u\"Type mẫu '{}' có các lớp khác dày {:g} mm ≥ {:g} mm – chọn type mẫu khác.\".format(\n                    self.template_name, rest, t_mm))\n            cs.SetLayerWidth(idx, from_mm(t_mm - rest))\n            ft.SetCompoundStructure(cs)\n            self.types.append(ft)\n        self.cache[t_mm] = ft\n        return ft\n\n\ndef existing_floors(level):\n    out = []\n    for f in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        if f.LevelId != level.Id:\n            continue\n        p = f.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED)\n        bb = f.get_BoundingBox(None)\n        out.append((f, p.AsDouble() * 0.09290304 if p else 0.0,\n                    ((to_mm(bb.Min.X) + to_mm(bb.Max.X)) / 2.0, (to_mm(bb.Min.Y) + to_mm(bb.Max.Y)) / 2.0) if bb else None))\n    return out\n\n\ndef curve_loop(pts, z):\n    cl = CurveLoop()\n    for a, b in zip(pts, pts[1:] + pts[:1]):\n        cl.Append(Line.CreateBound(XYZ(from_mm(a[0]), from_mm(a[1]), z), XYZ(from_mm(b[0]), from_mm(b[1]), z)))\n    return cl\n\n\nLOG_HEADER = [u\"Đối tượng\", u\"Loại / Ghi chú\", u\"Diện tích (m²)\", u\"Số nét / lỗ\", u\"Type\", u\"Kết quả\", u\"ElementId\",\n              u\"Điểm mốc (mm)\"]\n\n\ndef write_log(rows, source, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"VeBaoSanTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# Bản CAD: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef main(cad_filter, edge_filters, mark_filters, hatch_filters, legend, base_spec, template_name, style_name,\n         min_area, make_floors, dry_run):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], [], []\n    view = doc.ActiveView\n    if not isinstance(view, ViewPlan) or view.IsTemplate or view.GenLevel is None:\n        return [u\"DỪNG: view đang mở phải là mặt bằng (Structural/Floor Plan). Mở view mặt bằng tầng cần vẽ rồi Run.\"], [], []\n    level = view.GenLevel\n    style = find_line_style(style_name)\n\n    cad = pick_cad(cad_filter)\n    cad_name = get_name(doc.GetElement(cad.GetTypeId()))\n    items, other = cad_items(cad)\n    layers = sorted(set(l for l, _, _ in items if l))\n    edge_layers = [l for l in layers if matches(l, edge_filters)]\n    if not edge_layers:\n        return [u\"DỪNG: không có layer nào chứa '{}'. Các layer nét trong CAD:\".format(u\"; \".join(edge_filters))] \\\n            + layers, [], []\n    mark_layers = [l for l in layers if matches(l, mark_filters)]\n    segs, marks, arcs = [], [], 0\n    for layer, pts, is_arc in items:\n        if layer in edge_layers:\n            segs += [(p[0], p[1], q[0], q[1]) for p, q in zip(pts[:-1], pts[1:])]\n            arcs += 1 if is_arc else 0\n        if layer in mark_layers and len(pts) == 2:\n            marks.append((pts[0][0], pts[0][1], pts[1][0], pts[1][1]))\n\n    # --- Hatch: đọc từ bản sao DWG\n    warnings, zones, unknown, hatch_layers, other_hatch = [], [], {}, set(), {}\n    legend_pats = set(p for k in legend for p in k.split(u\"+\"))\n    path = cad_file_path(cad)\n    core = find_accoreconsole()\n    if path is None:\n        return [u\"DỪNG: bản CAD phải được LINK (không Import) và file DWG phải còn ở đường dẫn gốc để đọc hatch.\"], [], []\n    if core is None:\n        return [u\"DỪNG: không tìm thấy AutoCAD Core Console (C:\\\\Program Files\\\\Autodesk\\\\AutoCAD *\\\\accoreconsole.exe).\"], [], []\n    raw, errors = read_dwg_hatches(path, core)\n    tf = cad.GetTotalTransform()\n    for layer, pattern, loops in raw:\n        if not matches(layer, hatch_filters):\n            if pattern in legend_pats:\n                other_hatch[layer] = other_hatch.get(layer, 0) + 1\n            continue\n        hatch_layers.add(layer)\n        if pattern not in legend_pats:\n            unknown[pattern] = unknown.get(pattern, 0) + 1\n            continue\n        mloops = []\n        for l in loops:\n            ps = [tf.OfPoint(XYZ(from_mm(x), from_mm(y), 0)) for x, y in l]\n            mloops.append([(to_mm(p.X), to_mm(p.Y)) for p in ps])\n        zones.append({\"pattern\": pattern, \"spec\": legend.get(pattern), \"loops\": mloops})\n    for layer, err in errors:\n        if matches(layer, hatch_filters):\n            warnings.append(u\"CẢNH BÁO: bỏ 1 hatch trên layer {}: {}\".format(layer, err))\n\n    blocks, regions, info = find_regions(segs, marks, zones, base_spec,\n                                         {\"snap\": SNAP_MM, \"hatch_snap\": HATCH_SNAP_MM, \"min_area\": min_area}, legend)\n\n    # --- Đường bao cần vẽ: bao ngoài, lỗ mở, vùng hatch (nét chung vẽ một lần)\n    lines = LineSet(DUP_TOL_MM)\n    rows, plan_lines = [], []\n    for k, b in enumerate(blocks):\n        n = lines.add_loop(b[\"outer\"])\n        rows.append([u\"Bao ngoài {:02d}\".format(k + 1), u\"đường bao\", u\"{:.2f}\".format(b[\"area\"]), n, u\"\", u\"\", u\"\",\n                     fmt(b[\"outer\"][0])])\n        for j, o in enumerate(b[\"openings\"]):\n            n = lines.add_loop(o[\"loop\"])\n            note = u\"lỗ mở\" + (u\" (gộp {} ô)\".format(o[\"n\"]) if o[\"n\"] > 1 else u\"\")\n            if o[\"edge\"]:\n                note += u\" – CHẠM BAO NGOÀI\"\n            rows.append([u\"Lỗ mở {:02d}-{:02d}\".format(k + 1, j + 1), note, u\"{:.2f}\".format(o[\"area\"]), n, u\"\", u\"\", u\"\",\n                         fmt(o[\"loop\"][0])])\n    zcount = {}\n    for r in regions:\n        if r[\"pattern\"] is None:\n            continue\n        zcount[r[\"pattern\"]] = zcount.get(r[\"pattern\"], 0) + 1\n        r[\"name\"] = u\"Vùng {} {:02d}\".format(r[\"pattern\"], zcount[r[\"pattern\"]])\n        n = lines.add_loop(r[\"outer\"]) + sum(lines.add_loop(h) for h in r[\"holes\"])\n        rows.append([r[\"name\"], u\"đường bao – \" + spec_text(r[\"spec\"]), u\"{:.2f}\".format(r[\"area\"]), n, u\"\", u\"\", u\"\",\n                     fmt(r[\"outer\"][0])])\n    nbase = 0\n    for r in regions:\n        if r[\"pattern\"] is None:\n            nbase += 1\n            r[\"name\"] = u\"Sàn nền {:02d}\".format(nbase)\n\n    z = level.ProjectElevation\n    old = existing_lines(view)\n    todo = [(a, b) for a, b in lines.out if not is_dup(a, b, old)]\n    skipped = len(lines.out) - len(todo)\n\n    ftypes = FloorTypes(template_name) if make_floors else None\n    old_floors = existing_floors(level) if make_floors else []\n    drawn, floors, new_types = [], [], []\n    if make_floors:\n        for t in sorted(set(r[\"spec\"][0] for r in regions)):\n            ft, name = ftypes.plan(t)\n            if ft is None:\n                ftypes.template()\n                new_types.append(name)\n\n    if not dry_run:\n        TransactionManager.Instance.EnsureInTransaction(doc)\n    try:\n        if not dry_run:\n            for a, b in todo:\n                dc = doc.Create.NewDetailCurve(view, Line.CreateBound(XYZ(from_mm(a[0]), from_mm(a[1]), z),\n                                                                      XYZ(from_mm(b[0]), from_mm(b[1]), z)))\n                if style is not None:\n                    dc.LineStyle = style\n                drawn.append(dc)\n        if make_floors:\n            for r in regions:\n                t, off = r[\"spec\"]\n                label = u\"sàn – \" + spec_text(r[\"spec\"]) + (u\" (không hatch)\" if r[\"pattern\"] is None else u\"\")\n                ft_plan, tname = ftypes.plan(t)\n                cx = (min(p[0] for p in r[\"outer\"]) + max(p[0] for p in r[\"outer\"])) / 2.0\n                cy = (min(p[1] for p in r[\"outer\"]) + max(p[1] for p in r[\"outer\"])) / 2.0\n                dup = [f for f, a, c in old_floors\n                       if type_name(doc.GetElement(f.GetTypeId())) == tname and abs(a - r[\"area\"]) <= 0.05 and c is not None\n                       and abs(c[0] - cx) < 50 and abs(c[1] - cy) < 50]\n                result, eid = u\"\", u\"\"\n                if dup:\n                    result, eid = u\"đã có – bỏ qua\", str(dup[0].Id.Value)\n                elif dry_run:\n                    result = u\"Sẽ tạo\" + (u\" (type mới)\" if ft_plan is None else u\"\")\n                else:\n                    try:\n                        ft = ftypes.get(t)\n                        loops = List[CurveLoop]()\n                        loops.Add(curve_loop(r[\"outer\"], z))\n                        for h in r[\"holes\"]:\n                            loops.Add(curve_loop(h, z))\n                        fl = Floor.Create(doc, loops, ft.Id, level.Id, True, None, 0.0)\n                        fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).Set(from_mm(off))\n                        floors.append(fl)\n                        result, eid = u\"Đã tạo\", str(fl.Id.Value)\n                    except Exception as ex:\n                        result = u\"LỖI: {}\".format(ex)\n                rows.append([r[\"name\"], label, u\"{:.2f}\".format(r[\"area\"]), len(r[\"holes\"]), tname, result, eid,\n                             fmt(r[\"outer\"][0])])\n    finally:\n        if not dry_run:\n            TransactionManager.Instance.TransactionTaskDone()\n\n    log = write_log(rows, cad_name, dry_run)\n    nz = sum(1 for r in regions if r[\"pattern\"] is not None)\n    report = [\n        u\"{}: {} bao ngoài, {} lỗ mở, {} vùng hatch – {} nét{}{}\".format(\n            u\"CHẠY THỬ (dry-run)\" if dry_run else u\"ĐÃ THỰC HIỆN\", len(blocks),\n            sum(len(b[\"openings\"]) for b in blocks), nz, len(lines.out),\n            u\"\" if dry_run else u\" (đã vẽ {})\".format(len(drawn)),\n            (u\"; {} tấm sàn\".format(len(regions)) + (u\"\" if dry_run else u\" (đã tạo {})\".format(len(floors))))\n            if make_floors else u\"; không tạo sàn\"),\n        u\"Bản CAD: {} | View: {} | Level: {}\".format(cad_name, view.Name, level.Name),\n        u\"Layer mép sàn: {} | dấu lỗ mở: {} ({} dấu X) | hatch: {}\".format(\n            u\", \".join(edge_layers), u\", \".join(mark_layers) or u\"không có\", info[\"xmarks\"],\n            u\", \".join(sorted(hatch_layers)) or u\"không có\"),\n        u\"Ghi chú: {} | không hatch: {}\".format(\n            u\"; \".join(u\"{} = {}\".format(k, spec_text(v)) for k, v in sorted(legend.items())), spec_text(base_spec)),\n        u\"Log: {}\".format(log),\n    ]\n    if new_types:\n        report.append(u\"{} type sàn mới (nhân bản từ '{}'): {}\".format(\n            u\"Sẽ tạo\" if dry_run else u\"Đã tạo\", template_name, u\", \".join(new_types)))\n    if make_floors and old_floors:\n        report.append(u\"CẢNH BÁO: level {} đã có {} sàn (Id {}) – sàn mới sẽ chồng lên; xoá tay sàn cũ nếu thay thế.\".format(\n            level.Name, len(old_floors), u\", \".join(str(f.Id.Value) for f, _, _ in old_floors)))\n    if unknown:\n        report.append(u\"Hatch không có trong ghi chú (bỏ qua): {}\".format(\n            u\", \".join(u\"{} ×{}\".format(k or u\"?\", v) for k, v in sorted(unknown.items()))))\n    report += warnings\n    if info[\"conflict\"]:\n        report.append(u\"CẢNH BÁO: {} ô nằm trong 2 hatch khác ghi chú – lấy hatch vẽ sau.\".format(info[\"conflict\"]))\n    for p, why in info[\"bad\"]:\n        report.append(u\"CẢNH BÁO: bỏ {} tại {} – kiểm tra lại nét / biên hatch.\".format(why, fmt(p)))\n    edge_open = [r[0] for r in rows if u\"CHẠM BAO NGOÀI\" in r[1]]\n    if edge_open:\n        report.append(u\"CẢNH BÁO: lỗ mở chạm bao ngoài ({}) – sàn nền sẽ được khoét vào mép.\".format(u\", \".join(edge_open)))\n    if info[\"stray\"]:\n        report.append(u\"CẢNH BÁO: {} dấu X không nằm trong ô kín nào của bao ngoài (không vẽ): {}\".format(\n            len(info[\"stray\"]), u\", \".join(fmt(p) for p in info[\"stray\"][:10])))\n    if info[\"loose_x\"]:\n        report.append(u\"CẢNH BÁO: {} dấu X nằm trong ô lớn hơn nhiều so với dấu X (đường bao lỗ mở chưa kín trên layer \"\n                      u\"mép sàn) – KHÔNG khoét, kiểm tra nét quanh: {}\".format(len(info[\"loose_x\"]), u\", \".join(\n                          u\"{} (ô {:.1f} m²)\".format(fmt(p), a) for p, a in info[\"loose_x\"][:10])))\n    if other_hatch:\n        report.append(u\"GỢI Ý: hatch đúng mẫu ghi chú nhưng nằm ngoài layer hatch IN[3] (bỏ qua): {} – thêm vào IN[3] \"\n                      u\"nếu là vùng sàn.\".format(u\", \".join(u\"{} ×{}\".format(k, v) for k, v in sorted(other_hatch.items()))))\n    if info[\"loose\"]:\n        report.append(u\"CẢNH BÁO: {} đầu nét cụt/hở (đã bỏ) – nếu thiếu đường bao, kiểm tra nét tại: {}{}\".format(\n            len(info[\"loose\"]), u\", \".join(fmt(p) for p in info[\"loose\"][:10]), u\" …\" if len(info[\"loose\"]) > 10 else u\"\"))\n        cand = [l for l in layers if l not in edge_layers and\n                any(k in l.lower() for k in (u\"cot\", u\"cột\", u\"vach\", u\"vách\", u\"wall\", u\"col\"))]\n        if cand:\n            report.append(u\"GỢI Ý: mép sàn thường bị đứt tại cột / vách – thử thêm layer cột/vách vào IN[1]: {}\".format(\n                u\", \".join(cand)))\n    for a, p, why in info[\"small\"]:\n        report.append(u\"Bỏ qua vòng tại {}: {}\".format(fmt(p), why))\n    if arcs:\n        report.append(u\"CẢNH BÁO: {} cung tròn trên layer mép sàn được vẽ thành đoạn gấp khúc.\".format(arcs))\n    if other:\n        report.append(u\"Bỏ qua đối tượng CAD không hỗ trợ: {}\".format(\n            u\", \".join(u\"{} ×{}\".format(k, v) for k, v in sorted(other.items()))))\n    if skipped:\n        report.append(u\"{} nét trùng Detail Line đã có trong view → không vẽ lại.\".format(skipped))\n    if dry_run:\n        report.append(u\"Đúng thì đổi Dry-run = False và Run lại. Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    report += [u\" | \".join(str(c) for c in r) for r in rows]\n    return report, drawn, floors\n\n\ndef force_rerun_next_time():\n    \"\"\"Dynamo chỉ chạy lại node khi có đầu vào đổi → sau Undo / xoá trong Revit, bấm Run lần 2 không có tác dụng.\n    Đánh dấu node này 'đã sửa' để lần Run sau luôn chạy lại. Chỉ làm ở chế độ Manual (Automatic sẽ lặp vô hạn).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        # CPython3 (pythonnet) có thể trả enum dưới dạng số (Manual = 0) → so cả giá trị lẫn tên\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if u\"ARV_VeBaoSanTuCAD_v1\" in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\nif DYNAMO:\n    import traceback\n    # Graph cũ còn ô \"Tạo sàn\" ở IN[9] và Dry-run ở IN[10] → bỏ qua ô \"Tạo sàn\", lấy Dry-run ở ô cuối\n    _dry = IN[10] if len(IN) > 10 else IN[9]\n    DRY_RUN = True if _dry is None else bool(_dry)\n    try:\n        OUT = list(main(\n            (IN[0] or u\"\").strip(),\n            split_filters(IN[1] or u\"S-Thay;S-Cot vach\"),\n            split_filters(IN[2] or u\"S-Manh\"),\n            split_filters(IN[3] or u\"S-Hatch\"),\n            parse_legend(IN[4] or u\"ANSI31=230;STARS=250;TRIANG=500;ANSI37=450/-50\"),\n            parse_spec(IN[5] or u\"230/-50\"),\n            (IN[6] or u\"Generic 200\").strip(),\n            (IN[7] or u\"\").strip(),\n            float(10.0 if IN[8] is None else IN[8]),\n            True,                                   # luôn tạo sàn (ô \"Tạo sàn\" đã bỏ – dễ bấm nhầm với Dry-run)\n            DRY_RUN,\n        ))\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], [], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"VeBaoSanTuCAD_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "3dbecb6a11fb4ecdb8fd1e493134353f",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "0df8e7d01fc34801bc9ca9c3a2d4d846",
+          "Name": "IN[0]",
+          "Description": "Tên bản CAD",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2e2d1fda81d643c798b56864169a9c63",
+          "Name": "IN[1]",
+          "Description": "Layer mép sàn",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0d4ffe67cc9d44a6b5b3b2f80574f55f",
+          "Name": "IN[2]",
+          "Description": "Layer dấu lỗ mở",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b7e125c1e6c14ed697f239a7a6bbf9e3",
+          "Name": "IN[3]",
+          "Description": "Layer hatch",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "13d8e5ff63344bf6858566525b06b2f9",
+          "Name": "IN[4]",
+          "Description": "Ghi chú hatch",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "49c0c07ccfa54deea94d6daa54dbe164",
+          "Name": "IN[5]",
+          "Description": "Sàn nền",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "33c575ed00994a5c90e39c5cbbcc58eb",
+          "Name": "IN[6]",
+          "Description": "Type sàn mẫu",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a098a699d32d44b38b3154e9c92b182d",
+          "Name": "IN[7]",
+          "Description": "Line style",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2815e7f5323244c0a4f84203a4ca1bd3",
+          "Name": "IN[8]",
+          "Description": "Diện tích tối thiểu",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "114e0d759c6448b59758936ef8130cd7",
+          "Name": "IN[9]",
+          "Description": "Dry-run",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "35aebcf5eab444dab87ce9f4a222c1b5",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "cfa5ac8f6eb9465d95b9ca1475a4fff9",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "7218ed70ad6240cd91b36cec83c8b5ee",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "525b77d72c0f4c33a71e241961a3f182",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "7b092dde88f6459b8254b916b6519319",
+      "End": "0df8e7d01fc34801bc9ca9c3a2d4d846",
+      "Id": "cd77691ac16d40d8ba2f3d10ac3b35b9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "925a7f01f2ad41e9a965df9e709ac8da",
+      "End": "2e2d1fda81d643c798b56864169a9c63",
+      "Id": "cbb07103e17045ad900c03010f18db9c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "3c321dc9f8c8405db0123af43b27e3a5",
+      "End": "0d4ffe67cc9d44a6b5b3b2f80574f55f",
+      "Id": "03cf4fc0531543a09e2184bd4308dba8",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "c81f6a32f8f54703a296137be2f1b5b5",
+      "End": "b7e125c1e6c14ed697f239a7a6bbf9e3",
+      "Id": "80d2a527438f4e878bd8f5e5a489b439",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "62eae5704fba4b5db3a0753f051cd32f",
+      "End": "13d8e5ff63344bf6858566525b06b2f9",
+      "Id": "867f98a94df9408086139f5778704672",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "026081ecc37842a5ada16ecbc0e7424b",
+      "End": "49c0c07ccfa54deea94d6daa54dbe164",
+      "Id": "d1401b1e7cc948c7aa21d43aea669cc4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "527af55ac4a843df81b682e2c14ead93",
+      "End": "33c575ed00994a5c90e39c5cbbcc58eb",
+      "Id": "8d6140da5bd7422983fb801b304b20db",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d141c4af68424b3ba2ab27b2653637da",
+      "End": "a098a699d32d44b38b3154e9c92b182d",
+      "Id": "5e44f84fe7ac44288286509997996e4b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2376976f27974fc88593b4451abd4452",
+      "End": "2815e7f5323244c0a4f84203a4ca1bd3",
+      "Id": "9e2464719368408380697ad5894d2ff6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0cd1dd4d6f9543cab154daf0fe3279e1",
+      "End": "114e0d759c6448b59758936ef8130cd7",
+      "Id": "ddd5024925654b61b44b3b938123b016",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "35aebcf5eab444dab87ce9f4a222c1b5",
+      "End": "7218ed70ad6240cd91b36cec83c8b5ee",
+      "Id": "7e6235e4cc84469f8340626aeff6f0cc",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "4712bd970a394447aa7d45af3a0405ba",
+        "Name": "Tên bản CAD (để trống nếu chỉ có 1)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "1603dc0057764f649ca1a29f7128c1e0",
+        "Name": "Layer mép sàn (cách nhau ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 130.0
+      },
+      {
+        "Id": "602331f00e5c45f9a6e53560b8d4d83b",
+        "Name": "Layer dấu X lỗ mở",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Id": "114a4408939c4ee2bb193ae15cb65484",
+        "Name": "Layer hatch vùng sàn",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 390.0
+      },
+      {
+        "Id": "d3a34471349f4247a9519495cbe20447",
+        "Name": "Ghi chú hatch: MẪU=dày[/cốt] (mm, cốt âm = hạ cốt)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Id": "6ed489ef5d2d4832baf0b0a8631af344",
+        "Name": "Sàn nền không hatch: dày[/cốt]",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 650.0
+      },
+      {
+        "Id": "8606a0d80a9d4f0b89a7a6360fd1145a",
+        "Name": "Type sàn mẫu để nhân bản",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 780.0
+      },
+      {
+        "Id": "ca8cdff669fc45cca57877a1d69f80c4",
+        "Name": "Line style đường bao (trống = mặc định)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 910.0
+      },
+      {
+        "Id": "135331f6bbcb4e70a850d33f7f54ba00",
+        "Name": "Diện tích bao ngoài tối thiểu (m²)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1040.0
+      },
+      {
+        "Id": "ecf4bf0c2d124e6d818975e3f2e1d746",
+        "Name": "Dry-run (True = chỉ báo cáo; False = vẽ + tạo sàn)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1170.0
+      },
+      {
+        "Id": "3dbecb6a11fb4ecdb8fd1e493134353f",
+        "Name": "ARV - Vẽ đường bao sàn từ CAD",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 400.0
+      },
+      {
+        "Id": "cfa5ac8f6eb9465d95b9ca1475a4fff9",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "7df4c6c66a494f25ae17109e79d18d5f",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Mở view mặt bằng tầng cần vẽ. Bản CAD mặt bằng kết cấu sàn đã Link (mm). Giữ Dry-run = True cho lần chạy đầu.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "4712bd970a394447aa7d45af3a0405ba",
+          "1603dc0057764f649ca1a29f7128c1e0",
+          "602331f00e5c45f9a6e53560b8d4d83b",
+          "114a4408939c4ee2bb193ae15cb65484",
+          "d3a34471349f4247a9519495cbe20447",
+          "6ed489ef5d2d4832baf0b0a8631af344",
+          "8606a0d80a9d4f0b89a7a6360fd1145a",
+          "ca8cdff669fc45cca57877a1d69f80c4",
+          "135331f6bbcb4e70a850d33f7f54ba00",
+          "ecf4bf0c2d124e6d818975e3f2e1d746"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 486.0,
+        "Height": 1384.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1315.0,
+        "TextblockHeight": 72.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "a85972bc944240cfacb1df5f9bd0c6d7",
+        "Title": "2. Bao sàn + vùng hatch + tạo sàn (Python)",
+        "DescriptionText": "Vẽ Detail Line: bao ngoài cùng, bao lỗ mở gạch chéo X, bao từng vùng hatch theo ghi chú (nét chung vẽ một lần). Tạo sàn kết cấu: mỗi vùng hatch một tấm đúng dày/cốt; sàn nền không hatch khoét lỗ mở + vùng hatch. Hatch đọc từ bản sao DWG qua AutoCAD Core Console. Type thiếu → nhân bản type mẫu. Chặn file central, log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: CHƯA DUYỆT.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "3dbecb6a11fb4ecdb8fd1e493134353f"
+        ],
+        "HasNestedGroups": false,
+        "Left": 590.0,
+        "Top": 145.0,
+        "Width": 326.0,
+        "Height": 687.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 400.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 245.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "6fd67c97ac754b578416aaaabd9913e5",
+        "Title": "3. Kết quả",
+        "DescriptionText": "OUT[0] báo cáo từng đường bao / tấm sàn; OUT[1] Detail Line đã vẽ; OUT[2] sàn đã tạo.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "cfa5ac8f6eb9465d95b9ca1475a4fff9"
+        ],
+        "HasNestedGroups": false,
+        "Left": 990.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 173.15125813552393,
+    "Y": 56.940912385546426,
+    "Zoom": 0.6905771893855034
+  }
+}

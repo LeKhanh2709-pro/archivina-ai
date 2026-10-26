@@ -1,0 +1,923 @@
+{
+  "Uuid": "b46ae576-c21c-4980-a25e-4d4f1dceb170",
+  "IsCustomNode": false,
+  "Description": "Tạo ống thoát nước uPVC + phụ kiện (co, Y 45°, tê, côn) từ DWG cấp thoát nước đã Link: DN theo dim/ghi chú, hướng chảy theo mũi tên, dốc 1–2 %, ống đứng. Dry-run mặc định.",
+  "Name": "ARV_TaoOngThoatNuocTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "c3d43918b0f24be284501590d645938d",
+      "Name": "IN[0] Tên bản CAD (chuỗi con)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "ctn",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "69d1c55e431f4e15b28898796409aa8d",
+      "Name": "IN[1] Layer ống (cách ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV-P-DR-Nước thải phân;AV-P-DR-Nước thải rửa;AV-P-DR-Nước thải bếp;AV-P-DR-Nước thải mưa;AV-P-DR-Nước xả;AV-P-VE-Hơi;AV-P-DR-Nước thải phân T5;AV-P-DR-Nước thải rửa T5;AV-P-DR-Nước thải mưa T5",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "6459d5afce74421fa286d420e8a012e5",
+      "Name": "IN[2] Piping system theo tên layer",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "phân=AV_P_Nước Thải Xí;rửa=AV_P_Nước Thải Rửa;bếp=AV_P_Nước Thải Bếp;mưa=AV_P_Nước Mưa;Hơi=AV_P_Thông hơi Chung;*=AV_P_Nước Xả khác",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "e0c42f6b41284189b2df1191b60ac9c9",
+      "Name": "IN[3] Nhóm cao độ: hậu tố=level trên>level dưới",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "T5=TẦNG 5>TẦNG chuye;*=TẦNG chuye>TẦNG 4",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "fb043d47c1cc4e24a169bfe7741799e9",
+      "Name": "IN[4] Level trên → tâm ống điểm cao nhất (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "400.0",
+      "Description": "Creates a number.",
+      "NumberType": "Double"
+    },
+    {
+      "Id": "81ab3b2abf534e2b9f7ba69331614728",
+      "Name": "IN[5] Block mũi tên hướng chảy",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV-P-Hướng nước chảy",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "3035a363a6d542c6b984e180a95d2568",
+      "Name": "IN[6] Thư mục family PVC DWV (khi phải tạo type)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "C:\\ProgramData\\Autodesk\\RVT 2021\\Libraries\\English\\Pipe\\Fittings\\PVC\\Sch 40\\Socket-Type\\DWV",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "63a199683e404da6968cf1f287791ee9",
+      "Name": "IN[7] Pipe type (có sẵn thì dùng)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV_u.PVC PN6",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "bed70104be6f4f25abadba33abc9f020",
+      "Name": "IN[8] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "5d1b9ddab08d439a8b79df6083ee586e",
+      "Name": "IN[9] Chỉ dựng tuyến qua điểm DWG x,y (trống = tất cả)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "dd2746dcf52d43e5b07e088534155f77",
+      "Name": "IN[10] Màu trong view đang mở theo layer (R,G,B)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "phân=255,255,0;Hơi=128,0,128;rửa=0,0,255",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "ee87d50f5c4946a8b368780cc8e7bfe3",
+      "Name": "IN[11] DN theo layer (tên = tối thiểu, * = không nhãn)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "phân=110;*=75",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "e0aa47bc06a548098f88513720e30a0b",
+      "Name": "IN[12] Layer dựng phẳng, không dốc (cách ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Nước xả",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c3d43918b0f24be284501590d645938d",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "86bf34922a7a46f6b9c45c0ccadccf6e",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "ctn"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "69d1c55e431f4e15b28898796409aa8d",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "97844059829c4a84a4d86d6a64bbf4cc",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV-P-DR-Nước thải phân;AV-P-DR-Nước thải rửa;AV-P-DR-Nước thải bếp;AV-P-DR-Nước thải mưa;AV-P-DR-Nước xả;AV-P-VE-Hơi;AV-P-DR-Nước thải phân T5;AV-P-DR-Nước thải rửa T5;AV-P-DR-Nước thải mưa T5"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "6459d5afce74421fa286d420e8a012e5",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3cb3ac374d474e1388476c7d15dfa914",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "phân=AV_P_Nước Thải Xí;rửa=AV_P_Nước Thải Rửa;bếp=AV_P_Nước Thải Bếp;mưa=AV_P_Nước Mưa;Hơi=AV_P_Thông hơi Chung;*=AV_P_Nước Xả khác"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "e0c42f6b41284189b2df1191b60ac9c9",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "33d5599c3e984b80b48d67a4e184509e",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "T5=TẦNG 5>TẦNG chuye;*=TẦNG chuye>TẦNG 4"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "fb043d47c1cc4e24a169bfe7741799e9",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1ed0282526cf401bbcaaed38fe0c00d5",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 400.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "81ab3b2abf534e2b9f7ba69331614728",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "574f4e38ca934074a288b4dbb8e6c507",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV-P-Hướng nước chảy"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "3035a363a6d542c6b984e180a95d2568",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9817cfbb5c364399bb69e6f58a445d64",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "C:\\ProgramData\\Autodesk\\RVT 2021\\Libraries\\English\\Pipe\\Fittings\\PVC\\Sch 40\\Socket-Type\\DWV"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "63a199683e404da6968cf1f287791ee9",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6bda3a7c3ef2420c8fb49be01bdd47e4",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV_u.PVC PN6"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "bed70104be6f4f25abadba33abc9f020",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "98490a61cd414450be81f3b821373e9d",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "5d1b9ddab08d439a8b79df6083ee586e",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "418376011e9f4d5b8960dd027fd36980",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "dd2746dcf52d43e5b07e088534155f77",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6f0cbb1d3bb54d8ebc21bca46a75c6db",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "phân=255,255,0;Hơi=128,0,128;rửa=0,0,255"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "ee87d50f5c4946a8b368780cc8e7bfe3",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b5a6d8120d034825bf5d57d76783d7ed",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "phân=110;*=75"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "e0aa47bc06a548098f88513720e30a0b",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d6b705df60d14207922fc0b6dcb2c577",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Nước xả"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoOngThoatNuocTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo ống thoát nước uPVC + phụ kiện (co, Y 45°, tê, côn) từ mặt bằng cấp thoát nước (DWG CTN đã Link vào Revit).\n#   Đọc từ BẢN SAO DWG qua AutoCAD Core Console (chữ, dim, block trong bản link Revit không đọc được):\n#   - Ống: LINE 1 nét trên các layer IN[1]. Đoạn tách tại nút T, khe hở cùng layer ≤ 50 mm được nối.\n#   - DN: dimension có dimstyle chứa \"Dxxx\" (VD \"AV-Dim 1-75 (D160)\", \"0.T D110 (1-200)\") gán cho đoạn giữa 2 điểm đo;\n#     chữ \"D75-2%\" gán DN + độ dốc cho ống gần nhất; còn lại lan theo tuyến, rồi theo ống hạ lưu; không có → D75.\n#     DN không được giảm về hạ lưu: đoạn nhỏ hơn ống đổ vào nó được nâng lên (ghi log).\n#   - Hướng chảy: block mũi tên IN[5]. Điểm xả của mỗi cụm ống = tổ hợp đầu cụt (ống đứng R100, điểm rơi\n#     xuống lớp dưới, đầu cụt có mũi tên chỉ vào) khớp mũi tên nhiều nhất.\n#   - Cao độ: dốc theo chữ ghi chú, mặc định DN ≤ 90 → 2 %, còn lại 1 %; điểm cao nhất mỗi cụm cách level trên IN[4].\n#   - Nhóm cao độ theo hậu tố layer (IN[3]): VD \"T5\" = dưới sàn TẦNG 5; layer không hậu tố = dưới sàn TẦNG chuyển.\n#     Đầu cụt lớp có hậu tố trùng ống lớp thường cùng loại → ống đứng rơi xuống, nối tê.\n#   - Ống đứng: tại điểm xả xuống tới level dưới; tại vòng tròn ống đứng là đầu thượng lưu → lên tới level trên.\n#   Phụ kiện: co / côn dùng routing preference của pipe type; Y 45° và tê đặt thủ công (xoay theo 3 ống, đặt bán\n#   kính từng cổng) vì NewTeeFitting không làm góc 45° (đã thử cả family công ty u.PVC_WYE) và tra bảng kích\n#   thước family thư viện thiếu cỡ uPVC. Family Y / tê lấy từ rule Junctions của pipe type (nhận theo góc nhánh\n#   45° / 90°); pipe type chưa có thì tạo type uPVC + nạp family thư viện ở IN[6].\n#   Mỗi phụ kiện trong một SubTransaction: ống bị cắt lẹm / đổi chiều → hoàn tác phụ kiện đó, ghi vào báo cáo.\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (VD \"ctn\"; trống = bản CAD duy nhất)\n#   IN[1] (str)   Layer ống, cách ';' (khớp đúng tên). Mặc định 7 layer DR + VE-Hơi.\n#   IN[2] (str)   Piping system theo chuỗi con trong tên layer (lấy luật đầu tiên khớp, '*' = còn lại)\n#   IN[3] (str)   Nhóm cao độ theo hậu tố layer: \"T5=TẦNG 5>TẦNG chuye;*=TẦNG chuye>TẦNG 4\" (level trên > level dưới);\n#                 level kèm độ lệch mm được: \"Test+3000>Test\"; \"CAD\" = level của mặt bằng chứa link CAD.\n#                 Level không có trong mô hình → tự vẽ trên mặt bằng chứa link CAD (level trên = level kế trên\n#                 hoặc +3000 mm), ghi trong báo cáo.\n#   IN[4] (float) Khoảng cách level trên → tâm ống tại điểm cao nhất của cụm (mm), mặc định 400\n#   IN[5] (str)   Tên block mũi tên hướng nước chảy\n#   IN[6] (str)   Thư mục family phụ kiện PVC DWV (chỉ dùng khi phải tạo pipe type mới)\n#   IN[7] (str)   Pipe type: có sẵn thì dùng (VD \"AV_u.PVC PN6\"), chưa có thì tạo (segment uPVC, OD 60…315)\n#   IN[8] (bool)  Dry-run: True = chỉ báo cáo (mặc định True)\n#   IN[9] (str)   Chỉ dựng tuyến đi qua điểm DWG \"x,y\" (mm, cách ';' nhiều điểm; trống = toàn bộ). Ống rơi xuống\n#                 lớp dưới không nằm trong phạm vi dựng → thay bằng ống đứng xuống level dưới.\n#   IN[10] (str)  Màu trong view đang mở theo chuỗi con tên layer: \"phân=255,255,0;Hơi=128,0,128\" (trống = không tô)\n#   IN[11] (str)  DN theo layer: \"phân=110;*=75\" – luật có tên = DN tối thiểu của layer đó, '*' = DN cho đoạn không nhãn\n#   IN[12] (str)  Layer dựng phẳng, không dốc (chuỗi con, cách ';'), VD \"Nước xả\" = ống đẩy bơm\n# OUTPUT\n#   OUT (list[str]) Báo cáo: tóm tắt, log, danh sách phụ kiện không đặt được, mũi tên ngược.\n\nimport os\nimport io\nimport re\nimport csv\nimport glob\nimport math\nimport heapq\nimport shutil\nimport itertools\nimport tempfile\nimport datetime\nimport subprocess\nimport collections\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, CADLinkType, XYZ, Line, Transaction,\n                                   SubTransaction, ModelPathUtils, BuiltInParameter, Level, Material, Family,\n                                   FamilySymbol, MEPSize, RoutingPreferenceRule, RoutingPreferenceRuleGroupType,\n                                   ElementTransformUtils, Color, OverrideGraphicSettings,\n                                   FillPatternElement)\n    from Autodesk.Revit.DB.Plumbing import Pipe, PipeType, PipeSegment, PipeScheduleType, PipingSystemType\n    from Autodesk.Revit.DB.Structure import StructuralType\n    from System.Collections.Generic import List\n    from Autodesk.Revit.DB import (IFailuresPreprocessor, FailureProcessingResult, FailureSeverity, TransactionStatus,\n                                   FamilyInstance)\n\n    import uuid\n    # Dynamo giữ phiên Python giữa các lần Run → tên kiểu .NET phải khác nhau mỗi lần, không thì\n    # \"TypeError: Duplicate type name within an assembly\" (2026-10-21)\n    _CTN_NS = \"ARV_TaoOngThoatNuoc_\" + uuid.uuid4().hex\n\n    class CommitFailures(IFailuresPreprocessor):\n        \"\"\"Lỗi lúc commit (VD 'family … can no longer keep the connectivity') → chọn cách xử lý mặc định của Revit\n        (ngắt kết nối phụ kiện) thay vì bật hộp thoại làm hủy cả lần chạy; cảnh báo thì bỏ qua.\"\"\"\n        __namespace__ = _CTN_NS\n\n        def __init__(self):\n            self.resolved = collections.Counter()\n            self.all = collections.Counter()      # (mức độ, nội dung) → số lần, mọi lỗi kể cả không xử lý được\n            self.ids = collections.defaultdict(set)\n            self.warnings = collections.Counter()\n            self.calls = 0\n\n        def PreprocessFailures(self, fa):\n            # Chỉ trả ProceedWithCommit khi đã ResolveFailure một lỗi; xoá cảnh báo xong mà trả ProceedWithCommit\n            # thì Revit xử lý lại, cảnh báo sinh lại → lặp (666 lần, 2026-10-21) rồi hủy transaction.\n            self.calls += 1\n            resolved_any = False\n            for f in list(fa.GetFailureMessages()):\n                sev = str(f.GetSeverity())\n                text = f.GetDescriptionText()\n                if f.GetSeverity() == FailureSeverity.Warning:\n                    self.warnings[text[:100]] += 1\n                    fa.DeleteWarning(f)\n                    continue\n                self.all[(sev, text[:120])] += 1\n                try:\n                    for eid in f.GetFailingElementIds():\n                        self.ids[text[:120]].add(eid.Value)\n                except Exception:\n                    pass\n                if f.HasResolutions():\n                    self.resolved[text[:80]] += 1\n                    fa.ResolveFailure(f)\n                    resolved_any = True\n            if resolved_any and self.calls < 20:\n                return FailureProcessingResult.ProceedWithCommit\n            return FailureProcessingResult.Continue\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo ống thoát nước từ CAD\"\nCOMMENT = u\"ARV-CTN\"\nTOL = 3.0            # snap nút (mm)\nGAP = 50.0           # nối khe hở cùng layer (mm)\nDROP = 10.0          # đầu ống lớp trên trùng ống lớp dưới (mm)\nNEAR_CIRCLE = 300.0  # đầu cụt gần tâm vòng tròn ống đứng (mm)\nMIN_LEN_MM = 20.0    # ống còn lại sau khi đặt phụ kiện\nBOP_LEADER = 1500.0  # chữ \"BOP+…\" cách đầu đuôi leader tối đa (mm)\nBOP_TIP = 400.0      # mũi tên leader cách ống tối đa khi không kéo dài được (mm)\nBOP_RAY = 1500.0     # kéo dài mũi tên leader theo hướng leader tối đa (mm) để gặp ống\nCORE_TIMEOUT_S = 180\nSIZES = [60, 75, 90, 110, 125, 140, 160, 200, 250, 315]     # OD uPVC (mm)\nFAMILIES = {\"bend\": u\"M_Bend - PVC - Sch 40 - DWV\", \"tee\": u\"M_Tee Sanitary - PVC - Sch 40 - DWV\",\n            \"teeR\": u\"M_Tee Reducing Sanitary - PVC - Sch 40 - DWV\", \"red\": u\"M_Reducer - PVC - Sch 40 - DWV\",\n            \"wye\": u\"M_Wye 45 Deg - PVC - Sch 40 - DWV\", \"wyeR\": u\"M_Wye 45 Deg Reducing - PVC - Sch 40 - DWV\"}\n\n\ndef default_slope(dn):\n    return 0.02 if dn <= 90 else 0.01\n\n\ndef wall_thk(d):\n    return 2.2 if d <= 90 else (3.2 if d <= 160 else 4.9)\n\n\n# =====================================================================================\n# PHẦN XỬ LÝ MẠNG ỐNG – chỉ dùng tuple (x, y) theo mm, toạ độ DWG (chạy thử được ngoài Dynamo)\n# =====================================================================================\ndef key(p):\n    return (int(round(p[0] / TOL)), int(round(p[1] / TOL)))\n\n\ndef proj(p, a, b):\n    dx, dy = b[0] - a[0], b[1] - a[1]\n    L2 = dx * dx + dy * dy\n    t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L2\n    tt = min(1.0, max(0.0, t))\n    q = (a[0] + tt * dx, a[1] + tt * dy)\n    return t, math.hypot(p[0] - q[0], p[1] - q[1]), q\n\n\ndef dist(a, b):\n    return math.hypot(b[0] - a[0], b[1] - a[1])\n\n\ndef unit(a, b):\n    L = dist(a, b)\n    return ((b[0] - a[0]) / L, (b[1] - a[1]) / L)\n\n\ndef build_network(ents, layer_sys, layer_group, pair, arrow_block, merge=False):\n    \"\"\"ents: dict lines/circles/inserts/dims/texts (toạ độ DWG, mm). Trả về dict mạng ống (như JSON thử nghiệm).\n    merge=True: lớp có hậu tố (T5) cùng mặt bằng với lớp thường → nhánh T5 nối ngang vào ống thường (một mạng),\n    không tạo ống rơi.\"\"\"\n    def canon(lay):\n        return pair.get(lay, lay) if merge else lay\n    log = collections.Counter()\n    # ---- 1. line theo layer\n    raw = collections.defaultdict(list)\n    for lay, a, b in ents[\"lines\"]:\n        if lay in layer_sys and dist(a, b) > 1:\n            raw[lay].append([a, b])\n    # ---- 2. nối khe hở cùng layer\n    for lay, S in raw.items():\n        ends = collections.Counter(key(p) for s in S for p in s)\n        for si, s in enumerate(S):\n            for k in (0, 1):\n                p = s[k]\n                if ends[key(p)] > 1:\n                    continue\n                if any(proj(p, a, b)[1] < TOL for j, (a, b) in enumerate(S) if j != si):\n                    continue\n                best = None\n                for j, (a, b) in enumerate(S):\n                    if j == si:\n                        continue\n                    t, d, q = proj(p, a, b)\n                    for cand in (a, b):\n                        if dist(p, cand) < GAP and (best is None or dist(p, cand) - 5 < best[0]):\n                            best = (dist(p, cand) - 5, cand)\n                    if d < GAP and (best is None or d < best[0]):\n                        best = (d, q)\n                if best:\n                    s[k] = best[1]\n                    log[u\"nối khe hở ≤ 50 mm\"] += 1\n    # ---- 2b. gộp mặt bằng: đầu ống lớp T5 nằm trên ống lớp thường (≤ DROP) → kéo đúng vào ống đó\n    if merge:\n        for l5, lb in pair.items():\n            for s in raw.get(l5, []):\n                for k in (0, 1):\n                    p = s[k]\n                    best = None\n                    for a, b in raw.get(lb, []):\n                        t, d, q = proj(p, a, b)\n                        if d <= DROP and (best is None or d < best[0]):\n                            best = (d, a if dist(q, a) <= DROP else (b if dist(q, b) <= DROP else q))\n                    if best:\n                        s[k] = best[1]\n                        log[u\"nhánh T5 nối ngang vào ống thường\"] += 1\n    # ---- 3. tách tại nút T (kể cả điểm rơi từ lớp có hậu tố)\n    E = []\n    for lay, S in raw.items():\n        pts = [p for s in S for p in s]\n        extra = [p for l5, lb in pair.items() if lb == lay for s in raw.get(l5, []) for p in s]\n        seen = set()\n        for a, b in S:\n            L = dist(a, b)\n            ts = {0.0, 1.0}\n            for p in pts + extra:\n                t, d, _ = proj(p, a, b)\n                tol = TOL if p in pts else DROP\n                if d < tol and TOL < t * L < L - TOL:\n                    ts.add(round(t, 6))\n            ts = sorted(ts)\n            for t0, t1 in zip(ts, ts[1:]):\n                p0 = (a[0] + t0 * (b[0] - a[0]), a[1] + t0 * (b[1] - a[1]))\n                p1 = (a[0] + t1 * (b[0] - a[0]), a[1] + t1 * (b[1] - a[1]))\n                k = tuple(sorted((key(p0), key(p1))))\n                if dist(p0, p1) > TOL and k not in seen:\n                    seen.add(k)\n                    E.append({\"layer\": lay, \"a\": p0, \"b\": p1})\n    nid, NP, NL = {}, [], {}\n\n    def node(lay, p):\n        k = (canon(lay), key(p))\n        if k not in nid:\n            nid[k] = len(NP)\n            NP.append([p[0], p[1], 0.0])\n        return nid[k]\n    for e in E:\n        e[\"u\"] = node(e[\"layer\"], e[\"a\"])\n        e[\"v\"] = node(e[\"layer\"], e[\"b\"])\n        e[\"len\"] = dist(e[\"a\"], e[\"b\"])\n        NL[e[\"u\"]] = NL[e[\"v\"]] = canon(e[\"layer\"])\n    adj = collections.defaultdict(list)\n    for i, e in enumerate(E):\n        adj[e[\"u\"]].append(i)\n        adj[e[\"v\"]].append(i)\n\n    def other(i, n):\n        return E[i][\"v\"] if E[i][\"u\"] == n else E[i][\"u\"]\n    comp_of, comps = {}, []\n    for s in range(len(E)):\n        if s in comp_of:\n            continue\n        c = len(comps)\n        st, mem = [s], []\n        comp_of[s] = c\n        while st:\n            i = st.pop()\n            mem.append(i)\n            for n in (E[i][\"u\"], E[i][\"v\"]):\n                for j in adj[n]:\n                    if j not in comp_of:\n                        comp_of[j] = c\n                        st.append(j)\n        comps.append(mem)\n    # ---- 4. mũi tên, vòng tròn, điểm rơi\n    arrow = {}\n    n_arrows = 0\n    for lay, name, (x, y), rot in ents[\"inserts\"]:\n        if name != arrow_block:\n            continue\n        n_arrows += 1\n        best = None\n        for i, e in enumerate(E):\n            t, d, _ = proj((x, y), e[\"a\"], e[\"b\"])\n            if d < 200:\n                ux, uy = unit(e[\"a\"], e[\"b\"])\n                c = ux * math.cos(rot) + uy * math.sin(rot)\n                if abs(c) > 0.9 and (best is None or d < best[0]):\n                    best = (d, i, 1 if c > 0 else -1)\n        if best:\n            arrow[best[1]] = best[2]\n    circles = [(lay, c) for lay, c, r in ents[\"circles\"] if lay in layer_sys]\n    drops = {}\n    for n5, l5 in NL.items():\n        if l5 not in pair:\n            continue\n        for nb, lb in NL.items():\n            if lb == pair[l5] and dist(NP[n5], NP[nb]) <= DROP:\n                drops[n5] = nb\n    near_circle = set(n for n, l in NL.items() if len(adj[n]) == 1 and\n                      any(l == canon(cl) and dist(NP[n], cp) < NEAR_CIRCLE for cl, cp in circles))\n    drop_targets = set(drops.values())\n\n    # ---- 5. hướng chảy\n    def orient(sinks):\n        dd = dict((s, 0.0) for s in sinks)\n        h = [(0.0, s) for s in sinks]\n        down = {}\n        while h:\n            d, n = heapq.heappop(h)\n            if d > dd.get(n, 1e18):\n                continue\n            for i in adj[n]:\n                m = other(i, n)\n                nd = d + E[i][\"len\"]\n                if nd < dd.get(m, 1e18):\n                    dd[m] = nd\n                    down[i] = n\n                    heapq.heappush(h, (nd, m))\n        return down\n\n    def score(down, mem):\n        g = b = 0\n        for i in mem:\n            if i in arrow:\n                if down.get(i) == (E[i][\"v\"] if arrow[i] > 0 else E[i][\"u\"]):\n                    g += 1\n                else:\n                    b += 1\n        return g, b\n    flow_to, report, sinks_all, bad_arrows = {}, [], set(), []\n    for c, mem in enumerate(comps):\n        nodes = set(n for i in mem for n in (E[i][\"u\"], E[i][\"v\"]))\n        leaves = [n for n in nodes if len(adj[n]) == 1]\n        arrow_in = set(n for n in leaves if adj[n][0] in arrow and\n                       (E[adj[n][0]][\"v\"] if arrow[adj[n][0]] > 0 else E[adj[n][0]][\"u\"]) == n)\n        cands = [n for n in leaves if (n in drops or n in near_circle or n in arrow_in) and n not in drop_targets]\n        if 0 < len(cands) <= 12:\n            subsets = [s for k in range(1, len(cands) + 1) for s in itertools.combinations(cands, k)]\n        else:\n            subsets = [tuple(cands)] if cands else []\n        best = None\n        for s in subsets:\n            down = orient(s)\n            g, b = score(down, mem)\n            val = g - b - 0.01 * len(s)\n            if best is None or val > best[0]:\n                best = (val, s, down, g, b)\n        if best is None or best[4] > 0:\n            for s in leaves:\n                if s in drop_targets:\n                    continue\n                down = orient((s,))\n                g, b = score(down, mem)\n                val = g - b - 0.5\n                if best is None or val > best[0]:\n                    best = (val, (s,), down, g, b)\n        _, sk, down, g, b = best\n        flow_to.update(down)\n        sinks_all.update(sk)\n        report.append({\"comp\": c, \"layer\": E[mem[0]][\"layer\"], \"edges\": len(mem), \"sinks\": list(sk),\n                       \"ok\": g, \"bad\": b})\n        for i in mem:\n            if i in arrow and down.get(i) != (E[i][\"v\"] if arrow[i] > 0 else E[i][\"u\"]):\n                bad_arrows.append((E[i][\"layer\"], ((E[i][\"a\"][0] + E[i][\"b\"][0]) / 2, (E[i][\"a\"][1] + E[i][\"b\"][1]) / 2)))\n    # ---- 6. DN\n    votes = collections.defaultdict(collections.Counter)\n    slope_txt = {}\n    dim_slope = {}\n\n    def edges_at(p, lay=None, tol=5):\n        return [i for i, e in enumerate(E) if (lay is None or e[\"layer\"] == lay) and proj(p, e[\"a\"], e[\"b\"])[1] < tol]\n\n    def path(e1, e2):\n        if e1 == e2:\n            return [e1]\n        prev = {e1: None}\n        q = collections.deque([e1])\n        while q:\n            i = q.popleft()\n            for n in (E[i][\"u\"], E[i][\"v\"]):\n                for j in adj[n]:\n                    if j not in prev:\n                        prev[j] = i\n                        if j == e2:\n                            out = [j]\n                            while prev[out[-1]] is not None:\n                                out.append(prev[out[-1]])\n                            return out\n                        q.append(j)\n        return None\n    for lay, style, p2, p3 in ents[\"dims\"]:\n        # \"AV-Dim 1-75 (D160)\" hoặc \"0.T D110 (1-200)\"\n        m = re.search(r\"(?<![A-Za-z])D(\\d{2,3})(?!\\d)\", style or u\"\")\n        if not m:\n            continue\n        if re.match(r\"^\\s*0\\.C\\b\", style or u\"\"):       # \"0.C …\" = dim ống cấp nước\n            log[u\"bỏ dim ống cấp nước (0.C)\"] += 1\n            continue\n        D = int(m.group(1))\n        best = None\n        # điểm đo nằm trên ống (5 mm); không có thì nới tới 50 mm (dim vẽ không bắt điểm)\n        for tol in (5, 50):\n            for i in edges_at(p2, tol=tol):\n                for j in edges_at(p3, E[i][\"layer\"], tol=tol):\n                    pth = path(i, j)\n                    if pth and (best is None or len(pth) < len(best)):\n                        best = pth\n            if best:\n                break\n        if not best:\n            log[u\"dim DN không khớp ống\"] += 1\n            continue\n        ms = re.search(r\"D\\d+-(\\d+(?:[.,]\\d+)?)%\", style or u\"\")      # độ dốc trong DIMPOST \"D110-1%-<>M\"\n        for i in best:\n            votes[i][D] += 1\n            if ms:\n                dim_slope.setdefault(i, float(ms.group(1).replace(\",\", \".\")) / 100)\n    for lay, p, text in ents[\"texts\"]:\n        m = re.match(r\"\\s*D(\\d+)-(\\d+(?:[.,]\\d+)?)%\", text)\n        if not m or not E:\n            continue\n        d, i = min((proj(p, e[\"a\"], e[\"b\"])[1], i) for i, e in enumerate(E))\n        if d < 300:\n            votes[i][int(m.group(1))] += 3\n            slope_txt[i] = float(m.group(2).replace(\",\", \".\")) / 100\n    for i, s in dim_slope.items():\n        slope_txt.setdefault(i, s)\n    log[u\"độ dốc theo dim / chữ\"] = len(slope_txt)\n    dn = {}\n    for i, v in votes.items():\n        if len(v) > 1:\n            log[u\"DN xung đột (lấy số phiếu nhiều)\"] += 1\n        dn[i] = v.most_common(1)[0][0]\n    log[u\"DN có nhãn trực tiếp\"] = len(dn)\n    changed = True\n    while changed:\n        changed = False\n        for i, e in enumerate(E):\n            if i in dn:\n                continue\n            for n in (e[\"u\"], e[\"v\"]):\n                if len(adj[n]) == 2:\n                    j = [k for k in adj[n] if k != i][0]\n                    if j in dn:\n                        dn[i] = dn[j]\n                        changed = True\n                        log[u\"DN lan dọc tuyến\"] += 1\n                        break\n    changed = True\n    while changed:\n        changed = False\n        for i, e in enumerate(E):\n            if i in dn:\n                continue\n            n = flow_to.get(i)\n            cand = [dn[k] for k in adj[n] if k != i and k in dn] if n is not None else []\n            if cand:\n                dn[i] = min(cand)\n                changed = True\n                log[u\"DN theo ống hạ lưu\"] += 1\n    # DN mặc định / tối thiểu theo layer (IN[11]): \"phân=110;*=75\" – luật có tên layer là DN TỐI THIỂU\n    # của layer đó (ống xí không nhỏ hơn D110), '*' chỉ dùng cho đoạn không xác định được DN.\n    for i in range(len(E)):\n        lay = E[i][\"layer\"]\n        floor = first_match([r for r in dn_rules if r[0] != u\"*\"], lay)\n        if i not in dn:\n            dn[i] = int(float(floor or first_match(dn_rules, lay) or 75))\n            log[u\"DN không xác định → mặc định theo layer\"] += 1\n        elif floor and dn[i] < int(float(floor)):\n            dn[i] = int(float(floor))\n            slope_txt.pop(i, None)\n            log[u\"DN nâng lên tối thiểu theo layer\"] += 1\n    # DN không giảm về hạ lưu\n    changed = True\n    while changed:\n        changed = False\n        for i in range(len(E)):\n            d = flow_to.get(i)\n            if d is None:\n                continue\n            u = other(i, d)\n            inc = [dn[j] for j in adj[u] if j != i and flow_to.get(j) == u]\n            if inc and max(inc) > dn[i]:\n                dn[i] = max(inc)\n                slope_txt.pop(i, None)\n                changed = True\n                log[u\"DN nâng cho không nhỏ hơn ống thượng lưu\"] += 1\n    slope = dict((i, slope_txt.get(i, default_slope(dn[i]))) for i in range(len(E)))\n    # layer dựng phẳng (ống áp lực, VD ống đẩy bơm \"Nước xả\") – IN[12]\n    for i in range(len(E)):\n        if any(k.lower() in E[i][\"layer\"].lower() for k in flat_layers):\n            slope[i] = 0.0\n    # ---- 6b. cao độ đáy ống theo ghi chú \"BOP+3.80M\" có leader chỉ vào ống (thường là đầu tuyến)\n    #      z neo = BOP + DN/2 (tâm ống), mm so với level của mặt bằng chứa link CAD.\n    anchors = {}\n    for lay, p, text in ents[\"texts\"]:\n        mb = re.match(r\"\\s*BOP\\s*([+-]?\\s*\\d+(?:[.,]\\d+)?)\\s*M\", text, re.I)\n        if not mb:\n            continue\n        val = float(mb.group(1).replace(u\" \", u\"\").replace(u\",\", u\".\")) * 1000\n        best = None\n        for llay, pts in ents.get(\"leaders\", []):\n            if len(pts) < 2:\n                continue\n            for end, tip, nxt in ((pts[-1], pts[0], pts[1]), (pts[0], pts[-1], pts[-2])):\n                d = dist(end, p)\n                if d < BOP_LEADER and (best is None or d < best[0]):\n                    best = (d, tip, nxt)\n        if best is None:\n            log[u\"BOP không có leader (bỏ qua)\"] += 1\n            continue\n        tip, nxt = best[1], best[2]\n        # Mũi tên thường dừng ở ký hiệu nút bịt cách đầu ống vài trăm mm → kéo dài theo hướng leader\n        cand = None\n        L = dist(nxt, tip)\n        if L > 1e-6:\n            ux, uy = (tip[0] - nxt[0]) / L, (tip[1] - nxt[1]) / L\n            k = 0.0\n            while k <= BOP_RAY and cand is None:\n                q0 = (tip[0] + ux * k, tip[1] + uy * k)\n                hits = [(proj(q0, e[\"a\"], e[\"b\"])[1], i) for i, e in enumerate(E)]\n                hits = [h for h in hits if h[0] <= 30]\n                if hits:\n                    cand = (min(hits)[0], min(hits)[1], q0)\n                k += 25.0\n        if cand is None:\n            near = min(((proj(tip, e[\"a\"], e[\"b\"])[1], i) for i, e in enumerate(E)), default=None)\n            if near is not None and near[0] <= BOP_TIP:\n                cand = (near[0], near[1], tip)\n        if cand is None:\n            log[u\"BOP leader không tới ống (bỏ qua)\"] += 1\n            continue\n        i = cand[1]\n        e = E[i]\n        down = flow_to.get(i, e[\"v\"])\n        up = other(i, down)\n        q = proj(cand[2], e[\"a\"], e[\"b\"])[2]\n        zq = val + dn[i] / 2.0\n        if dist(q, NP[up]) <= 300:            # mũi tên ở đầu đoạn (đầu tuyến / nút) → neo tại nút đó\n            n, z = up, zq\n        elif dist(q, NP[down]) <= 300:\n            n, z = down, zq\n        else:                                 # giữa đoạn → quy về nút hạ lưu theo độ dốc\n            n, z = down, zq - slope[i] * dist(q, NP[down])\n        if n in anchors and abs(anchors[n] - z) > 5:\n            log[u\"BOP trùng nút, khác giá trị (lấy thấp hơn)\"] += 1\n            z = min(z, anchors[n])\n        anchors[n] = z\n        log[u\"BOP gán vào ống\"] += 1\n    comp_abs = set()\n    for c, mem in enumerate(comps):\n        nodes = set(n for i in mem for n in (E[i][\"u\"], E[i][\"v\"]))\n        an = dict((n, z) for n, z in anchors.items() if n in nodes)\n        if not an:\n            continue\n        comp_abs.add(c)\n        z = dict(an)\n        # (A) xuôi dòng từ các điểm neo: nút hạ lưu thấp nhất trong các đường từ thượng lưu xuống\n        changed = True\n        while changed:\n            changed = False\n            for i in mem:\n                d = flow_to.get(i)\n                if d is None:\n                    continue\n                u = other(i, d)\n                if u in z and d not in an:\n                    nz = z[u] - E[i][\"len\"] * slope[i]\n                    if nz < z.get(d, 1e18) - 1e-6:\n                        z[d] = nz\n                        changed = True\n        # (B) nhánh không có BOP: tính ngược lên từ chỗ nhập vào\n        changed = True\n        while changed:\n            changed = False\n            for i in mem:\n                d = flow_to.get(i)\n                if d is None:\n                    continue\n                u = other(i, d)\n                if d in z and u not in z:\n                    z[u] = z[d] + E[i][\"len\"] * slope[i]\n                    changed = True\n        for i in mem:                         # kiểm tra ngược dốc tại điểm neo\n            d = flow_to.get(i)\n            if d is not None and d in an and other(i, d) in z and z[other(i, d)] < an[d] - 1:\n                log[u\"BOP làm ngược dốc (kiểm tra)\"] += 1\n        for n in nodes:\n            NP[n][2] = z.get(n, 0.0)\n        report[c][\"abs\"] = True\n        report[c][\"rise\"] = max(z.values()) - min(z.values())\n        report[c][\"z_range\"] = (min(z.values()), max(z.values()))\n    log[u\"cụm theo BOP\"] = len(comp_abs)\n\n    # ---- 7. cao độ tương đối (điểm cao nhất cụm = 0) – cụm không có BOP\n    for c, mem in enumerate(comps):\n        if c in comp_abs:\n            continue\n        sk = report[c][\"sinks\"]\n        rise = dict((s, 0.0) for s in sk)\n        h = [(0.0, s) for s in sk]\n        while h:\n            z, n = heapq.heappop(h)\n            if z > rise.get(n, 1e18):\n                continue\n            for i in adj[n]:\n                m = other(i, n)\n                nz = z + E[i][\"len\"] * slope[i]\n                if nz < rise.get(m, 1e18):\n                    rise[m] = nz\n                    heapq.heappush(h, (nz, m))\n        top = max(rise.values())\n        for n, z in rise.items():\n            NP[n][2] = z - top\n        report[c][\"rise\"] = top\n\n    # ---- 8. gộp đoạn thẳng hàng, lập ống + ống đứng + phụ kiện\n    def collinear(i, j, n):\n        a = unit(NP[n], NP[other(i, n)])\n        b = unit(NP[n], NP[other(j, n)])\n        return a[0] * b[0] + a[1] * b[1] < -0.9995\n    pipes, visited = [], set()\n    special = set(drops) | drop_targets | sinks_all\n    for i in range(len(E)):\n        if i in visited:\n            continue\n        chain = [i]\n        visited.add(i)\n        for end in (E[i][\"u\"], E[i][\"v\"]):\n            cur, n = i, end\n            while len(adj[n]) == 2 and n not in special:\n                j = [k for k in adj[n] if k != cur][0]\n                if j in visited or dn[j] != dn[cur] or abs(slope[j] - slope[cur]) > 1e-9 or not collinear(cur, j, n) \\\n                        or E[j][\"layer\"] != E[cur][\"layer\"]:\n                    break\n                chain.append(j)\n                visited.add(j)\n                cur, n = j, other(j, n)\n        ns = collections.Counter(n for k in chain for n in (E[k][\"u\"], E[k][\"v\"]))\n        a, b = [n for n, c in ns.items() if c == 1]\n        if NP[a][2] < NP[b][2]:\n            a, b = b, a\n        lay = E[chain[0]][\"layer\"]\n        pipes.append({\"id\": len(pipes), \"layer\": lay, \"system\": layer_sys[lay], \"group\": layer_group[lay],\n                      \"dn\": dn[chain[0]], \"n1\": a, \"n2\": b, \"comp\": comp_of[chain[0]],\n                      \"abs\": comp_of[chain[0]] in comp_abs})\n    pipe_at = collections.defaultdict(list)\n    for p in pipes:\n        pipe_at[p[\"n1\"]].append(p[\"id\"])\n        pipe_at[p[\"n2\"]].append(p[\"id\"])\n    risers = []\n\n    def add_riser(**kw):\n        kw[\"id\"] = len(pipes) + len(risers)\n        risers.append(kw)\n    for n5, nb in drops.items():\n        if n5 in sinks_all:\n            p = pipes[pipe_at[n5][0]]\n            add_riser(kind=\"drop\", top=n5, bottom=nb, dn=p[\"dn\"], system=p[\"system\"], layer=p[\"layer\"], group=p[\"group\"])\n            log[u\"ống rơi xuống lớp dưới\"] += 1\n    for n in sinks_all:\n        if n in drops:\n            continue\n        p = pipes[pipe_at[n][0]]\n        add_riser(kind=\"down\", node=n, dn=p[\"dn\"], system=p[\"system\"], layer=p[\"layer\"], group=p[\"group\"])\n    for n in near_circle:\n        if n in sinks_all or n not in pipe_at:\n            continue\n        p = pipes[pipe_at[n][0]]\n        add_riser(kind=\"up\", node=n, dn=p[\"dn\"], system=p[\"system\"], layer=p[\"layer\"], group=p[\"group\"])\n    riser_at = collections.defaultdict(list)\n    for r in risers:\n        if r[\"kind\"] == \"drop\":\n            riser_at[r[\"top\"]].append(r[\"id\"])\n            riser_at[r[\"bottom\"]].append(r[\"id\"])\n        else:\n            riser_at[r[\"node\"]].append(r[\"id\"])\n    fittings = []\n    for n in set(pipe_at) | set(riser_at):\n        ps, rs = pipe_at.get(n, []), riser_at.get(n, [])\n        if len(ps) + len(rs) < 2:\n            continue\n\n        def dir_from(k):\n            p = pipes[k]\n            return unit(NP[n], NP[p[\"n2\"] if p[\"n1\"] == n else p[\"n1\"]])\n        f = {\"node\": n}\n        if rs:\n            if len(ps) == 1:\n                f.update(kind=\"elbow\", pipes=ps + rs)\n            elif len(ps) == 2:\n                f.update(kind=\"tee\", main=ps, branch=rs[0])\n            else:\n                f.update(kind=u\"nút {} ống\".format(len(ps) + len(rs)), pipes=ps + rs)\n        elif len(ps) == 2:\n            d0, d1 = dir_from(ps[0]), dir_from(ps[1])\n            f.update(kind=\"transition\" if d0[0] * d1[0] + d0[1] * d1[1] < -0.9995 else \"elbow\", pipes=ps)\n        elif len(ps) == 3:\n            dirs = [dir_from(k) for k in ps]\n            pr = None\n            for x, y in ((0, 1), (0, 2), (1, 2)):\n                if dirs[x][0] * dirs[y][0] + dirs[x][1] * dirs[y][1] < -0.999:\n                    pr = (x, y)\n            if pr is None:\n                f.update(kind=u\"nút 3 ống không thẳng hàng\", pipes=ps)\n            else:\n                br = 3 - pr[0] - pr[1]\n                cb = [dirs[br][0] * dirs[k][0] + dirs[br][1] * dirs[k][1] for k in pr]\n                if abs(cb[0]) < 0.05:\n                    f.update(kind=\"tee\", main=[ps[pr[0]], ps[pr[1]]], branch=ps[br])\n                else:\n                    l45 = pr[0] if cb[0] > 0 else pr[1]\n                    l135 = pr[1] if l45 == pr[0] else pr[0]\n                    f.update(kind=\"wye\", leg45=ps[l45], leg135=ps[l135], branch=ps[br])\n        else:\n            f.update(kind=u\"nút {} ống\".format(len(ps)), pipes=ps)\n        fittings.append(f)\n    return {\"nodes\": NP, \"pipes\": pipes, \"risers\": risers, \"fittings\": fittings, \"components\": report,\n            \"bad_arrows\": bad_arrows, \"n_arrows\": n_arrows, \"log\": log}\n\n\n# =====================================================================================\n# PHẦN REVIT\n# =====================================================================================\ndef parse_map(s):\n    out = []\n    for part in (s or u\"\").split(u\";\"):\n        if u\"=\" in part:\n            k, v = part.split(u\"=\", 1)\n            out.append((k.strip(), v.strip()))\n    return out\n\n\ndef parse_points(s):\n    pts = []\n    for part in (s or u\"\").split(u\";\"):\n        try:\n            x, y = part.split(u\",\")\n            pts.append((float(x), float(y)))\n        except ValueError:\n            continue\n    return pts\n\n\ncad_filter = ((IN[0] if DYNAMO else u\"\") or u\"\").strip()\nlayer_list = [s.strip() for s in ((IN[1] if DYNAMO else u\"\") or u\"\").split(u\";\") if s.strip()]\nsys_map = parse_map(IN[2] if DYNAMO else u\"phân=AV_P_Nước Thải Xí;rửa=AV_P_Nước Thải Rửa;bếp=AV_P_Nước Thải Bếp;\"\n                                          u\"mưa=AV_P_Nước Mưa;Hơi=AV_P_Thông hơi Chung;*=AV_P_Nước Xả khác\")\ngroup_map = parse_map(IN[3] if DYNAMO else u\"T5=TẦNG 5>TẦNG chuye;*=TẦNG chuye>TẦNG 4\")\nh_top_mm = float(IN[4]) if DYNAMO and IN[4] is not None else 400.0\narrow_block = ((IN[5] if DYNAMO else u\"\") or u\"AV-P-Hướng nước chảy\").strip()\nfamily_dir = ((IN[6] if DYNAMO else u\"\") or u\"\").strip()\npipe_type_name = ((IN[7] if DYNAMO else u\"\") or u\"uPVC thoát nước\").strip()\ndry_run = True if not DYNAMO or IN[8] is None else bool(IN[8])\nonly_points = parse_points(IN[9] if DYNAMO and len(IN) > 9 else u\"\")\ncolor_map = parse_map(IN[10] if DYNAMO and len(IN) > 10 else u\"\")\ndn_rules = parse_map(IN[11] if DYNAMO and len(IN) > 11 and IN[11] else u\"phân=110;*=75\")\nflat_layers = [s.strip() for s in ((IN[12] if DYNAMO and len(IN) > 12 and IN[12] is not None else u\"Nước xả\") or u\"\").split(u\";\")\n               if s.strip()]\n\n\ndef mm2ft(v):\n    return v / 304.8\n\n\ndef ft2mm(v):\n    return v * 304.8\n\n\ndef get_name(e):\n    try:\n        return e.Name\n    except Exception:\n        p = e.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef pick_cad():\n    instances = list(FilteredElementCollector(doc).OfClass(ImportInstance).ToElements())\n    if cad_filter:\n        instances = [i for i in instances if cad_filter.lower() in get_name(doc.GetElement(i.GetTypeId())).lower()]\n    if len(instances) != 1:\n        names = [get_name(doc.GetElement(i.GetTypeId())) for i in\n                 FilteredElementCollector(doc).OfClass(ImportInstance).ToElements()]\n        raise Exception(u\"Tìm thấy {} bản CAD khớp '{}'. Nhập tên bản CAD vào ô IN[0]. Các bản CAD: {}\".format(\n            len(instances), cad_filter, u\", \".join(names) or u\"không có\"))\n    return instances[0]\n\n\ndef cad_file_path(inst):\n    link = doc.GetElement(inst.GetTypeId())\n    if not inst.IsLinked or not isinstance(link, CADLinkType):\n        return None\n    try:\n        path = ModelPathUtils.ConvertModelPathToUserVisiblePath(link.GetExternalFileReference().GetAbsolutePath())\n    except Exception:\n        return None\n    return path if path and os.path.isfile(path) else None\n\n\ndef find_accoreconsole():\n    found = glob.glob(r\"C:\\Program Files\\Autodesk\\AutoCAD *\\accoreconsole.exe\")\n    return sorted(found)[-1] if found else None\n\n\ndef core_env(core):\n    \"\"\"Môi trường sạch cho AutoCAD Core Console (xem README: Path của Revit làm Core Console nạp nhầm DLL).\"\"\"\n    keep = (\"SYSTEMROOT\", \"WINDIR\", \"SYSTEMDRIVE\", \"USERPROFILE\", \"APPDATA\", \"LOCALAPPDATA\", \"USERNAME\",\n            \"USERDOMAIN\", \"PROGRAMDATA\", \"PROGRAMFILES\", \"PROGRAMFILES(X86)\", \"PROGRAMW6432\", \"COMMONPROGRAMFILES\",\n            \"COMMONPROGRAMFILES(X86)\", \"COMMONPROGRAMW6432\", \"ALLUSERSPROFILE\", \"COMPUTERNAME\", \"HOMEDRIVE\",\n            \"HOMEPATH\", \"OS\", \"NUMBER_OF_PROCESSORS\", \"PROCESSOR_ARCHITECTURE\", \"PUBLIC\", \"COMSPEC\", \"PATHEXT\")\n    env = dict((k, v) for k, v in os.environ.items() if k.upper() in keep)\n    root = env.get(\"SYSTEMROOT\") or os.environ.get(\"SystemRoot\") or r\"C:\\Windows\"\n    temp = os.path.join(os.environ.get(\"LOCALAPPDATA\") or os.path.expanduser(\"~\"), \"Temp\")\n    env[\"TEMP\"] = env[\"TMP\"] = temp if os.path.isdir(temp) else tempfile.gettempdir()\n    env[\"PATH\"] = u\";\".join([os.path.dirname(core), os.path.join(root, \"System32\"), root,\n                             os.path.join(root, \"System32\", \"Wbem\")])\n    return env\n\n\n# Xuất LINE / CIRCLE / INSERT / DIMENSION / TEXT / MTEXT ở model space (cấp ngoài cùng) ra file text.\nDUMP_LISP = u\"\"\"(setq f (open \"{out}\" \"w\" \"utf8\"))\n(defun _p (p) (if p (strcat (rtos (car p) 2 3) \",\" (rtos (cadr p) 2 3)) \"x\"))\n(defun _s (v) (if v v \"\"))\n(defun _pts (d / s) (setq s \"\") (foreach g d (if (= (car g) 10) (setq s (strcat s (if (= s \"\") \"\" \";\") (_p (cdr g)))))) s)\n(defun _post (n / r) (setq r (tblsearch \"DIMSTYLE\" n)) (if (and r (cdr (assoc 3 r))) (cdr (assoc 3 r)) \"\"))\n(if (setq ss (ssget \"_X\" '((0 . \"LINE,CIRCLE,INSERT,DIMENSION,TEXT,MTEXT,LEADER\") (410 . \"Model\"))))\n  (progn (setq i 0)\n    (repeat (sslength ss)\n      (setq d (entget (ssname ss i)) i (1+ i) ty (cdr (assoc 0 d)) la (cdr (assoc 8 d)))\n      (cond\n        ((= ty \"LINE\") (write-line (strcat \"L|\" la \"|\" (_p (cdr (assoc 10 d))) \"|\" (_p (cdr (assoc 11 d)))) f))\n        ((= ty \"CIRCLE\") (write-line (strcat \"C|\" la \"|\" (_p (cdr (assoc 10 d))) \"|\" (rtos (cdr (assoc 40 d)) 2 3)) f))\n        ((= ty \"INSERT\") (write-line (strcat \"I|\" la \"|\" (_p (cdr (assoc 10 d))) \"|\" (rtos (if (assoc 50 d) (cdr (assoc 50 d)) 0.0) 2 6) \"|\" (_s (cdr (assoc 2 d)))) f))\n        ((= ty \"DIMENSION\") (write-line (strcat \"D|\" la \"|\" (_p (cdr (assoc 13 d))) \"|\" (_p (cdr (assoc 14 d))) \"|\" (_s (cdr (assoc 3 d))) \"|\" (_post (_s (cdr (assoc 3 d))))) f))\n        ((= ty \"LEADER\") (write-line (strcat \"R|\" la \"|\" (_pts d)) f))\n        (T (write-line (strcat \"T|\" la \"|\" (_p (cdr (assoc 10 d))) \"|\" (_s (cdr (assoc 1 d)))) f))))))\n(close f)\n\"\"\"\n\n\ndef clean_mtext(s):\n    s = re.sub(r\"\\\\[A-Za-z][^;\\\\{}]*;\", \"\", s)\n    s = re.sub(r\"\\\\[Pp~]\", \" \", s)\n    return s.replace(\"{\", \"\").replace(\"}\", \"\").strip()\n\n\ndef read_dwg(dwg_path, core):\n    \"\"\"Thực thể DWG (toạ độ DWG, mm). Chạy trên bản sao trong thư mục tạm – không mở file gốc.\"\"\"\n    work = tempfile.mkdtemp(prefix=\"ARV_CTN_\")\n    try:\n        copy = os.path.join(work, \"copy.dwg\")\n        shutil.copy2(dwg_path, copy)\n        out = os.path.join(work, \"ents.txt\")\n        scr = os.path.join(work, \"dump.scr\")\n        with io.open(scr, \"w\", encoding=\"utf-8\") as f:\n            f.write(DUMP_LISP.replace(\"{out}\", out.replace(\"\\\\\", \"/\")))\n        subprocess.run([core, \"/i\", copy, \"/s\", scr, \"/l\", \"en-US\"], stdin=subprocess.DEVNULL,\n                       env=core_env(core), cwd=os.path.dirname(core),\n                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,\n                       timeout=CORE_TIMEOUT_S, creationflags=0x08000000)\n        if not os.path.isfile(out):\n            raise Exception(u\"Core Console không xuất được dữ liệu DWG\")\n        with io.open(out, \"r\", encoding=\"utf-8-sig\", errors=\"replace\") as f:\n            return parse_dump(f.read())\n    finally:\n        shutil.rmtree(work, ignore_errors=True)\n\n\ndef parse_dump(text):\n    ents = {\"lines\": [], \"circles\": [], \"inserts\": [], \"dims\": [], \"texts\": [], \"leaders\": []}\n\n    def pt(s):\n        x, y = s.split(\",\")\n        return (float(x), float(y))\n    for line in text.splitlines():\n        parts = line.split(\"|\")\n        try:\n            if parts[0] == \"L\":\n                ents[\"lines\"].append((parts[1], pt(parts[2]), pt(parts[3])))\n            elif parts[0] == \"C\":\n                ents[\"circles\"].append((parts[1], pt(parts[2]), float(parts[3])))\n            elif parts[0] == \"I\":\n                ents[\"inserts\"].append((parts[1], u\"|\".join(parts[4:]), pt(parts[2]), float(parts[3])))\n            elif parts[0] == \"D\":\n                # D|layer|p2|p3|dimstyle|DIMPOST (VD \"D110-1%-<>M\") – tiền / hậu tố mang DN và độ dốc\n                ents[\"dims\"].append((parts[1], parts[4] + (u\" \" + parts[5] if len(parts) > 5 else u\"\"),\n                                     pt(parts[2]), pt(parts[3])))\n            elif parts[0] == \"R\":\n                ents[\"leaders\"].append((parts[1], [pt(s) for s in parts[2].split(\";\") if s]))\n            elif parts[0] == \"T\":\n                ents[\"texts\"].append((parts[1], pt(parts[2]), clean_mtext(u\"|\".join(parts[3:]))))\n        except (ValueError, IndexError):\n            continue\n    return ents\n\n\ndef first_match(rules, lay):\n    for k, v in rules:\n        if k == u\"*\" or k.lower() in lay.lower():\n            return v\n    return None\n\n\ndef layer_maps(layers):\n    \"\"\"layer → system, nhóm cao độ; cặp layer có hậu tố → layer thường cùng loại.\"\"\"\n    suffixes = [k for k, v in group_map if k != u\"*\"]\n    lsys, lgrp, pair = {}, {}, {}\n    for lay in layers:\n        lsys[lay] = first_match(sys_map, lay) or u\"Sanitary\"\n        grp = u\"*\"\n        for sfx in suffixes:\n            if lay.endswith(u\" \" + sfx):\n                grp = sfx\n                base = lay[:-len(sfx) - 1]\n                if base in layers:\n                    pair[lay] = base\n        lgrp[lay] = grp\n    return lsys, lgrp, pair\n\n\ndef parse_level(spec, lv, cad_level):\n    \"\"\"'TẦNG 5', 'Test+3000' hoặc 'CAD' / 'CAD+3000' (level của mặt bằng chứa link CAD) → (Level, cao độ ft).\"\"\"\n    m = re.match(u\"^(.*?)\\\\s*([+-]\\\\s*\\\\d+(?:\\\\.\\\\d+)?)?$\", spec.strip())\n    name, off = m.group(1).strip(), m.group(2)\n    level = cad_level if name.upper() == u\"CAD\" else lv.get(name)\n    if level is None:\n        return None\n    return level, level.Elevation + mm2ft(float(off.replace(u\" \", u\"\")) if off else 0.0)\n\n\ndef cad_plan_level(cad):\n    \"\"\"Level của mặt bằng chứa link CAD (link theo view); link 3D → level của view đang mở.\"\"\"\n    for vid in (cad.OwnerViewId, doc.ActiveView.Id):\n        v = doc.GetElement(vid) if vid is not None else None\n        if v is not None and getattr(v, \"GenLevel\", None) is not None:\n            return v.GenLevel, v.Name\n    return None, None\n\n\ndef filter_network(net, points):\n    \"\"\"Mỗi điểm chọn cụm của ống GẦN NHẤT (≤ 300 mm). Ống rơi mất đầu dưới → ống đứng xuống.\"\"\"\n    NP = net[\"nodes\"]\n    comps = set()\n    for q in points:\n        best = min(((proj(q, NP[p[\"n1\"]], NP[p[\"n2\"]])[1], p[\"comp\"]) for p in net[\"pipes\"]), default=None)\n        if best is not None and best[0] <= 300:\n            comps.add(best[1])\n    pipes = [p for p in net[\"pipes\"] if p[\"comp\"] in comps]\n    nodes = set(n for p in pipes for n in (p[\"n1\"], p[\"n2\"]))\n    risers = []\n    for r in net[\"risers\"]:\n        if r[\"kind\"] == \"drop\":\n            if r[\"top\"] in nodes and r[\"bottom\"] in nodes:\n                risers.append(r)\n            elif r[\"top\"] in nodes:\n                risers.append(dict(r, kind=\"down\", node=r[\"top\"]))\n        elif r[\"node\"] in nodes:\n            risers.append(r)\n    keep = set(p[\"id\"] for p in pipes) | set(r[\"id\"] for r in risers)\n    fittings = []\n    for f in net[\"fittings\"]:\n        ids = [f.get(\"leg45\"), f.get(\"leg135\"), f.get(\"branch\")] + list(f.get(\"main\", [])) + list(f.get(\"pipes\", []))\n        ids = [i for i in ids if i is not None]\n        if ids and all(i in keep for i in ids):\n            fittings.append(f)\n    out = dict(net)\n    out.update(pipes=pipes, risers=risers, fittings=fittings,\n               components=[c for c in net[\"components\"] if c[\"comp\"] in comps])\n    return out\n\n\ndef write_log(rows, source):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoOngThoatNuocTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n# Bản CAD: {}\\n# Ngày xuất: {}\\n# Chế độ: {}\\n# Đơn vị: mm, toạ độ theo DWG\\n\".format(\n            doc.Title, source, datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\"),\n            u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        w = csv.writer(f)\n        w.writerow([u\"Loại\", u\"Toạ độ DWG (mm)\", u\"DN\", u\"Kết quả / lý do\", u\"Layer\"])\n        w.writerows(rows)\n    return path\n\n\nclass Builder(object):\n    \"\"\"Dựng ống + phụ kiện trong Transaction đang mở.\"\"\"\n\n    def __init__(self, net, tf, levels, pipe_type, systems, fits, cad_z):\n        self.net, self.tf, self.levels, self.cad_z = net, tf, levels, cad_z\n        self.pt, self.systems, self.fits = pipe_type, systems, fits\n        self.by_id = dict((p[\"id\"], p) for p in net[\"pipes\"])\n        self.by_id.update((r[\"id\"], r) for r in net[\"risers\"])\n        self.made, self.dir0, self.xyz, self.layer_of = {}, {}, {}, {}\n        self.fit_made = []      # (FamilyInstance, layer)\n        self.min_len = mm2ft(MIN_LEN_MM)\n\n    def node_xyz(self, n, grp, absz=False):\n        \"\"\"absz: cụm có BOP → z là cao độ tâm ống so với level mặt bằng CAD; không thì so với điểm cao nhất cụm.\"\"\"\n        if n not in self.xyz:\n            p = self.net[\"nodes\"][n]\n            q = self.tf.OfPoint(XYZ(mm2ft(p[0]), mm2ft(p[1]), 0))\n            base = self.cad_z if absz else self.levels[grp][\"up_z\"] - mm2ft(h_top_mm)\n            self.xyz[n] = XYZ(q.X, q.Y, base + mm2ft(p[2]))\n        return self.xyz[n]\n\n    def new_pipe(self, pid, a, b, rec, grp):\n        p = Pipe.Create(doc, self.systems[rec[\"system\"]].Id, self.pt.Id, self.levels[grp][\"host\"].Id, a, b)\n        p.get_Parameter(BuiltInParameter.RBS_PIPE_DIAMETER_PARAM).Set(mm2ft(rec[\"dn\"]))\n        short = rec[\"layer\"].replace(u\"AV-P-DR-\", u\"\").replace(u\"AV-P-VE-\", u\"\")\n        p.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).Set(u\"{} | {}\".format(COMMENT, short))\n        self.made[pid] = p\n        self.layer_of[pid] = rec[\"layer\"]\n        self.dir0[pid] = b.Subtract(a).Normalize()\n        return p\n\n    def pipes(self):\n        for rec in self.net[\"pipes\"]:\n            a = self.node_xyz(rec[\"n1\"], rec[\"group\"], rec.get(\"abs\", False))\n            b = self.node_xyz(rec[\"n2\"], rec[\"group\"], rec.get(\"abs\", False))\n            self.new_pipe(rec[\"id\"], a, b, rec, rec[\"group\"])\n        for r in self.net[\"risers\"]:\n            if r[\"kind\"] == \"drop\":\n                top = self.xyz[r[\"top\"]]\n                bot = XYZ(top.X, top.Y, self.xyz[r[\"bottom\"]].Z)\n                grp = u\"*\"\n            else:\n                q = self.xyz[r[\"node\"]]\n                grp = r[\"group\"]\n                if r[\"kind\"] == \"down\":\n                    top, bot = q, XYZ(q.X, q.Y, self.levels[grp][\"host_z\"])\n                else:\n                    bot, top = q, XYZ(q.X, q.Y, self.levels[grp][\"up_z\"])\n            if top.Z - bot.Z > self.min_len:\n                self.new_pipe(r[\"id\"], top, bot, r, grp)\n        doc.Regenerate()\n\n    def con(self, pid, q):\n        cs = list(self.made[pid].ConnectorManager.Connectors)\n        return min(cs, key=lambda c: c.Origin.DistanceTo(q))\n\n    def far(self, pid, q):\n        cs = list(self.made[pid].ConnectorManager.Connectors)\n        return max(cs, key=lambda c: c.Origin.DistanceTo(q)).Origin\n\n    def pipes_ok(self, ids):\n        for i in ids:\n            p = self.made[i]\n            if not p.IsValidObject:\n                return False\n            c = p.Location.Curve\n            if c.Length < self.min_len:\n                return False\n            if c.GetEndPoint(1).Subtract(c.GetEndPoint(0)).Normalize().DotProduct(self.dir0[i]) < 0.99:\n                return False\n            # Phụ kiện đã nối ở đầu kia của ống phải còn thẳng hàng – nếu ống bị cắt lại làm xoay đi,\n            # Revit báo \"… can no longer keep the connectivity\" lúc commit và hủy cả transaction (2026-10-21)\n            for pc in p.ConnectorManager.Connectors:\n                for r in pc.AllRefs:\n                    if r.Owner.Id == p.Id or not isinstance(r.Owner, FamilyInstance):\n                        continue\n                    if pc.Origin.DistanceTo(r.Origin) > mm2ft(0.5) or \\\n                            pc.CoordinateSystem.BasisZ.DotProduct(r.CoordinateSystem.BasisZ) > -0.9995:\n                        return False\n        return True\n\n    def place3(self, pair, N, legA, legB, br, level):\n        \"\"\"Đặt phụ kiện 3 cổng: legA → +X (C2), legB → −X (C1), nhánh → −Y (C3) của family.\n        pair = (symbol cùng cỡ, symbol thu) – family có Nominal Radius 1/2/3 thì một symbol dùng cho cả hai.\"\"\"\n        uA = self.far(legA, N).Subtract(N)\n        uB = self.far(legB, N).Subtract(N)\n        ub = self.far(br, N).Subtract(N)\n        if min(uA.GetLength(), uB.GetLength(), ub.GetLength()) < 1e-6:\n            raise Exception(u\"ống dài 0\")\n        uA, uB, ub = uA.Normalize(), uB.Normalize(), ub.Normalize()\n        X = uA.Subtract(uB)\n        if X.GetLength() < 1e-6:\n            raise Exception(u\"ống chính suy biến\")\n        X = X.Normalize()\n        Yp = ub.Subtract(X.Multiply(ub.DotProduct(X)))\n        if Yp.GetLength() < 0.05:\n            raise Exception(u\"nhánh thẳng hàng ống chính\")\n        Y = Yp.Normalize().Negate()\n        Z = X.CrossProduct(Y)\n        d1, d2, d3 = self.made[legB].Diameter, self.made[legA].Diameter, self.made[br].Diameter\n        red = abs(d1 - d2) > 1e-6 or abs(d1 - d3) > 1e-6\n        fi = doc.Create.NewFamilyInstance(N, pair[1] if red else pair[0], level, StructuralType.NonStructural)\n        if fi.LookupParameter(\"Nominal Radius 1\") is not None:\n            fi.LookupParameter(\"Nominal Radius 1\").Set(d1 / 2)\n            fi.LookupParameter(\"Nominal Radius 2\").Set(d2 / 2)\n            fi.LookupParameter(\"Nominal Radius 3\").Set(d3 / 2)\n        else:\n            fi.LookupParameter(\"Nominal Radius\").Set(d1 / 2)\n        # Ma trận quay R có cột X, Y, Z → trục + góc\n        tr = X.X + Y.Y + Z.Z\n        ang = math.acos(max(-1.0, min(1.0, (tr - 1) / 2)))\n        if ang > 1e-9:\n            if math.pi - ang < 1e-6:\n                k = 0 if (X.X >= Y.Y and X.X >= Z.Z) else (1 if Y.Y >= Z.Z else 2)\n                ax = [XYZ(X.X + 1, X.Y, X.Z), XYZ(Y.X, Y.Y + 1, Y.Z), XYZ(Z.X, Z.Y, Z.Z + 1)][k]\n            else:\n                ax = XYZ(Y.Z - Z.Y, Z.X - X.Z, X.Y - Y.X)\n            if ax.GetLength() < 1e-9:\n                raise Exception(u\"trục xoay suy biến\")\n            ElementTransformUtils.RotateElement(doc, fi.Id, Line.CreateUnbound(N, ax.Normalize()), ang)\n        doc.Regenerate()\n        lp = fi.Location.Point\n        if lp.DistanceTo(N) > 1e-6:\n            ElementTransformUtils.MoveElement(doc, fi.Id, N.Subtract(lp))\n            doc.Regenerate()\n        cs = list(fi.MEPModel.ConnectorManager.Connectors)\n        plan = []\n        for pid, u in ((legA, uA), (legB, uB), (br, ub)):\n            c = max(cs, key=lambda k: k.CoordinateSystem.BasisZ.DotProduct(u))\n            far = self.far(pid, N)\n            if far.Subtract(c.Origin).DotProduct(u) < self.min_len:\n                raise Exception(u\"ống quá ngắn cho phụ kiện\")\n            plan.append((pid, c, far))\n        for pid, c, far in plan:\n            cur = self.made[pid].Location.Curve\n            end1 = cur.GetEndPoint(1).IsAlmostEqualTo(far)\n            self.made[pid].Location.Curve = Line.CreateBound(c.Origin, far) if end1 else Line.CreateBound(far, c.Origin)\n            self.con(pid, c.Origin).ConnectTo(c)\n        return fi\n\n    def fitting(self, f):\n        kind = f[\"kind\"]\n        if kind == \"wye\":\n            ids = [f[\"leg45\"], f[\"leg135\"], f[\"branch\"]]\n        elif kind == \"tee\":\n            ids = list(f[\"main\"]) + [f[\"branch\"]]\n        else:\n            ids = list(f.get(\"pipes\", []))\n        if any(i not in self.made for i in ids):\n            return u\"thiếu ống\"\n        n = f[\"node\"]\n        N = self.xyz.get(n) or self.con(ids[0], XYZ.Zero).Origin\n        level = self.levels[self.by_id[ids[0]].get(\"group\", u\"*\")][\"host\"]\n        st = SubTransaction(doc)\n        st.Start()\n        why, fi = None, None\n        try:\n            if kind == \"elbow\":\n                fi = doc.Create.NewElbowFitting(self.con(ids[0], N), self.con(ids[1], N))\n            elif kind == \"transition\":\n                fi = doc.Create.NewTransitionFitting(self.con(ids[0], N), self.con(ids[1], N))\n            elif kind == \"tee\":\n                a0, a1 = ids[0], ids[1]\n                if self.made[a0].Diameter > self.made[a1].Diameter:\n                    a0, a1 = a1, a0\n                fi = self.place3(self.fits[\"tee\"], N, a0, a1, ids[2], level)\n            elif kind == \"wye\":\n                fi = self.place3(self.fits[\"wye\"], N, ids[0], ids[1], ids[2], level)\n            else:\n                why = kind\n            if why is None:\n                doc.Regenerate()\n                if not self.pipes_ok(ids):\n                    why = u\"ống quá ngắn / đổi chiều / làm lệch phụ kiện cạnh\"\n        except Exception as ex:\n            why = u\"{}\".format(ex)\n        if why is None:\n            st.Commit()\n            if fi is not None:\n                self.fit_made.append((fi, self.layer_of[ids[0]]))\n        else:\n            st.RollBack()\n        return why\n\n\ndef load_family(name):\n    fams = dict((get_name(f), f) for f in FilteredElementCollector(doc).OfClass(Family).ToElements())\n    if name not in fams:\n        path = os.path.join(family_dir, name + u\".rfa\")\n        if not os.path.isfile(path):\n            raise Exception(u\"Thiếu family '{}' (không có trong mô hình, không thấy file {}).\".format(name, path))\n        doc.LoadFamily(path)\n        fams = dict((get_name(f), f) for f in FilteredElementCollector(doc).OfClass(Family).ToElements())\n    s = doc.GetElement(list(fams[name].GetFamilySymbolIds())[0])\n    if not s.IsActive:\n        s.Activate()\n    return s\n\n\ndef junction_symbols(pt):\n    \"\"\"Y / tê từ rule Junctions của pipe type (nhận theo tên family: WYE / Y → Y, còn lại → tê).\"\"\"\n    rpm = pt.RoutingPreferenceManager\n    wye = tee = None\n    for i in range(rpm.GetNumberOfRules(RoutingPreferenceRuleGroupType.Junctions)):\n        s = doc.GetElement(rpm.GetRule(RoutingPreferenceRuleGroupType.Junctions, i).MEPPartId)\n        if not isinstance(s, FamilySymbol):\n            continue\n        fam = s.FamilyName.upper()\n        if (u\"WYE\" in fam or re.search(u\"(^|[ _-])Y([ _-]|$)\", fam)) and wye is None:\n            wye = s\n        elif tee is None:\n            tee = s\n    for s in (wye, tee):\n        if s is not None and not s.IsActive:\n            s.Activate()\n    return wye, tee\n\n\ndef ensure_types():\n    \"\"\"Pipe type IN[7] (có sẵn thì dùng) + family Y / tê. Trả về (pipe_type, fits, danh sách việc đã làm).\"\"\"\n    done = []\n    pt = [p for p in FilteredElementCollector(doc).OfClass(PipeType).ToElements() if get_name(p) == pipe_type_name]\n    if pt:\n        pt = pt[0]\n        wye, tee = junction_symbols(pt)\n        fits = {}\n        if wye is not None:\n            fits[\"wye\"] = (wye, wye)\n            done.append(u\"Y theo type: \" + wye.FamilyName)\n        if tee is not None:\n            fits[\"tee\"] = (tee, tee)\n            done.append(u\"tê theo type: \" + tee.FamilyName)\n        if \"wye\" not in fits:\n            fits[\"wye\"] = (load_family(FAMILIES[\"wye\"]), load_family(FAMILIES[\"wyeR\"]))\n            done.append(u\"Y theo thư viện \" + FAMILIES[\"wye\"])\n        if \"tee\" not in fits:\n            fits[\"tee\"] = (load_family(FAMILIES[\"tee\"]), load_family(FAMILIES[\"teeR\"]))\n            done.append(u\"tê theo thư viện \" + FAMILIES[\"tee\"])\n        return pt, fits, done\n    syms = dict((k, load_family(name)) for k, name in FAMILIES.items())\n    done.append(u\"nạp family PVC DWV thư viện\")\n    mat = [m for m in FilteredElementCollector(doc).OfClass(Material).ToElements() if get_name(m) == u\"uPVC\"]\n    mat = mat[0] if mat else doc.GetElement(Material.Create(doc, u\"uPVC\"))\n    sch = [s for s in FilteredElementCollector(doc).OfClass(PipeScheduleType).ToElements() if get_name(s) == u\"uPVC\"]\n    sch = sch[0] if sch else PipeScheduleType.Create(doc, u\"uPVC\")\n    seg = [s for s in FilteredElementCollector(doc).OfClass(PipeSegment).ToElements()\n           if s.MaterialId == mat.Id and s.ScheduleTypeId == sch.Id]\n    if seg:\n        seg = seg[0]\n    else:\n        sizes = List[MEPSize]()\n        for d in SIZES:\n            sizes.Add(MEPSize(mm2ft(d), mm2ft(d - 2 * wall_thk(d)), mm2ft(d), True, True))\n        seg = PipeSegment.Create(doc, mat.Id, sch.Id, sizes)\n        done.append(u\"tạo segment uPVC (OD {})\".format(u\"/\".join(str(d) for d in SIZES)))\n    base = list(FilteredElementCollector(doc).OfClass(PipeType).ToElements())[0]\n    pt = base.Duplicate(pipe_type_name)\n    rpm = pt.RoutingPreferenceManager\n    for g in (RoutingPreferenceRuleGroupType.Elbows, RoutingPreferenceRuleGroupType.Junctions,\n              RoutingPreferenceRuleGroupType.Transitions, RoutingPreferenceRuleGroupType.Unions,\n              RoutingPreferenceRuleGroupType.Crosses, RoutingPreferenceRuleGroupType.Caps):\n        while rpm.GetNumberOfRules(g) > 0:\n            rpm.RemoveRule(g, 0)\n    rpm.AddRule(RoutingPreferenceRuleGroupType.Segments, RoutingPreferenceRule(seg.Id, u\"uPVC\"), 0)\n    while rpm.GetNumberOfRules(RoutingPreferenceRuleGroupType.Segments) > 1:\n        rpm.RemoveRule(RoutingPreferenceRuleGroupType.Segments, 1)\n    rpm.AddRule(RoutingPreferenceRuleGroupType.Elbows, RoutingPreferenceRule(syms[\"bend\"].Id, u\"Co\"))\n    rpm.AddRule(RoutingPreferenceRuleGroupType.Junctions, RoutingPreferenceRule(syms[\"tee\"].Id, u\"Tê\"))\n    rpm.AddRule(RoutingPreferenceRuleGroupType.Transitions, RoutingPreferenceRule(syms[\"red\"].Id, u\"Côn\"))\n    done.append(u\"tạo pipe type '{}'\".format(pipe_type_name))\n    return pt, {\"wye\": (syms[\"wye\"], syms[\"wyeR\"]), \"tee\": (syms[\"tee\"], syms[\"teeR\"])}, done\n\n\ndef apply_colors(builder):\n    \"\"\"Tô màu ống + phụ kiện trong view đang mở theo IN[10] (đè hiển thị theo phần tử, chỉ view này).\"\"\"\n    if not color_map:\n        return u\"không tô màu\"\n    view = doc.ActiveView\n    solid = [f for f in FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements() if f.GetFillPattern().IsSolidFill]\n    settings = {}\n    for k, v in color_map:\n        try:\n            r, g, b = [int(x) for x in v.split(u\",\")]\n        except ValueError:\n            continue\n        og = OverrideGraphicSettings()\n        col = Color(r, g, b)\n        og.SetProjectionLineColor(col)\n        og.SetCutLineColor(col)\n        if solid:\n            og.SetSurfaceForegroundPatternId(solid[0].Id)\n            og.SetSurfaceForegroundPatternColor(col)\n        settings[k] = og\n    n = 0\n    items = [(p, builder.layer_of[i]) for i, p in builder.made.items()] + builder.fit_made\n    for e, lay in items:\n        if e is None or not e.IsValidObject:\n            continue\n        for k, og in settings.items():\n            if k == u\"*\" or k.lower() in lay.lower():\n                view.SetElementOverrides(e.Id, og)\n                n += 1\n                break\n    return u\"tô màu {} phần tử trong view '{}'\".format(n, view.Name)\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef main():\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"]\n    cad = pick_cad()\n    cad_name = get_name(doc.GetElement(cad.GetTypeId()))\n    path = cad_file_path(cad)\n    if path is None:\n        return [u\"DỪNG: bản CAD phải được LINK (không Import) và file DWG phải còn ở đường dẫn gốc.\"]\n    core = find_accoreconsole()\n    if core is None:\n        return [u\"DỪNG: không tìm thấy AutoCAD Core Console (C:\\\\Program Files\\\\Autodesk\\\\AutoCAD *\\\\accoreconsole.exe).\"]\n    ents = read_dwg(path, core)\n    all_layers = sorted(set(l for l, a, b in ents[\"lines\"]))\n    layers = [l for l in layer_list if l in all_layers]\n    if not layers:\n        return [u\"DỪNG: không có layer ống nào trong IN[1]. Các layer LINE trong DWG:\"] + all_layers\n    missing = [l for l in layer_list if l not in all_layers]\n\n    lv = dict((l.Name, l) for l in FilteredElementCollector(doc).OfClass(Level).ToElements())\n    cad_level, cad_view = cad_plan_level(cad)\n    levels, level_notes = {}, []\n    for k, v in group_map:\n        up, _, host = v.partition(u\">\")\n        u_, h_ = parse_level(up, lv, cad_level), parse_level(host, lv, cad_level)\n        if u_ is None or h_ is None:\n            # Level ghi ở IN[3] không có trong mô hình → vẽ trên mặt bằng chứa link CAD:\n            # level dưới = level của mặt bằng đó, level trên = level kế trên (không có → +3000 mm)\n            if cad_level is None:\n                return [u\"DỪNG: IN[3] có level không tồn tại ('{}') và không xác định được mặt bằng chứa link CAD. \"\n                        u\"Các level: {}\".format(v, u\", \".join(sorted(lv)))]\n            above = sorted((l for l in lv.values() if l.Elevation > cad_level.Elevation + 1e-6), key=lambda l: l.Elevation)\n            h_ = (cad_level, cad_level.Elevation)\n            u_ = (above[0], above[0].Elevation) if above else (cad_level, cad_level.Elevation + mm2ft(3000))\n            level_notes.append(u\"Nhóm '{}': không có level '{}' → vẽ trên mặt bằng chứa link CAD (view '{}', level {}), \"\n                               u\"level trên = {}\".format(k, v, cad_view, cad_level.Name,\n                                                         above[0].Name if above else cad_level.Name + u\" +3000\"))\n        levels[k] = {\"up\": u_[0], \"up_z\": u_[1], \"host\": h_[0], \"host_z\": h_[1]}\n    if u\"*\" not in levels:\n        return [u\"DỪNG: IN[3] phải có nhóm '*' cho layer không hậu tố.\"]\n\n    lsys, lgrp, pair = layer_maps(layers)\n    systems = dict((get_name(s), s) for s in FilteredElementCollector(doc).OfClass(PipingSystemType).ToElements())\n    bad_sys = sorted(set(v for v in lsys.values() if v not in systems))\n    if bad_sys:\n        return [u\"DỪNG: không có piping system '{}'. Các system: {}\".format(u\", \".join(bad_sys), u\", \".join(sorted(systems)))]\n    # Các nhóm cùng level trên / dưới (VD mặt bằng chỉ 1 tầng) → nhánh T5 nối ngang vào ống thường\n    merge = len(levels) > 1 and len(set((round(v[\"up_z\"], 6), round(v[\"host_z\"], 6)) for v in levels.values())) == 1\n    net = build_network(ents, lsys, lgrp, pair, arrow_block, merge)\n    if only_points:\n        net = filter_network(net, only_points)\n        if not net[\"pipes\"]:\n            return [u\"DỪNG: không có tuyến ống nào cách điểm IN[9] ≤ 300 mm (toạ độ DWG).\"]\n\n    old = [p for p in FilteredElementCollector(doc).OfClass(Pipe).ToElements()\n           if (p.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS).AsString() or u\"\").startswith(COMMENT)]\n\n    kinds = collections.Counter(f[\"kind\"] for f in net[\"fittings\"])\n    risers = collections.Counter(r[\"kind\"] for r in net[\"risers\"])\n    groups_used = set(lgrp[c[\"layer\"]] for c in net[\"components\"])\n    rises = dict((g, max([c[\"rise\"] for c in net[\"components\"] if lgrp[c[\"layer\"]] == g and not c.get(\"abs\")] or [0]))\n                 for g in groups_used)\n    abs_c = [c for c in net[\"components\"] if c.get(\"abs\")]\n    good = sum(c[\"ok\"] for c in net[\"components\"])\n    rows = [[u\"Mũi tên ngược hướng tính\", fmt(p), u\"\", u\"Kiểm tra hướng chảy / điểm xả\", lay] for lay, p in net[\"bad_arrows\"]]\n\n    mode = (u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else\n            u\"KHÔNG GHI – đã có ống của lần chạy trước (xem dòng DỪNG GHI)\" if old else u\"ĐÃ THỰC HIỆN\")\n    lines = [u\"{} – {}\".format(TRANSACTION_NAME, mode),\n             u\"Bản CAD: {} | {} layer ống{}\".format(cad_name, len(layers),\n                                                     u\" | KHÔNG có layer: \" + u\"; \".join(missing) if missing else u\"\"),\n             u\"Phạm vi: \" + (u\"tuyến qua điểm \" + u\"; \".join(fmt(q) for q in only_points) if only_points else u\"toàn bộ\"),\n             u\"Ống ngang: {} | Ống đứng: {} (rơi {}, xuống {}, lên {}) | Cụm ống: {}\".format(\n                 len(net[\"pipes\"]), len(net[\"risers\"]), risers[\"drop\"], risers[\"down\"], risers[\"up\"], len(net[\"components\"])),\n             u\"Phụ kiện dự kiến: \" + u\", \".join(u\"{} {}\".format(k, v) for k, v in sorted(kinds.items())),\n             u\"DN: \" + u\", \".join(u\"D{} × {}\".format(d, c) for d, c in sorted(collections.Counter(p[\"dn\"] for p in net[\"pipes\"]).items())),\n             u\"System: \" + u\", \".join(sorted(set(u\"{} → {}\".format(p[\"layer\"].replace(u\"AV-P-DR-\", u\"\"), p[\"system\"]) for p in net[\"pipes\"]))),\n             u\"Mũi tên khớp hướng chảy: {} ({} ngược trên toàn bản vẽ – xem log)\".format(good, len(net[\"bad_arrows\"])),\n             u\"Xử lý: \" + u\", \".join(u\"{} {}\".format(k, v) for k, v in net[\"log\"].items())] + level_notes\n    if abs_c:\n        lines.append(u\"Theo BOP: {} cụm, tâm ống {:+.0f} … {:+.0f} so với level mặt bằng CAD ({})\".format(\n            len(abs_c), min(c[\"z_range\"][0] for c in abs_c), max(c[\"z_range\"][1] for c in abs_c),\n            cad_level.Name if cad_level is not None else u\"?\"))\n    for k in sorted(groups_used):\n        L = levels[k]\n        lines.append(u\"Nhóm '{}' (cụm không có BOP): tâm ống điểm cao nhất {:+.0f}, thấp nhất ≈ {:+.0f}; ống đứng xuống tới {:+.0f} (level {})\".format(\n            k, ft2mm(L[\"up_z\"]) - h_top_mm, ft2mm(L[\"up_z\"]) - h_top_mm - rises[k], ft2mm(L[\"host_z\"]), L[\"host\"].Name))\n    if old:\n        lines.append(u\"DỪNG GHI: mô hình đã có {} ống '{}' của lần chạy trước. Xoá chúng (lọc Comments) rồi chạy lại.\".format(len(old), COMMENT))\n\n    if not dry_run and not old:\n        TransactionManager.Instance.ForceCloseTransaction()\n        t = Transaction(doc, TRANSACTION_NAME)\n        handler = CommitFailures()\n        opts = t.GetFailureHandlingOptions()\n        opts.SetFailuresPreprocessor(handler)\n        opts.SetClearAfterRollback(True)\n        t.SetFailureHandlingOptions(opts)\n        t.Start()\n        try:\n            pt, fits, done = ensure_types()\n            lines.append(u\"Pipe type '{}': {}\".format(get_name(pt), u\"; \".join(done)))\n            b = Builder(net, cad.GetTotalTransform(), levels, pt, systems, fits,\n                        cad_level.Elevation if cad_level is not None else levels[u\"*\"][\"host_z\"])\n            b.pipes()\n            ok, fail = collections.Counter(), collections.Counter()\n            order = {\"wye\": 0, \"tee\": 1, \"transition\": 2, \"elbow\": 3}      # Y / tê trước (cần nhiều chỗ)\n            for f in sorted(net[\"fittings\"], key=lambda f: order.get(f[\"kind\"], 9)):\n                why = b.fitting(f)\n                if why is None:\n                    ok[f[\"kind\"]] += 1\n                else:\n                    fail[f[\"kind\"]] += 1\n                    ids = [f.get(\"leg45\"), f.get(\"leg135\"), f.get(\"branch\")] + list(f.get(\"main\", [])) + list(f.get(\"pipes\", []))\n                    dns = sorted(set(int(round(ft2mm(b.made[i].Diameter))) for i in ids if i is not None and i in b.made))\n                    rows.append([u\"Phụ kiện \" + f[\"kind\"], fmt(net[\"nodes\"][f[\"node\"]]), u\"/\".join(str(d) for d in dns), why, u\"\"])\n            lines.append(apply_colors(b))\n            status = t.Commit()\n            if status != TransactionStatus.Committed:\n                lines.append(u\"LỖI: Revit không commit được (trạng thái {}), mọi thay đổi đã bị hoàn tác. \"\n                             u\"Bộ xử lý lỗi được gọi {} lần.\".format(status, handler.calls))\n                for (sev, text), n in handler.all.most_common():\n                    ids = sorted(handler.ids.get(text, []))\n                    lines.append(u\"  [{}] {} ×{} | Id: {}\".format(sev, text, n, u\", \".join(str(i) for i in ids[:12])))\n                    rows.append([u\"Lỗi commit \" + sev, u\"\", u\"\", text, u\"Id \" + u\" \".join(str(i) for i in ids)])\n                if not handler.all:\n                    lines.append(u\"  (không có thông báo lỗi nào qua bộ xử lý)\")\n                for text, n in handler.warnings.most_common(5):\n                    lines.append(u\"  [Warning] {} ×{}\".format(text, n))\n                try:\n                    lines.append(u\"Log: \" + write_log(rows, cad_name))\n                except Exception:\n                    pass\n                return lines\n            lines.append(u\"Đã tạo: {} ống; phụ kiện {}\".format(len(b.made), u\", \".join(u\"{} {}\".format(k, v) for k, v in sorted(ok.items()))))\n            lines.append(u\"Không đặt được (nối tay, xem log): \" + (u\", \".join(u\"{} {}\".format(k, v) for k, v in sorted(fail.items())) or u\"0\"))\n            if handler.resolved:\n                lines.append(u\"Revit tự xử lý lúc commit (đã ngắt nối, kiểm tra lại): \" +\n                             u\"; \".join(u\"{} ×{}\".format(k, v) for k, v in handler.resolved.items()))\n            if handler.warnings:\n                lines.append(u\"Cảnh báo Revit (đã ẩn, không ảnh hưởng): \" +\n                             u\"; \".join(u\"{} ×{}\".format(k, v) for k, v in handler.warnings.most_common(5)))\n        except Exception as ex:\n            if t.HasStarted() and not t.HasEnded():\n                t.RollBack()\n            import traceback\n            return lines + [u\"LỖI khi dựng ống, mọi thay đổi đã được hoàn tác: {}\".format(ex), traceback.format_exc()]\n    try:\n        lines.append(u\"Log: \" + write_log(rows, cad_name))\n    except Exception as ex:\n        lines.append(u\"Không ghi được file log: {}\".format(ex))\n    return lines + [u\" | \".join(r[:4]) for r in rows[:200]]\n\n\nif DYNAMO:\n    try:\n        OUT = main()\n    except Exception as ex:\n        import traceback\n        OUT = [u\"LỖI: {}\".format(ex), traceback.format_exc()]\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "a9d29dec38f54d07903654f2ccd661dd",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "53a776e938434915add111f81ec6359c",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tên bản CAD (chuỗi con)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "28aaf507f3f04af5809ca4e74cbd38b4",
+          "Name": "IN[1]",
+          "Description": "IN[1] Layer ống (cách ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d64cb7b339c94ab09210794fd17c6fa2",
+          "Name": "IN[2]",
+          "Description": "IN[2] Piping system theo tên layer",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a1f0d0842679409ba94ead97796bd271",
+          "Name": "IN[3]",
+          "Description": "IN[3] Nhóm cao độ: hậu tố=level trên>level dưới",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bcccc919669d4f8fb0be2850edf9bea2",
+          "Name": "IN[4]",
+          "Description": "IN[4] Level trên → tâm ống điểm cao nhất (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "dfacf995449948d9ad5a984152501576",
+          "Name": "IN[5]",
+          "Description": "IN[5] Block mũi tên hướng chảy",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2af9cbffce1148cea9239b3cd7e68306",
+          "Name": "IN[6]",
+          "Description": "IN[6] Thư mục family PVC DWV (khi phải tạo type)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7c3c741db4e343fabeae6a58119f4b56",
+          "Name": "IN[7]",
+          "Description": "IN[7] Pipe type (có sẵn thì dùng)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "03aea83f0e3e4eb38aa2aee5bc04c5ed",
+          "Name": "IN[8]",
+          "Description": "IN[8] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "02cb8980c5314bf58fd12ac5f5ede710",
+          "Name": "IN[9]",
+          "Description": "IN[9] Chỉ dựng tuyến qua điểm DWG x,y (trống = tất cả)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f7ce0e02089a4451a7759cff88094167",
+          "Name": "IN[10]",
+          "Description": "IN[10] Màu trong view đang mở theo layer (R,G,B)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "108a5b3d05be457c925de310d6a43a0c",
+          "Name": "IN[11]",
+          "Description": "IN[11] DN theo layer (tên = tối thiểu, * = không nhãn)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d7d6dcea5e134ad4b13f7f233f7a76f2",
+          "Name": "IN[12]",
+          "Description": "IN[12] Layer dựng phẳng, không dốc (cách ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "db150f1e6bef4b1cab20cdc75389f228",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "232baae021504016bea1c2165ef41781",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "af563d5e7d594725901ac2870fe55b5f",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d241f0249e02483bb03a5bf193527af7",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "86bf34922a7a46f6b9c45c0ccadccf6e",
+      "End": "53a776e938434915add111f81ec6359c",
+      "Id": "2991f8ea7074461ba7eb5a250a91983b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "97844059829c4a84a4d86d6a64bbf4cc",
+      "End": "28aaf507f3f04af5809ca4e74cbd38b4",
+      "Id": "437524a7833846929f2e49117e8c6702",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "3cb3ac374d474e1388476c7d15dfa914",
+      "End": "d64cb7b339c94ab09210794fd17c6fa2",
+      "Id": "c140dca4800749aab736d0b9e3e89de6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "33d5599c3e984b80b48d67a4e184509e",
+      "End": "a1f0d0842679409ba94ead97796bd271",
+      "Id": "0db3bf7314dc4cd78c20067f542391d1",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1ed0282526cf401bbcaaed38fe0c00d5",
+      "End": "bcccc919669d4f8fb0be2850edf9bea2",
+      "Id": "087f692658a4483fa9c6f1bb0d2409a4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "574f4e38ca934074a288b4dbb8e6c507",
+      "End": "dfacf995449948d9ad5a984152501576",
+      "Id": "15d2aeb1330d4d36bcf30f0fc42e16cd",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9817cfbb5c364399bb69e6f58a445d64",
+      "End": "2af9cbffce1148cea9239b3cd7e68306",
+      "Id": "379e1439c7ce4ee7810b9d9afa02db06",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6bda3a7c3ef2420c8fb49be01bdd47e4",
+      "End": "7c3c741db4e343fabeae6a58119f4b56",
+      "Id": "b9c0414264b248bb976f09a300f31373",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "98490a61cd414450be81f3b821373e9d",
+      "End": "03aea83f0e3e4eb38aa2aee5bc04c5ed",
+      "Id": "9156ef840e65400e9cad093fc9d39c5c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "418376011e9f4d5b8960dd027fd36980",
+      "End": "02cb8980c5314bf58fd12ac5f5ede710",
+      "Id": "8937a18fccd24d13bf28f4369e94ba5c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6f0cbb1d3bb54d8ebc21bca46a75c6db",
+      "End": "f7ce0e02089a4451a7759cff88094167",
+      "Id": "f9c83a3aef574a2b87ee5be8816ba633",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b5a6d8120d034825bf5d57d76783d7ed",
+      "End": "108a5b3d05be457c925de310d6a43a0c",
+      "Id": "f2e2173c7ed04183830306b51aee87b5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d6b705df60d14207922fc0b6dcb2c577",
+      "End": "d7d6dcea5e134ad4b13f7f233f7a76f2",
+      "Id": "59810c38deff4e4e90fd9dc9925def2e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "db150f1e6bef4b1cab20cdc75389f228",
+      "End": "af563d5e7d594725901ac2870fe55b5f",
+      "Id": "afa8ff8f500340aab07532b62769d890",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "c3d43918b0f24be284501590d645938d",
+        "Name": "IN[0] Tên bản CAD (chuỗi con)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "69d1c55e431f4e15b28898796409aa8d",
+        "Name": "IN[1] Layer ống (cách ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "6459d5afce74421fa286d420e8a012e5",
+        "Name": "IN[2] Piping system theo tên layer",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "e0c42f6b41284189b2df1191b60ac9c9",
+        "Name": "IN[3] Nhóm cao độ: hậu tố=level trên>level dưới",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "fb043d47c1cc4e24a169bfe7741799e9",
+        "Name": "IN[4] Level trên → tâm ống điểm cao nhất (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "81ab3b2abf534e2b9f7ba69331614728",
+        "Name": "IN[5] Block mũi tên hướng chảy",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "3035a363a6d542c6b984e180a95d2568",
+        "Name": "IN[6] Thư mục family PVC DWV (khi phải tạo type)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "63a199683e404da6968cf1f287791ee9",
+        "Name": "IN[7] Pipe type (có sẵn thì dùng)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "bed70104be6f4f25abadba33abc9f020",
+        "Name": "IN[8] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "5d1b9ddab08d439a8b79df6083ee586e",
+        "Name": "IN[9] Chỉ dựng tuyến qua điểm DWG x,y (trống = tất cả)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "dd2746dcf52d43e5b07e088534155f77",
+        "Name": "IN[10] Màu trong view đang mở theo layer (R,G,B)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "ee87d50f5c4946a8b368780cc8e7bfe3",
+        "Name": "IN[11] DN theo layer (tên = tối thiểu, * = không nhãn)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1210.0
+      },
+      {
+        "Id": "e0aa47bc06a548098f88513720e30a0b",
+        "Name": "IN[12] Layer dựng phẳng, không dốc (cách ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1320.0
+      },
+      {
+        "Id": "a9d29dec38f54d07903654f2ccd661dd",
+        "Name": "Tạo ống thoát nước từ CAD",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 700.0,
+        "Y": 350.0
+      },
+      {
+        "Id": "232baae021504016bea1c2165ef41781",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1100.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "ff07c27e89b44355ace4800ab7597235",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Link (không Import) DWG cấp thoát nước đúng vị trí. Bản CAD phải còn ở đường dẫn gốc (đọc bản sao qua AutoCAD Core Console). Kiểm tra IN[3] (level) và IN[4] (khoảng hở dưới sàn). Giữ Dry-run = True lần đầu, đọc Báo cáo rồi mới đổi False.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "c3d43918b0f24be284501590d645938d",
+          "69d1c55e431f4e15b28898796409aa8d",
+          "6459d5afce74421fa286d420e8a012e5",
+          "e0c42f6b41284189b2df1191b60ac9c9",
+          "fb043d47c1cc4e24a169bfe7741799e9",
+          "81ab3b2abf534e2b9f7ba69331614728",
+          "3035a363a6d542c6b984e180a95d2568",
+          "63a199683e404da6968cf1f287791ee9",
+          "bed70104be6f4f25abadba33abc9f020",
+          "5d1b9ddab08d439a8b79df6083ee586e",
+          "dd2746dcf52d43e5b07e088534155f77",
+          "ee87d50f5c4946a8b368780cc8e7bfe3",
+          "e0aa47bc06a548098f88513720e30a0b"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -96.0,
+        "Width": 537.0,
+        "Height": 1550.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 805.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "5a62e464ac4c4f97a7bb23f66befff87",
+        "Title": "2. Xử lý + Báo cáo",
+        "DescriptionText": "Undo bằng mục 'ARV - Tạo ống thoát nước từ CAD'. Ống tạo có Comments 'ARV-CTN | <layer>'. Log CSV trong Documents\\ARV_Logs (phụ kiện không đặt được, mũi tên ngược – toạ độ DWG).",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "a9d29dec38f54d07903654f2ccd661dd",
+          "232baae021504016bea1c2165ef41781"
+        ],
+        "HasNestedGroups": false,
+        "Left": 680.0,
+        "Top": 250.0,
+        "Width": 1500.0,
+        "Height": 900.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 805.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 275.01122799999996,
+    "Y": 169.82738700000004,
+    "Zoom": 0.9063352
+  }
+}

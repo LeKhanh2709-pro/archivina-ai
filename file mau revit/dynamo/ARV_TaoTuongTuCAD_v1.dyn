@@ -1,0 +1,784 @@
+{
+  "Uuid": "cc8d5c84-95fc-4cb8-81a2-31eb5b990ebc",
+  "IsCustomNode": false,
+  "Description": "Tạo tường kiến trúc từ mặt bằng tường DWG đã link (cặp nét song song → tim tường, wall type theo chiều dày CAD). Mặc định dry-run. TRẠNG THÁI: CHƯA DUYỆT.",
+  "Name": "ARV_TaoTuongTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "3fb9c2c154d441428d0524e1303f96e3",
+      "Name": "IN[0] Tên bản CAD (để trống = bản có layer tường)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "c06b94f51fab4e55aa785bab5c37a042",
+      "Name": "IN[1] Lọc layer tường (cách nhau bằng ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "A-Wall",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "8696c165f0a847e5a4aa686f4452349f",
+      "Name": "IN[2] Dày lõi CAD = wall type (VD 150=Tên type;100=...)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "150=WB 15-150-15;100=WB 15-100-15;200=WB 15-200-15",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "ea891b7ff761428cab510bdb326c5ca2",
+      "Name": "IN[3] Type mẫu để nhân bản (trống = không tự tạo)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "T2-V15-G100-V15",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "c9ce3580708a4ab4a1724a08c4ac55ee",
+      "Name": "IN[4] Level chân tường",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Tầng 1",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "aa382abd3ecd4292bd404efcd6ecc189",
+      "Name": "IN[5] Level đỉnh tường",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Tầng 2",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "df490ef2f38e43d487326fad42b2da63",
+      "Name": "IN[6] Layer cửa đi / cửa sổ (cách nhau bằng ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Door;Window;Glaz;Cửa",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "6e0748364dc94dacb48a47b06bbddae5",
+      "Name": "IN[7] Ô cửa rộng tối đa nối tường liền (mm, 0 = không)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "3000",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "051d8704bc714ed0ae88e8b795df45c7",
+      "Name": "IN[8] Top Offset (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "0",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "da8d65225e0e4a36a1c5d55cd0f0511c",
+      "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "7e484f629742448e8e5c8f69898e38d5",
+      "Name": "Báo cáo",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "3fb9c2c154d441428d0524e1303f96e3",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "75937ac707ba4bd28382b6cef3e2acda",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c06b94f51fab4e55aa785bab5c37a042",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "72787459ad0c418e94097ce5c24bc19d",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "A-Wall"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "8696c165f0a847e5a4aa686f4452349f",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "869464156a6b405bb37ce5678dce902d",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "150=WB 15-150-15;100=WB 15-100-15;200=WB 15-200-15"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "ea891b7ff761428cab510bdb326c5ca2",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b01dcf6b2b724992a77b6437922f45e2",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "T2-V15-G100-V15"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c9ce3580708a4ab4a1724a08c4ac55ee",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "282d519fe87d40a98ca5ef6e1d41f121",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Tầng 1"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "aa382abd3ecd4292bd404efcd6ecc189",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a1443cd30c684709b506a99a1d496ee6",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Tầng 2"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "df490ef2f38e43d487326fad42b2da63",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "60a701937c3c435a93144421dbc4f646",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Door;Window;Glaz;Cửa"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "6e0748364dc94dacb48a47b06bbddae5",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "77587be4efe848abb84c1c99df781c07",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 3000.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "051d8704bc714ed0ae88e8b795df45c7",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "deca6eb47a0f4924b4a32b7f24861147",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 0.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "da8d65225e0e4a36a1c5d55cd0f0511c",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fd0c7ffd07454259bf2ade9045faf6c2",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoTuongTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n# Bản Dynamo của nút pyRevit KienTruc.panel/TaoTuongTuCAD – mỗi chiều dày CAD một wall type (bảng IN[2]).\n#\n# Tạo tường kiến trúc từ mặt bằng tường xây (DWG đã Link/Import vào Revit):\n#   1. Đọc đoạn thẳng (line, polyline, kể cả trong block) trên layer tường.\n#   2. Ghép cặp hai nét song song cách nhau trong dải chiều dày → đường tim tường. Cặp gần nhau nhất trước;\n#      không ghép hai nét có nét thứ ba nằm giữa (tường vẽ cả mặt thô lẫn mặt hoàn thiện không bị tạo đôi).\n#   3. Gộp đoạn thẳng hàng cùng chiều dày bị ngắt tại chỗ giao tường.\n#   4. Tường liền qua ô cửa: hai đoạn thẳng hàng cách nhau ≤ IN[7] mà trong khe có nét của layer cửa (IN[6])\n#      → nối thành tường liền (chèn cửa sau). Khe không có nét cửa (lối đi mở) giữ nguyên. Khe ≤ 150 mm giữa hai\n#      tường thẳng hàng khác chiều dày cũng được nối.\n#   5. Kéo dài đầu tường tới tim tường không song song để nối góc L / chữ T (cả khi đầu tường hụt mặt tường giao\n#      ≤ 50 mm). Bỏ mẩu tường nằm trọn trong thân tường khác (cặp nét giả ở nút giao), kéo dài lại; cắt chỗ hai\n#      tường thẳng hàng chồng đầu nhau → không có tường đè.\n#   6. Tạo tường theo wall type gán cho chiều dày CAD (IN[2]), chân / đỉnh theo level, Location Line = Core\n#      Centerline (lõi tường trùng hai nét CAD, lớp trát chia đều hai bên). Chiều dày CAD = chiều dày LÕI (nét A-Wall\n#      là mặt thô; nét trát nằm ở layer khác). Type trong IN[2] chưa có → nhân bản type mẫu IN[3], đổi lõi = chiều dày\n#      CAD. Chiều dày không có trong IN[2] chỉ báo cáo. Bỏ qua tường chồng lên tường đã có.\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (để trống = bản CAD duy nhất có layer khớp IN[1])\n#   IN[1] (str)   Chuỗi lọc layer tường, nhiều chuỗi cách nhau bằng ';' (khớp chuỗi con, không phân biệt hoa thường)\n#   IN[2] (str)   Bảng chiều dày lõi CAD (mm) = wall type (Basic), cách nhau bằng ';'\n#                 VD \"150=WB 15-150-15;100=WB 15-100-15\". Khớp chiều dày ±2 mm.\n#   IN[3] (str)   Wall type mẫu để nhân bản khi type trong IN[2] chưa có (VD \"WB 15-220-15\"); trống = không tự tạo\n#   IN[4] (str)   Tên level chân tường\n#   IN[5] (str)   Tên level đỉnh tường\n#   IN[6] (str)   Chuỗi lọc layer cửa đi / cửa sổ, cách nhau bằng ';', khớp chuỗi con (VD \"Door;Window;Glaz;Cửa\" lấy cả\n#                 A-Door, A-Window(s), A-Glaz, A-Cửa, 23-DOOR trong xref); trống = không nối\n#   IN[7] (float) Ô cửa rộng tối đa được nối tường liền (mm), 0 = không nối\n#   IN[8] (float) Top Offset so với level đỉnh (mm), VD -120 nếu xây tới đáy sàn dày 120\n#   IN[9] (bool)  Dry-run: True = chỉ báo cáo + xem trước đường tim, không ghi vào mô hình (mặc định True)\n# OUTPUT\n#   OUT[0] (list[str]) Báo cáo: tóm tắt, layer đã dùng, đường dẫn log, rồi từng tường\n#   OUT[1] (list[Line]) Đường tim tường sẽ tạo / đã tạo (xem trước trong Dynamo, đơn vị mm)\n\nimport os\nimport io\nimport csv\nimport math\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, Options, GeometryInstance, PolyLine,\n                                   Line, Arc, XYZ, Transaction, UnitUtils, UnitTypeId, ModelPathUtils,\n                                   BuiltInParameter, Level, Wall, WallType, WallKind, LocationCurve)\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo tường kiến trúc từ CAD\"\nSCRIPT_TAG = u\"ARV_TaoTuongTuCAD_v1\"\nJOIN_TOL_MM = 1.0          # Sai số toạ độ / thẳng hàng\nTHICK_TOL_MM = 2.0         # Gộp chiều dày lệch nhỏ (109/110/111 → 110)\nDUP_TOL_MM = 10.0          # Khoảng cách tim coi là trùng tường đã có\nMIN_LENGTH_MM = 50.0       # Bỏ đoạn tường ngắn hơn\nANGLE_TOL = 1e-3           # Sai số song song (rad)\nPAIR_RANGE_MM = (60.0, 400.0)  # Dải ghép cặp; chỉ tạo tường có chiều dày nằm trong bảng IN[2]\nSTEP_GAP_MM = 150.0        # Khe giữa hai tường thẳng hàng khác chiều dày → luôn nối\nOPENING_MARGIN_MM = 50.0   # Nới vùng tìm nét cửa ra hai bên mặt tường\nGRID_MM = 500.0            # Ô lưới tra cứu điểm nét cửa\nABSORB_TOL_MM = 5.0        # Sai số khi xét đoạn tường nằm trọn trong thân tường khác\nINSIDE_TOL_MM = 10.0       # Sai số xét tường mỏng nằm trong thân tường dày (CAD vẽ lệch tim vài mm)\nEND_GAP_MM = 50.0         # Đầu tường hụt mặt tường giao ≤ giá trị này vẫn được kéo tới tim tường giao\nDUP_LABEL = u\"Bỏ qua – chồng lên tường cũ\"\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\ndef sub(a, b):\n    return (a[0] - b[0], a[1] - b[1])\n\n\ndef dot(a, b):\n    return a[0] * b[0] + a[1] * b[1]\n\n\ndef cross(a, b):\n    return a[0] * b[1] - a[1] * b[0]\n\n\ndef unit(v):\n    l = math.hypot(v[0], v[1])\n    return (v[0] / l, v[1] / l)\n\n\nclass Seg(object):\n    \"\"\"Đoạn CAD trong hệ toạ độ của nhóm song song: off = toạ độ pháp tuyến, [s0, s1] = hình chiếu.\"\"\"\n\n    def __init__(self, a, b, u, n):\n        self.off = (dot(a, n) + dot(b, n)) / 2.0\n        sa, sb = dot(a, u), dot(b, u)\n        self.s0, self.s1 = min(sa, sb), max(sa, sb)\n        self.free = [(self.s0, self.s1)]   # Phần chưa được dùng làm mặt tường\n\n\nclass WallPiece(object):\n    def __init__(self, gid, u, n, off, s0, s1, thick):\n        self.gid, self.u, self.n, self.off = gid, u, n, off\n        self.s0, self.s1 = s0, s1\n        self.thick = thick        # mm, đo từ CAD\n        self.t = None             # mm nguyên, sau khi gộp chiều dày\n\n    def point(self, s):\n        return (self.u[0] * s + self.n[0] * self.off, self.u[1] * s + self.n[1] * self.off)\n\n\ndef canonical(a, b):\n    \"\"\"Hướng chuẩn hoá về góc [-tol, π - tol) để hai đường ngược chiều vẫn cùng nhóm.\"\"\"\n    u = unit(sub(b, a))\n    ang = math.atan2(u[1], u[0])\n    if ang < -ANGLE_TOL:\n        ang += math.pi\n        u = (-u[0], -u[1])\n    if ang >= math.pi - ANGLE_TOL:\n        ang -= math.pi\n        u = (-u[0], -u[1])\n    return u, ang\n\n\ndef parallel_groups(segs):\n    data = sorted((canonical(a, b)[1], canonical(a, b)[0], a, b) for a, b in segs)\n    groups, current = [], []\n    for d in data:\n        if current and d[0] - current[-1][0] > ANGLE_TOL:\n            groups.append(current)\n            current = []\n        current.append(d)\n    if current:\n        groups.append(current)\n    return groups\n\n\ndef clip(free, a, b):\n    return [(max(x, a), min(y, b)) for x, y in free if min(y, b) > max(x, a)]\n\n\ndef intersect(f1, f2):\n    result = []\n    for x, y in f1:\n        result.extend(clip(f2, x, y))\n    return result\n\n\ndef subtract(free, a, b):\n    out = []\n    for x, y in free:\n        if y <= a or x >= b:\n            out.append((x, y))\n            continue\n        if x < a:\n            out.append((x, a))\n        if y > b:\n            out.append((b, y))\n    return out\n\n\ndef pair_group(gid, group, tmin, tmax):\n    \"\"\"Ghép cặp các nét trong một nhóm song song, ưu tiên cặp gần nhau nhất.\n    Bỏ phần có nét thứ ba nằm giữa cặp (mặt thô + mặt hoàn thiện cùng layer → chỉ ghép cặp trong cùng).\"\"\"\n    u = group[0][1]\n    n = (-u[1], u[0])\n    tol = JOIN_TOL_MM\n    segs = sorted([Seg(a, b, u, n) for _, _, a, b in group], key=lambda s: s.off)\n\n    cands = []\n    for i in range(len(segs)):\n        si = segs[i]\n        for j in range(i + 1, len(segs)):\n            sj = segs[j]\n            d = sj.off - si.off\n            if d > tmax + tol:\n                break\n            if d < tmin - tol:\n                continue\n            a, b = max(si.s0, sj.s0), min(si.s1, sj.s1)\n            if b - a >= MIN_LENGTH_MM:\n                cands.append((d, b - a, i, j, a, b))\n\n    # Gần nhất trước; cùng khoảng cách thì ưu tiên đoạn chồng dài hơn\n    cands.sort(key=lambda c: (round(c[0], 1), -c[1]))\n    pieces = []\n    for d, _, i, j, a, b in cands:\n        si, sj = segs[i], segs[j]\n        free = intersect(clip(si.free, a, b), sj.free)\n        for k in range(i + 1, j):\n            sk = segs[k]\n            if sk.off - si.off > tol and sj.off - sk.off > tol:\n                free = subtract(free, sk.s0, sk.s1)\n        for x, y in free:\n            if y - x < MIN_LENGTH_MM:\n                continue\n            si.free = subtract(si.free, x, y)\n            sj.free = subtract(sj.free, x, y)\n            pieces.append(WallPiece(gid, u, n, (si.off + sj.off) / 2.0, x, y, d))\n    return pieces\n\n\ndef snap_thicknesses(pieces):\n    \"\"\"Gộp chiều dày lệch nhỏ về giá trị xuất hiện nhiều nhất trong cụm.\"\"\"\n    counts = {}\n    for p in pieces:\n        k = int(round(p.thick))\n        counts[k] = counts.get(k, 0) + 1\n    mapping, cluster = {}, []\n\n    def close(cl):\n        rep = max(cl, key=lambda k: counts[k])\n        for k in cl:\n            mapping[k] = rep\n\n    for k in sorted(counts):\n        if cluster and k - cluster[-1] > THICK_TOL_MM:\n            close(cluster)\n            cluster = []\n        cluster.append(k)\n    if cluster:\n        close(cluster)\n    for p in pieces:\n        p.t = mapping[int(round(p.thick))]\n\n\ndef merge_collinear(pieces, max_gap):\n    \"\"\"Gộp các đoạn thẳng hàng, cùng chiều dày, cách nhau ≤ max_gap (mm).\"\"\"\n    pieces = sorted(pieces, key=lambda p: (p.gid, p.t, p.off))\n    lines, current = [], []\n    for p in pieces:\n        if current and (p.gid != current[-1].gid or p.t != current[-1].t\n                        or p.off - current[-1].off > THICK_TOL_MM):\n            lines.append(current)\n            current = []\n        current.append(p)\n    if current:\n        lines.append(current)\n\n    merged = []\n    for line in lines:\n        line.sort(key=lambda p: p.s0)\n        cur = line[0]\n        for p in line[1:]:\n            if p.s0 - cur.s1 <= max_gap:\n                cur.s1 = max(cur.s1, p.s1)\n            else:\n                merged.append(cur)\n                cur = p\n        merged.append(cur)\n    return merged\n\n\ndef extend_to_junctions(pieces):\n    \"\"\"Kéo dài đầu tường tới tim tường không song song gần nhất (nối góc L và chữ T).\"\"\"\n    tol = JOIN_TOL_MM\n    new_ends = []\n    for w in pieces:\n        ends = [w.s0, w.s1]\n        for k, sign in ((0, -1.0), (1, 1.0)):\n            e = w.point(ends[k])\n            v = (w.u[0] * sign, w.u[1] * sign)\n            best = None\n            for o in pieces:\n                if o is w:\n                    continue\n                sin = abs(cross(w.u, o.u))\n                if sin < ANGLE_TOL:\n                    continue\n                denom = dot(v, o.n)\n                if abs(denom) < ANGLE_TOL:\n                    continue\n                t = (o.off - dot(e, o.n)) / denom\n                # Cho phép đầu tường hụt mặt tường giao tới END_GAP_MM (nét CAD vẽ hở vài mm)\n                if t <= tol or t > o.thick / 2.0 / sin + END_GAP_MM:\n                    continue\n                s = dot((e[0] + v[0] * t, e[1] + v[1] * t), o.u)\n                reach = w.thick / 2.0 / sin + tol\n                if s < o.s0 - reach or s > o.s1 + reach:\n                    continue\n                if best is None or t < best:\n                    best = t\n            if best is not None:\n                ends[k] += sign * best\n        new_ends.append(ends)\n    for w, (a, b) in zip(pieces, new_ends):\n        w.s0, w.s1 = a, b\n\n\nclass PointGrid(object):\n    \"\"\"Tra cứu nhanh điểm nét cửa trong một hình chữ nhật xoay.\"\"\"\n\n    def __init__(self, points):\n        self.cells = {}\n        for x, y in points:\n            self.cells.setdefault((int(math.floor(x / GRID_MM)), int(math.floor(y / GRID_MM))), []).append((x, y))\n\n    def any_in(self, origin, u, n, s0, s1, h):\n        \"\"\"Có điểm nào với s0 < (p-origin)·u < s1 và |(p-origin)·n| ≤ h.\"\"\"\n        corners = [(origin[0] + u[0] * s + n[0] * t, origin[1] + u[1] * s + n[1] * t)\n                   for s in (s0, s1) for t in (-h, h)]\n        xs, ys = [c[0] for c in corners], [c[1] for c in corners]\n        for i in range(int(math.floor(min(xs) / GRID_MM)), int(math.floor(max(xs) / GRID_MM)) + 1):\n            for j in range(int(math.floor(min(ys) / GRID_MM)), int(math.floor(max(ys) / GRID_MM)) + 1):\n                for p in self.cells.get((i, j), ()):\n                    d = sub(p, origin)\n                    if s0 < dot(d, u) < s1 and abs(dot(d, n)) <= h:\n                        return True\n        return False\n\n\ndef bridge_openings(pieces, grid, max_gap):\n    \"\"\"Nối hai đoạn tường thẳng hàng qua ô cửa (khe có nét cửa, ≤ max_gap) hoặc qua khe nhỏ đổi chiều dày.\n    Cùng chiều dày, cùng tim → gộp một tường; khác → kéo hai đầu gặp nhau giữa khe. Trả về (số ô cửa, số khe nhỏ).\"\"\"\n    n_open, n_step = 0, 0\n    limit = max(max_gap, STEP_GAP_MM)\n    changed = True\n    while changed:\n        changed = False\n        for a in pieces:\n            # Đoạn gần nhất phía sau đầu s1 của a, cùng phương, hai mặt tường còn chồng nhau theo chiều dày\n            best = None\n            for b in pieces:\n                if b is a or b.gid != a.gid or abs(b.off - a.off) >= (a.thick + b.thick) / 2.0:\n                    continue\n                gap = b.s0 - a.s1\n                if 0 < gap <= limit and (best is None or gap < best[0]):\n                    best = (gap, b)\n            if best is None:\n                continue\n            gap, b = best\n            mid_off = (a.off + b.off) / 2.0\n            origin = (a.n[0] * mid_off, a.n[1] * mid_off)\n            h = max(a.thick, b.thick) / 2.0 + OPENING_MARGIN_MM\n            is_door = (max_gap > 0 and grid is not None and gap <= max_gap\n                       and grid.any_in(origin, a.u, a.n, a.s1 + JOIN_TOL_MM, b.s0 - JOIN_TOL_MM, h))\n            is_step = gap <= STEP_GAP_MM and a.t != b.t\n            if not (is_door or is_step):\n                continue\n            if a.t == b.t and abs(a.off - b.off) <= THICK_TOL_MM:\n                a.s1 = max(a.s1, b.s1)\n                pieces.remove(b)\n            else:\n                m = (a.s1 + b.s0) / 2.0\n                a.s1, b.s0 = m, m\n            if is_door:\n                n_open += 1\n            else:\n                n_step += 1\n            changed = True\n            break\n    return n_open, n_step\n\n\ndef inside_body(p, q, tol):\n    \"\"\"Đường tim của p nằm trọn trong thân (hình chữ nhật dài × dày) của q.\"\"\"\n    lq = q.s1 - q.s0\n    for s in (p.s0, p.s1):\n        pt = p.point(s)\n        along = dot(pt, q.u) - q.s0\n        across = dot(pt, q.n) - q.off\n        if along < -tol or along > lq + tol or abs(across) > q.thick / 2.0 + tol:\n            return False\n    return True\n\n\ndef drop_absorbed(pieces, real=lambda p: True):\n    \"\"\"Bỏ đoạn tường nằm trọn trong thân một tường dài hơn (mẩu do đầu tường / mặt tường giao nhau ở nút T, góc L\n    bị ghép nhầm thành cặp). Trả về số đoạn bỏ.\"\"\"\n    order = sorted(pieces, key=lambda p: p.s1 - p.s0)\n    dropped = set()\n    for p in order:\n        lp = p.s1 - p.s0\n        for q in pieces:\n            if q is p or id(q) in dropped or q.s1 - q.s0 <= lp or not real(q):\n                continue\n            if inside_body(p, q, ABSORB_TOL_MM):\n                dropped.add(id(p))\n                break\n    pieces[:] = [p for p in pieces if id(p) not in dropped]\n    return len(dropped)\n\n\ndef trim_collinear_overlaps(pieces):\n    \"\"\"Hai tường song song, thân chồng nhau theo chiều dày, chồng nhau một đoạn ở đầu (≤ PAIR_RANGE max) → cắt\n    tường ngắn hơn lùi về đúng đầu tường dài hơn. Trả về số chỗ cắt.\"\"\"\n    n = 0\n    for a in pieces:\n        for b in pieces:\n            if b is a or b.gid != a.gid or abs(b.off - a.off) >= (a.thick + b.thick) / 2.0:\n                continue\n            if (b.s1 - b.s0) > (a.s1 - a.s0):\n                continue   # chỉ cắt b khi b ngắn hơn (hoặc bằng) a\n            ov = min(a.s1, b.s1) - max(a.s0, b.s0)\n            if ov <= JOIN_TOL_MM or ov > PAIR_RANGE_MM[1]:\n                continue\n            if b.s0 < a.s1 < b.s1:\n                b.s0 = a.s1\n            elif b.s0 < a.s0 < b.s1:\n                b.s1 = a.s0\n            else:\n                continue\n            n += 1\n    return n\n\n\ndef trim_inside_thicker(pieces, real=lambda p: True):\n    \"\"\"Tường mỏng (hoặc cùng dày) nằm trong thân một tường dày hơn trên một đoạn (VD tường 100 sát mặt tường 200,\n    lệch tim 50 – do nét giữa tường dày bị ghép thành cặp riêng) → cắt bỏ đoạn đó khỏi tường mỏng, giữ tường dày.\n    Cùng chiều dày thì giữ tường dài hơn. Trả về số đoạn bị cắt.\"\"\"\n    n = 0\n    changed = True\n    while changed:\n        changed = False\n        for p in pieces:\n            for q in pieces:\n                if q is p or q.gid != p.gid or not real(q):\n                    continue   # chỉ cắt theo tường sẽ được tạo (cặp nét giả 350, 400… không cắt tường thật)\n                if q.thick < p.thick - THICK_TOL_MM:\n                    continue\n                if abs(q.thick - p.thick) <= THICK_TOL_MM and (q.s1 - q.s0) < (p.s1 - p.s0):\n                    continue   # cùng dày: chỉ cắt tường ngắn hơn\n                # thân p nằm trong thân q theo chiều dày (nới INSIDE_TOL_MM: CAD hay vẽ lệch tim vài mm)\n                if abs(p.off - q.off) + p.thick / 2.0 > q.thick / 2.0 + INSIDE_TOL_MM:\n                    continue\n                a, b = max(p.s0, q.s0), min(p.s1, q.s1)\n                if b - a <= JOIN_TOL_MM:\n                    continue\n                rest = subtract([(p.s0, p.s1)], a, b)\n                rest = [(x, y) for x, y in rest if y - x >= MIN_LENGTH_MM]\n                pieces.remove(p)\n                for x, y in rest:\n                    np_ = WallPiece(p.gid, p.u, p.n, p.off, x, y, p.thick)\n                    np_.t = p.t\n                    pieces.append(np_)\n                n += 1\n                changed = True\n                break\n            if changed:\n                break\n    return n\n\n\ndef analyse(segs, opening_pts=None, max_gap=0.0, stats=None, thick_keys=None):\n    \"\"\"segs: [((x0, y0), (x1, y1))] mm; opening_pts: điểm nét cửa (mm); thick_keys: chiều dày sẽ tạo tường (bảng IN[2],\n    None = mọi chiều dày). Trả về WallPiece đã gộp, nối góc, sắp xếp.\"\"\"\n    real = (lambda p: True) if thick_keys is None else (lambda p: map_thickness(p.t, thick_keys) is not None)\n    pieces = []\n    for gid, group in enumerate(parallel_groups(segs)):\n        pieces.extend(pair_group(gid, group, PAIR_RANGE_MM[0], PAIR_RANGE_MM[1]))\n    if not pieces:\n        return []\n    snap_thicknesses(pieces)\n    # Luôn nối qua chỗ giao tường (khe ≤ chiều dày lớn nhất)\n    pieces = merge_collinear(pieces, PAIR_RANGE_MM[1] + JOIN_TOL_MM)\n    n_open, n_step = bridge_openings(pieces, PointGrid(opening_pts) if opening_pts else None, max_gap)\n    # Kéo dài nối góc, bỏ mẩu nằm trong thân tường khác, kéo dài lần nữa (đầu tường trước bị mẩu chặn → tới tim\n    # tường thật)\n    extend_to_junctions(pieces)\n    n_drop = drop_absorbed(pieces, real)\n    if n_drop:\n        extend_to_junctions(pieces)\n    n_inside = trim_inside_thicker(pieces, real)\n    n_trim = trim_collinear_overlaps(pieces)\n    if stats is not None:\n        stats[\"openings\"], stats[\"steps\"], stats[\"absorbed\"], stats[\"trimmed\"] = n_open, n_step, n_drop, n_trim\n        stats[\"inside\"] = n_inside\n    pieces = [p for p in pieces if p.s1 - p.s0 >= MIN_LENGTH_MM]\n    pieces.sort(key=lambda p: (p.t, round(p.point(p.s0)[1]), round(p.point(p.s0)[0])))\n    return pieces\n\n\ndef overlaps_existing(p0, p1, existing):\n    \"\"\"Tường mới trùng tim và chồng > 50% chiều dài tường mới HOẶC tường cũ (tường liền qua cửa chồng lên các\n    đoạn cũ bị ngắt ở cửa cũng bị nhận ra). existing: [(a, b, id)] mm.\"\"\"\n    up = unit(sub(p1, p0))\n    for a, b, eid in existing:\n        d = sub(b, a)\n        length = math.hypot(d[0], d[1])\n        if length < DUP_TOL_MM:\n            continue\n        ue = (d[0] / length, d[1] / length)\n        if abs(cross(ue, up)) > ANGLE_TOL:\n            continue\n        ne = (-ue[1], ue[0])\n        if abs(dot(sub(p0, a), ne)) > DUP_TOL_MM:\n            continue\n        s_a, s_b = sorted([dot(sub(p0, a), ue), dot(sub(p1, a), ue)])\n        if min(s_b, length) - max(s_a, 0.0) > 0.5 * min(s_b - s_a, length):\n            return eid\n    return None\n\n\ndef parse_type_map(text):\n    \"\"\"'150=Tường 150;100=Tường 100' → {150: 'Tường 150', 100: 'Tường 100'}; tên trống giữ '' (chưa gán).\"\"\"\n    result = {}\n    for item in (text or u\"\").split(u\";\"):\n        if not item.strip():\n            continue\n        if u\"=\" not in item:\n            raise Exception(u\"Ô IN[2] sai định dạng ở '{}'. Nhập dạng <dày>=<wall type>;..., \"\n                            u\"VD 150=Tường 150;100=Tường 100.\".format(item.strip()))\n        k, v = item.split(u\"=\", 1)\n        try:\n            t = int(round(float(k.strip())))\n        except ValueError:\n            raise Exception(u\"Ô IN[2]: chiều dày '{}' không phải số.\".format(k.strip()))\n        result[t] = v.strip()\n    if not result:\n        raise Exception(u\"Ô IN[2] trống. Nhập dạng <dày>=<wall type>;..., VD 150=Tường 150;100=Tường 100.\")\n    return result\n\n\ndef map_thickness(t, type_map):\n    \"\"\"Chiều dày CAD → khoá trong bảng IN[2] (±THICK_TOL_MM), None nếu không có.\"\"\"\n    for k in type_map:\n        if abs(k - t) <= THICK_TOL_MM:\n            return k\n    return None\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\n# --- Revit ---------------------------------------------------------------------------\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef model_role(document):\n    # Trường Bộ môn (Role) theo tên file ISO 19650: PRJ-ARV-T1-ZZ-M3-A-0001\n    parts = (document.Title or \"\").split(\"-\")\n    return parts[5].upper() if len(parts) >= 7 else None\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return style.GraphicsStyleCategory.Name\n    return None\n\n\ndef cad_objects(cad):\n    \"\"\"Mọi đối tượng hình học của CAD, kể cả trong block lồng nhau.\"\"\"\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            else:\n                result.append(obj)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef match_layers(all_layers, filters):\n    # NFC: tên layer tiếng Việt (VD \"A-Cửa\") có thể ở dạng dựng sẵn hoặc tổ hợp\n    return set(l for l in all_layers if any(norm(f).lower() in norm(l).lower() for f in filters))\n\n\ndef pick_cad(cad_filter, filters):\n    \"\"\"Chọn bản CAD theo tên; để trống thì lấy bản CAD duy nhất có layer khớp. Trả về (cad, tên, objects, layers).\"\"\"\n    found = []\n    for inst in FilteredElementCollector(doc).OfClass(ImportInstance).ToElements():\n        name = get_name(doc.GetElement(inst.GetTypeId()))\n        if cad_filter and cad_filter.lower() not in name.lower():\n            continue\n        objects = cad_objects(inst)\n        all_layers = sorted(set(l for l in (layer_of(o) for o in objects) if l))\n        found.append((inst, name, objects, all_layers, match_layers(all_layers, filters)))\n    hits = [f for f in found if f[4]]\n    if len(hits) == 1:\n        return hits[0]\n    if not hits:\n        lines = [u\"DỪNG: không có bản CAD{} nào có layer chứa '{}'.\".format(\n            u\" khớp '{}'\".format(cad_filter) if cad_filter else u\"\", u\"; \".join(filters))]\n        for _, name, _, all_layers, _ in found:\n            lines.append(u\"Layer của '{}': {}\".format(name, u\", \".join(all_layers)))\n        raise StopReport(lines)\n    raise StopReport([u\"DỪNG: {} bản CAD có layer khớp – nhập tên bản CAD vào ô IN[0]: {}\".format(\n        len(hits), u\", \".join(h[1] for h in hits))])\n\n\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef find_level(name):\n    levels = list(FilteredElementCollector(doc).OfClass(Level).ToElements())\n    for l in levels:\n        if norm(l.Name) == norm(name):\n            return l\n    raise StopReport([u\"DỪNG: không có level '{}'. Các level: {}\".format(\n        name, u\", \".join(l.Name for l in sorted(levels, key=lambda x: x.Elevation)))])\n\n\ndef core_range(wall_type):\n    \"\"\"(chỉ số lớp lõi đầu, cuối) của type Basic, None nếu không có cấu trúc lớp.\"\"\"\n    cs = wall_type.GetCompoundStructure()\n    if cs is None or cs.GetFirstCoreLayerIndex() < 0:\n        return None\n    return cs.GetFirstCoreLayerIndex(), cs.GetLastCoreLayerIndex()\n\n\ndef core_width_mm(wall_type):\n    rng = core_range(wall_type)\n    if rng is None:\n        return to_mm(wall_type.Width)\n    cs = wall_type.GetCompoundStructure()\n    return to_mm(sum(cs.GetLayerWidth(i) for i in range(rng[0], rng[1] + 1)))\n\n\ndef resolve_wall_types(type_map, template_name):\n    \"\"\"{dày: tên} → ({dày: WallType | None}, {dày: tên type sẽ nhân bản}, type mẫu).\n    Tên trống = chưa gán (None). Tên chưa có + có type mẫu → nhân bản; không có mẫu → dừng, liệt kê type.\"\"\"\n    types = [t for t in FilteredElementCollector(doc).OfClass(WallType).ToElements() if t.Kind == WallKind.Basic]\n    by_name = dict((norm(get_name(t)), t) for t in types)\n    template = None\n    if template_name:\n        template = by_name.get(norm(template_name))\n        if template is None:\n            raise StopReport([u\"DỪNG: không có wall type mẫu '{}' (IN[3]).\".format(template_name)])\n        rng = core_range(template)\n        if rng is None or rng[0] != rng[1]:\n            raise StopReport([u\"DỪNG: type mẫu '{}' phải có đúng một lớp lõi để đổi chiều dày.\".format(\n                template_name)])\n    result, to_create, missing = {}, {}, []\n    for k, name in type_map.items():\n        if not name:\n            result[k] = None\n        elif norm(name) in by_name:\n            result[k] = by_name[norm(name)]\n        elif template is not None:\n            result[k] = None\n            to_create[k] = name\n        else:\n            missing.append(u\"{}={}\".format(k, name))\n    if missing:\n        raise StopReport([u\"DỪNG: không có wall type Basic: {} và ô IN[3] (type mẫu) trống. Các wall type (dày mm): {}\"\n                          .format(u\"; \".join(missing), u\", \".join(sorted(\n                              u\"{} ({:.0f})\".format(get_name(t), to_mm(t.Width)) for t in types)))])\n    return result, to_create, template\n\n\ndef duplicate_with_core(template, name, core_mm):\n    \"\"\"Nhân bản type mẫu, đặt lớp lõi = core_mm (lớp hoàn thiện giữ nguyên). Gọi trong Transaction.\"\"\"\n    new_type = template.Duplicate(name)\n    cs = new_type.GetCompoundStructure()\n    idx = cs.GetFirstCoreLayerIndex()\n    cs.SetLayerWidth(idx, from_mm(core_mm))\n    new_type.SetCompoundStructure(cs)\n    return new_type\n\n\ndef read_segments(objects, layers):\n    \"\"\"Đoạn thẳng (mm, Z=0) trên các layer; đếm cung tròn bỏ qua.\"\"\"\n    segs, arcs = [], 0\n    for obj in objects:\n        if layer_of(obj) not in layers:\n            continue\n        if isinstance(obj, Line):\n            pts = [obj.GetEndPoint(0), obj.GetEndPoint(1)]\n        elif isinstance(obj, PolyLine):\n            pts = list(obj.GetCoordinates())\n        elif isinstance(obj, Arc):\n            arcs += 1\n            continue\n        else:\n            continue\n        pts = [(to_mm(p.X), to_mm(p.Y)) for p in pts]\n        for a, b in zip(pts[:-1], pts[1:]):\n            if math.hypot(b[0] - a[0], b[1] - a[1]) > JOIN_TOL_MM:\n                segs.append((a, b))\n    return segs, arcs\n\n\ndef read_points(objects, layers):\n    \"\"\"Đỉnh / đầu mút (mm) của mọi nét trên các layer cửa.\"\"\"\n    pts = []\n    for obj in objects:\n        if layer_of(obj) not in layers:\n            continue\n        if isinstance(obj, PolyLine):\n            raw = list(obj.GetCoordinates())\n        else:\n            try:\n                if not obj.IsBound:\n                    continue\n                raw = [obj.GetEndPoint(0), obj.GetEndPoint(1)]\n            except Exception:\n                continue\n        pts.extend((to_mm(p.X), to_mm(p.Y)) for p in raw)\n    return pts\n\n\ndef existing_walls(level):\n    result = []\n    for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n        loc = wl.Location\n        if wl.LevelId == level.Id and isinstance(loc, LocationCurve) and isinstance(loc.Curve, Line):\n            a, b = loc.Curve.GetEndPoint(0), loc.Curve.GetEndPoint(1)\n            result.append(((to_mm(a.X), to_mm(a.Y)), (to_mm(b.X), to_mm(b.Y)), wl.Id.Value))\n    return result\n\n\ndef preview_lines(pairs, z_mm):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n        return [DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(a[0], a[1], z_mm),\n                                            DSPoint.ByCoordinates(b[0], b[1], z_mm)) for a, b in pairs]\n    except Exception:\n        return []\n\n\nLOG_HEADER = [u\"STT\", u\"Điểm đầu (mm)\", u\"Điểm cuối (mm)\", u\"Dày CAD (mm)\", u\"Dài (mm)\", u\"Wall type\",\n              u\"Kết quả\", u\"ElementId\", u\"Giá trị cũ\", u\"Giá trị mới\"]\n\n\ndef write_log(rows, source, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoTuongTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    # CSV UTF-8 có BOM để Excel đọc đúng tiếng Việt\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# File nguồn: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef main(cad_filter, filters, type_map, template_name, base_name, top_name, door_filters, max_gap, top_offset_mm,\n         dry_run):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    report = []\n    if model_role(doc) == \"S\":\n        report.append(u\"CẢNH BÁO: đây có vẻ là mô hình Kết cấu (S). Tường kiến trúc thuộc mô hình Kiến trúc (A).\")\n\n    cad, cad_name, objects, all_layers, layers = pick_cad(cad_filter, filters)\n    door_layers = match_layers(all_layers, door_filters) - layers if door_filters else set()\n    if door_filters and max_gap > 0 and not door_layers:\n        report.append(u\"CẢNH BÁO: không có layer cửa nào chứa '{}' → không nối tường qua ô cửa.\".format(\n            u\"; \".join(door_filters)))\n    wtypes, to_create, template = resolve_wall_types(type_map, template_name)\n    base_level = find_level(base_name)\n    top_level = find_level(top_name)\n    top_offset = from_mm(top_offset_mm)\n    height = top_level.Elevation + top_offset - base_level.Elevation\n    if height <= 0:\n        raise StopReport([u\"DỪNG: chiều cao tường ≤ 0 – level đỉnh '{}' phải cao hơn level chân '{}'.\".format(\n            top_name, base_name)])\n\n    segs, arcs = read_segments(objects, layers)\n    door_pts = read_points(objects, door_layers) if door_layers and max_gap > 0 else []\n    stats = {}\n    pieces = analyse(segs, door_pts, max_gap, stats, type_map)\n    existing = existing_walls(base_level)\n    z = base_level.Elevation\n    z_mm = to_mm(z)\n\n    rows, jobs, unmapped, unassigned, used_new = [], [], {}, {}, set()\n    for idx, p in enumerate(pieces, 1):\n        p0, p1 = p.point(p.s0), p.point(p.s1)\n        key = map_thickness(p.t, type_map)\n        wtype = wtypes.get(key) if key is not None else None\n        if wtype is not None:\n            type_name = get_name(wtype)\n        elif key in to_create:\n            type_name = to_create[key] + u\" (mới)\"\n        else:\n            type_name = u\"—\"\n        row = [idx, fmt(p0), fmt(p1), p.t, u\"{:.0f}\".format(p.s1 - p.s0), type_name, u\"\", u\"\", u\"—\", type_name]\n        dup = overlaps_existing(p0, p1, existing)\n        if key is None:\n            row[6] = u\"Bỏ qua – dày {} mm không có trong bảng IN[2]\".format(p.t)\n            unmapped[p.t] = unmapped.get(p.t, 0) + 1\n        elif wtype is None and key not in to_create:\n            row[6] = u\"Bỏ qua – chưa gán wall type cho dày {} mm\".format(key)\n            unassigned[key] = unassigned.get(key, 0) + 1\n        elif dup is not None:\n            row[6] = DUP_LABEL\n            row[7] = dup\n        else:\n            core = key if wtype is None else int(round(core_width_mm(wtype)))\n            note = u\"\" if abs(core - p.t) <= THICK_TOL_MM else u\" (lõi type {} ≠ CAD {})\".format(core, p.t)\n            row[6] = (u\"Sẽ tạo\" if dry_run else u\"Chờ tạo\") + note\n            jobs.append((p0, p1, key, len(rows)))\n            if wtype is None:\n                used_new.add(key)\n        rows.append(row)\n\n    if not dry_run and jobs:\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            for k in sorted(used_new):\n                wtypes[k] = duplicate_with_core(template, to_create[k], k)\n            for p0, p1, key, ri in jobs:\n                line = Line.CreateBound(XYZ(from_mm(p0[0]), from_mm(p0[1]), z), XYZ(from_mm(p1[0]), from_mm(p1[1]), z))\n                wall = Wall.Create(doc, line, wtypes[key].Id, base_level.Id, height, 0.0, False, False)\n                wall.get_Parameter(BuiltInParameter.WALL_BASE_OFFSET).Set(0.0)\n                wall.get_Parameter(BuiltInParameter.WALL_HEIGHT_TYPE).Set(top_level.Id)\n                wall.get_Parameter(BuiltInParameter.WALL_TOP_OFFSET).Set(top_offset)\n                # Location Line = Core Centerline (1), rồi đặt lại đường định vị để tim lõi trùng tim cặp nét CAD\n                wall.get_Parameter(BuiltInParameter.WALL_KEY_REF_PARAM).Set(1)\n                wall.Location.Curve = line\n                rows[ri][6] = rows[ri][6].replace(u\"Chờ tạo\", u\"Đã tạo\")\n                rows[ri][7] = wall.Id.Value\n            tx.Commit()\n        except Exception as ex:\n            tx.RollBack()\n            return [u\"LỖI khi tạo tường, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n\n    counts = {}\n    for p in pieces:\n        counts[p.t] = counts.get(p.t, 0) + 1\n    report.append(u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run\n                                     else u\"ĐÃ THỰC HIỆN\"))\n    report.append(u\"CAD: {} – layer: {}\".format(cad_name, u\"; \".join(sorted(layers))))\n    report.append(u\"Level {} → {} (Top Offset {:.0f} mm)\".format(base_level.Name, top_level.Name, top_offset_mm))\n    report.append(u\"Tường liền qua ô cửa ≤ {:.0f} mm: {} ô (layer cửa: {}; {} điểm nét cửa); nối khe đổi chiều dày \"\n                  u\"≤ {:.0f} mm: {} chỗ\".format(max_gap, stats.get(\"openings\", 0),\n                                                u\"; \".join(sorted(door_layers)) or u\"không có\", len(door_pts),\n                                                STEP_GAP_MM, stats.get(\"steps\", 0)))\n    report.append(u\"Chống đè: bỏ {} mẩu nằm trong thân tường khác (nút T / góc L), cắt {} đoạn tường mỏng nằm trong \"\n                  u\"thân tường dày, cắt {} chỗ hai tường thẳng hàng chồng đầu\".format(\n                      stats.get(\"absorbed\", 0), stats.get(\"inside\", 0), stats.get(\"trimmed\", 0)))\n    def type_label(k):\n        w = wtypes.get(k)\n        if w is not None and k not in used_new:\n            return u\"{} (lõi {:.0f}, tổng {:.0f})\".format(get_name(w), core_width_mm(w), to_mm(w.Width))\n        if k in to_create:\n            outer = to_mm(template.Width) - core_width_mm(template)\n            state = (u\"không có tường dùng, không tạo\" if k not in used_new\n                     else u\"SẼ NHÂN BẢN\" if dry_run else u\"ĐÃ NHÂN BẢN\")\n            return u\"{} – {} từ '{}' (lõi {}, tổng {:.0f})\".format(\n                to_create[k], state, get_name(template), k, k + outer)\n        return u\"CHƯA GÁN\"\n    report.append(u\"Bảng dày lõi → wall type (Location Line = Core Centerline): \" + u\"; \".join(\n        u\"{} → {}\".format(k, type_label(k)) for k in sorted(type_map)))\n    report.append(u\"Đoạn CAD đã đọc: {} – tường tìm được: {} – {}: {} – trùng tường cũ: {}\".format(\n        len(segs), len(pieces), u\"sẽ tạo\" if dry_run else u\"đã tạo\", len(jobs),\n        sum(1 for r in rows if r[6] == DUP_LABEL)))\n    if any(r[6] == DUP_LABEL for r in rows):\n        report.append(u\"LƯU Ý: tường chồng lên tường cũ không được tạo. Muốn dựng lại (VD tường liền qua cửa) → \"\n                      u\"xoá các tường cũ có Id trong log trước rồi Run lại.\")\n    report.append(u\"Chiều dày tìm được (mm × số đoạn): \" + u\", \".join(\n        u\"{} × {}\".format(t, counts[t]) for t in sorted(counts)))\n    if unassigned:\n        report.append(u\"Chưa gán wall type, không tạo: \" + u\", \".join(\n            u\"{} mm × {}\".format(t, unassigned[t]) for t in sorted(unassigned)) + u\" – điền tên type vào IN[2].\")\n    if unmapped:\n        report.append(u\"Không có trong bảng IN[2], không tạo: \" + u\", \".join(\n            u\"{} mm × {}\".format(t, unmapped[t]) for t in sorted(unmapped)) + u\" – thêm vào IN[2] nếu là tường thật.\")\n    if arcs:\n        report.append(u\"Bỏ qua {} cung tròn (tường cong cần vẽ tay).\".format(arcs))\n    try:\n        report.append(u\"Log: \" + write_log(rows, cad_name, dry_run))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra đường tim xanh trong Dynamo + log. Đúng thì đổi Dry-run = False và Run lại. \"\n                      u\"Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER[:8]))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r[:8]) for r in rows]\n    return report, preview_lines([(p0, p1) for p0, p1, _, _ in jobs], z_mm)\n\n\ndef force_rerun_next_time():\n    \"\"\"Dynamo chỉ chạy lại node khi có đầu vào đổi → sau Undo trong Revit, bấm Run lần 2 không có tác dụng.\n    Đánh dấu node này 'đã sửa' để lần Run sau luôn chạy lại. Chỉ làm ở chế độ Manual (Automatic sẽ lặp vô hạn).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        # CPython3 (pythonnet) có thể trả enum dưới dạng số (Manual = 0) → so cả giá trị lẫn tên\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\nif DYNAMO:\n    import traceback\n    try:\n        OUT = list(main(\n            (IN[0] or u\"\").strip(),\n            [s.strip() for s in (IN[1] or u\"A-Wall\").split(u\";\") if s.strip()],\n            parse_type_map(IN[2] or u\"150=;100=;200=\"),\n            (IN[3] or u\"\").strip(),\n            (IN[4] or u\"TẦNG 2\"),\n            (IN[5] or u\"TẦNG 3\"),\n            [s.strip() for s in (IN[6] or u\"\").split(u\";\") if s.strip()],\n            float(IN[7] or 0.0),\n            float(IN[8] or 0.0),\n            True if IN[9] is None else bool(IN[9]),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoTuongTuCAD_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "96e52fc766c9469f9d7df56b7ff883f5",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "203360a3caf14916b3360d98a300f600",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tên bản CAD (để trống = bản có layer tường)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "95c2d4cd26c7487285d812963928dca5",
+          "Name": "IN[1]",
+          "Description": "IN[1] Lọc layer tường (cách nhau bằng ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0e2307e0ed7d43b4b034b549cc8c116c",
+          "Name": "IN[2]",
+          "Description": "IN[2] Dày lõi CAD = wall type (VD 150=Tên type;100=...)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c2090417b3454ed1b20f5dc7f7a490ec",
+          "Name": "IN[3]",
+          "Description": "IN[3] Type mẫu để nhân bản (trống = không tự tạo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "685520215ff84f17bb9e8bb6842d0595",
+          "Name": "IN[4]",
+          "Description": "IN[4] Level chân tường",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "63d8dc993ba041c3ad9efe34908e3d59",
+          "Name": "IN[5]",
+          "Description": "IN[5] Level đỉnh tường",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f4dad0df536649b680a785c58c3d6e0d",
+          "Name": "IN[6]",
+          "Description": "IN[6] Layer cửa đi / cửa sổ (cách nhau bằng ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7435a564291842f0b314ffe333f87932",
+          "Name": "IN[7]",
+          "Description": "IN[7] Ô cửa rộng tối đa nối tường liền (mm, 0 = không)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6e73d257c6894db9b5bf260c89cd1bf7",
+          "Name": "IN[8]",
+          "Description": "IN[8] Top Offset (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "09a5b938c5834f4ab3e96f567f7fd957",
+          "Name": "IN[9]",
+          "Description": "IN[9] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9613a89884524714ba997032ad265e0b",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "7e484f629742448e8e5c8f69898e38d5",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "588a9797002642e78d41f48ad247653e",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3944d056188b4918aa5c8fe3607b56dd",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "75937ac707ba4bd28382b6cef3e2acda",
+      "End": "203360a3caf14916b3360d98a300f600",
+      "Id": "9dcdfd9f18f041db91a6c8f3442323b1",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "72787459ad0c418e94097ce5c24bc19d",
+      "End": "95c2d4cd26c7487285d812963928dca5",
+      "Id": "9617ac02889c406cafa24d4210bb11e8",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "869464156a6b405bb37ce5678dce902d",
+      "End": "0e2307e0ed7d43b4b034b549cc8c116c",
+      "Id": "be87f9c461b4458ca2693ecd995b58b7",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b01dcf6b2b724992a77b6437922f45e2",
+      "End": "c2090417b3454ed1b20f5dc7f7a490ec",
+      "Id": "ee10fe8b50cd46268f60f8e884c4b023",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "282d519fe87d40a98ca5ef6e1d41f121",
+      "End": "685520215ff84f17bb9e8bb6842d0595",
+      "Id": "6bc109ddd9644fc4b4838d61d0de656a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a1443cd30c684709b506a99a1d496ee6",
+      "End": "63d8dc993ba041c3ad9efe34908e3d59",
+      "Id": "a21f4592af5c4373ad1da50736df6045",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "60a701937c3c435a93144421dbc4f646",
+      "End": "f4dad0df536649b680a785c58c3d6e0d",
+      "Id": "a59616f675424fbfa1fa5394a1f591ae",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "77587be4efe848abb84c1c99df781c07",
+      "End": "7435a564291842f0b314ffe333f87932",
+      "Id": "4c45c4b0bfba49ad8438596e64f96106",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "deca6eb47a0f4924b4a32b7f24861147",
+      "End": "6e73d257c6894db9b5bf260c89cd1bf7",
+      "Id": "fbfb2d8954c74e529fef4bb4fff5d390",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fd0c7ffd07454259bf2ade9045faf6c2",
+      "End": "09a5b938c5834f4ab3e96f567f7fd957",
+      "Id": "1d63a855ee394dd08f87b3c19dcc6bfd",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9613a89884524714ba997032ad265e0b",
+      "End": "588a9797002642e78d41f48ad247653e",
+      "Id": "d23628572edd448695b29c098e59c607",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "3fb9c2c154d441428d0524e1303f96e3",
+        "Name": "IN[0] Tên bản CAD (để trống = bản có layer tường)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "c06b94f51fab4e55aa785bab5c37a042",
+        "Name": "IN[1] Lọc layer tường (cách nhau bằng ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "8696c165f0a847e5a4aa686f4452349f",
+        "Name": "IN[2] Dày lõi CAD = wall type (VD 150=Tên type;100=...)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "ea891b7ff761428cab510bdb326c5ca2",
+        "Name": "IN[3] Type mẫu để nhân bản (trống = không tự tạo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "c9ce3580708a4ab4a1724a08c4ac55ee",
+        "Name": "IN[4] Level chân tường",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "aa382abd3ecd4292bd404efcd6ecc189",
+        "Name": "IN[5] Level đỉnh tường",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "df490ef2f38e43d487326fad42b2da63",
+        "Name": "IN[6] Layer cửa đi / cửa sổ (cách nhau bằng ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "6e0748364dc94dacb48a47b06bbddae5",
+        "Name": "IN[7] Ô cửa rộng tối đa nối tường liền (mm, 0 = không)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "051d8704bc714ed0ae88e8b795df45c7",
+        "Name": "IN[8] Top Offset (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "da8d65225e0e4a36a1c5d55cd0f0511c",
+        "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "96e52fc766c9469f9d7df56b7ff883f5",
+        "Name": "Tạo tường từ CAD (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 650.0,
+        "Y": 400.0
+      },
+      {
+        "Id": "7e484f629742448e8e5c8f69898e38d5",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": false,
+        "X": 1050.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "e675993b384e43e99f36f6b997d2b684",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Layer tường, bảng chiều dày = wall type, level chân/đỉnh. Ô sai thì node Báo cáo liệt kê giá trị hợp lệ. Giữ Dry-run = True cho lần chạy đầu.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "3fb9c2c154d441428d0524e1303f96e3",
+          "c06b94f51fab4e55aa785bab5c37a042",
+          "8696c165f0a847e5a4aa686f4452349f",
+          "ea891b7ff761428cab510bdb326c5ca2",
+          "c9ce3580708a4ab4a1724a08c4ac55ee",
+          "aa382abd3ecd4292bd404efcd6ecc189",
+          "df490ef2f38e43d487326fad42b2da63",
+          "6e0748364dc94dacb48a47b06bbddae5",
+          "051d8704bc714ed0ae88e8b795df45c7",
+          "da8d65225e0e4a36a1c5d55cd0f0511c"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 503.0,
+        "Height": 1204.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1135.0,
+        "TextblockHeight": 72.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "3a918da95e0941cda4409b7fb59f108a",
+        "Title": "2. Tạo tường (Python)",
+        "DescriptionText": "Ghép cặp nét song song → tim tường, nối góc L/T, bỏ tường trùng, chặn file central, log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: CHƯA DUYỆT.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "96e52fc766c9469f9d7df56b7ff883f5"
+        ],
+        "HasNestedGroups": false,
+        "Left": 640.0,
+        "Top": 246.0,
+        "Width": 292.0,
+        "Height": 598.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 400.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 144.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "c079c15c44ff418aa8b9f634649f3ca5",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "OUT[0] báo cáo từng tường; OUT[1] đường tim xem trước (nền 3D).",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "7e484f629742448e8e5c8f69898e38d5"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1040.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 877.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 377.98527337994875,
+    "Y": 84.92394183740453,
+    "Zoom": 0.7067732453937925
+  }
+}

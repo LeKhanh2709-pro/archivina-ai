@@ -1,0 +1,699 @@
+{
+  "Uuid": "a7e0fe8a-85e6-4c10-abd9-4c6edb81b95c",
+  "IsCustomNode": false,
+  "Description": "Đặt bệt xí + lavabo trong WC theo vị trí CAD link (CHƯA DUYỆT)",
+  "Name": "ARV_TaoThietBiWCTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "c4d6923009ae4a938a4b29423f1dee0e",
+      "Name": "IN[0] Tên bản CAD (chuỗi con, trống = tự tìm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "1f8e3210caf4406b8d2ba9d324f07a29",
+      "Name": "IN[1] Layer lavabo",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "A-Interior WC",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "c5c6a86c97ed487c8578cdda0d42bf75",
+      "Name": "IN[2] Layer bệt xí (đúng tên)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "0",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "009f7c2951b947bfb677e9d69e5a06ef",
+      "Name": "IN[3] Bệt: Family : Type",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV-Toilet : AV-Toilet",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "401255177c6f4710854c567fd35900af",
+      "Name": "IN[4] Lavabo: family",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV-Bàn Lavabo chữ nhật bán âm",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "42b6f2ed2c644b7c91e937e704ca13b1",
+      "Name": "IN[5] Lavabo: type mẫu để nhân bản",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "900x470",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "6b79728f21ea4315b8a0d3ae4f7db659",
+      "Name": "IN[6] Cao độ chân khi không có sàn WC (mm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "-15",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "ec978d2254c64b3f9db434beba217cba",
+      "Name": "IN[7] Tầm dò mặt tường hoàn thiện sau lưng CAD (mm, 0 = giữ CAD)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "100",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "fc9fa205730e4f07aa2fcfee7228a29b",
+      "Name": "IN[8] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c4d6923009ae4a938a4b29423f1dee0e",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4a76d613824e43c2b7866082d5876baa",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "1f8e3210caf4406b8d2ba9d324f07a29",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e91719b2ddde449681f2d4226667b41d",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "A-Interior WC"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c5c6a86c97ed487c8578cdda0d42bf75",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "96f1e2c9e2c6461586095c2686dde021",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "0"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "009f7c2951b947bfb677e9d69e5a06ef",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "516cffa796f04da0b8712dd4dc0b4d62",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV-Toilet : AV-Toilet"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "401255177c6f4710854c567fd35900af",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "73eb28695c004e92b073f64e792546eb",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV-Bàn Lavabo chữ nhật bán âm"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "42b6f2ed2c644b7c91e937e704ca13b1",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "813ba5e5041e46fd96d89dad7a06fd24",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "900x470"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "6b79728f21ea4315b8a0d3ae4f7db659",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2cdf0cb43e29462f8ea424a0eefb4e51",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "-15"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "ec978d2254c64b3f9db434beba217cba",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c0b9b4f8da4b4df293c78d1e194ae051",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "100"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "fc9fa205730e4f07aa2fcfee7228a29b",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "121836bd17474cf3bda54d262923ecea",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoThietBiWCTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Đặt thiết bị vệ sinh (bệt xí + lavabo) trong WC theo vị trí trên bản CAD đã Link:\n#   1. Lavabo: polyline chữ nhật kín trên layer IN[1] (khung ngoài block lavabo, VD block động 半挂式台盆),\n#      cạnh dài 800–1100, cạnh ngắn 400–650 mm. Lưng lavabo = cạnh dài phía có vòi (trọng tâm các nét thiết bị\n#      trong khung lệch về phía vòi). Kích thước lấy theo khung CAD (trạng thái hiển thị của block động).\n#   2. Bệt xí: cung đầu bệt (≈ nửa vòng tròn, R 150–230) trên layer IN[2] + nét két nước vuông góc trục bệt\n#      (dài ≈ 2R, nằm sau cung 1,8R–3,5R). Lưng bệt = nét két xa nhất; tổng sâu 600–800 mm. Cung không có két → bỏ.\n#   3. Đặt family: tâm thiết bị theo trục CAD, lưng áp mặt hoàn thiện tường gần nhất (tia dò ≤ IN[7] mm sau lưng\n#      CAD; CAD vẽ sát mặt tường thô, mô hình có trát + ốp) – không gặp tường thì giữ đúng vị trí CAD.\n#      Lavabo lấn mặt hoàn thiện tường bên (CAD vẽ kín tới mặt thô) → dời ngang ra ≤ LAT_MAX_MM, giữ kích thước CAD;\n#      lấn nhiều hơn / kẹp hai bên → giữ CAD, báo KIỂM TRA.\n#      Lưng / tâm đo trên khối đặc của family sau khi đặt (không phụ thuộc điểm chèn của family).\n#   4. Lavabo: type của family IN[4] có Width × Depth đúng khung CAD thì dùng; chưa có → nhân bản type mẫu IN[5]\n#      thành \"{rộng}x{sâu}\". Bệt: một type IN[3] cho mọi WC (kích thước CAD chỉ ghi vào log).\n#   5. Cao độ = mặt sàn hoàn thiện WC (sàn có Comments chứa \"WC\" dưới thiết bị): bệt (family Work Plane) host lên\n#      mặt trên sàn WC, lavabo (family theo level) Offset from Host = cao độ sàn WC. Không có sàn WC → đặt theo\n#      level, lavabo Offset = IN[6], bệt Work Plane nằm ở level (báo cáo). Comments \"ARV-ThietBiWC <loại> <căn>\".\n#      Đã có thiết bị cùng family tại chỗ (khối đặc phủ ≥ 30 % khung CAD): đúng hướng → bỏ qua; sai hướng → xoá\n#      cái cũ, đặt lại (báo trước trong dry-run). Mỗi thiết bị một SubTransaction – lỗi thì hoàn tác riêng cái đó.\n# INPUT\n#   IN[0] (str)   Tên bản CAD (chuỗi con). Trống = bản CAD link duy nhất có layer IN[1]\n#   IN[1] (str)   Layer lavabo, mặc định \"A-Interior WC\"\n#   IN[2] (str)   Layer bệt xí, mặc định \"0\" (khớp đúng tên)\n#   IN[3] (str)   Bệt: \"Family : Type\", mặc định \"AV-Toilet : AV-Toilet\"\n#   IN[4] (str)   Lavabo: family, mặc định \"AV-Bàn Lavabo chữ nhật bán âm\"\n#   IN[5] (str)   Lavabo: type mẫu để nhân bản, mặc định \"900x470\"\n#   IN[6] (float) Cao độ chân thiết bị so với level khi không có sàn WC (mm), mặc định -15\n#   IN[7] (float) Tầm dò mặt tường hoàn thiện sau lưng CAD (mm), mặc định 100; 0 = giữ đúng vị trí CAD\n#   IN[8] (bool)  Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, đường dẫn log, rồi từng thiết bị\n#   OUT[1] (list[Line]) Xem trước: khung thiết bị theo CAD (mm, tại cao độ level)\n\nimport os\nimport io\nimport csv\nimport math\nimport re\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, Line, Arc, PolyLine, Transaction, SubTransaction,\n                                   UnitUtils,\n                                   UnitTypeId, ModelPathUtils, BuiltInParameter, BuiltInCategory, Floor,\n                                   ImportInstance, Options, ViewDetailLevel, Solid, GeometryInstance, ElementId,\n                                   SolidCurveIntersectionOptions, SolidCurveIntersectionMode, Outline, Level,\n                                   BoundingBoxIntersectsFilter, ElementMulticategoryFilter, FamilyInstance,\n                                   FamilySymbol, FamilyPlacementType, ElementTransformUtils, Curve,\n                                   HostObjectUtils)\n    from Autodesk.Revit.DB.Structure import StructuralType\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    from System.Collections.Generic import List\n    doc = DocumentManager.Instance.CurrentDBDocument\n    uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo thiết bị vệ sinh WC từ CAD\"\nSCRIPT_TAG = u\"ARV_TaoThietBiWCTuCAD_v1\"\nCOMMENT_TAG = u\"ARV-ThietBiWC\"\nLAV_LONG = (800.0, 1100.0)    # Khung lavabo CAD: cạnh dài (mm)\nLAV_SHORT = (400.0, 650.0)    # cạnh ngắn\nWC_R = (150.0, 230.0)         # Bán kính cung đầu bệt\nWC_SWEEP = (160.0, 190.0)     # Góc quét cung đầu bệt (độ)\nWC_DEPTH = (600.0, 800.0)     # Tổng sâu bệt (lưng → đầu cung)\nTANK_TOL_MM = 60.0            # Nét két nước: lệch trục bệt tối đa\nROUND_MM = 10.0               # Làm tròn kích thước lavabo → tên type\nRAY_IN_MM = 150.0             # Tia dò mặt tường bắt đầu trước lưng CAD (trong phòng)\nRAY_Z_MM = 300.0              # Cao độ tia dò mặt tường sau lưng, so với level\nLAT_Z_MM = 700.0              # Cao độ tia dò tường bên lavabo (ngang mặt đá)\nLAT_MAX_MM = 50.0             # Lavabo lấn tường bên tối đa được dời ngang ra\nEXIST_IN_MM = 100.0           # Điểm thử \"đã có thiết bị\": trước lưng CAD\nSEARCH_MM = 600.0             # Nới hộp tìm tường quanh thiết bị\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef dir_label(v):\n    if abs(v[0]) >= abs(v[1]):\n        return u\"+X\" if v[0] > 0 else u\"-X\"\n    return u\"+Y\" if v[1] > 0 else u\"-Y\"\n\n\ndef detect_lavabos(rects, pts):\n    \"\"\"rects: [(x0, y0, x1, y1)] khung chữ nhật kín; pts: mọi điểm nét layer lavabo.\n    Trả về [dict(kind, back, n, lat, long, short, center)] – n: hướng từ lưng vào phòng, lat: trục dọc lưng.\"\"\"\n    out = []\n    for b in sorted(rects, key=lambda r: -(r[2] - r[0]) * (r[3] - r[1])):\n        w, h = b[2] - b[0], b[3] - b[1]\n        L, S = max(w, h), min(w, h)\n        if not (LAV_LONG[0] <= L <= LAV_LONG[1] and LAV_SHORT[0] <= S <= LAV_SHORT[1]):\n            continue\n        cx, cy = (b[0] + b[2]) / 2.0, (b[1] + b[3]) / 2.0\n        if any(abs(o[\"center\"][0] - cx) < L / 2.0 and abs(o[\"center\"][1] - cy) < L / 2.0 for o in out):\n            continue   # khung lồng trong khung đã nhận (mặt đá + chân tủ của cùng block)\n        inside = [p for p in pts if b[0] - 1 <= p[0] <= b[2] + 1 and b[1] - 1 <= p[1] <= b[3] + 1]\n        mx = sum(p[0] for p in inside) / len(inside) if inside else cx\n        my = sum(p[1] for p in inside) / len(inside) if inside else cy\n        if w >= h:\n            n = (0.0, -1.0 if my > cy else 1.0)\n            lat = (1.0, 0.0)\n        else:\n            n = (-1.0 if mx > cx else 1.0, 0.0)\n            lat = (0.0, 1.0)\n        back = (cx - n[0] * S / 2.0, cy - n[1] * S / 2.0)\n        out.append(dict(kind=u\"LAVABO\", back=back, n=n, lat=lat, long=L, short=S, center=(cx, cy),\n                        skew=abs(my - cy) if w >= h else abs(mx - cx)))\n    return out\n\n\ndef detect_toilets(arcs, segs):\n    \"\"\"arcs: [(cx, cy, r, sweep_deg, mid_x, mid_y)]; segs: [(x0, y0, x1, y1)] nét layer bệt.\n    Trả về [dict(kind, back, n, lat, long, short, center)] – n: hướng từ lưng ra đầu bệt.\"\"\"\n    out, dropped = [], []\n    for cx, cy, r, sw, mx, my in arcs:\n        if not (WC_R[0] <= r <= WC_R[1] and WC_SWEEP[0] <= sw <= WC_SWEEP[1]):\n            continue\n        dx, dy = mx - cx, my - cy\n        L = math.hypot(dx, dy)\n        if L < 1e-6:\n            continue\n        dx, dy = dx / L, dy / L\n        best = None\n        for x0, y0, x1, y1 in segs:\n            ux, uy = x1 - x0, y1 - y0\n            ln = math.hypot(ux, uy)\n            if ln < 1.6 * r or ln > 2.5 * r or abs(ux * dx + uy * dy) / ln > 0.02:\n                continue\n            px, py = (x0 + x1) / 2.0 - cx, (y0 + y1) / 2.0 - cy\n            s = -(px * dx + py * dy)\n            t = abs(-px * dy + py * dx)\n            if t <= TANK_TOL_MM and 1.8 * r <= s <= 3.5 * r and (best is None or s > best):\n                best = s\n        depth = (best + r) if best is not None else None\n        if depth is None or not (WC_DEPTH[0] <= depth <= WC_DEPTH[1]):\n            dropped.append((cx, cy, r, depth))\n            continue\n        back = (cx - dx * best, cy - dy * best)\n        key = (round(back[0] / 20.0), round(back[1] / 20.0), round(dx), round(dy))\n        if any(o[\"key\"] == key for o in out):\n            continue\n        out.append(dict(kind=u\"BET\", back=back, n=(dx, dy), lat=(-dy, dx), long=depth, short=2.0 * r,\n                        center=(cx, cy), key=key))\n    return out, dropped\n\n\ndef footprint(f):\n    \"\"\"Khung 2D thiết bị theo CAD: 4 điểm (mm).\"\"\"\n    bx, by = f[\"back\"]\n    nx, ny = f[\"n\"]\n    lx, ly = f[\"lat\"]\n    if f[\"kind\"] == u\"LAVABO\":\n        depth, half = f[\"short\"], f[\"long\"] / 2.0\n    else:\n        depth, half = f[\"long\"], f[\"short\"] / 2.0\n    return [(bx - lx * half, by - ly * half), (bx + lx * half, by + ly * half),\n            (bx + lx * half + nx * depth, by + ly * half + ny * depth),\n            (bx - lx * half + nx * depth, by - ly * half + ny * depth)]\n\n\ndef lav_type_name(f):\n    w = int(round(f[\"long\"] / ROUND_MM) * ROUND_MM)\n    d = int(round(f[\"short\"] / ROUND_MM) * ROUND_MM)\n    return w, d, u\"{}x{}\".format(w, d)\n\n\n# --- Revit: tiện ích -------------------------------------------------------------------\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef type_name(t):\n    p = t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)\n    return p.AsString() if p else get_name(t)\n\n\ndef id_value(eid):\n    v = getattr(eid, \"Value\", None)\n    return v if v is not None else eid.IntegerValue\n\n\ndef comments(el):\n    p = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    return (p.AsString() or u\"\") if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef layer_of(obj):\n    gs = doc.GetElement(obj.GraphicsStyleId)\n    cat = gs.GraphicsStyleCategory if gs is not None else None\n    return norm(cat.Name) if cat is not None else u\"\"\n\n\ndef read_cad(inst, lav_layer, wc_layer):\n    \"\"\"Hình học bản CAD link theo toạ độ mô hình (mm).\"\"\"\n    rects, lav_pts, segs, arcs = [], [], [], []\n\n    def xy(p):\n        return (to_mm(p.X), to_mm(p.Y))\n\n    def walk(geo):\n        for o in geo:\n            if isinstance(o, GeometryInstance):\n                walk(o.GetInstanceGeometry())\n                continue\n            lay = layer_of(o)\n            is_lav, is_wc = lay == lav_layer, lay == wc_layer\n            if not (is_lav or is_wc):\n                continue\n            if isinstance(o, PolyLine):\n                c = [xy(p) for p in o.GetCoordinates()]\n                if is_lav:\n                    lav_pts.extend(c)\n                    if 4 <= len(c) <= 5 and math.hypot(c[0][0] - c[-1][0], c[0][1] - c[-1][1]) < 1.0:\n                        rects.append((min(p[0] for p in c), min(p[1] for p in c),\n                                      max(p[0] for p in c), max(p[1] for p in c)))\n                if is_wc:\n                    segs.extend((c[i][0], c[i][1], c[i + 1][0], c[i + 1][1]) for i in range(len(c) - 1))\n            elif isinstance(o, Line):\n                a, b = xy(o.GetEndPoint(0)), xy(o.GetEndPoint(1))\n                if is_lav:\n                    lav_pts.extend([a, b])\n                if is_wc:\n                    segs.append((a[0], a[1], b[0], b[1]))\n            elif isinstance(o, Arc):\n                if is_wc and o.IsBound:\n                    m = xy(o.Evaluate(0.5, True))\n                    sw = math.degrees(o.GetEndParameter(1) - o.GetEndParameter(0))\n                    arcs.append((to_mm(o.Center.X), to_mm(o.Center.Y), to_mm(o.Radius), sw, m[0], m[1]))\n                if is_lav and o.IsBound:\n                    lav_pts.extend(xy(p) for p in o.Tessellate())\n            elif isinstance(o, Curve) and is_lav and o.IsBound:\n                lav_pts.extend(xy(p) for p in o.Tessellate())\n\n    geo = inst.get_Geometry(Options())\n    if geo is not None:\n        walk(geo)\n    return rects, lav_pts, segs, arcs\n\n\ndef pick_cad(cad_filter, lav_layer):\n    links = [i for i in FilteredElementCollector(doc).OfClass(ImportInstance).ToElements() if i.IsLinked]\n    names = [get_name(doc.GetElement(i.GetTypeId())) for i in links]\n    if cad_filter:\n        hit = [i for i, n in zip(links, names) if cad_filter.lower() in n.lower()]\n    else:\n        hit = []\n        for i in links:\n            cat = i.Category\n            subs = [norm(c.Name) for c in cat.SubCategories] if cat is not None else []\n            if lav_layer in subs:\n                hit.append(i)\n    if len(hit) != 1:\n        raise StopReport([u\"DỪNG: tìm thấy {} bản CAD link khớp '{}'. Nhập tên bản CAD vào ô IN[0]. \"\n                          u\"Các bản CAD link: {}\".format(len(hit), cad_filter or lav_layer,\n                                                         u\", \".join(names) or u\"không có\")])\n    return hit[0]\n\n\ndef pick_level(inst):\n    owner = doc.GetElement(inst.OwnerViewId) if inst.OwnerViewId != ElementId.InvalidElementId else None\n    view = owner if owner is not None else doc.ActiveView\n    lvl = getattr(view, \"GenLevel\", None)\n    if lvl is None:\n        raise StopReport([u\"DỪNG: không xác định được level. Bản CAD phải Link vào một mặt bằng \"\n                          u\"(view-specific), hoặc mở view mặt bằng của tầng rồi Run.\"])\n    return lvl, view\n\n\ndef find_symbol(fam_name, typ_name):\n    for s in FilteredElementCollector(doc).OfClass(FamilySymbol).OfCategory(BuiltInCategory.OST_PlumbingFixtures):\n        if norm(s.FamilyName) == norm(fam_name) and (typ_name is None or norm(type_name(s)) == norm(typ_name)):\n            return s\n    return None\n\n\ndef family_types(fam_name):\n    return [s for s in FilteredElementCollector(doc).OfClass(FamilySymbol)\n            .OfCategory(BuiltInCategory.OST_PlumbingFixtures) if norm(s.FamilyName) == norm(fam_name)]\n\n\ndef list_types_text():\n    return u\", \".join(sorted(u\"{} : {}\".format(s.FamilyName, type_name(s)) for s in FilteredElementCollector(doc)\n                             .OfClass(FamilySymbol).OfCategory(BuiltInCategory.OST_PlumbingFixtures)))\n\n\ndef len_param(sym, name):\n    p = sym.LookupParameter(name)\n    return to_mm(p.AsDouble()) if p is not None and p.HasValue else None\n\n\ndef element_solids(element):\n    opt = Options()\n    opt.DetailLevel = ViewDetailLevel.Fine\n    result = []\n\n    def walk(geo):\n        for g in geo:\n            if isinstance(g, Solid) and g.Volume > 0:\n                result.append(g)\n            elif isinstance(g, GeometryInstance):\n                walk(g.GetInstanceGeometry())\n\n    geo = element.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef wall_solids_near(f, z0):\n    xs = [p[0] for p in footprint(f)]\n    ys = [p[1] for p in footprint(f)]\n    mn = XYZ(from_mm(min(xs) - SEARCH_MM), from_mm(min(ys) - SEARCH_MM), z0)\n    mx = XYZ(from_mm(max(xs) + SEARCH_MM), from_mm(max(ys) + SEARCH_MM), z0 + from_mm(2000.0))\n    cats = [BuiltInCategory.OST_Walls, BuiltInCategory.OST_StructuralColumns, BuiltInCategory.OST_Columns]\n    els = FilteredElementCollector(doc).WherePasses(ElementMulticategoryFilter(List[BuiltInCategory](cats))) \\\n        .WherePasses(BoundingBoxIntersectsFilter(Outline(mn, mx))).WhereElementIsNotElementType().ToElements()\n    return [(s, e) for e in els for s in element_solids(e)]\n\n\nSCI_OPT = None\n\n\ndef first_hit(solids, a, b):\n    global SCI_OPT\n    if SCI_OPT is None:\n        SCI_OPT = SolidCurveIntersectionOptions()\n        SCI_OPT.ResultType = SolidCurveIntersectionMode.CurveSegmentsInside\n    line = Line.CreateBound(a, b)\n    best = None\n    for s, el in solids:\n        try:\n            res = s.IntersectWithCurve(line, SCI_OPT)\n        except Exception:\n            continue\n        for i in range(res.SegmentCount):\n            c = res.GetCurveSegment(i)\n            t = min(c.GetEndPoint(0).DistanceTo(a), c.GetEndPoint(1).DistanceTo(a))\n            if best is None or t < best:\n                best = t\n    return best\n\n\ndef wall_face_shift(f, z0, reach_mm, solids):\n    \"\"\"Khoảng dời lưng thiết bị (mm, dương = vào phòng) để áp mặt tường hoàn thiện gần nhất; None = không gặp.\"\"\"\n    if reach_mm <= 0:\n        return None\n    bx, by = f[\"back\"]\n    nx, ny = f[\"n\"]\n    lx, ly = f[\"lat\"]\n    half = (f[\"long\"] if f[\"kind\"] == u\"LAVABO\" else f[\"short\"]) / 2.0\n    z = z0 + from_mm(RAY_Z_MM)\n    hits = []\n    for k in (-0.5, 0.0, 0.5):\n        px, py = bx + lx * half * k, by + ly * half * k\n        a = XYZ(from_mm(px + nx * RAY_IN_MM), from_mm(py + ny * RAY_IN_MM), z)\n        b = XYZ(from_mm(px - nx * reach_mm), from_mm(py - ny * reach_mm), z)\n        t = first_hit(solids, a, b)\n        if t is not None and to_mm(t) > 0.5:\n            hits.append(RAY_IN_MM - to_mm(t))\n    return max(hits) if hits else None\n\n\ndef side_shift(f, z0, solids):\n    \"\"\"Lavabo: (dời ngang mm theo f['lat'], ghi chú). Lấn mặt tường bên ≤ LAT_MAX_MM → dời ra, giữ kích thước.\"\"\"\n    cx, cy = f[\"center\"]\n    s = f.get(\"shift\") or 0.0\n    cx, cy = cx + f[\"n\"][0] * s, cy + f[\"n\"][1] * s\n    lx, ly = f[\"lat\"]\n    half = f[\"long\"] / 2.0\n    z = z0 + from_mm(LAT_Z_MM)\n    over = []\n    for sg in (-1.0, 1.0):\n        a = XYZ(from_mm(cx), from_mm(cy), z)\n        b = XYZ(from_mm(cx + sg * lx * (half + 200.0)), from_mm(cy + sg * ly * (half + 200.0)), z)\n        t = first_hit(solids, a, b)\n        over.append(None if t is None else half - to_mm(t))   # dương = lấn vào tường\n    lo, hi = over\n    bad = [o for o in over if o is not None and o > 0.5]\n    if not bad:\n        return 0.0, u\"\"\n    if len(bad) == 2:\n        return 0.0, u\"KIỂM TRA: lavabo lấn tường cả hai bên ({:.0f} / {:.0f} mm)\".format(lo, hi)\n    o = bad[0]\n    other = hi if lo is not None and lo > 0.5 else lo\n    if o > LAT_MAX_MM or (other is not None and -other < o):\n        return 0.0, u\"KIỂM TRA: lavabo lấn tường bên {:.0f} mm – giữ vị trí CAD\".format(o)\n    return (o if lo is not None and lo > 0.5 else -o), u\"\"\n\n\ndef solid_extent(inst, axis, lat):\n    \"\"\"(lưng, giữa dọc lưng) của khối đặc family theo trục axis (hướng vào tường) / lat, toạ độ mm từ gốc.\"\"\"\n    pmax, lmin, lmax = None, None, None\n    for s in element_solids(inst):\n        for e in s.Edges:\n            for p in e.Tessellate():\n                a = to_mm(p.X) * axis[0] + to_mm(p.Y) * axis[1]\n                l = to_mm(p.X) * lat[0] + to_mm(p.Y) * lat[1]\n                pmax = a if pmax is None else max(pmax, a)\n                lmin = l if lmin is None else min(lmin, l)\n                lmax = l if lmax is None else max(lmax, l)\n    if pmax is None:\n        return None\n    return pmax, (lmin + lmax) / 2.0\n\n\ndef place(f, sym, level, offset_mm, facing_to_wall, floor):\n    \"\"\"Đặt family, quay, dời cho lưng khối đặc trùng f['target'] và giữa thân trùng trục CAD (+ f['lat_shift']).\n    Family Work Plane: host lên mặt trên sàn WC (floor) nếu có; family theo level: Offset from Host = offset_mm.\"\"\"\n    nx, ny = f[\"n\"]\n    fx, fy = (-nx, -ny) if facing_to_wall else (nx, ny)\n    bx, by = f[\"target\"]\n    p = XYZ(from_mm(bx + nx * 300.0), from_mm(by + ny * 300.0), level.Elevation + from_mm(offset_mm))\n    if not sym.IsActive:\n        sym.Activate()\n    hosted = False\n    if sym.Family.FamilyPlacementType == FamilyPlacementType.WorkPlaneBased:\n        top = list(HostObjectUtils.GetTopFaces(floor)) if floor is not None else []\n        if top:\n            inst = doc.Create.NewFamilyInstance(top[0], p, XYZ(fy, -fx, 0), sym)\n            hosted = True\n            sl = inst.get_Parameter(BuiltInParameter.INSTANCE_SCHEDULE_ONLY_LEVEL_PARAM)\n            if sl is not None and not sl.IsReadOnly:\n                sl.Set(level.Id)\n        else:\n            inst = doc.Create.NewFamilyInstance(p, sym, XYZ(fy, -fx, 0), level, StructuralType.NonStructural)\n    else:\n        inst = doc.Create.NewFamilyInstance(p, sym, level, StructuralType.NonStructural)\n        doc.Regenerate()\n        ang = math.atan2(fy, fx) - math.atan2(inst.FacingOrientation.Y, inst.FacingOrientation.X)\n        if abs(ang) > 1e-9:\n            # CPython3 trong Dynamo không cộng được XYZ bằng \"+\" → dùng XYZ.Add\n            ElementTransformUtils.RotateElement(doc, inst.Id, Line.CreateBound(p, p.Add(XYZ.BasisZ)), ang)\n        off = inst.get_Parameter(BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM)\n        if off is not None and not off.IsReadOnly:\n            off.Set(from_mm(offset_mm))\n        hosted = True\n    doc.Regenerate()\n    fo = inst.FacingOrientation\n    ok_dir = fo.X * fx + fo.Y * fy > 0.99\n    ext = solid_extent(inst, (-nx, -ny), f[\"lat\"])\n    if ext is not None:\n        back_now, lat_now = ext\n        want_back = -(bx * nx + by * ny)\n        want_lat = f[\"center\"][0] * f[\"lat\"][0] + f[\"center\"][1] * f[\"lat\"][1] + f.get(\"lat_shift\", 0.0)\n        da, dl = want_back - back_now, want_lat - lat_now\n        mv = XYZ(from_mm(-nx * da + f[\"lat\"][0] * dl), from_mm(-ny * da + f[\"lat\"][1] * dl), 0)\n        if mv.GetLength() > from_mm(0.1):\n            ElementTransformUtils.MoveElement(doc, inst.Id, mv)\n    cm = inst.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    if cm is not None and not cm.IsReadOnly:\n        cm.Set(u\"{} {} {}\".format(COMMENT_TAG, f[\"kind\"], f.get(\"apt\") or u\"\").strip())\n    return inst, ok_dir, ext is not None, hosted\n\n\ndef wc_floors(level):\n    \"\"\"[(tên căn, x0, y0, x1, y1, floor, cao độ mặt sàn so với level mm)] các sàn WC (Comments chứa 'WC').\"\"\"\n    out = []\n    for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        c = comments(fl)\n        if fl.LevelId != level.Id or u\"WC\" not in c.upper():\n            continue\n        bb = fl.get_BoundingBox(None)\n        m = re.search(r\"CH\\d+\", c)\n        hp = fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM)\n        top = to_mm(hp.AsDouble()) if hp is not None else to_mm(bb.Max.Z - level.Elevation)\n        out.append((m.group(0) if m else c, to_mm(bb.Min.X), to_mm(bb.Min.Y), to_mm(bb.Max.X), to_mm(bb.Max.Y),\n                    fl, top))\n    return out\n\n\ndef floor_of(f, floors):\n    x = f[\"back\"][0] + f[\"n\"][0] * 200.0\n    y = f[\"back\"][1] + f[\"n\"][1] * 200.0\n    for row in floors:\n        if row[1] - 60 <= x <= row[3] + 60 and row[2] - 60 <= y <= row[4] + 60:\n            return row\n    return None\n\n\ndef existing_at(f, fam_name, level, facing_to_wall):\n    \"\"\"Thiết bị cùng family đã có tại chỗ: (element, đúng hướng?) – khối đặc phủ ≥ 30 % khung CAD; None nếu không có.\n    Sai hướng = Facing lệch hướng cần đặt (VD lavabo của bản lỗi 2026-10-21 không xoay được, nằm quay +Y).\"\"\"\n    pts = footprint(f)\n    fx0, fy0 = min(p[0] for p in pts), min(p[1] for p in pts)\n    fx1, fy1 = max(p[0] for p in pts), max(p[1] for p in pts)\n    area = max((fx1 - fx0) * (fy1 - fy0), 1.0)\n    nx, ny = f[\"n\"]\n    want = (-nx, -ny) if facing_to_wall else (nx, ny)\n    for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_PlumbingFixtures) \\\n            .WhereElementIsNotElementType().ToElements():\n        if not isinstance(e, FamilyInstance) or norm(e.Symbol.FamilyName) != norm(fam_name):\n            continue\n        bb = e.get_BoundingBox(None)\n        if bb is None or abs(bb.Min.Z - level.Elevation) > from_mm(1500.0):\n            continue\n        sol = solid_extent_box(e)\n        if sol is None:\n            continue\n        ox = min(sol[2], fx1) - max(sol[0], fx0)\n        oy = min(sol[3], fy1) - max(sol[1], fy0)\n        if ox > 0 and oy > 0 and ox * oy >= 0.3 * area:\n            fo = e.FacingOrientation\n            return e, fo.X * want[0] + fo.Y * want[1] > 0.99\n    return None\n\n\ndef solid_extent_box(e):\n    xs, ys = [], []\n    for s in element_solids(e):\n        for ed in s.Edges:\n            for p in ed.Tessellate():\n                xs.append(to_mm(p.X))\n                ys.append(to_mm(p.Y))\n    return (min(xs), min(ys), max(xs), max(ys)) if xs else None\n\n\ndef preview_lines(items, z_mm):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n        out = []\n        for f in items:\n            pts = footprint(f)\n            for i in range(4):\n                a, b = pts[i], pts[(i + 1) % 4]\n                out.append(DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(a[0], a[1], z_mm),\n                                                       DSPoint.ByCoordinates(b[0], b[1], z_mm)))\n        return out\n    except Exception:\n        return []\n\n\nHEADER = [u\"Căn\", u\"Loại\", u\"Lưng CAD (mm)\", u\"Hướng vào phòng\", u\"Kích thước CAD (mm)\", u\"Family : Type\",\n          u\"Dời áp tường (mm)\", u\"Cao độ chân (mm)\", u\"Kết quả\", u\"ElementId\"]\n\n\ndef write_log(rows, dry_run, settings):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoThietBiWCTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Thiết lập: {}\\n\".format(settings))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef main(cad_filter, lav_layer, wc_layer, wc_fam_type, lav_fam, lav_template, offset_mm, reach_mm, dry_run):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    inst = pick_cad(cad_filter, lav_layer)\n    cad_name = get_name(doc.GetElement(inst.GetTypeId()))\n    level, view = pick_level(inst)\n\n    # Family\n    if u\":\" in wc_fam_type:\n        wf, wt = [s.strip() for s in wc_fam_type.split(u\":\", 1)]\n    else:\n        wf, wt = wc_fam_type.strip(), None\n    wc_sym = find_symbol(wf, wt)\n    if wc_sym is None:\n        raise StopReport([u\"DỪNG: không có family bệt '{}' (IN[3]). Các type thiết bị vệ sinh: {}\".format(\n            wc_fam_type, list_types_text())])\n    lav_syms = family_types(lav_fam)\n    tmpl = [s for s in lav_syms if norm(type_name(s)) == norm(lav_template)]\n    if not lav_syms or not tmpl:\n        raise StopReport([u\"DỪNG: không có lavabo '{} : {}' (IN[4], IN[5]). Các type thiết bị vệ sinh: {}\".format(\n            lav_fam, lav_template, list_types_text())])\n    tmpl = tmpl[0]\n    for pn in (u\"Width\", u\"Depth\"):\n        if tmpl.LookupParameter(pn) is None:\n            raise StopReport([u\"DỪNG: type mẫu lavabo '{}' không có tham số '{}'.\".format(lav_template, pn)])\n\n    # Đọc CAD + nhận thiết bị\n    rects, lav_pts, segs, arcs = read_cad(inst, lav_layer, wc_layer)\n    lavs = detect_lavabos(rects, lav_pts)\n    wcs, dropped = detect_toilets(arcs, segs)\n    floors = wc_floors(level)\n    items = sorted(lavs + wcs, key=lambda f: (round(f[\"back\"][1] / 1000.0), f[\"back\"][0]))\n    for f in items:\n        f[\"floor\"] = floor_of(f, floors)\n        f[\"apt\"] = f[\"floor\"][0] if f[\"floor\"] else u\"\"\n\n    # Type lavabo theo khung CAD\n    type_of = {}\n    pending = {}\n    for f in lavs:\n        w, d, name = lav_type_name(f)\n        hit = [s for s in lav_syms if abs((len_param(s, u\"Width\") or -1) - w) < 1.0\n               and abs((len_param(s, u\"Depth\") or -1) - d) < 1.0]\n        if hit:\n            type_of[name] = hit[0]\n        elif name not in pending:\n            clash = [s for s in lav_syms if norm(type_name(s)) == name]\n            pending[name] = (w, d, bool(clash))\n        f[\"tname\"] = name\n\n    z0 = level.Elevation\n    rows, created, errors = [], 0, []\n    for f in items:\n        solids = wall_solids_near(f, z0)\n        shift = wall_face_shift(f, z0, reach_mm, solids)\n        f[\"shift\"] = shift\n        s = shift or 0.0\n        f[\"target\"] = (f[\"back\"][0] + f[\"n\"][0] * s, f[\"back\"][1] + f[\"n\"][1] * s)\n        f[\"lat_shift\"], f[\"note\"] = side_shift(f, z0, solids) if f[\"kind\"] == u\"LAVABO\" and reach_mm > 0 \\\n            else (0.0, u\"\")\n        f[\"z\"] = f[\"floor\"][6] if f[\"floor\"] else offset_mm\n        fam = wf if f[\"kind\"] == u\"BET\" else lav_fam\n        old = existing_at(f, fam, level, f[\"kind\"] == u\"BET\")\n        f[\"replace\"] = None\n        f[\"id\"] = u\"\"\n        if old is not None and old[1]:\n            f[\"status\"] = u\"Đã có (Id {})\".format(id_value(old[0].Id))\n        elif old is not None:\n            f[\"replace\"] = old[0]\n            f[\"status\"] = u\"Sai hướng (Id {}) → {}\".format(\n                id_value(old[0].Id), u\"sẽ xoá + đặt lại\" if dry_run else u\"xoá + đặt lại\")\n        else:\n            f[\"status\"] = u\"Sẽ tạo\" if dry_run else u\"\"\n\n    todo = [f for f in items if not f[\"status\"].startswith(u\"Đã có\")]\n    if not dry_run and todo:\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        step = [u\"nhân bản type lavabo\"]\n        try:\n            for name in sorted(pending):\n                w, d, clash = pending[name]\n                nm = name if not clash else u\"{} (ARV)\".format(name)\n                ns = tmpl.Duplicate(nm)\n                ns.LookupParameter(u\"Width\").Set(from_mm(w))\n                ns.LookupParameter(u\"Depth\").Set(from_mm(d))\n                type_of[name] = ns\n            for f in todo:\n                step[0] = u\"đặt {} {}\".format(f[\"kind\"], fmt(f[\"back\"]))\n                sym = wc_sym if f[\"kind\"] == u\"BET\" else type_of[f[\"tname\"]]\n                # Mỗi thiết bị một SubTransaction: lỗi giữa chừng → hoàn tác riêng thiết bị đó, không để lại\n                # phần tử đặt dở (bản trước để lại 26 lavabo chưa xoay khi RotateElement lỗi)\n                st = SubTransaction(doc)\n                st.Start()\n                try:\n                    pre = u\"\"\n                    if f[\"replace\"] is not None:\n                        pre = u\"Thay Id {} (sai hướng) – \".format(id_value(f[\"replace\"].Id))\n                        doc.Delete(f[\"replace\"].Id)\n                    el, ok_dir, measured, at_z = place(f, sym, level, f[\"z\"], f[\"kind\"] == u\"BET\",\n                                                       f[\"floor\"][5] if f[\"floor\"] else None)\n                    st.Commit()\n                    f[\"id\"] = id_value(el.Id)\n                    f[\"status\"] = pre + u\"Đã tạo\" + (u\"\" if ok_dir else u\" – KIỂM TRA HƯỚNG\") + \\\n                        (u\"\" if measured else u\" – family không có khối đặc, giữ điểm chèn\") + \\\n                        (u\"\" if at_z else u\" – Work Plane ở level (không có sàn WC)\")\n                    created += 1\n                except Exception as ex:\n                    st.RollBack()\n                    f[\"status\"] = u\"LỖI: {}\".format(ex)\n                    errors.append(f)\n            tx.Commit()\n        except Exception as ex:\n            import traceback\n            tx.RollBack()\n            return [u\"LỖI khi ghi vào mô hình (bước: {}), mọi thay đổi đã được hoàn tác: {}\".format(step[0], ex),\n                    traceback.format_exc()], []\n\n    for f in items:\n        if f[\"kind\"] == u\"BET\":\n            ft = u\"{} : {}\".format(wc_sym.FamilyName, type_name(wc_sym))\n            size = u\"sâu {:.0f} × rộng {:.0f}\".format(f[\"long\"], f[\"short\"])\n        else:\n            ft = u\"{} : {}{}\".format(lav_fam, f[\"tname\"], u\" (nhân bản)\" if f[\"tname\"] in pending else u\"\")\n            size = u\"{:.0f} × {:.0f}\".format(f[\"long\"], f[\"short\"])\n        sh = u\"không gặp tường – giữ CAD\" if f[\"shift\"] is None else u\"{:.0f}\".format(f[\"shift\"])\n        if abs(f[\"lat_shift\"]) > 0.5:\n            sh += u\"; ngang {:.0f}\".format(f[\"lat_shift\"])\n        st = f[\"status\"] + (u\" – \" + f[\"note\"] if f[\"note\"] else u\"\")\n        rows.append([f[\"apt\"] or u\"—\", f[\"kind\"], fmt(f[\"back\"]), dir_label(f[\"n\"]), size, ft, sh,\n                     u\"{:.0f}\".format(f[\"z\"]), st, f[\"id\"]])\n\n    n_bet = len(wcs)\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\")]\n    if dry_run:\n        report.append(u\">>> ĐANG CHẠY THỬ: chưa ghi gì vào mô hình. Đổi ô IN[8] Dry-run = False rồi Run để đặt.\")\n    report.append(u\"CAD: {} – level: {} (view '{}') – cao độ chân = mặt sàn WC (không có sàn: {:.0f} mm)\".format(\n        cad_name, level.Name, view.Name, offset_mm))\n    report.append(u\"Nhận từ CAD: {} bệt xí (layer '{}'), {} lavabo (layer '{}')\".format(\n        n_bet, wc_layer, len(lavs), lav_layer))\n    n_old = sum(1 for f in items if f[\"status\"].startswith(u\"Đã có\"))\n    n_rep = sum(1 for f in items if f[\"replace\"] is not None)\n    report.append(u\"Thiết bị {}: {} – đã có, bỏ qua: {}{}{}\".format(\n        u\"sẽ đặt\" if dry_run else u\"đã đặt\", len(todo) if dry_run else created, n_old,\n        u\" – trong đó {} thay thiết bị sai hướng cùng chỗ ({} xoá cái cũ)\".format(\n            n_rep, u\"sẽ\" if dry_run else u\"đã\") if n_rep else u\"\",\n        u\" – lỗi: {}\".format(len(errors)) if errors else u\"\"))\n    shifts = [f[\"shift\"] for f in items if f[\"shift\"] is not None]\n    if shifts:\n        report.append(u\"Áp mặt tường hoàn thiện: {} thiết bị dời {:.0f}…{:.0f} mm so với CAD; {} không gặp tường \"\n                      u\"trong {:.0f} mm (giữ CAD)\".format(len(shifts), min(shifts), max(shifts),\n                                                         len(items) - len(shifts), reach_mm))\n    lat = [f for f in items if abs(f[\"lat_shift\"]) > 0.5]\n    if lat:\n        report.append(u\"Lavabo lấn mặt hoàn thiện tường bên: {} cái dời ngang {:.0f}…{:.0f} mm (giữ kích thước CAD)\"\n                      .format(len(lat), min(abs(f[\"lat_shift\"]) for f in lat), max(abs(f[\"lat_shift\"]) for f in lat)))\n    for f in items:\n        if f[\"note\"]:\n            report.append(u\"{} {} {}: {}\".format(f[\"apt\"] or u\"—\", f[\"kind\"], fmt(f[\"back\"]), f[\"note\"]))\n    for name in sorted(pending):\n        w, d, clash = pending[name]\n        report.append(u\"Type lavabo '{}' (Width {} × Depth {}) chưa có → {} từ '{}'{}\".format(\n            name, w, d, u\"sẽ nhân bản\" if dry_run else u\"ĐÃ NHÂN BẢN\", lav_template,\n            u\" – tên đã có khác kích thước → đặt tên '{} (ARV)'\".format(name) if clash else u\"\"))\n    if dropped:\n        report.append(u\"Bỏ qua {} cung R{}–{} không có nét két nước bệt (không phải bệt): {}\".format(\n            len(dropped), int(WC_R[0]), int(WC_R[1]),\n            u\"; \".join(fmt(d[:2]) for d in dropped[:8]) + (u\"…\" if len(dropped) > 8 else u\"\")))\n    no_apt = [f for f in items if not f[\"apt\"]]\n    if no_apt:\n        report.append(u\"CẢNH BÁO: {} thiết bị không nằm trong sàn WC nào (Comments chứa 'WC') – vẫn đặt theo CAD, \"\n                      u\"cao độ IN[6], bệt nằm trên level: {}\".format(len(no_apt), u\"; \".join(u\"{} {}\".format(f[\"kind\"], fmt(f[\"back\"]))\n                                                            for f in no_apt)))\n    for f in errors:\n        report.append(u\"LỖI {} {}: {}\".format(f[\"kind\"], fmt(f[\"back\"]), f[\"status\"]))\n    settings = u\"CAD={}; lavabo={}; bệt layer={}; bệt={}; lavabo={} (mẫu {}); offset={}; dò tường={}\".format(\n        cad_name, lav_layer, wc_layer, wc_fam_type, lav_fam, lav_template, offset_mm, reach_mm)\n    try:\n        report.append(u\"Log: \" + write_log(rows, dry_run, settings))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra khung thiết bị (OUT[1]) + log. Đúng thì đổi Dry-run = False và Run lại. \"\n                      u\"Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows]\n    return report, preview_lines(items, to_mm(z0))\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\ndef num(v, default):\n    try:\n        return float(v)\n    except (TypeError, ValueError):\n        return default\n\n\nif DYNAMO:\n    import traceback\n    try:\n        OUT = list(main(\n            (IN[0] or u\"\").strip(),\n            norm(IN[1] or u\"A-Interior WC\"),\n            norm(IN[2] if IN[2] not in (None, u\"\") else u\"0\"),\n            norm(IN[3] or u\"AV-Toilet : AV-Toilet\"),\n            norm(IN[4] or u\"AV-Bàn Lavabo chữ nhật bán âm\"),\n            norm(IN[5] or u\"900x470\"),\n            num(IN[6], -15.0),\n            num(IN[7], 100.0),\n            True if IN[8] is None else bool(IN[8]),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoThietBiWCTuCAD_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "ca1e0dbd881b4702bbb5b1360c672712",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "e8836c6e4d564bc3afca09bae1d77bf3",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d2689d97ddd54c45a1031b0e6f50bcfe",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "96a2b78bb2014a79b060686c330edb28",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "99e027692ad043c1b0f8d115ec74c423",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3b78045b90f24889b1dc216aa0cc6f0b",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f997af5ed14f4dc59ea92185ef8ef3a8",
+          "Name": "IN[5]",
+          "Description": "Input #5",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2e42494b40c447539307335ef8bd7e3f",
+          "Name": "IN[6]",
+          "Description": "Input #6",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fff20b6493104d4aae68df05229aa96e",
+          "Name": "IN[7]",
+          "Description": "Input #7",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0918226f352c49cdb28138963f30f7cd",
+          "Name": "IN[8]",
+          "Description": "Input #8",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d927c935722d40c38099d68950c422a5",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "724c356da49d49a4b9ddcca23c8f50ed",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "fc2149035ac14e938dbb413d8930b8ed",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fb9fad16ac434b2698adf33fbd817240",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "4a76d613824e43c2b7866082d5876baa",
+      "End": "e8836c6e4d564bc3afca09bae1d77bf3",
+      "Id": "a287281389714032b4c4534af646a835",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e91719b2ddde449681f2d4226667b41d",
+      "End": "d2689d97ddd54c45a1031b0e6f50bcfe",
+      "Id": "408a7711c5d0425ea36b900169d58b02",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "96f1e2c9e2c6461586095c2686dde021",
+      "End": "96a2b78bb2014a79b060686c330edb28",
+      "Id": "8ca372033a1b4138ae0360334025d1be",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "516cffa796f04da0b8712dd4dc0b4d62",
+      "End": "99e027692ad043c1b0f8d115ec74c423",
+      "Id": "e3d2ed0959694a4b941d295e66007415",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "73eb28695c004e92b073f64e792546eb",
+      "End": "3b78045b90f24889b1dc216aa0cc6f0b",
+      "Id": "ad7335803e574a97ab3412c24cdcc88c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "813ba5e5041e46fd96d89dad7a06fd24",
+      "End": "f997af5ed14f4dc59ea92185ef8ef3a8",
+      "Id": "a9f9fcbee5de4cb18310520ef9ddbce5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2cdf0cb43e29462f8ea424a0eefb4e51",
+      "End": "2e42494b40c447539307335ef8bd7e3f",
+      "Id": "fb442a3ecc7a4493b5a2f2bd5f8f41c4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "c0b9b4f8da4b4df293c78d1e194ae051",
+      "End": "fff20b6493104d4aae68df05229aa96e",
+      "Id": "a1eee552908547c2a6a86a325fb49729",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "121836bd17474cf3bda54d262923ecea",
+      "End": "0918226f352c49cdb28138963f30f7cd",
+      "Id": "28ef8210d442406786bd0eb160a5ea60",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d927c935722d40c38099d68950c422a5",
+      "End": "fc2149035ac14e938dbb413d8930b8ed",
+      "Id": "d0e84bfd579b4e92bdb5fc1b458ecfbf",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "c4d6923009ae4a938a4b29423f1dee0e",
+        "Name": "IN[0] Tên bản CAD (chuỗi con, trống = tự tìm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "1f8e3210caf4406b8d2ba9d324f07a29",
+        "Name": "IN[1] Layer lavabo",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "c5c6a86c97ed487c8578cdda0d42bf75",
+        "Name": "IN[2] Layer bệt xí (đúng tên)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "009f7c2951b947bfb677e9d69e5a06ef",
+        "Name": "IN[3] Bệt: Family : Type",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "401255177c6f4710854c567fd35900af",
+        "Name": "IN[4] Lavabo: family",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "42b6f2ed2c644b7c91e937e704ca13b1",
+        "Name": "IN[5] Lavabo: type mẫu để nhân bản",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "6b79728f21ea4315b8a0d3ae4f7db659",
+        "Name": "IN[6] Cao độ chân khi không có sàn WC (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "ec978d2254c64b3f9db434beba217cba",
+        "Name": "IN[7] Tầm dò mặt tường hoàn thiện sau lưng CAD (mm, 0 = giữ CAD)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "fc9fa205730e4f07aa2fcfee7228a29b",
+        "Name": "IN[8] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "ca1e0dbd881b4702bbb5b1360c672712",
+        "Name": "Tạo thiết bị vệ sinh WC từ CAD",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 700.0,
+        "Y": 300.0
+      },
+      {
+        "Id": "724c356da49d49a4b9ddcca23c8f50ed",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1150.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "b169784976c140eeae196eb2bd4a88d6",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Bản DWG mặt bằng Link đúng vị trí (view mặt bằng của tầng); mô hình đã có tường + ốp + sàn WC. Giữ Dry-run = True cho lần chạy đầu, đọc Báo cáo rồi mới đổi False.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "c4d6923009ae4a938a4b29423f1dee0e",
+          "1f8e3210caf4406b8d2ba9d324f07a29",
+          "c5c6a86c97ed487c8578cdda0d42bf75",
+          "009f7c2951b947bfb677e9d69e5a06ef",
+          "401255177c6f4710854c567fd35900af",
+          "42b6f2ed2c644b7c91e937e704ca13b1",
+          "6b79728f21ea4315b8a0d3ae4f7db659",
+          "ec978d2254c64b3f9db434beba217cba",
+          "fc9fa205730e4f07aa2fcfee7228a29b"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 599.0,
+        "Height": 1094.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1025.0,
+        "TextblockHeight": 72.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "18c93e9832a24fd7addadf43b2c625d0",
+        "Title": "2. Xử lý + báo cáo",
+        "DescriptionText": "OUT[0]: báo cáo + đường dẫn log; OUT[1]: khung thiết bị theo CAD (xem trước 3D).",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "ca1e0dbd881b4702bbb5b1360c672712",
+          "724c356da49d49a4b9ddcca23c8f50ed"
+        ],
+        "HasNestedGroups": false,
+        "Left": 690.0,
+        "Top": -73.0,
+        "Width": 1547.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 445.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 148.49223220956767,
+    "Y": 92.3108076034074,
+    "Zoom": 0.8441280731520622
+  }
+}

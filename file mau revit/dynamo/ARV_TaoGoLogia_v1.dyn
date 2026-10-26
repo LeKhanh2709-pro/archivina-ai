@@ -1,0 +1,676 @@
+{
+  "Uuid": "97ebd71c-da8e-4f1d-8abb-57f17ce176a2",
+  "IsCustomNode": false,
+  "Description": "Tạo gờ bê tông mặt ngoài logia (Basic Wall) từ CAD link (CHƯA DUYỆT)",
+  "Name": "ARV_TaoGoLogia_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "1dc5a52f281d475795af09771a9e2b47",
+      "Name": "IN[0] Tên bản CAD (chuỗi con, trống = tự tìm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "16f8369e424f40f598a3cb97cf31ebdf",
+      "Name": "IN[1] Layer nét mặt ngoài logia (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "A-Line;A-line1;A-line2",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "1abf609d3e3f42c88cdb8c4723b641e0",
+      "Name": "IN[2] Chuỗi con tên floor type sàn logia",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Logia",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "767a59c70b9d4801bc8dd7bb8097c125",
+      "Name": "IN[3] Wall type gờ",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "VBT-150",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "b8441663058b4254ad2880302d611a09",
+      "Name": "IN[4] Wall type mẫu (nhân bản khi IN[3] chưa có)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "VBT-200",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "692b8b2797f94b9d92323b880640c41e",
+      "Name": "IN[5] Level",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Tầng 1",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "97b77d56a17548bc98d5b05246810d2d",
+      "Name": "IN[6] Gờ cao trên mặt sàn hoàn thiện logia (mm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "100",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "f0eb9034797f4146bc97abb12d792a4f",
+      "Name": "IN[7] Chân gờ so với level (mm), trống = đáy sàn hoàn thiện logia",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "d6b9bb68f76041f49bcb8c4b95b6532e",
+      "Name": "IN[8] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "1dc5a52f281d475795af09771a9e2b47",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "624bc7e66777458887d941dba5035be4",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "16f8369e424f40f598a3cb97cf31ebdf",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e5fbca231b78467d8cf47de9694d2d0f",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "A-Line;A-line1;A-line2"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "1abf609d3e3f42c88cdb8c4723b641e0",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "62466899911c475baf016476360954c4",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Logia"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "767a59c70b9d4801bc8dd7bb8097c125",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d4230c7f453e4ad68f2400cab1811adc",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "VBT-150"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b8441663058b4254ad2880302d611a09",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ed74b92540e74aa6ad74d6cec08ba650",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "VBT-200"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "692b8b2797f94b9d92323b880640c41e",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b6a60342640746ab94d380c650dfde65",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Tầng 1"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "97b77d56a17548bc98d5b05246810d2d",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fbbb878c86e3411898fc6e99cdf81354",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "100"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "f0eb9034797f4146bc97abb12d792a4f",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "975f0fb5f6dc405ebcd7ce3ef36206f9",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "d6b9bb68f76041f49bcb8c4b95b6532e",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5db3f92d9e2745f49b40568d26545b36",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoGoLogia_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo gờ bê tông mặt ngoài logia (Basic Wall), lấy tuyến từ mặt bằng DWG đã Link (KTS chốt 2026-10-21):\n#   1. Logia = sàn (Floor) trên level IN[5] có tên type chứa IN[2] (VD \"SHT-Gach Lat Logia-300x600\"), lấy hộp bao.\n#   2. Tuyến gờ = đường giữa cặp nét song song cách nhau 150 mm (± 3) trên layer IN[1], sát cạnh hộp bao logia\n#      (≤ 300 mm), phủ ≥ 50 % cạnh đó, dài từ tường đến tường (đầu nét CAD) – cùng cách dò với\n#      ARV_TaoLanCanLouverLogia_v1. Nét dài hơn logia → cắt ở cạnh logia rồi bắt vào đầu tường Revit trên tuyến\n#      (≤ 400 mm); không có tường → giữ mép logia, báo \"KIỂM TRA ĐẦU\".\n#   3. Gờ = Wall type IN[3] (VD \"VBT-150\"), tâm tường trên đường giữa cặp nét, không nối (join) đầu tường.\n#      Type chưa có → nhân bản type mẫu IN[4] (VD \"VBT-200\", một lớp bê tông) với tên IN[3], đổi chiều dày lớp\n#      = bề dày cặp nét CAD (150). Dry-run chỉ báo \"SẼ NHÂN BẢN\".\n#   4. Cao độ theo từng logia (so với level): đỉnh gờ = mặt sàn hoàn thiện logia + IN[6] (VD -30 + 100 = +70);\n#      chân gờ = IN[7] nếu có, trống = đáy sàn hoàn thiện logia (VD -30 - 50 = -80).\n#   5. Gờ tạo ra có Comments \"ARV-GoLogia\". Chạy lại, trong phạm vi tuyến từng logia:\n#      - Tường có Comments đó, đúng kế hoạch (đầu tuyến ± 20 mm, chân/đỉnh ± 2 mm, đúng type) → giữ.\n#      - Có Comments đó mà sai kế hoạch → XOÁ rồi tạo lại (báo \"thay\").\n#      - Tường khác trùng tuyến (dựng tay) → không đụng, logia đó bỏ qua, báo \"đã có tường dựng tay\".\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (trống = bản CAD duy nhất có layer khớp IN[1])\n#   IN[1] (str)   Layer nét mặt ngoài logia, cách nhau ';' (khớp đúng tên) – VD \"A-Line;A-line1;A-line2\"\n#   IN[2] (str)   Chuỗi con tên floor type sàn logia – VD \"Logia\"\n#   IN[3] (str)   Wall type gờ – VD \"VBT-150\"\n#   IN[4] (str)   Wall type mẫu để nhân bản khi IN[3] chưa có – VD \"VBT-200\"\n#   IN[5] (str)   Level – VD \"Tầng 1\"\n#   IN[6] (float) Gờ cao trên mặt sàn hoàn thiện logia (mm) – VD 100\n#   IN[7] (str)   Chân gờ so với level (mm); trống = đáy sàn hoàn thiện logia\n#   IN[8] (bool)  Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, đường dẫn log, rồi từng logia\n#   OUT[1] (list[Line]) Xem trước: tuyến gờ ở cao độ đỉnh gờ + vạch 600 mm chỉ ra ngoài (mm)\n\nimport os\nimport io\nimport csv\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, Options, GeometryInstance, PolyLine,\n                                   Line, XYZ, Transaction, UnitUtils, UnitTypeId, ModelPathUtils, BuiltInParameter,\n                                   Level, Wall, WallType, WallKind, WallUtils, Floor, LocationCurve, ElementId)\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo gờ bê tông logia từ CAD\"\nSCRIPT_TAG = u\"ARV_TaoGoLogia_v1\"\nCOMMENT = u\"ARV-GoLogia\"\nPAIR_GAP_MM = 150.0       # Bề dày nét đôi mặt ngoài = bề dày gờ\nPAIR_TOL_MM = 3.0\nEDGE_MM = 300.0           # Cặp nét cách cạnh logia tối đa\nCOVER = 0.5               # Cặp nét phủ tối thiểu cạnh logia\nSNAP_WALL_MM = 400.0      # Bắt đầu tường Revit khi nét dài hơn logia\nON_AXIS_MM = 50.0\nEXIST_WALL_MM = 50.0      # Lệch ngang tim để coi là cùng tuyến\nSAME_END_MM = 20.0        # Đầu đoạn khớp kế hoạch\nSAME_Z_MM = 2.0           # Chân / đỉnh khớp kế hoạch\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\nclass Facade(object):\n    \"\"\"Cặp nét đôi song song trục: axis 'H' (chạy theo X, line = y) hoặc 'V' (chạy theo Y, line = x).\"\"\"\n    def __init__(self, axis, line, s, e, layer, gap):\n        self.axis, self.line, self.s, self.e, self.layer, self.gap = axis, line, s, e, layer, gap\n\n    def point(self, t):\n        return (t, self.line) if self.axis == 'H' else (self.line, t)\n\n\ndef axis_segments(segs):\n    \"\"\"segs [(a, b, layer)] → [(axis, line, s, e, layer)] chỉ đoạn song song trục X/Y (lệch ≤ 1 mm).\"\"\"\n    out = []\n    for a, b, layer in segs:\n        if abs(a[1] - b[1]) <= 1.0 and abs(a[0] - b[0]) > 1.0:\n            out.append(('H', (a[1] + b[1]) / 2.0, min(a[0], b[0]), max(a[0], b[0]), layer))\n        elif abs(a[0] - b[0]) <= 1.0 and abs(a[1] - b[1]) > 1.0:\n            out.append(('V', (a[0] + b[0]) / 2.0, min(a[1], b[1]), max(a[1], b[1]), layer))\n    return out\n\n\ndef facade_pairs(segs):\n    \"\"\"Cặp nét cùng phương, cách nhau 150 ± 3, cùng hai đầu (± 3) → [Facade] trên đường giữa.\"\"\"\n    ax = axis_segments(segs)\n    pairs, used = [], set()\n    for i, p in enumerate(ax):\n        if i in used:\n            continue\n        for j in range(i + 1, len(ax)):\n            q = ax[j]\n            if j in used or p[0] != q[0]:\n                continue\n            if (abs(abs(p[1] - q[1]) - PAIR_GAP_MM) <= PAIR_TOL_MM and abs(p[2] - q[2]) <= PAIR_TOL_MM\n                    and abs(p[3] - q[3]) <= PAIR_TOL_MM):\n                pairs.append(Facade(p[0], (p[1] + q[1]) / 2.0, (p[2] + q[2]) / 2.0, (p[3] + q[3]) / 2.0, p[4],\n                                    abs(p[1] - q[1])))\n                used.add(i)\n                used.add(j)\n                break\n    return pairs\n\n\ndef match_facade(box, pairs):\n    \"\"\"Cặp nét mặt ngoài của logia (hộp bao x0, y0, x1, y1) → (Facade, lo, hi) hoặc None.\"\"\"\n    x0, y0, x1, y1 = box\n    best = None\n    for f in pairs:\n        if f.axis == 'V':\n            d, lo, hi = min(abs(f.line - x0), abs(f.line - x1)), y0, y1\n        else:\n            d, lo, hi = min(abs(f.line - y0), abs(f.line - y1)), x0, x1\n        ov = min(f.e, hi) - max(f.s, lo)\n        if d <= EDGE_MM and ov >= COVER * (hi - lo) and (best is None or d < best[0]):\n            best = (d, f, lo, hi)\n    return None if best is None else best[1:]\n\n\ndef outward(box, f):\n    x0, y0, x1, y1 = box\n    if f.axis == 'V':\n        return (1.0 if f.line > (x0 + x1) / 2.0 else -1.0, 0.0)\n    return (0.0, 1.0 if f.line > (y0 + y1) / 2.0 else -1.0)\n\n\ndef span_of(f, lo, hi, wall_ends):\n    \"\"\"Đoạn tuyến (s, e) + ghi chú. wall_ends: [(x, y)] đầu tường Revit.\"\"\"\n    notes = []\n    s, e = f.s, f.e\n    for side in (0, 1):\n        val = s if side == 0 else e\n        limit = lo - EDGE_MM if side == 0 else hi + EDGE_MM\n        if (side == 0 and val >= limit) or (side == 1 and val <= limit):\n            continue\n        edge = lo if side == 0 else hi\n        cand = []\n        for p in wall_ends:\n            off = p[1] - f.line if f.axis == 'H' else p[0] - f.line\n            t = p[0] if f.axis == 'H' else p[1]\n            if abs(off) <= ON_AXIS_MM and abs(t - edge) <= SNAP_WALL_MM:\n                cand.append(t)\n        if cand:\n            val = min(cand, key=lambda t: abs(t - edge))\n            notes.append(u\"{} tuyến bắt đầu tường Revit\".format(u\"Đầu\" if side == 0 else u\"Cuối\"))\n        else:\n            val = edge\n            notes.append(u\"KIỂM TRA ĐẦU – {} tuyến lấy mép logia (nét CAD dài hơn logia, không thấy tường)\".format(\n                u\"đầu\" if side == 0 else u\"cuối\"))\n        if side == 0:\n            s = val\n        else:\n            e = val\n    return s, e, notes\n\n\ndef along(f, pt):\n    \"\"\"(toạ độ dọc tuyến, lệch ngang) của điểm so với tuyến f.\"\"\"\n    return (pt[0], pt[1] - f.line) if f.axis == 'H' else (pt[1], pt[0] - f.line)\n\n\nclass Plan(object):\n    def __init__(self, fid, box, ffl, bottom):\n        self.fid, self.box = fid, box\n        self.ffl, self.floor_bottom = ffl, bottom   # mặt / đáy sàn hoàn thiện logia so với level (mm)\n        self.base = self.top = None\n        self.facade = None\n        self.s = self.e = None\n        self.out = None\n        self.notes = []\n        self.status = u\"\"\n        self.wall_id = u\"\"\n        self.need = False\n        self.delete_ids = []\n\n    def pt(self, t):\n        return self.facade.point(t)\n\n\ndef plan_logia(fid, box, ffl, bottom, pairs, wall_ends, curb_h, base_mm):\n    p = Plan(fid, box, ffl, bottom)\n    p.top = ffl + curb_h\n    p.base = bottom if base_mm is None else base_mm\n    m = match_facade(box, pairs)\n    if m is None:\n        p.status = u\"Bỏ qua – không thấy cặp nét mặt ngoài dày 150\"\n        return p\n    f, lo, hi = m\n    p.facade = f\n    p.out = outward(box, f)\n    p.s, p.e, p.notes = span_of(f, lo, hi, wall_ends)\n    if p.e - p.s <= 0:\n        p.status = u\"Bỏ qua – tuyến rỗng\"\n    elif p.top - p.base <= 0:\n        p.status = u\"Bỏ qua – đỉnh gờ {:.0f} không cao hơn chân {:.0f}\".format(p.top, p.base)\n    else:\n        p.status = u\"OK\"\n    return p\n\n\ndef reconcile(p, walls, type_name):\n    \"\"\"walls [(a, b, Id, của tool, tên type, chân, đỉnh)] (mm, so với level) → giữ / thay / dựng tay.\"\"\"\n    f = p.facade\n    lo, hi = min(p.s, p.e), max(p.s, p.e)\n    keep = None\n    for a, b, eid, mine, tname, base, top in walls:\n        ta, da = along(f, a)\n        tb, db = along(f, b)\n        if abs(da) > EXIST_WALL_MM or abs(db) > EXIST_WALL_MM:\n            continue\n        s, e = min(ta, tb), max(ta, tb)\n        if min(e, hi) - max(s, lo) <= 50.0:\n            continue\n        if not mine:\n            keep = keep or eid\n            p.notes.append(u\"đã có tường dựng tay Id {} ({}) trên tuyến\".format(eid, tname))\n        elif (keep is None and abs(s - lo) <= SAME_END_MM and abs(e - hi) <= SAME_END_MM\n              and abs(base - p.base) <= SAME_Z_MM and abs(top - p.top) <= SAME_Z_MM\n              and norm(tname) == norm(type_name)):\n            keep = eid\n        else:\n            p.delete_ids.append(eid)\n            p.notes.append(u\"thay gờ cũ Id {} ({:.0f}, {:.0f}→{:.0f})\".format(eid, e - s, base, top))\n    p.wall_id = keep or u\"\"\n    p.need = keep is None\n\n\n# --- Revit ---------------------------------------------------------------------------\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef xy(p):\n    return (to_mm(p.X), to_mm(p.Y))\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return norm(style.GraphicsStyleCategory.Name)\n    return None\n\n\ndef cad_objects(cad):\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            else:\n                result.append(obj)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef pick_cad(cad_filter, layers):\n    found = []\n    for inst in FilteredElementCollector(doc).OfClass(ImportInstance).ToElements():\n        name = get_name(doc.GetElement(inst.GetTypeId()))\n        if cad_filter and cad_filter.lower() not in name.lower():\n            continue\n        objects = cad_objects(inst)\n        all_layers = set(l for l in (layer_of(o) for o in objects) if l)\n        found.append((inst, name, objects, all_layers))\n    hits = [f for f in found if f[3] & layers]\n    if len(hits) == 1:\n        return hits[0]\n    if not hits:\n        raise StopReport([u\"DỪNG: không có bản CAD{} nào có layer '{}'.\".format(\n            u\" khớp '{}'\".format(cad_filter) if cad_filter else u\"\", u\"; \".join(sorted(layers)))])\n    raise StopReport([u\"DỪNG: {} bản CAD có layer khớp – nhập tên bản CAD vào ô IN[0]: {}\".format(\n        len(hits), u\", \".join(h[1] for h in hits))])\n\n\ndef find_level(name):\n    levels = list(FilteredElementCollector(doc).OfClass(Level).ToElements())\n    for l in levels:\n        if norm(l.Name) == norm(name):\n            return l\n    raise StopReport([u\"DỪNG: không có level '{}'. Các level: {}\".format(\n        name, u\", \".join(l.Name for l in sorted(levels, key=lambda x: x.Elevation)))])\n\n\ndef basic_wall_types():\n    return [t for t in FilteredElementCollector(doc).OfClass(WallType).ToElements() if t.Kind == WallKind.Basic]\n\n\ndef find_wall_type(name, template_name):\n    \"\"\"→ (WallType có sẵn hoặc None, WallType mẫu hoặc None).\"\"\"\n    types = basic_wall_types()\n    for t in types:\n        if norm(get_name(t)) == norm(name):\n            return t, None\n    for t in types:\n        if norm(get_name(t)) == norm(template_name):\n            layers = t.GetCompoundStructure().GetLayers()\n            if len(layers) != 1:\n                raise StopReport([u\"DỪNG: type mẫu '{}' (IN[4]) có {} lớp – cần type một lớp bê tông.\".format(\n                    template_name, len(layers))])\n            return None, t\n    raise StopReport([u\"DỪNG: chưa có wall type '{}' (IN[3]) và không có type mẫu '{}' (IN[4]). Các Basic Wall: {}\"\n                      .format(name, template_name, u\", \".join(sorted(get_name(t) for t in types)))])\n\n\ndef duplicate_type(template, name, width_mm):\n    new_type = template.Duplicate(name)\n    cs = new_type.GetCompoundStructure()\n    cs.SetLayerWidth(0, from_mm(width_mm))\n    new_type.SetCompoundStructure(cs)\n    return new_type\n\n\ndef logia_floors(level, type_part):\n    \"\"\"[(Id, hộp bao, mặt sàn, đáy sàn)] – cao độ so với level (mm).\"\"\"\n    result = []\n    for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        if fl.LevelId != level.Id:\n            continue\n        ftype = doc.GetElement(fl.GetTypeId())\n        if norm(type_part).lower() not in norm(get_name(ftype)).lower():\n            continue\n        bb = fl.get_BoundingBox(None)\n        if bb is None:\n            continue\n        ffl = to_mm(fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).AsDouble())\n        thk = to_mm(ftype.GetCompoundStructure().GetWidth())\n        result.append((fl.Id.Value, (to_mm(bb.Min.X), to_mm(bb.Min.Y), to_mm(bb.Max.X), to_mm(bb.Max.Y)),\n                       ffl, ffl - thk))\n    return result\n\n\ndef level_walls(level):\n    \"\"\"[(đầu, cuối, Id, của tool, tên type, chân, đỉnh)] tường thẳng trên level (mm, so với level).\"\"\"\n    out = []\n    for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n        loc = wl.Location\n        if wl.LevelId != level.Id or not isinstance(loc, LocationCurve) or not isinstance(loc.Curve, Line):\n            continue\n        base = to_mm(wl.get_Parameter(BuiltInParameter.WALL_BASE_OFFSET).AsDouble())\n        hp = wl.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM)\n        top = base + to_mm(hp.AsDouble()) if hp is not None else base\n        out.append((xy(loc.Curve.GetEndPoint(0)), xy(loc.Curve.GetEndPoint(1)), wl.Id.Value, is_mine(wl),\n                    get_name(wl.WallType), base, top))\n    return out\n\n\ndef is_mine(el):\n    prm = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    return prm is not None and norm(prm.AsString()) == COMMENT\n\n\ndef create_curb(p, wtype, level):\n    a, b = p.pt(p.s), p.pt(p.e)\n    line = Line.CreateBound(XYZ(from_mm(a[0]), from_mm(a[1]), 0.0), XYZ(from_mm(b[0]), from_mm(b[1]), 0.0))\n    w = Wall.Create(doc, line, wtype.Id, level.Id, from_mm(p.top - p.base), from_mm(p.base), False, False)\n    w.get_Parameter(BuiltInParameter.WALL_HEIGHT_TYPE).Set(ElementId.InvalidElementId)   # Unconnected\n    WallUtils.DisallowWallJoinAtEnd(w, 0)\n    WallUtils.DisallowWallJoinAtEnd(w, 1)\n    prm = w.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    if prm is not None and not prm.IsReadOnly:\n        prm.Set(COMMENT)\n    return w\n\n\ndef preview_lines(plans, z0_mm):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n        out = []\n        for p in plans:\n            z = z0_mm + p.top\n            a, b = p.pt(p.s), p.pt(p.e)\n            m = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)\n            for u, v in ((a, b), (m, (m[0] + p.out[0] * 600.0, m[1] + p.out[1] * 600.0))):\n                out.append(DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(u[0], u[1], z),\n                                                       DSPoint.ByCoordinates(v[0], v[1], z)))\n        return out\n    except Exception:\n        return []\n\n\nLOG_HEADER = [u\"STT\", u\"Sàn logia Id\", u\"Layer mặt ngoài\", u\"Tuyến từ\", u\"Tuyến đến\", u\"Dài (mm)\", u\"Dày CAD (mm)\",\n              u\"Mặt sàn logia\", u\"Chân gờ\", u\"Đỉnh gờ\", u\"Ghi chú\", u\"Kết quả\", u\"Gờ Id\"]\n\n\ndef write_log(rows, source, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoGoLogia_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# File nguồn: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm, cao độ so với level\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef split_layers(text):\n    return set(norm(s) for s in (text or u\"\").split(u\";\") if norm(s))\n\n\ndef main(cad_filter, facade_layers, floor_part, type_name, template_name, level_name, curb_h, base_mm, dry_run):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    cad, cad_name, objects, all_layers = pick_cad(cad_filter, facade_layers)\n    missing = sorted(facade_layers - all_layers)\n    level = find_level(level_name)\n    wtype, template = find_wall_type(type_name, template_name)\n    floors = logia_floors(level, floor_part)\n    if not floors:\n        raise StopReport([u\"DỪNG: level '{}' không có sàn nào có type chứa '{}' (IN[2]).\".format(level_name, floor_part)])\n\n    segs = []\n    for obj in objects:\n        l = layer_of(obj)\n        if l not in facade_layers:\n            continue\n        if isinstance(obj, Line):\n            segs.append((xy(obj.GetEndPoint(0)), xy(obj.GetEndPoint(1)), l))\n        elif isinstance(obj, PolyLine):\n            pts = [xy(q) for q in obj.GetCoordinates()]\n            segs.extend((a, b, l) for a, b in zip(pts[:-1], pts[1:]))\n    pairs = facade_pairs(segs)\n    walls = level_walls(level)\n    wall_ends = [w[0] for w in walls if not w[3]] + [w[1] for w in walls if not w[3]]\n\n    plans = []\n    for fid, box, ffl, bottom in floors:\n        p = plan_logia(fid, box, ffl, bottom, pairs, wall_ends, curb_h, base_mm)\n        if p.status == u\"OK\":\n            reconcile(p, walls, type_name)\n            if any(n.startswith(u\"đã có tường dựng tay\") for n in p.notes):\n                p.need, p.status = False, u\"Bỏ qua – đã có tường dựng tay\"\n            elif not (p.need or p.delete_ids):\n                p.status = u\"Bỏ qua – đã đúng\"\n        plans.append(p)\n    plans.sort(key=lambda q: (-round((q.box[1] + q.box[3]) / 2.0), round((q.box[0] + q.box[2]) / 2.0)))\n    jobs = [p for p in plans if p.status == u\"OK\"]\n    gaps = sorted(set(int(round(p.facade.gap)) for p in jobs))\n\n    if not dry_run and jobs:\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            if wtype is None:\n                wtype = duplicate_type(template, type_name, PAIR_GAP_MM)\n            for p in jobs:\n                for eid in p.delete_ids:\n                    doc.Delete(ElementId(eid))\n            for p in jobs:\n                p.wall_id = create_curb(p, wtype, level).Id.Value\n                p.status = u\"Đã tạo\" if not p.delete_ids else u\"Đã thay\"\n            tx.Commit()\n        except Exception as ex:\n            tx.RollBack()\n            return [u\"LỖI khi tạo, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n    elif dry_run:\n        for p in jobs:\n            p.status = u\"Sẽ tạo\" if not p.delete_ids else u\"Sẽ thay\"\n\n    rows = []\n    for i, p in enumerate(plans, 1):\n        f = p.facade\n        has = f is not None and p.s is not None\n        rows.append([i, p.fid, f.layer if f else u\"—\",\n                     fmt(p.pt(p.s)) if has else u\"—\", fmt(p.pt(p.e)) if has else u\"—\",\n                     u\"{:.0f}\".format(p.e - p.s) if has else u\"—\", u\"{:.0f}\".format(f.gap) if f else u\"—\",\n                     u\"{:.0f}\".format(p.ffl), u\"{:.0f}\".format(p.base), u\"{:.0f}\".format(p.top),\n                     u\"; \".join(p.notes), p.status, p.wall_id])\n\n    done = [p for p in plans if p.status in (u\"Sẽ tạo\", u\"Đã tạo\", u\"Sẽ thay\", u\"Đã thay\")]\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\")]\n    report.append(u\"CAD: {} – level: {} – wall type '{}'{} – cao {:.0f} trên mặt sàn logia, chân {}\".format(\n        cad_name, level.Name, type_name,\n        u\"\" if template is None else u\" ({} từ '{}', dày {:.0f})\".format(\n            u\"SẼ NHÂN BẢN\" if dry_run else u\"đã nhân bản\", template_name, PAIR_GAP_MM),\n        curb_h, u\"= đáy sàn hoàn thiện logia\" if base_mm is None else u\"{:.0f}\".format(base_mm)))\n    if missing:\n        report.append(u\"LƯU Ý: bản CAD không có layer: {}\".format(u\"; \".join(missing)))\n    if any(abs(g - PAIR_GAP_MM) > 0.5 for g in gaps):\n        report.append(u\"LƯU Ý: bề dày cặp nét CAD đo được {} (gờ dựng {:.0f})\".format(gaps, PAIR_GAP_MM))\n    report.append(u\"Logia: {} – {}: {} (thay {}), đã đúng: {}, có tường dựng tay: {}\".format(\n        len(plans), u\"Sẽ tạo\" if dry_run else u\"Đã tạo\", len(done), len([p for p in done if p.delete_ids]),\n        len([p for p in plans if p.status == u\"Bỏ qua – đã đúng\"]),\n        len([p for p in plans if p.status == u\"Bỏ qua – đã có tường dựng tay\"])))\n    report.append(u\"Tổng chiều dài gờ: {:.2f} m\".format(sum(p.e - p.s for p in done) / 1000.0))\n    for p in plans:\n        if p not in done and p.status != u\"Bỏ qua – đã đúng\":\n            report.append(u\"  Sàn {}: {}\".format(p.fid, p.status))\n    checks = [p for p in plans if any(n.startswith(u\"KIỂM TRA\") for n in p.notes)]\n    if checks:\n        report.append(u\"KIỂM TRA ĐẦU tuyến {} logia: {}\".format(len(checks), u\", \".join(str(p.fid) for p in checks)))\n    try:\n        report.append(u\"Log: \" + write_log(rows, cad_name, dry_run))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Xem trước: tuyến gờ ở cao độ đỉnh gờ + vạch 600 mm chỉ ra ngoài. Đúng thì đổi Dry-run = False \"\n                      u\"và Run lại. Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows]\n    return report, preview_lines(done, to_mm(level.Elevation))\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\nif DYNAMO:\n    import traceback\n\n    def _s(i, default):\n        v = IN[i] if len(IN) > i else None\n        return (v if v is not None and u\"{}\".format(v).strip() else default)\n\n    try:\n        _base = _s(7, None)\n        OUT = list(main(\n            u\"{}\".format(_s(0, u\"\")).strip(),\n            split_layers(_s(1, u\"A-Line;A-line1;A-line2\")),\n            norm(_s(2, u\"Logia\")),\n            norm(_s(3, u\"VBT-150\")),\n            norm(_s(4, u\"VBT-200\")),\n            norm(_s(5, u\"Tầng 1\")),\n            float(_s(6, 100.0)),\n            None if _base is None else float(_base),\n            True if (len(IN) <= 8 or IN[8] is None) else bool(IN[8]),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoGoLogia_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "4f78b3ff89ce40a9b8c5261858443bee",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "b2056999c07442a0b8e61808b1a1f7e4",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ba688ada07f745f29f7a54c8135e39a5",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "668b807c19be47149006dd833bc8c748",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1c34aa12bed94fe1ab98a745f7023897",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f5c4121e9da44599ae309b9720c2486b",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c2f94869436e41b9874f81bb479faa9d",
+          "Name": "IN[5]",
+          "Description": "Input #5",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "04583d71c69c43e691b6d8a25deaa3c5",
+          "Name": "IN[6]",
+          "Description": "Input #6",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e0cbb75febbe4e7a90bc5f3bd83b9958",
+          "Name": "IN[7]",
+          "Description": "Input #7",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c08437fac8cc4424b6d574254c6bbd72",
+          "Name": "IN[8]",
+          "Description": "Input #8",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8e1a2a81556b48cea17684b4da614f01",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "398ed9f80c404d5faaffa030577b48f0",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "9a2dfd093abe4616aed0ba82b585a1c4",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d0a326cf75204a0db5187a3ae5c32d7c",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "624bc7e66777458887d941dba5035be4",
+      "End": "b2056999c07442a0b8e61808b1a1f7e4",
+      "Id": "86383370bac345039a3e704b56334d32",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e5fbca231b78467d8cf47de9694d2d0f",
+      "End": "ba688ada07f745f29f7a54c8135e39a5",
+      "Id": "e0a88330e13449b99b579c3ff09e3841",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "62466899911c475baf016476360954c4",
+      "End": "668b807c19be47149006dd833bc8c748",
+      "Id": "93a24921cfa84bf9a0940298cf8a063e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d4230c7f453e4ad68f2400cab1811adc",
+      "End": "1c34aa12bed94fe1ab98a745f7023897",
+      "Id": "da744997878a4d1f93ea504de8abcaae",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "ed74b92540e74aa6ad74d6cec08ba650",
+      "End": "f5c4121e9da44599ae309b9720c2486b",
+      "Id": "0e5f4e44f6f241d6b0626fa4db99c24b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b6a60342640746ab94d380c650dfde65",
+      "End": "c2f94869436e41b9874f81bb479faa9d",
+      "Id": "332146f6b0e24c40afeafaa8e6acccfa",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fbbb878c86e3411898fc6e99cdf81354",
+      "End": "04583d71c69c43e691b6d8a25deaa3c5",
+      "Id": "f0e61a2d27d24f2c8b09d816ce6f44c8",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "975f0fb5f6dc405ebcd7ce3ef36206f9",
+      "End": "e0cbb75febbe4e7a90bc5f3bd83b9958",
+      "Id": "fc0c7ae680304762876a7f26995e217a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5db3f92d9e2745f49b40568d26545b36",
+      "End": "c08437fac8cc4424b6d574254c6bbd72",
+      "Id": "a30ebe18db524074bf4a861a7017b82f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8e1a2a81556b48cea17684b4da614f01",
+      "End": "9a2dfd093abe4616aed0ba82b585a1c4",
+      "Id": "c81a4946cd8f4f94b72b94af6e327d10",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "1dc5a52f281d475795af09771a9e2b47",
+        "Name": "IN[0] Tên bản CAD (chuỗi con, trống = tự tìm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "16f8369e424f40f598a3cb97cf31ebdf",
+        "Name": "IN[1] Layer nét mặt ngoài logia (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "1abf609d3e3f42c88cdb8c4723b641e0",
+        "Name": "IN[2] Chuỗi con tên floor type sàn logia",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "767a59c70b9d4801bc8dd7bb8097c125",
+        "Name": "IN[3] Wall type gờ",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "b8441663058b4254ad2880302d611a09",
+        "Name": "IN[4] Wall type mẫu (nhân bản khi IN[3] chưa có)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "692b8b2797f94b9d92323b880640c41e",
+        "Name": "IN[5] Level",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "97b77d56a17548bc98d5b05246810d2d",
+        "Name": "IN[6] Gờ cao trên mặt sàn hoàn thiện logia (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "f0eb9034797f4146bc97abb12d792a4f",
+        "Name": "IN[7] Chân gờ so với level (mm), trống = đáy sàn hoàn thiện logia",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "d6b9bb68f76041f49bcb8c4b95b6532e",
+        "Name": "IN[8] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "4f78b3ff89ce40a9b8c5261858443bee",
+        "Name": "ARV_TaoGoLogia_v1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 650.0,
+        "Y": 300.0
+      },
+      {
+        "Id": "398ed9f80c404d5faaffa030577b48f0",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "55bae7e93b72443e8ab8f49b486297aa",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Mô hình phải có sàn logia (type chứa IN[2]) + tường; bản DWG mặt bằng Link đúng vị trí. Giữ Dry-run = True cho lần chạy đầu, đọc Báo cáo rồi mới đổi False.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "1dc5a52f281d475795af09771a9e2b47",
+          "16f8369e424f40f598a3cb97cf31ebdf",
+          "1abf609d3e3f42c88cdb8c4723b641e0",
+          "767a59c70b9d4801bc8dd7bb8097c125",
+          "b8441663058b4254ad2880302d611a09",
+          "692b8b2797f94b9d92323b880640c41e",
+          "97b77d56a17548bc98d5b05246810d2d",
+          "f0eb9034797f4146bc97abb12d792a4f",
+          "d6b9bb68f76041f49bcb8c4b95b6532e"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 583.0,
+        "Height": 1094.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1025.0,
+        "TextblockHeight": 72.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 275.01122799999996,
+    "Y": 169.82738700000004,
+    "Zoom": 0.9063352
+  }
+}

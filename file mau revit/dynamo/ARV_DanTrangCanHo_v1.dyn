@@ -1,0 +1,782 @@
+{
+  "Uuid": "10b0776f-4645-4635-bcd5-aa8698e38eec",
+  "IsCustomNode": false,
+  "Description": "Dàn trang hồ sơ chi tiết căn hộ theo mẫu CAD CT1-CH02-CTCH: Room, view MB nội thất / tường xây / lát sàn / trần, chi tiết WC + logia, tag, sheet A1. Dry-run mặc định.",
+  "Name": "ARV_DanTrangCanHo_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "962f6926ebbf4852bf9774f60b2c3619",
+      "Name": "IN[0] Căn hộ (cách ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "CH01",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "cffc2df265c94e408349d7f601e3a4cc",
+      "Name": "IN[1] Tỷ lệ sheet căn hộ – thử lần lượt, lấy lớn nhất vừa khung",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "50;60;65;70;75;80;90;100;125;150",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "00ffa48142a84b1380c9fbf4ea01e66a",
+      "Name": "IN[2] Tỷ lệ chi tiết WC / logia – thử lần lượt",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "20;25;30;40;50",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "bf528654e9c242f0a545de9893ae87d1",
+      "Name": "IN[3] Số hiệu sheet ({nn} = số căn)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "CTCH=A.5-1{nn}-1;WC=A.5-1{nn}-2;LG=A.5-1{nn}-3",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "b6dedcdf87fe4bb9946e57f0b10313e5",
+      "Name": "IN[4] Khung tên (family)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV-Khung A1(841x594)-Kien Truc",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "687ad1844a8f4e7eb63ffdacfcf386c9",
+      "Name": "IN[5] Viewport type",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV-Title w Line_Detail",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "0648d04467b74f86acd55ceac0afca81",
+      "Name": "IN[6] Lề crop quanh căn / WC / logia (mm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "300",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "3896dfe6982948b78def4fad93e841ec",
+      "Name": "IN[7] Legend ghi chú cột phải (chưa có → tự sinh; trống = không đặt)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "GHI CHÚ CĂN HỘ",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "a1c9d928c18d4f4287ae830245d4bb54",
+      "Name": "IN[8] Dry-run (True = dựng thử rồi hoàn tác)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "4a3ec7db55c647f4a64ed434b3d3790b",
+      "Name": "IN[9] Làm lại (True = xóa view/sheet cũ của căn, vẽ lại legend)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "882e5ddacad0402d8d9f417d94bf2b55",
+      "Name": "Báo cáo",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "962f6926ebbf4852bf9774f60b2c3619",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c8e18e972a39484ebcca571b6d89019d",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "CH01"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "cffc2df265c94e408349d7f601e3a4cc",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a38f2fd0df0646139900672d736bbdbf",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "50;60;65;70;75;80;90;100;125;150"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "00ffa48142a84b1380c9fbf4ea01e66a",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e3e81cb115b24551a45851681f9ab28d",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "20;25;30;40;50"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "bf528654e9c242f0a545de9893ae87d1",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c0139e3977564108a0025bd7210e057a",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "CTCH=A.5-1{nn}-1;WC=A.5-1{nn}-2;LG=A.5-1{nn}-3"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b6dedcdf87fe4bb9946e57f0b10313e5",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7288960c55c94629a636ca9c1bee79fc",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV-Khung A1(841x594)-Kien Truc"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "687ad1844a8f4e7eb63ffdacfcf386c9",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0ebf1887647f4b0eac0a090acde91138",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV-Title w Line_Detail"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "0648d04467b74f86acd55ceac0afca81",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b651003b14a84ac98a7e50b97e84e3c3",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "300"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "3896dfe6982948b78def4fad93e841ec",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6d23f3b3868044229148243aa6a00f13",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "GHI CHÚ CĂN HỘ"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "a1c9d928c18d4f4287ae830245d4bb54",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fe703f6bf56645baadb6364fff645c7e",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "4a3ec7db55c647f4a64ed434b3d3790b",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e58bac4147fb4c71b814649fed2df874",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_DanTrangCanHo_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n# Revit 2026 / Dynamo 3.6 (CPython3)\n#\n# Dàn trang hồ sơ chi tiết căn hộ theo mẫu CAD CT1-CH02-CTCH (TAOVP / TAOVPWC / TAOVPLG bên ACA), trên level\n# của view mặt bằng đang mở. Căn hộ nhận theo sàn hoàn thiện \"ARV-SanCanHo <căn> <loại>\" (ARV_TaoSanCanHoTuCAD_v1).\n#   1. Room: mỗi vùng kín (PlanCircuit ≥ 1 m²) nằm trong sàn của căn mà chưa có Room → tạo Room.\n#      Tên theo Room mẫu của template: sàn KHO lớn nhất = Phòng khách-ăn (KA), còn lại Phòng ngủ (NG);\n#      WC = Vệ sinh; logia lớn nhất = Logia phòng khách (LG1), còn lại Logia phơi đồ (LG2).\n#      Number = \"<căn>-<mã>\", Occupant = căn. KTS soát lại tên phòng sau khi chạy.\n#   2. Sheet CTCH (khung A1, 2 cột + cột ghi chú bên phải), 3 hàng như mẫu FPT P5-04.01:\n#      MC 1-1 | MC 2-2 căn hộ (4.6) · MB tường xây, định vị cửa (4.1) | MB trần (4.4) ·\n#      MB bố trí nội thất (4.2) | MB lát sàn (4.3). MC 1-1 song song trục X, MC 2-2 song song trục Y: một mặt\n#      cắt qua tâm logia (vuông góc cạnh dài logia), mặt kia qua tâm WC – KTS kéo lại đường cắt nếu cần.\n#      Tỷ lệ chung: lớn nhất trong danh sách IN[1] mà cả 6 view vừa khung (hàng cao theo view thật).\n#      Cột phải 592–742: SƠ ĐỒ VỊ TRÍ CĂN HỘ (MB cả tầng VFT 1.1, 1/200–1/1000, sàn của căn tô đỏ bằng override\n#      riêng view) + legend ghi chú dùng chung (bảng tường xây / trần / lát sàn: mã = Type Mark như tag, cấu tạo\n#      theo các lớp của type, hatch tường theo filled region type có sẵn trùng mẫu cắt vật liệu lõi).\n#   3. Sheet WC: mỗi WC một hàng (tối đa 2) × 3 MB: thiết bị (5.1) · lát sàn (5.2) · trần (5.3); tỷ lệ chung của\n#      sheet = lớn nhất trong danh sách IN[2] mà mọi view vừa ô (sheet logia / sheet gộp cũng vậy).\n#   4. Sheet logia: mỗi logia một hàng (tối đa 2) × MB lát sàn + thiết bị (6.1) · MB trần (4.4) · MC 1-1 (6.2).\n#      Mặt cắt vuông góc cạnh dài nhất của sàn logia, qua tâm, nhìn về một nửa logia.\n#      Căn có đúng 1 WC + 1 logia → gộp chi tiết WC (hàng trên) và logia (hàng dưới) vào MỘT sheet số hiệu WC,\n#      tên \"CHI TIẾT VỆ SINH, LOGIA CĂN HỘ …\" (KTS chốt 2026-10-22).\n#   5. View tạo từ View Family Type của template công ty (tự gắn view template). Tỷ lệ khác tỷ lệ template →\n#      chép thông số template vào view rồi bỏ gắn template (KHÔNG sửa view template).\n#   6. Tag: Room (MB nội thất), cửa đi / cửa sổ / louver (MB tường xây, MB thiết bị WC, MB logia),\n#      sàn (MB lát sàn, đá chân cửa có đường dẫn), trần (MB trần), thiết bị vệ sinh (MB thiết bị WC).\n#   7. Chưa làm: dim tường / cửa, cao độ, ghi chú vật liệu tường (WF-…) – KTS bổ sung tay hoặc tool sau.\n# INPUT\n#   IN[0] (str)  Căn hộ (cách ';', VD \"CH01;CH02\")\n#   IN[1] (str)  Tỷ lệ sheet căn hộ thử lần lượt (VD \"50;60;65;70;75;80;90;100;125;150\"; một số = cố định)\n#   IN[2] (str)  Tỷ lệ chi tiết WC / logia thử lần lượt (VD \"20;25;30;40;50\")\n#   IN[3] (str)  Số hiệu sheet: \"CTCH=…;WC=…;LG=…\", {nn} = số của căn (CH01 → 01)\n#   IN[4] (str)  Tên family khung tên (title block)\n#   IN[5] (str)  Viewport type\n#   IN[6] (str)  Lề crop quanh căn / WC / logia (mm)\n#   IN[7] (str)  Tên legend ghi chú cột phải sheet CTCH (mặc định \"GHI CHÚ CĂN HỘ\"; có sẵn → dùng lại, chưa có →\n#                sinh 3 bảng tường xây / trần / lát sàn từ type đang dùng trong các căn; trống = không đặt)\n#   IN[8] (bool) Dry-run: True = dựng thử rồi hoàn tác, chỉ báo cáo (mặc định True)\n#   IN[9] (bool) Làm lại (mặc định False): căn đã có view '<căn> - …' / sheet số theo IN[3] → xóa đúng các view,\n#                sheet đó (Room giữ nguyên) rồi dựng mới; legend ghi chú xóa nội dung, vẽ lại tại chỗ.\n#                False → căn đã có kết quả bị bỏ qua.\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, cảnh báo, đường dẫn log, từng view / sheet\n#   OUT[1] (list)       Trống (giữ chỗ cho đồng bộ với các tool khác)\n\nimport os\nimport io\nimport csv\nimport math\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, UV, Transform, Transaction, UnitUtils, UnitTypeId,\n                                   ModelPathUtils, BuiltInParameter, BuiltInCategory, Floor, Ceiling, Level, Sketch,\n                                   ViewType, ViewFamily, ViewFamilyType, ViewPlan, ViewSection, ViewSheet, Viewport,\n                                   ViewportRotation, BoundingBoxXYZ, ElementId, IndependentTag, TagOrientation,\n                                   Reference, LinkElementId, FamilySymbol, ElementType, LocationPoint, View,\n                                   SpatialElement, FailureProcessingResult, IFailuresPreprocessor, FailureSeverity,\n                                   FilledRegion, FilledRegionType, CurveLoop, Line, TextNote, TextNoteOptions,\n                                   TextNoteType, HorizontalTextAlignment, OverrideGraphicSettings, Color,\n                                   FillPatternElement, Category, ViewDuplicateOption, ViewDetailLevel, Wall,\n                                   WallType, BoundingBoxIntersectsFilter, Outline, CurveElement, DocumentValidation,\n                                   GraphicsStyleType)\n    from System.Collections.Generic import List\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Dàn trang chi tiết căn hộ\"\nSCRIPT_TAG = u\"ARV_DanTrangCanHo_v1\"\nFLOOR_TAG = u\"ARV-SanCanHo\"\nCEIL_TAG = u\"ARV-TranCanHo\"\nMIN_ROOM_M2 = 1.0\n\n# Room mẫu trong template G19 / công ty: mã → tên\nROOM_NAMES = {\"KA\": u\"Phòng khách-ăn\", \"NG\": u\"Phòng ngủ\", \"WC\": u\"Vệ sinh\",\n              \"LG1\": u\"Logia phòng khách\", \"LG2\": u\"Logia phơi đồ\"}\n\n# Khung A1 AV-Khung A1(841x594): hộp bao family 0,5–841,5 × −1–593 gồm cả viền vô hình (PDF); khung NHÌN THẤY\n# đo lại 2026-10-22 bằng nét chuẩn trên sheet: viền trong x 35,4 – cột khung tên 733,  y 16,3 – 576,5 mm.\nAREA_X0, AREA_X1, AREA_Y0, AREA_Y1 = 36.0, 733.0, 17.0, 576.0\nCTCH_X = (36.0, 309.5, 583.0)         # 2 cột viewport, cột phải 583–733 (key plan + ghi chú) như mẫu FPT\nNOTE_X0, NOTE_X1 = 583.0, 733.0\nNOTE_X = (NOTE_X0 + NOTE_X1) / 2.0\nKEY_SCALES = (200, 250, 300, 400, 500, 600, 800, 1000)\nKEY_MAX_H = 120.0                    # mm giấy, chiều cao tối đa key plan\nKEY_MARGIN = 1500.0                  # mm, lề crop quanh các căn của tầng\nTABLE_W = (14.0, 92.0, 24.0)         # mm giấy: cột ký hiệu / cấu tạo / dày-cao độ\nKIND_LABEL = {\"KHO\": u\"ngủ, khách\", \"WC\": u\"WC\", \"LOGIA\": u\"logia\", \"CHANCUA\": u\"chân cửa\"}\nTEXT_TITLE = u\"AV_Text 3mm_Arial-Bold\"\nTEXT_BODY = u\"AV_Arial_2 mm_Dot\"\nCELL_PAD = 8.0                       # mm giấy, khoảng hở tối thiểu quanh viewport trong ô\nTITLE_ROOM = 14.0                    # mm giấy dành cho tên hình dưới viewport\nTITLE_LABEL_GAP = 7.0                # mm giấy từ đáy hình thấp nhất của hàng tới tâm tên hình\nDIVIDER_STYLES = (u\"AV.Nét Khuất.W1\", u\"<Hidden>\")   # line style nét đứt chia ô (có sẵn trong template)\n\n# Tag (family : type) – template công ty\nTAG_ROOM = (u\"AV_Room Tag\", u\"Room Tag Name+ area\")\nTAG_DOOR = (u\"AV_Door Tag\", u\"AV_Door Tag\")\nTAG_WIN = (u\"AV_Window Tag\", u\"Window Tag\")\nTAG_LOUVER = (u\"AV_Louver Tag\", u\"Louver Tag\")\nTAG_FLOOR = (u\"AV_Floor Tag\", u\"Plan\")\nTAG_CEIL = (u\"AV_Celling Tag\", u\"Section Tag\")\nTAG_PLUMB = (u\"AV_Plumbing Fixture Tag\", u\"AV_Plumbing Fixture Tag\")\n\n\n# --- Hình học 2D thuần (mm) ---------------------------------------------------------\ndef signed_area(pts):\n    return sum(pts[i][0] * pts[(i + 1) % len(pts)][1] - pts[(i + 1) % len(pts)][0] * pts[i][1]\n               for i in range(len(pts))) / 2.0\n\n\ndef point_in(pt, pts):\n    x, y = pt\n    inside = False\n    j = len(pts) - 1\n    for i in range(len(pts)):\n        xi, yi = pts[i]\n        xj, yj = pts[j]\n        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi:\n            inside = not inside\n        j = i\n    return inside\n\n\ndef interior_point(outer, holes, inner=150.0):\n    \"\"\"Điểm trong vòng ngoài, ngoài các lỗ: tâm hộp bao nếu lọt, không thì trung điểm cạnh dài lùi vào trong.\"\"\"\n    xs, ys = [p[0] for p in outer], [p[1] for p in outer]\n    c = ((min(xs) + max(xs)) / 2.0, (min(ys) + max(ys)) / 2.0)\n    if point_in(c, outer) and not any(point_in(c, h) for h in holes):\n        return c\n    ccw = signed_area(outer) > 0\n    s = 1.0 if ccw else -1.0\n    edges = sorted(range(len(outer)), key=lambda i: -math.hypot(outer[(i + 1) % len(outer)][0] - outer[i][0],\n                                                                outer[(i + 1) % len(outer)][1] - outer[i][1]))\n    for i in edges:\n        a, b = outer[i], outer[(i + 1) % len(outer)]\n        l = math.hypot(b[0] - a[0], b[1] - a[1])\n        if l < 3 * inner:\n            continue\n        p = ((a[0] + b[0]) / 2.0 - s * (b[1] - a[1]) / l * inner, (a[1] + b[1]) / 2.0 + s * (b[0] - a[0]) / l * inner)\n        if point_in(p, outer) and not any(point_in(p, h) for h in holes):\n            return p\n    return c\n\n\ndef bbox_of(loops, margin=0.0):\n    xs = [p[0] for l in loops for p in l]\n    ys = [p[1] for l in loops for p in l]\n    return (min(xs) - margin, min(ys) - margin, max(xs) + margin, max(ys) + margin)\n\n\ndef longest_edge_dir(outer):\n    best, d = -1.0, (1.0, 0.0)\n    for i in range(len(outer)):\n        a, b = outer[i], outer[(i + 1) % len(outer)]\n        l = math.hypot(b[0] - a[0], b[1] - a[1])\n        if l > best:\n            best, d = l, ((b[0] - a[0]) / l, (b[1] - a[1]) / l)\n    return d\n\n\ndef parse_map(text):\n    result = {}\n    for part in (text or u\"\").split(u\";\"):\n        if u\"=\" in part:\n            k, v = part.split(u\"=\", 1)\n            if k.strip():\n                result[k.strip().upper()] = v.strip()\n    return result\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef split_filters(text):\n    return [s.strip() for s in (text or u\"\").replace(u\",\", u\";\").split(u\";\") if s.strip()]\n\n\ndef apt_digits(apt):\n    d = u\"\".join(ch for ch in apt if ch.isdigit())\n    return d.zfill(2) if d else apt\n\n\ndef cells_row(n_cols, n_rows):\n    \"\"\"Tâm các ô (mm giấy) chia đều vùng vẽ: [hàng][cột] → (cx, cy, w, h).\"\"\"\n    w = (AREA_X1 - AREA_X0) / n_cols\n    h = (AREA_Y1 - AREA_Y0) / n_rows\n    return [[(AREA_X0 + w * (c + 0.5), AREA_Y1 - h * (r + 0.5), w, h) for c in range(n_cols)] for r in range(n_rows)]\n\n\n# =====================================================================================\n# PHẦN REVIT\n# =====================================================================================\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef P(x_mm, y_mm, z_ft=0.0):\n    return XYZ(from_mm(x_mm), from_mm(y_mm), z_ft)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef id_value(eid):\n    v = getattr(eid, \"Value\", None)\n    return v if v is not None else eid.IntegerValue\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef comment_of(el):\n    p = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    return (p.AsString() if p else u\"\") or u\"\"\n\n\ndef sketch_loops(el):\n    \"\"\"Biên sketch (sàn / trần) → [vòng điểm mm]; vòng ngoài = vòng diện tích lớn nhất.\"\"\"\n    try:\n        sk = doc.GetElement(el.SketchId)\n    except Exception:\n        sk = None\n    if not isinstance(sk, Sketch):\n        return [], []\n    loops = []\n    for arr in sk.Profile:\n        loop = []\n        for c in list(arr):\n            loop.extend([(to_mm(p.X), to_mm(p.Y)) for p in list(c.Tessellate())[:-1]])\n        if len(loop) >= 3:\n            loops.append(loop)\n    if not loops:\n        return [], []\n    k = max(range(len(loops)), key=lambda i: abs(signed_area(loops[i])))\n    return loops[k], [l for i, l in enumerate(loops) if i != k]\n\n\nclass Part(object):\n    \"\"\"Một tấm sàn / trần hoàn thiện của căn.\"\"\"\n    def __init__(self, el, kind):\n        self.el = el\n        self.kind = kind\n        self.outer, self.holes = sketch_loops(el)\n        self.area = (abs(signed_area(self.outer)) - sum(abs(signed_area(h)) for h in self.holes)) / 1e6 \\\n            if self.outer else 0.0\n        self.ip = interior_point(self.outer, self.holes) if self.outer else None\n\n    def contains(self, pt):\n        return bool(self.outer) and point_in(pt, self.outer) and not any(point_in(pt, h) for h in self.holes)\n\n\nclass Ctx(object):\n    \"\"\"Type / view family type tra một lần.\"\"\"\n    def __init__(self, title_block, vp_type):\n        self.vft = {}\n        for t in FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElements():\n            self.vft.setdefault((t.ViewFamily, norm(get_name(t)).split(u\" \")[0]), t)\n        tbs = [t for t in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_TitleBlocks)\n               .WhereElementIsElementType().ToElements() if norm(t.FamilyName) == norm(title_block)]\n        if not tbs:\n            names = sorted(set(t.FamilyName for t in FilteredElementCollector(doc)\n                               .OfCategory(BuiltInCategory.OST_TitleBlocks).WhereElementIsElementType().ToElements()))\n            raise StopReport([u\"DỪNG: không có khung tên '{}' (IN[4]). Các khung tên: {}\".format(\n                title_block, u\", \".join(names))])\n        self.title_block = tbs[0]\n        vpts = [t for t in FilteredElementCollector(doc).OfClass(ElementType).ToElements()\n                if t.FamilyName == u\"Viewport\" and norm(get_name(t)) == norm(vp_type)]\n        if not vpts:\n            names = [get_name(t) for t in FilteredElementCollector(doc).OfClass(ElementType).ToElements()\n                     if t.FamilyName == u\"Viewport\"]\n            raise StopReport([u\"DỪNG: không có viewport type '{}' (IN[5]). Các type: {}\".format(\n                vp_type, u\", \".join(names))])\n        self.vp_type = vpts[0]\n        # Legend ghi chú đặt bằng viewport không tên (như mẫu); không có thì dùng type chính\n        self.vp_notitle = next((t for t in FilteredElementCollector(doc).OfClass(ElementType).ToElements()\n                                if t.FamilyName == u\"Viewport\" and norm(get_name(t)) == u\"No Title\"), self.vp_type)\n        self.divider_style = None\n        for sub in Category.GetCategory(doc, BuiltInCategory.OST_Lines).SubCategories:\n            if sub.Name in DIVIDER_STYLES and (self.divider_style is None or sub.Name == DIVIDER_STYLES[0]):\n                self.divider_style = sub.GetGraphicsStyle(GraphicsStyleType.Projection)\n        self.tags = {}\n        self.missing_tags = []\n        for key, bic in ((TAG_ROOM, BuiltInCategory.OST_RoomTags), (TAG_DOOR, BuiltInCategory.OST_DoorTags),\n                         (TAG_WIN, BuiltInCategory.OST_WindowTags), (TAG_LOUVER, BuiltInCategory.OST_WindowTags),\n                         (TAG_FLOOR, BuiltInCategory.OST_FloorTags), (TAG_CEIL, BuiltInCategory.OST_CeilingTags),\n                         (TAG_PLUMB, BuiltInCategory.OST_PlumbingFixtureTags)):\n            found = [t for t in FilteredElementCollector(doc).OfCategory(bic).WhereElementIsElementType().ToElements()\n                     if norm(t.FamilyName) == norm(key[0]) and norm(get_name(t)) == norm(key[1])]\n            if found:\n                self.tags[key] = found[0].Id\n            else:\n                self.missing_tags.append(u\"{} : {}\".format(key[0], key[1]))\n\n    def text_type(self, name):\n        if not hasattr(self, \"_text_types\"):\n            self._text_types = dict((norm(get_name(t)), t) for t in\n                                    FilteredElementCollector(doc).OfClass(TextNoteType).ToElements())\n        return self._text_types.get(norm(name))\n\n    def family_type(self, family, code):\n        t = self.vft.get((family, code))\n        if t is None:\n            raise StopReport([u\"DỪNG: không có View Family Type '{} …' ({}) trong template.\".format(code, family)])\n        return t\n\n\nclass Apt(object):\n    def __init__(self, name):\n        self.name = name\n        self.floors = []      # [Part]\n        self.ceilings = []    # [Part]\n        self.rooms = []       # [(code, Room)]\n        self.views = []       # [(sheet key, View, tỷ lệ, kết quả)]\n        self.sheets = []      # [(key, ViewSheet)]\n        self.notes = []\n        self.wc_labels = {}   # Part → \"WC1\"\n        self.lg_labels = {}   # Part → \"LG1\"\n\n    def of_kind(self, kind):\n        return [f for f in self.floors if f.kind == kind]\n\n    def bbox(self, margin):\n        return bbox_of([f.outer for f in self.floors if f.outer], margin)\n\n\ndef collect_apartments(level, wanted):\n    apts = dict((a.upper(), Apt(a.upper())) for a in wanted)\n    for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        if fl.LevelId != level.Id:\n            continue\n        w = norm(comment_of(fl)).split()\n        if len(w) >= 3 and w[0] == FLOOR_TAG and w[1].upper() in apts:\n            part = Part(fl, w[-1].upper())\n            if part.outer:\n                apts[w[1].upper()].floors.append(part)\n    for cg in FilteredElementCollector(doc).OfClass(Ceiling).ToElements():\n        if cg.LevelId != level.Id:\n            continue\n        w = norm(comment_of(cg)).split()\n        if len(w) >= 3 and w[0] == CEIL_TAG and w[1].upper() in apts:\n            part = Part(cg, w[-1].upper())\n            if part.outer:\n                apts[w[1].upper()].ceilings.append(part)\n    return [apts[a.upper()] for a in wanted]\n\n\n# --- Room ------------------------------------------------------------------------------\ndef plan_circuits(level):\n    try:\n        topo = doc.get_PlanTopology(level)\n    except Exception:\n        topo = doc.PlanTopology[level]\n    return list(topo.Circuits)\n\n\ndef make_rooms(apt, level, circuits, placed_rooms):\n    \"\"\"Gán mã phòng cho vùng kín trong sàn căn; tạo Room cho vùng chưa có. Trả về [(code, Room, mới?)].\"\"\"\n    found = []    # (kind, area_m2, pt, room hoặc None)\n    for c in circuits:\n        p = c.GetPointInside()\n        pt = (to_mm(p.U), to_mm(p.V))\n        area = c.Area * 0.09290304\n        if area < MIN_ROOM_M2:\n            continue\n        part = next((f for f in apt.floors if f.kind in (\"KHO\", \"WC\", \"LOGIA\") and f.contains(pt)), None)\n        if part is None:\n            continue\n        room = None\n        if c.IsRoomLocated:\n            room = next((r for r in placed_rooms if r.IsPointInRoom(P(pt[0], pt[1], level.Elevation + 1.0))), None)\n            if room is None:\n                continue\n        found.append((part.kind, area, pt, room))\n    result = []\n    kho = sorted([f for f in found if f[0] == \"KHO\"], key=lambda f: -f[1])\n    lg = sorted([f for f in found if f[0] == \"LOGIA\"], key=lambda f: -f[1])\n    wc = sorted([f for f in found if f[0] == \"WC\"], key=lambda f: (f[2][0], f[2][1]))\n    plan = [(\"KA\" if i == 0 else \"NG\", f) for i, f in enumerate(kho)]\n    plan += [(\"LG1\" if i == 0 else \"LG2\", f) for i, f in enumerate(lg)]\n    plan += [(\"WC\", f) for f in wc]\n    n_code = {}\n    for code, f in plan:\n        n_code[code] = n_code.get(code, 0) + 1\n        number = u\"{}-{}{}\".format(apt.name, code, n_code[code] if code in (\"NG\", \"WC\", \"LG2\") else u\"\")\n        room = f[3]\n        if room is None:\n            room = doc.Create.NewRoom(level, UV(from_mm(f[2][0]), from_mm(f[2][1])))\n            room.Name = ROOM_NAMES[code]\n            room.Number = number\n            occ = room.get_Parameter(BuiltInParameter.ROOM_OCCUPANCY)\n            if occ is not None and not occ.IsReadOnly:\n                occ.Set(apt.name)\n            result.append((code, room, True))\n        else:\n            result.append((code, room, False))\n    return result\n\n\n# --- View ------------------------------------------------------------------------------\ndef set_scale(view, scale):\n    \"\"\"Đặt tỷ lệ; template khóa tỷ lệ khác → chép thông số template vào view rồi bỏ gắn template.\"\"\"\n    note = u\"\"\n    tid = view.ViewTemplateId\n    if tid != ElementId.InvalidElementId and view.Scale != scale:\n        tpl = doc.GetElement(tid)\n        view.ViewTemplateId = ElementId.InvalidElementId\n        view.ApplyViewTemplateParameters(tpl)\n        note = u\"bỏ gắn template '{}' (chép thông số) để đặt 1/{}\".format(get_name(tpl), scale)\n    view.Scale = scale\n    return note\n\n\ndef make_plan(ctx, level, family, code, name, title, scale, box):\n    view = ViewPlan.Create(doc, ctx.family_type(family, code).Id, level.Id)\n    view.Name = name\n    tpl_name = get_name(doc.GetElement(view.ViewTemplateId)) if view.ViewTemplateId != ElementId.InvalidElementId \\\n        else u\"(không)\"\n    note = set_scale(view, scale)\n    cb = view.CropBox\n    cb.Min = XYZ(from_mm(box[0]), from_mm(box[1]), cb.Min.Z)\n    cb.Max = XYZ(from_mm(box[2]), from_mm(box[3]), cb.Max.Z)\n    view.CropBox = cb\n    view.CropBoxActive = True\n    view.CropBoxVisible = False\n    annotation_crop(view)\n    view.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION).Set(title)\n    return view, note or u\"template '{}'\".format(tpl_name)\n\n\ndef make_apt_section(ctx, level, name, title, scale, box, along_x, cut, height_mm):\n    \"\"\"Mặt cắt căn hộ (4.6): along_x = đường cắt song song trục X tại y = cut (nhìn về −Y), ngược lại song song\n    trục Y tại x = cut (nhìn về +X). Rộng = hộp căn, sâu từ đường cắt tới mép hộp, cao −300 → tầng + 300.\"\"\"\n    t = Transform.Identity\n    if along_x:\n        t.Origin = XYZ(from_mm((box[0] + box[2]) / 2.0), from_mm(cut), level.Elevation)\n        t.BasisX = XYZ(1, 0, 0)\n        t.BasisZ = XYZ(0, -1, 0)          # = BasisX × BasisY\n        w, depth = box[2] - box[0], cut - box[1]\n    else:\n        t.Origin = XYZ(from_mm(cut), from_mm((box[1] + box[3]) / 2.0), level.Elevation)\n        t.BasisX = XYZ(0, 1, 0)\n        t.BasisZ = XYZ(1, 0, 0)\n        w, depth = box[3] - box[1], box[2] - cut\n    t.BasisY = XYZ(0, 0, 1)\n    bb = BoundingBoxXYZ()\n    bb.Transform = t\n    bb.Min = XYZ(from_mm(-w / 2.0), from_mm(-300), 0)          # mặt cắt ở Min.Z\n    bb.Max = XYZ(from_mm(w / 2.0), from_mm(height_mm + 300), from_mm(max(depth, 300.0)))\n    view = ViewSection.CreateSection(doc, ctx.family_type(ViewFamily.Section, u\"4.6\").Id, bb)\n    view.Name = name\n    annotation_crop(view)\n    note = set_scale(view, scale)\n    view.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION).Set(title)\n    return view, note or u\"template 4.6\"\n\n\ndef section_cuts(apt):\n    \"\"\"Vị trí 2 mặt cắt căn: một qua tâm logia vuông góc cạnh dài logia, một qua tâm WC theo phương còn lại.\n    Trả về (y của MC 1-1 song song X, x của MC 2-2 song song Y).\"\"\"\n    box = apt.bbox(0.0)\n    cy, cx = (box[1] + box[3]) / 2.0, (box[0] + box[2]) / 2.0\n    wc = apt.of_kind(\"WC\")\n    lg = sorted(apt.of_kind(\"LOGIA\"), key=lambda f: -f.area)\n    wc_c = bbox_of([wc[0].outer]) if wc else None\n    lg_c = bbox_of([lg[0].outer]) if lg else None\n    y11, x22 = cy, cx\n    if lg_c is not None:\n        d = longest_edge_dir(lg[0].outer)\n        if abs(d[0]) >= abs(d[1]):        # logia nằm ngang → cắt dọc (MC 2-2) qua logia\n            x22 = (lg_c[0] + lg_c[2]) / 2.0\n            if wc_c is not None:\n                y11 = (wc_c[1] + wc_c[3]) / 2.0\n        else:\n            y11 = (lg_c[1] + lg_c[3]) / 2.0\n            if wc_c is not None:\n                x22 = (wc_c[0] + wc_c[2]) / 2.0\n    elif wc_c is not None:\n        y11 = (wc_c[1] + wc_c[3]) / 2.0\n    return y11, x22\n\n\ndef make_logia_section(ctx, level, part, name, title, scale, height_mm):\n    d = longest_edge_dir(part.outer)\n    u = (-d[1], d[0])\n    pu = [p[0] * u[0] + p[1] * u[1] for p in part.outer]\n    pd = [p[0] * d[0] + p[1] * d[1] for p in part.outer]\n    cu, cd = (min(pu) + max(pu)) / 2.0, (min(pd) + max(pd)) / 2.0\n    w, l = max(pu) - min(pu), max(pd) - min(pd)\n    t = Transform.Identity\n    t.Origin = XYZ(from_mm(cu * u[0] + cd * d[0]), from_mm(cu * u[1] + cd * d[1]), level.Elevation)\n    t.BasisX = XYZ(u[0], u[1], 0)\n    t.BasisY = XYZ(0, 0, 1)\n    t.BasisZ = XYZ(u[1], -u[0], 0)        # = BasisX × BasisY\n    bb = BoundingBoxXYZ()\n    bb.Transform = t\n    # Mặt cắt nằm ở Min.Z (đo qua MCP 2026-10-22) → Min.Z = 0 tại tâm logia, nhìn sâu nửa logia + 200\n    bb.Min = XYZ(from_mm(-w / 2.0 - 600), from_mm(-600), 0)\n    bb.Max = XYZ(from_mm(w / 2.0 + 600), from_mm(height_mm + 400), from_mm(l / 2.0 + 200))\n    view = ViewSection.CreateSection(doc, ctx.family_type(ViewFamily.Section, u\"6.2\").Id, bb)\n    view.Name = name\n    annotation_crop(view)\n    note = set_scale(view, scale)\n    view.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION).Set(title)\n    return view, note or u\"template 6.2\"\n\n\n# --- Tag -------------------------------------------------------------------------------\ndef set_type(el, type_id):\n    \"\"\"Đổi type. pythonnet (Dynamo CPython3) không khớp overload Element.ChangeTypeId cho RoomTag →\n    gán qua tham số ELEM_TYPE_PARAM, cuối cùng RoomTag.RoomTagType.\"\"\"\n    try:\n        el.ChangeTypeId(type_id)\n        return\n    except TypeError:\n        pass\n    p = el.get_Parameter(BuiltInParameter.ELEM_TYPE_PARAM)\n    if p is not None and not p.IsReadOnly and p.Set(type_id):\n        return\n    if hasattr(el, \"RoomTagType\"):\n        el.RoomTagType = doc.GetElement(type_id)\n        return\n    raise Exception(u\"Không đổi được type của phần tử Id {}\".format(id_value(el.Id)))\n\n\ndef in_box(pt, box):\n    return box[0] <= pt[0] <= box[2] and box[1] <= pt[1] <= box[3]\n\n\ndef location_mm(el):\n    loc = el.Location\n    if isinstance(loc, LocationPoint):\n        return (to_mm(loc.Point.X), to_mm(loc.Point.Y))\n    bb = el.get_BoundingBox(None)\n    if bb is None:\n        return None\n    return (to_mm((bb.Min.X + bb.Max.X) / 2.0), to_mm((bb.Min.Y + bb.Max.Y) / 2.0))\n\n\ndef tag(ctx, key, view, el, pt_mm, z, leader=False, head=None):\n    tid = ctx.tags.get(key)\n    if tid is None:\n        return 0\n    t = IndependentTag.Create(doc, tid, view.Id, Reference(el), leader, TagOrientation.Horizontal,\n                              P(pt_mm[0], pt_mm[1], z))\n    if leader and head is not None:\n        try:\n            t.TagHeadPosition = P(head[0], head[1], z)\n        except Exception:\n            pass\n    return 1\n\n\ndef tag_openings(ctx, view, box, z):\n    n = 0\n    for bic in (BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows):\n        for el in FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType().ToElements():\n            pt = location_mm(el)\n            if pt is None or not in_box(pt, box):\n                continue\n            if bic == BuiltInCategory.OST_Doors:\n                key = TAG_DOOR\n            else:\n                key = TAG_LOUVER if u\"LanCan\" in comment_of(el) or u\"Louver\" in get_name(el) else TAG_WIN\n            n += tag(ctx, key, view, el, pt, z)\n    return n\n\n\ndef tag_floors(ctx, view, parts, z):\n    n = 0\n    for f in parts:\n        if f.kind == \"CHANCUA\":\n            n += tag(ctx, TAG_FLOOR, view, f.el, f.ip, z, True, (f.ip[0] + 600, f.ip[1] + 600))\n        else:\n            n += tag(ctx, TAG_FLOOR, view, f.el, f.ip, z)\n    return n\n\n\n# --- Sheet -----------------------------------------------------------------------------\ndef new_sheet(ctx, number, name, ref_sheet):\n    sh = ViewSheet.Create(doc, ctx.title_block.Id)\n    sh.SheetNumber = number\n    sh.Name = name\n    if ref_sheet is not None:     # nhóm trong Project Browser như sheet mục A.5\n        for pname in (u\"Lọc Thư Mục Sheet\", u\"Lọc Giai Đoạn Hồ Sơ\"):\n            src, dst = ref_sheet.LookupParameter(pname), sh.LookupParameter(pname)\n            if src is not None and dst is not None and not dst.IsReadOnly and src.AsString():\n                dst.Set(src.AsString())\n    return sh\n\n\ndef place(ctx, sheet, view, cell):\n    cx, cy = cell[0], cell[1] + TITLE_ROOM / 2.0\n    vp = Viewport.Create(doc, sheet.Id, view.Id, XYZ(from_mm(cx), from_mm(cy), 0))\n    set_type(vp, ctx.vp_type.Id)\n    return vp\n\n\ndef fits(vp, cell):\n    o = vp.GetBoxOutline()\n    w = to_mm(o.MaximumPoint.X - o.MinimumPoint.X)\n    h = to_mm(o.MaximumPoint.Y - o.MinimumPoint.Y)\n    return w <= cell[2] - 2 * CELL_PAD and h <= cell[3] - 2 * CELL_PAD - TITLE_ROOM, (w, h)\n\n\ndef recenter(vps, cells):\n    for vp, cell in zip(vps, cells):\n        vp.SetBoxCenter(XYZ(from_mm(cell[0]), from_mm(cell[1] + TITLE_ROOM / 2.0), 0))\n\n\ndef outline_size(vp):\n    o = vp.GetBoxOutline()\n    return to_mm(o.MaximumPoint.X - o.MinimumPoint.X), to_mm(o.MaximumPoint.Y - o.MinimumPoint.Y)\n\n\ndef grid_layout(vps, cells):\n    \"\"\"Đặt viewport vào tâm ô; True nếu tất cả vừa ô.\"\"\"\n    recenter(vps, cells)\n    return all(fits(vp, cell)[0] for vp, cell in zip(vps, cells))\n\n\ndef fit_scale(views, scales, layout):\n    \"\"\"Thử tỷ lệ từ lớn (mẫu số nhỏ) đến nhỏ; dừng ở tỷ lệ đầu tiên layout() vừa khung.\n    Trả về (tỷ lệ, vừa?) – không vừa ở tỷ lệ cuối thì giữ tỷ lệ cuối.\"\"\"\n    for s in scales:\n        for v in views:\n            if v.Scale != s:\n                set_scale(v, s)\n        doc.Regenerate()\n        if layout():\n            doc.Regenerate()\n            return s, True\n    doc.Regenerate()\n    return scales[-1], False\n\n\ndef ctch_layout(rows, bounds=None):\n    \"\"\"Sheet CTCH: các hàng viewport (trên → dưới) trong 2 cột x 3–297,5–592, hàng cao theo view thật,\n    khoảng thừa chia đều. True nếu vừa; bounds (list) nhận cao độ ranh giới giữa các hàng (mm giấy).\"\"\"\n    col_w = CTCH_X[1] - CTCH_X[0]\n    heights = []\n    for row in rows:\n        sizes = [outline_size(vp) for vp in row]\n        if any(w > col_w - 2 * CELL_PAD for w, _h in sizes):\n            return False\n        heights.append(max(h for _w, h in sizes) + TITLE_ROOM + 2 * CELL_PAD)\n    avail = AREA_Y1 - AREA_Y0\n    if sum(heights) > avail:\n        return False\n    gap = (avail - sum(heights)) / len(rows)\n    y = AREA_Y1\n    if bounds is not None:\n        del bounds[:]\n    for row, h in zip(rows, heights):\n        cy = y - (h + gap) / 2.0\n        y -= h + gap\n        if bounds is not None and y > AREA_Y0 + 1.0:\n            bounds.append(y)\n        for c, vp in enumerate(row):\n            vp.SetBoxCenter(XYZ(from_mm((CTCH_X[c] + CTCH_X[c + 1]) / 2.0), from_mm(cy + TITLE_ROOM / 2.0), 0))\n    return True\n\n\ndef annotation_crop(view):\n    \"\"\"Cắt chú thích theo khung crop: ký hiệu mặt cắt / tag ngoài crop không làm phình khung viewport.\"\"\"\n    p = view.get_Parameter(BuiltInParameter.VIEWER_ANNOTATION_CROP_ACTIVE)\n    if p is not None and not p.IsReadOnly:\n        p.Set(1)\n\n\ndef align_titles(rows):\n    \"\"\"Tên hình: giữa, ngay dưới hình vẽ; cùng hàng thẳng một cao độ; gạch dưới dài vừa chữ (ước tính 2,2 mm/ký tự\n    – đo trên sheet G19: 43 ký tự ≈ 102 mm). Đo trên Revit 2026: nhãn từ (min.X + LabelOffset.X − 9) tới\n    (min.X + LabelOffset.X + LabelLineLength), tâm nhãn theo phương đứng ≈ min.Y + LabelOffset.Y.\"\"\"\n    for row in rows:\n        boxes = [vp.GetBoxOutline() for vp in row]\n        bottom = min(to_mm(o.MinimumPoint.Y) for o in boxes)\n        for vp, o in zip(row, boxes):\n            w = to_mm(o.MaximumPoint.X - o.MinimumPoint.X)\n            view = doc.GetElement(vp.ViewId)\n            p = view.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION)\n            title = (p.AsString() if p else u\"\") or get_name(view)\n            length = len(title) * 2.2 + 6.0\n            try:\n                vp.LabelLineLength = from_mm(length)\n                vp.LabelOffset = XYZ(from_mm((w - length + 9.0) / 2.0),\n                                     from_mm(bottom - TITLE_LABEL_GAP - to_mm(o.MinimumPoint.Y)), 0)\n            except Exception:\n                pass\n\n\ndef hide_elements(view, section_views):\n    \"\"\"Ẩn ký hiệu của các mặt cắt trong view. Ký hiệu là phần tử riêng category OST_Viewers, cùng tên nhưng KHÁC\n    id với view mặt cắt (đo qua MCP 2026-10-22) – ẩn theo id view không có tác dụng.\"\"\"\n    names = set(get_name(s) for s in section_views if s.Id != view.Id)\n    ids = List[ElementId]()\n    for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Viewers).WhereElementIsNotElementType() \\\n            .ToElements():\n        if get_name(e) in names and e.CanBeHidden(view) and not e.IsHidden(view):\n            ids.Add(e.Id)\n    if ids.Count:\n        view.HideElements(ids)\n\n\ndef draw_dividers(ctx, sheet, segments):\n    \"\"\"Nét đứt chia ô trên sheet (line style có sẵn, không tạo mới). segments = [((x1, y1), (x2, y2))] mm giấy.\"\"\"\n    for a, b in segments:\n        c = doc.Create.NewDetailCurve(sheet, Line.CreateBound(XYZ(from_mm(a[0]), from_mm(a[1]), 0),\n                                                              XYZ(from_mm(b[0]), from_mm(b[1]), 0)))\n        if ctx.divider_style is not None:\n            c.LineStyle = ctx.divider_style\n\n\n# --- Cột phải: key plan + legend ghi chú -----------------------------------------------------\ndef floors_box(level):\n    \"\"\"Hộp bao (mm) mọi sàn ARV-SanCanHo trên level – vùng các căn của tầng.\"\"\"\n    loops = []\n    for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        if fl.LevelId == level.Id and norm(comment_of(fl)).startswith(FLOOR_TAG):\n            bb = fl.get_BoundingBox(None)\n            if bb is not None:\n                loops.append([(to_mm(bb.Min.X), to_mm(bb.Min.Y)), (to_mm(bb.Max.X), to_mm(bb.Max.Y))])\n    return bbox_of(loops) if loops else None\n\n\ndef hide_category(view, bic):\n    try:\n        view.SetCategoryHidden(Category.GetCategory(doc, bic).Id, True)\n    except Exception:\n        pass\n\n\ndef make_key_plan(ctx, level, apt, bld):\n    \"\"\"Sơ đồ vị trí căn: MB cả tầng (VFT 1.1, bỏ gắn template), tỷ lệ lớn nhất vừa cột phải, sàn của căn tô đỏ\n    (override riêng view – không tạo filter / style mới), ẩn trục / mặt cắt / cao độ, chữ tên căn.\"\"\"\n    view = ViewPlan.Create(doc, ctx.family_type(ViewFamily.FloorPlan, u\"1.1\").Id, level.Id)\n    view.Name = u\"{} - SĐ VỊ TRÍ\".format(apt.name)\n    tid = view.ViewTemplateId\n    if tid != ElementId.InvalidElementId:\n        view.ViewTemplateId = ElementId.InvalidElementId\n        view.ApplyViewTemplateParameters(doc.GetElement(tid))\n    box = (bld[0] - KEY_MARGIN, bld[1] - KEY_MARGIN, bld[2] + KEY_MARGIN, bld[3] + KEY_MARGIN)\n    w, h = box[2] - box[0], box[3] - box[1]\n    max_w = NOTE_X1 - NOTE_X0 - 2 * CELL_PAD - 6.0        # 6 mm: khung viewport rộng hơn crop\n    view.Scale = next((s for s in KEY_SCALES if w / s <= max_w and h / s <= KEY_MAX_H), KEY_SCALES[-1])\n    cb = view.CropBox\n    cb.Min = XYZ(from_mm(box[0]), from_mm(box[1]), cb.Min.Z)\n    cb.Max = XYZ(from_mm(box[2]), from_mm(box[3]), cb.Max.Z)\n    view.CropBox = cb\n    view.CropBoxActive = True\n    view.CropBoxVisible = False\n    p = view.get_Parameter(BuiltInParameter.VIEWER_ANNOTATION_CROP_ACTIVE)\n    if p is not None and not p.IsReadOnly:\n        p.Set(1)\n    view.DetailLevel = ViewDetailLevel.Coarse\n    for bic in (BuiltInCategory.OST_Grids, BuiltInCategory.OST_Sections, BuiltInCategory.OST_Elev,\n                BuiltInCategory.OST_ElevationMarks, BuiltInCategory.OST_Callouts):\n        hide_category(view, bic)\n    solid = next((f for f in FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements()\n                  if f.GetFillPattern().IsSolidFill), None)\n    if solid is not None:\n        ogs = OverrideGraphicSettings()\n        red = Color(255, 0, 0)\n        ogs.SetSurfaceForegroundPatternId(solid.Id)\n        ogs.SetSurfaceForegroundPatternColor(red)\n        ogs.SetCutForegroundPatternId(solid.Id)\n        ogs.SetCutForegroundPatternColor(red)\n        for f in apt.floors:\n            view.SetElementOverrides(f.el.Id, ogs)\n    tt = ctx.text_type(u\"AV_Text 3.5mm_Arial\")\n    if tt is not None:\n        abox = apt.bbox(0.0)\n        TextNote.Create(doc, view.Id, P(abox[2] + 300, abox[3] + 300), u\"CĂN HỘ {}\".format(apt.name),\n                        TextNoteOptions(tt.Id))\n    view.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION).Set(u\"SƠ ĐỒ VỊ TRÍ CĂN HỘ {} – {}\".format(\n        apt.name, level.Name.upper()))\n    return view\n\n\ndef strip_num(name):\n    \"\"\"'2.1 Vữa trát tường' → 'Vữa trát tường'.\"\"\"\n    s = (name or u\"\").strip()\n    i = 0\n    while i < len(s) and (s[i].isdigit() or s[i] in u\". \"):\n        i += 1\n    return s[i:] or s\n\n\ndef layers_text(cs, is_wall):\n    \"\"\"Mô tả cấu tạo theo các lớp của type (không dùng Type Comments vì đang ghi sai).\"\"\"\n    if cs is None:\n        return u\"\"\n    items = []\n    for ly in cs.GetLayers():\n        w = to_mm(ly.Width)\n        if w < 0.5:\n            continue\n        m = doc.GetElement(ly.MaterialId)\n        items.append((strip_num(get_name(m)) if m is not None else u\"(không vật liệu)\", w))\n    if is_wall and items:\n        core = max(items, key=lambda it: it[1])\n        rest = [it for it in items if it is not core]\n        parts = [u\"{} dày {:.0f}\".format(core[0], core[1])]\n        seen = []\n        for it in rest:\n            if (it[0], round(it[1])) in seen:\n                continue\n            n = sum(1 for r in rest if r[0] == it[0] and round(r[1]) == round(it[1]))\n            seen.append((it[0], round(it[1])))\n            parts.append(u\"{} dày {:.0f}{}\".format(it[0], it[1], u\" hai mặt\" if n >= 2 else u\"\"))\n    else:\n        parts = [u\"{} dày {:.0f}\".format(n, w) for n, w in items]\n    return u\", \".join(parts)          # giữ nguyên chữ hoa/thường tên vật liệu như trong mô hình\n\n\ndef type_mark(t):\n    p = t.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_MARK)\n    return ((p.AsString() if p else u\"\") or u\"\").strip()\n\n\ndef collect_note_rows(level, apts):\n    \"\"\"Các type tường / trần / sàn dùng trong các căn → 3 nhóm dòng bảng. Mỗi dòng\n    {swatch, code, desc, val}. Trả về (walls, ceilings, floors, cảnh báo).\"\"\"\n    warns = []\n    frts = dict((id_value(t.ForegroundPatternId), t) for t in\n                FilteredElementCollector(doc).OfClass(FilledRegionType).ToElements())\n    floor_kinds, ceil_kinds, ceil_h, types = {}, {}, {}, {}\n    for a in apts:\n        for f in a.floors:\n            tid = id_value(f.el.GetTypeId())\n            types[tid] = doc.GetElement(f.el.GetTypeId())\n            floor_kinds.setdefault(tid, set()).add(f.kind)\n        for c in a.ceilings:\n            tid = id_value(c.el.GetTypeId())\n            types[tid] = doc.GetElement(c.el.GetTypeId())\n            ceil_kinds.setdefault(tid, set()).add(c.kind)\n            hp = c.el.get_Parameter(BuiltInParameter.CEILING_HEIGHTABOVELEVEL_PARAM)\n            if hp is not None:\n                ceil_h.setdefault(tid, set()).add(int(round(to_mm(hp.AsDouble()))))\n    wall_types, len_h = {}, {}\n    for a in apts:\n        b = a.bbox(200.0)\n        flt = BoundingBoxIntersectsFilter(Outline(XYZ(from_mm(b[0]), from_mm(b[1]), level.Elevation - 1.0),\n                                                  XYZ(from_mm(b[2]), from_mm(b[3]), level.Elevation + 10.0)))\n        for w in FilteredElementCollector(doc).OfClass(Wall).WherePasses(flt).ToElements():\n            wt = doc.GetElement(w.GetTypeId())\n            if isinstance(wt, WallType) and wt.GetCompoundStructure() is not None:\n                wall_types[id_value(wt.Id)] = wt\n                hp = w.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM)\n                if hp is not None:\n                    len_h.setdefault(id_value(wt.Id), set()).add(int(round(to_mm(hp.AsDouble()))))\n\n    def kinds_text(ks):\n        order = [\"KHO\", \"WC\", \"LOGIA\", \"CHANCUA\"]\n        return u\", \".join(KIND_LABEL.get(k, k.lower()) for k in order if k in ks)\n\n    walls, floors, ceilings, len_rows = [], [], [], []\n    for tid, wt in sorted(wall_types.items(), key=lambda kv: -kv[1].GetCompoundStructure().GetWidth()):\n        cs = wt.GetCompoundStructure()\n        width = to_mm(cs.GetWidth())\n        name = get_name(wt)\n        mark = type_mark(wt)\n        if name.upper().startswith(u\"LCT\"):        # len chân tường → bảng lát sàn như mẫu\n            hs = sorted(len_h.get(tid, []))\n            len_rows.append({\"swatch\": None, \"code\": mark, \"val\": u\"{:.0f}\".format(width),\n                           \"desc\": u\"Len chân tường: {}{}\".format(layers_text(cs, False),\n                                                                u\", cao {}\".format(u\"/\".join(str(h) for h in hs))\n                                                                if hs else u\"\")})\n            continue\n        if width <= 30:                              # lớp ốp / hoàn thiện tường\n            walls.append({\"swatch\": None, \"code\": mark, \"val\": u\"{:.0f}\".format(width),\n                          \"desc\": u\"Ốp / hoàn thiện tường: {}\".format(layers_text(cs, False))})\n            continue\n        core = max(list(cs.GetLayers()), key=lambda ly: ly.Width)\n        mat = doc.GetElement(core.MaterialId)\n        frt = frts.get(id_value(mat.CutForegroundPatternId)) if mat is not None else None\n        walls.append({\"swatch\": frt.Id if frt is not None else None, \"code\": mark, \"val\": u\"{:.0f}\".format(width),\n                      \"desc\": (u\"{} – \".format(mark) if mark and frt is not None else u\"\") + layers_text(cs, True)})\n    for tid, ks in sorted(floor_kinds.items(), key=lambda kv: sorted(kv[1])):\n        ft = types[tid]\n        cs = ft.GetCompoundStructure()\n        floors.append({\"swatch\": None, \"code\": type_mark(ft),\n                       \"val\": u\"{:.0f}\".format(to_mm(cs.GetWidth())) if cs else u\"\",\n                       \"desc\": u\"{} – {}\".format(layers_text(cs, False), kinds_text(ks))})\n        if not type_mark(ft):\n            warns.append(u\"Floor type '{}' chưa có Type Mark – tag sàn và bảng ghi chú để trống mã.\".format(\n                get_name(ft)))\n    floors += len_rows\n    for tid, ks in sorted(ceil_kinds.items(), key=lambda kv: sorted(kv[1])):\n        ct = types[tid]\n        cs = ct.GetCompoundStructure()\n        name = get_name(ct)\n        label = name.split(u\"-\", 1)[1] if u\"-\" in name[:4] else name\n        ceilings.append({\"swatch\": None, \"code\": type_mark(ct),\n                         \"val\": u\"/\".join(u\"+{}\".format(h) for h in sorted(ceil_h.get(tid, []))),\n                         \"desc\": u\"{}: {} – {}\".format(label, layers_text(cs, False), kinds_text(ks))})\n        if not type_mark(ct):\n            warns.append(u\"Ceiling type '{}' chưa có Type Mark – bảng ghi chú để trống mã.\".format(name))\n    return walls, ceilings, floors, warns\n\n\ndef draw_table(ctx, view, x0, ytop, title, header, rows):\n    \"\"\"Vẽ một bảng (mm giấy) trong legend: tiêu đề, dòng tiêu đề cột, các dòng; trả về y đáy bảng.\"\"\"\n    s = view.Scale\n    Q = lambda x, y: XYZ(from_mm(x * s), from_mm(y * s), 0)\n    t_title, t_body = ctx.text_type(TEXT_TITLE), ctx.text_type(TEXT_BODY)\n    total = sum(TABLE_W)\n    xs = [x0, x0 + TABLE_W[0], x0 + TABLE_W[0] + TABLE_W[1], x0 + total]\n\n    def text(x, y, width, value, tt, center=False):\n        opts = TextNoteOptions(tt.Id)\n        if center:\n            opts.HorizontalAlignment = HorizontalTextAlignment.Center\n        tn = TextNote.Create(doc, view.Id, Q(x, y), from_mm(width), value, opts)\n        doc.Regenerate()\n        bb = tn.get_BoundingBox(view)\n        return to_mm(bb.Max.Y - bb.Min.Y) / s if bb is not None else 3.0\n\n    def hline(y):\n        doc.Create.NewDetailCurve(view, Line.CreateBound(Q(xs[0], y), Q(xs[3], y)))\n\n    text(x0 + total / 2.0, ytop, total, title, t_title, True)\n    y = ytop - 6.0\n    hline(y)\n    y_head = y\n    for i, hd in enumerate(header):\n        text((xs[i] + xs[i + 1]) / 2.0, y - 1.5, xs[i + 1] - xs[i] - 2, hd, t_body, True)\n    y -= 6.0\n    hline(y)\n    for r in rows:\n        hd = text(xs[1] + 1.5, y - 1.5, TABLE_W[1] - 3, r[\"desc\"] or u\"—\", t_body)\n        rh = max(7.0, hd + 3.0)\n        if r[\"swatch\"] is not None:\n            loop = CurveLoop()\n            pts = [Q(xs[0] + 2, y - 1.5), Q(xs[1] - 2, y - 1.5), Q(xs[1] - 2, y - rh + 1.5), Q(xs[0] + 2, y - rh + 1.5)]\n            for i in range(4):\n                loop.Append(Line.CreateBound(pts[i], pts[(i + 1) % 4]))\n            loops = List[CurveLoop]()\n            loops.Add(loop)\n            FilledRegion.Create(doc, r[\"swatch\"], view.Id, loops)\n        elif r[\"code\"]:\n            text((xs[0] + xs[1]) / 2.0, y - 1.5, TABLE_W[0] - 2, r[\"code\"], t_body, True)\n        if r[\"val\"]:\n            text((xs[2] + xs[3]) / 2.0, y - 1.5, TABLE_W[2] - 2, r[\"val\"], t_body, True)\n        y -= rh\n        hline(y)\n    for x in xs:\n        doc.Create.NewDetailCurve(view, Line.CreateBound(Q(x, y_head), Q(x, y)))\n    return y\n\n\ndef ensure_notes_legend(ctx, level, apts, name, rebuild):\n    \"\"\"Legend ghi chú dùng chung các căn: có sẵn (tên trùng) → dùng lại, KHÔNG sửa (rebuild → xóa nội dung, vẽ lại\n    tại chỗ để viewport trên sheet các căn khác vẫn giữ); chưa có → nhân bản một legend bất kỳ (bản trống) rồi vẽ\n    3 bảng: tường xây, trần, lát sàn. Trả về (legend hoặc None, ghi chú).\"\"\"\n    legends = [v for v in FilteredElementCollector(doc).OfClass(View).ToElements()\n               if v.ViewType == ViewType.Legend and not v.IsTemplate]\n    old = next((v for v in legends if norm(get_name(v)) == norm(name)), None)\n    if old is not None and not rebuild:\n        return old, [u\"Dùng lại legend có sẵn '{}' (không vẽ lại – bật IN[9] Làm lại để vẽ lại).\".format(name)]\n    if ctx.text_type(TEXT_TITLE) is None or ctx.text_type(TEXT_BODY) is None:\n        return old, [u\"Thiếu text type '{}' / '{}' → không vẽ bảng ghi chú.\".format(TEXT_TITLE, TEXT_BODY)]\n    if old is not None:\n        delete_ids([e for e in FilteredElementCollector(doc, old.Id).WhereElementIsNotElementType().ToElements()\n                    if e.OwnerViewId == old.Id and isinstance(e, (TextNote, CurveElement, FilledRegion))])\n        view = old\n    else:\n        src = next((v for v in legends if v.CanViewBeDuplicated(ViewDuplicateOption.Duplicate)), None)\n        if src is None:\n            return None, [u\"Không có legend nào để nhân bản → bỏ qua bảng ghi chú (tạo 1 legend trống rồi chạy lại).\"]\n        view = doc.GetElement(src.Duplicate(ViewDuplicateOption.Duplicate))\n        view.Name = name\n    walls, ceilings, floors, warns = collect_note_rows(level, apts)\n    y = draw_table(ctx, view, 0.0, 0.0, u\"GHI CHÚ TƯỜNG XÂY CĂN HỘ\", [u\"Ký hiệu\", u\"Loại / cấu tạo\", u\"Dày\"], walls)\n    y = draw_table(ctx, view, 0.0, y - 8.0, u\"GHI CHÚ TRẦN CĂN HỘ\", [u\"Mã\", u\"Loại / cấu tạo\", u\"Đáy trần\"],\n                   ceilings)\n    draw_table(ctx, view, 0.0, y - 8.0, u\"GHI CHÚ LÁT SÀN CĂN HỘ\", [u\"Mã\", u\"Loại / cấu tạo\", u\"Dày\"], floors)\n    return view, [u\"Đã {} legend '{}' ({} dòng tường, {} trần, {} sàn) – KTS soát mô tả.\".format(\n        u\"vẽ lại\" if old is not None else u\"tạo\", name, len(walls), len(ceilings), len(floors))] + warns\n\n\ndef old_outputs(apt, numbers):\n    \"\"\"Kết quả lần chạy trước của căn: view tên '<căn> - …' và sheet có số hiệu theo mẫu IN[3].\"\"\"\n    nn = apt_digits(apt.name)\n    nums = set(norm(numbers[k].replace(u\"{nn}\", nn)) for k in (\"CTCH\", \"WC\", \"LG\"))\n    prefix = norm(apt.name) + u\" - \"\n    views = [v for v in FilteredElementCollector(doc).OfClass(View).ToElements()\n             if not v.IsTemplate and not isinstance(v, ViewSheet) and norm(get_name(v)).startswith(prefix)]\n    sheets = [s for s in FilteredElementCollector(doc).OfClass(ViewSheet).ToElements()\n              if norm(s.SheetNumber) in nums]\n    return views, sheets\n\n\ndef delete_ids(elements):\n    ids = List[ElementId]()\n    for e in elements:\n        ids.Add(e.Id)\n    if ids.Count:\n        doc.Delete(ids)\n\n\n# --- Một căn ----------------------------------------------------------------------------\ndef build_apartment(ctx, apt, level, circuits, placed_rooms, scales_ch, scales_dt, numbers, margin, legend,\n                    ref_sheet, height_mm, bld):\n    z = level.Elevation\n    nn = apt_digits(apt.name)\n    num = dict((k, numbers[k].replace(u\"{nn}\", nn)) for k in (\"CTCH\", \"WC\", \"LG\"))\n    wcs = sorted(apt.of_kind(\"WC\"), key=lambda f: (f.ip[0], f.ip[1]))\n    lgs = sorted(apt.of_kind(\"LOGIA\"), key=lambda f: -f.area)\n    for i, f in enumerate(wcs):\n        apt.wc_labels[f] = u\"WC{}\".format(i + 1) if len(wcs) > 1 else u\"WC\"\n    for i, f in enumerate(lgs):\n        apt.lg_labels[f] = u\"LG{}\".format(i + 1)\n    # Căn 1 WC + 1 logia → gộp chi tiết WC và logia vào một sheet (số hiệu WC): hàng trên WC, hàng dưới logia\n    combined = len(wcs) == 1 and len(lgs) == 1\n\n    # Trùng tên view / số sheet → bỏ cả căn (không ghi đè)\n    existing_views = set(norm(get_name(v)) for v in FilteredElementCollector(doc).OfClass(View).ToElements()\n                         if not v.IsTemplate)\n    existing_sheets = set(norm(s.SheetNumber) for s in FilteredElementCollector(doc).OfClass(ViewSheet).ToElements())\n    clash = [n for k, n in num.items() if norm(n) in existing_sheets and\n             (k == \"CTCH\" or (k == \"WC\" and wcs) or (k == \"LG\" and lgs and not combined))]\n    clash += [n for n in existing_views if n.startswith(norm(apt.name) + u\" - \")]\n    if clash:\n        apt.notes.append(u\"BỎ QUA căn {}: đã có sheet / view {} – không ghi đè.\".format(apt.name, u\", \".join(clash[:5])))\n        return False\n\n    # 1. Room\n    apt.rooms = make_rooms(apt, level, circuits, placed_rooms)\n    doc.Regenerate()\n\n    # 2. Sheet CTCH\n    box = apt.bbox(margin)\n    plans = [\n        (ViewFamily.FloorPlan, u\"4.2\", u\"MB BỐ TRÍ NỘI THẤT\", u\"MẶT BẰNG BỐ TRÍ NỘI THẤT CĂN HỘ {}\"),\n        (ViewFamily.FloorPlan, u\"4.1\", u\"MB TƯỜNG XÂY\", u\"MẶT BẰNG TƯỜNG XÂY, ĐỊNH VỊ CỬA CĂN HỘ {}\"),\n        (ViewFamily.FloorPlan, u\"4.3\", u\"MB LÁT SÀN\", u\"MẶT BẰNG LÁT SÀN CĂN HỘ {}\"),\n        (ViewFamily.CeilingPlan, u\"4.4\", u\"MB TRẦN\", u\"MẶT BẰNG TRẦN CĂN HỘ {}\"),\n    ]\n    views = []\n    for fam, code, short, title in plans:\n        v, note = make_plan(ctx, level, fam, code, u\"{} - {}\".format(apt.name, short), title.format(apt.name),\n                            scales_ch[0], box)\n        views.append(v)\n        apt.views.append([u\"CTCH\", v, note])\n    y11, x22 = section_cuts(apt)\n    sections = []\n    for along_x, cut, lab in ((True, y11, u\"1-1\"), (False, x22, u\"2-2\")):\n        v, note = make_apt_section(ctx, level, u\"{} - MC {}\".format(apt.name, lab),\n                                   u\"MẶT CẮT {} CĂN HỘ {}\".format(lab, apt.name), scales_ch[0], box, along_x, cut,\n                                   height_mm)\n        sections.append(v)\n        apt.views.append([u\"CTCH\", v, note])\n    doc.Regenerate()\n    # Ký hiệu MC 1-1 / 2-2 chỉ hiện trên MB tường xây (như mẫu); Revit không cắt ký hiệu mặt cắt theo\n    # annotation crop nên phải ẩn riêng ở các view khác (view đã bỏ gắn template nên ẩn được)\n    for v in (views[0], views[2], views[3], sections[0], sections[1]):\n        hide_elements(v, sections)\n    n_tag = 0\n    for code, room, _new in apt.rooms:\n        lp = room.Location.Point if isinstance(room.Location, LocationPoint) else None\n        if lp is not None and TAG_ROOM in ctx.tags:\n            rt = doc.Create.NewRoomTag(LinkElementId(room.Id), UV(lp.X, lp.Y), views[0].Id)\n            set_type(rt, ctx.tags[TAG_ROOM])\n            n_tag += 1\n    n_tag += tag_openings(ctx, views[1], box, z)\n    n_tag += tag_floors(ctx, views[2], apt.floors, z)\n    for c in apt.ceilings:\n        n_tag += tag(ctx, TAG_CEIL, views[3], c.el, c.ip, z)\n\n    sh = new_sheet(ctx, num[\"CTCH\"], u\"CHI TIẾT CĂN HỘ {}\".format(apt.name), ref_sheet)\n    apt.sheets.append((u\"CTCH\", sh))\n    # Bố cục như mẫu: MC 1-1 | MC 2-2 · MB tường xây | MB trần · MB nội thất | MB lát sàn.\n    # Tỷ lệ: lớn nhất trong danh sách IN[1] mà cả 6 view vừa khung (không quá nhỏ, không tràn).\n    vps = [place(ctx, sh, v, (160.0, 300.0)) for v in views + sections]\n    rows = [[vps[4], vps[5]], [vps[1], vps[3]], [vps[0], vps[2]]]\n    bounds = []\n    s, ok = fit_scale(views + sections, scales_ch, lambda: ctch_layout(rows, bounds))\n    if not ok:\n        apt.notes.append(u\"{}: sheet CTCH không vừa khung kể cả 1/{} – KTS chỉnh tay.\".format(apt.name, s))\n    align_titles(rows)\n    # Nét đứt chia ô: ngang giữa các hàng, dọc giữa 2 cột và trước cột phải\n    draw_dividers(ctx, sh, [((CTCH_X[0], y), (CTCH_X[2], y)) for y in bounds] +\n                  [((CTCH_X[1], AREA_Y0), (CTCH_X[1], AREA_Y1)), ((CTCH_X[2], AREA_Y0), (CTCH_X[2], AREA_Y1))])\n    # Cột phải (như mẫu FPT): sơ đồ vị trí căn trên cùng, legend ghi chú bên dưới\n    y_free = AREA_Y1 - 4.0\n    if bld is not None:\n        kv = make_key_plan(ctx, level, apt, bld)\n        apt.views.append([u\"CTCH\", kv, u\"sơ đồ vị trí, bỏ gắn template 1.1\"])\n        kvp = place(ctx, sh, kv, (NOTE_X, 400.0))\n        doc.Regenerate()\n        _w, h = outline_size(kvp)\n        kvp.SetBoxCenter(XYZ(from_mm(NOTE_X), from_mm(y_free - h / 2.0), 0))\n        align_titles([[kvp]])\n        y_free -= h + TITLE_ROOM + 6.0\n    if legend is not None:\n        lvp = Viewport.Create(doc, sh.Id, legend.Id, XYZ(from_mm(NOTE_X), from_mm(300), 0))\n        set_type(lvp, ctx.vp_notitle.Id)\n        doc.Regenerate()\n        _w, h = outline_size(lvp)\n        lvp.SetBoxCenter(XYZ(from_mm(NOTE_X), from_mm(y_free - h / 2.0), 0))\n        if y_free - h < AREA_Y0:\n            apt.notes.append(u\"{}: legend ghi chú dài hơn chỗ trống cột phải {:.0f} mm – KTS chỉnh.\".format(\n                apt.name, h - (y_free - AREA_Y0)))\n\n    # 3. Sheet WC (+ logia khi gộp). Mỗi sheet: [sheet, views, vps, cells] – chọn tỷ lệ chung sau khi đặt hết\n    detail_sheets = []\n    if len(wcs) > 2:\n        apt.notes.append(u\"{}: {} WC – sheet WC chỉ dàn 2 WC đầu.\".format(apt.name, len(wcs)))\n    if wcs:\n        if combined:\n            sh = new_sheet(ctx, num[\"WC\"], u\"CHI TIẾT VỆ SINH, LOGIA CĂN HỘ {}\".format(apt.name), ref_sheet)\n            apt.sheets.append((u\"WC+LG\", sh))\n            grid = cells_row(3, 2)\n        else:\n            sh = new_sheet(ctx, num[\"WC\"], u\"CHI TIẾT VỆ SINH CĂN HỘ {}\".format(apt.name), ref_sheet)\n            apt.sheets.append((u\"WC\", sh))\n            grid = cells_row(3, len(wcs[:2]))\n        detail_sheets.append([sh, [], [], []])\n        for r, f in enumerate(wcs[:2]):\n            lab = apt.wc_labels[f]\n            wbox = bbox_of([f.outer], margin)\n            row = []\n            for fam, code, short, title in (\n                    (ViewFamily.FloorPlan, u\"5.1\", u\"MB THIẾT BỊ\", u\"MẶT BẰNG BỐ TRÍ THIẾT BỊ {} CĂN HỘ {}\"),\n                    (ViewFamily.FloorPlan, u\"5.2\", u\"MB LÁT SÀN\", u\"MẶT BẰNG LÁT SÀN {} CĂN HỘ {}\"),\n                    (ViewFamily.CeilingPlan, u\"5.3\", u\"MB TRẦN\", u\"MẶT BẰNG TRẦN {} CĂN HỘ {}\")):\n                v, note = make_plan(ctx, level, fam, code, u\"{} - {} - {}\".format(apt.name, lab, short),\n                                    title.format(lab, apt.name), scales_dt[0], wbox)\n                hide_elements(v, sections)\n                row.append(v)\n                apt.views.append([u\"WC\", v, note])\n            doc.Regenerate()\n            for el in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_PlumbingFixtures) \\\n                    .WhereElementIsNotElementType().ToElements():\n                pt = location_mm(el)\n                if pt is not None and f.contains(pt):\n                    n_tag += tag(ctx, TAG_PLUMB, row[0], el, pt, z)\n            n_tag += tag_openings(ctx, row[0], wbox, z)\n            n_tag += tag_floors(ctx, row[1], [g for g in apt.floors if g is f or\n                                              (g.kind == \"CHANCUA\" and in_box(g.ip, wbox))], z)\n            for c in apt.ceilings:\n                if c.kind == \"WC\" and f.contains(c.ip):\n                    n_tag += tag(ctx, TAG_CEIL, row[2], c.el, c.ip, z)\n            detail_sheets[-1][1].extend(row)\n            detail_sheets[-1][2].extend(place(ctx, sh, v, cell) for v, cell in zip(row, grid[r]))\n            detail_sheets[-1][3].extend(grid[r])\n\n    # 4. Sheet logia\n    if len(lgs) > 2:\n        apt.notes.append(u\"{}: {} logia – sheet logia chỉ dàn 2 logia đầu.\".format(apt.name, len(lgs)))\n    if lgs:\n        if combined:      # dùng tiếp sheet WC, hàng dưới\n            row0 = 1\n        else:\n            sh = new_sheet(ctx, num[\"LG\"], u\"CHI TIẾT LOGIA CĂN HỘ {}\".format(apt.name), ref_sheet)\n            apt.sheets.append((u\"LG\", sh))\n            grid = cells_row(3, len(lgs[:2]))\n            row0 = 0\n            detail_sheets.append([sh, [], [], []])\n        for r, f in enumerate(lgs[:2], row0):\n            lab = apt.lg_labels[f]\n            lbox = bbox_of([f.outer], margin)\n            v1, n1 = make_plan(ctx, level, ViewFamily.FloorPlan, u\"6.1\", u\"{} - {} - MB LÁT SÀN\".format(apt.name, lab),\n                               u\"MẶT BẰNG LÁT SÀN, BỐ TRÍ THIẾT BỊ LOGIA {} CĂN HỘ {}\".format(lab, apt.name),\n                               scales_dt[0], lbox)\n            v2, n2 = make_plan(ctx, level, ViewFamily.CeilingPlan, u\"4.4\", u\"{} - {} - MB TRẦN\".format(apt.name, lab),\n                               u\"MẶT BẰNG TRẦN LOGIA {} CĂN HỘ {}\".format(lab, apt.name), scales_dt[0], lbox)\n            v3, n3 = make_logia_section(ctx, level, f, u\"{} - {} - MC 1-1\".format(apt.name, lab),\n                                        u\"MẶT CẮT 1-1 LOGIA {} CĂN HỘ {}\".format(lab, apt.name), scales_dt[0],\n                                        height_mm)\n            for v, note in ((v1, n1), (v2, n2), (v3, n3)):\n                apt.views.append([u\"LG\", v, note])\n            # MC căn hộ không hiện ở chi tiết logia; MC logia chỉ hiện trên MB lát sàn logia\n            for v in (v1, v2, v3):\n                hide_elements(v, sections)\n            for v in list(views) + list(sections) + [v2]:\n                hide_elements(v, [v3])\n            doc.Regenerate()\n            n_tag += tag_floors(ctx, v1, [f], z)\n            n_tag += tag_openings(ctx, v1, lbox, z)\n            for c in apt.ceilings:\n                if c.kind == \"LOGIA\" and f.contains(c.ip):\n                    n_tag += tag(ctx, TAG_CEIL, v2, c.el, c.ip, z)\n            detail_sheets[-1][1].extend((v1, v2, v3))\n            detail_sheets[-1][2].extend(place(ctx, sh, v, cell) for v, cell in zip((v1, v2, v3), grid[r]))\n            detail_sheets[-1][3].extend(grid[r])\n\n    # Tỷ lệ chung từng sheet chi tiết: lớn nhất trong IN[2] mà mọi view vừa ô\n    for sh_, views_, vps_, cells_ in detail_sheets:\n        s, ok = fit_scale(views_, scales_dt, lambda: grid_layout(vps_, cells_))\n        if not ok:\n            apt.notes.append(u\"{} sheet {}: view chi tiết vượt ô kể cả 1/{} – KTS chỉnh tay.\".format(\n                apt.name, sh_.SheetNumber, s))\n        n_rows = len(vps_) // 3\n        align_titles([vps_[i * 3:(i + 1) * 3] for i in range(n_rows)])\n        cw = (AREA_X1 - AREA_X0) / 3.0\n        ch = (AREA_Y1 - AREA_Y0) / max(n_rows, 1)\n        draw_dividers(ctx, sh_, [((AREA_X0 + cw * k, AREA_Y0), (AREA_X0 + cw * k, AREA_Y1)) for k in (1, 2)] +\n                      [((AREA_X0, AREA_Y1 - ch * r), (AREA_X1, AREA_Y1 - ch * r)) for r in range(1, n_rows)])\n    apt.n_tag = n_tag\n    return True\n\n\n# --- Log / chính --------------------------------------------------------------------------\nLOG_HEADER = [u\"Căn\", u\"Sheet\", u\"View\", u\"Tỷ lệ\", u\"Ghi chú template\"]\n\n\ndef write_log(rows, level_name, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"DanTrangCanHo_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# Level: {}\\n\".format(level_name))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef make_warning_swallower():\n    \"\"\"Bộ nuốt cảnh báo (VD Room trùng số / không kín) để không bật hộp thoại; lỗi thật vẫn giữ.\n    pythonnet không cho khai báo lại lớp .NET cùng tên trong một phiên Dynamo (lần Run thứ hai báo lỗi ngoài\n    try → OUT null) → khai báo trong hàm, namespace riêng mỗi lần chạy. Không tạo được → None (bỏ qua).\"\"\"\n    ns = \"ARV.DanTrangCanHo.R\" + datetime.datetime.now().strftime(\"%Y%m%d%H%M%S%f\")\n    try:\n        class SwallowWarnings(IFailuresPreprocessor):\n            __namespace__ = ns\n\n            def PreprocessFailures(self, fa):\n                for m in list(fa.GetFailureMessages()):\n                    if m.GetSeverity() == FailureSeverity.Warning:\n                        fa.DeleteWarning(m)\n                return FailureProcessingResult.Continue\n        return SwallowWarnings()\n    except Exception:\n        return None\n\n\ndef to_int(text, label):\n    try:\n        v = int(float(text))\n    except (TypeError, ValueError):\n        raise StopReport([u\"DỪNG: {} '{}' không phải số.\".format(label, text)])\n    if v <= 0:\n        raise StopReport([u\"DỪNG: {} phải > 0.\".format(label)])\n    return v\n\n\ndef to_scales(text, label):\n    \"\"\"'50;60;75' → [50, 60, 75] tăng dần (thử từ hình lớn nhất). Một số = cố định tỷ lệ đó.\"\"\"\n    vals = sorted(set(to_int(s, label) for s in split_filters(text)))\n    if not vals:\n        raise StopReport([u\"DỪNG: {} trống.\".format(label)])\n    return vals\n\n\ndef main(apt_text, scale_ch_text, scale_dt_text, number_text, title_block, vp_type, margin_text, legend_name,\n         dry_run, rebuild):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    view = doc.ActiveView\n    level = view.GenLevel if view.ViewType in (ViewType.FloorPlan, ViewType.CeilingPlan) else None\n    if level is None:\n        return [u\"DỪNG: hãy mở view mặt bằng của tầng có căn hộ rồi Run lại.\"], []\n    wanted = split_filters(apt_text)\n    if not wanted:\n        raise StopReport([u\"DỪNG: IN[0] trống – nhập căn hộ (VD CH01).\"])\n    scales_ch = to_scales(scale_ch_text, u\"IN[1] tỷ lệ MB căn hộ\")\n    scales_dt = to_scales(scale_dt_text, u\"IN[2] tỷ lệ chi tiết\")\n    margin = float(to_int(margin_text, u\"IN[6] lề crop\"))\n    numbers = parse_map(number_text)\n    lack = [k for k in (\"CTCH\", \"WC\", \"LG\") if not numbers.get(k)]\n    if lack:\n        raise StopReport([u\"DỪNG: IN[3] thiếu số hiệu sheet cho: {}.\".format(u\", \".join(lack))])\n    ctx = Ctx(title_block, vp_type)\n    above = sorted([l for l in FilteredElementCollector(doc).OfClass(Level).ToElements()\n                    if l.Elevation > level.Elevation + 1e-6], key=lambda l: l.Elevation)\n    height_mm = to_mm(above[0].Elevation - level.Elevation) if above else 3300.0\n\n    apts = collect_apartments(level, wanted)\n    warns = []\n    for a in apts:\n        if not a.floors:\n            warns.append(u\"{}: không có sàn '{} {} …' trên level {} – bỏ qua (chạy tool sàn hoàn thiện trước).\"\n                         .format(a.name, FLOOR_TAG, a.name, level.Name))\n    todo = [a for a in apts if a.floors]\n    if not todo:\n        raise StopReport([u\"DỪNG: không căn nào có sàn hoàn thiện.\"] + warns)\n\n    TransactionManager.Instance.ForceCloseTransaction()\n    tx = Transaction(doc, TRANSACTION_NAME)\n    swallower = make_warning_swallower()\n    if swallower is not None:\n        opts = tx.GetFailureHandlingOptions()\n        opts.SetFailuresPreprocessor(swallower)\n        tx.SetFailureHandlingOptions(opts)\n    tx.Start()\n    done = []\n    try:\n        circuits = plan_circuits(level)\n        placed = [r for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms)\n                  .WhereElementIsNotElementType().ToElements() if r.Location is not None and r.LevelId == level.Id]\n        bld = floors_box(level)\n        # Căn đã có view / sheet: bỏ qua, hoặc (IN[9] Làm lại) xóa đúng view / sheet của căn rồi dựng lại\n        ready = []\n        for a in todo:\n            views, sheets = old_outputs(a, numbers)\n            if not views and not sheets:\n                ready.append(a)\n                continue\n            foreign = [s for s in sheets if norm(a.name) not in norm(s.Name)]\n            if not rebuild:\n                a.notes.append(u\"BỎ QUA căn {}: đã có {} view / {} sheet ({}) – bật IN[9] Làm lại để dựng mới.\".format(\n                    a.name, len(views), len(sheets), u\", \".join(s.SheetNumber for s in sheets)))\n            elif foreign:\n                a.notes.append(u\"BỎ QUA căn {}: số sheet {} đang dùng cho nội dung khác – sửa IN[3].\".format(\n                    a.name, u\", \".join(s.SheetNumber for s in foreign)))\n            elif any(not DocumentValidation.CanDeleteElement(doc, e.Id) for e in views + sheets):\n                # Revit không cho xóa view / sheet đang mở trong tab\n                locked = [get_name(e) for e in views + sheets if not DocumentValidation.CanDeleteElement(doc, e.Id)]\n                a.notes.append(u\"BỎ QUA căn {}: không xóa được {} (đang mở trong Revit?) – đóng tab rồi chạy lại.\".format(\n                    a.name, u\", \".join(locked)))\n            else:\n                # Đọc số sheet TRƯỚC khi xóa – sau Delete đối tượng không còn hợp lệ\n                note = u\"{}: Làm lại – đã xóa {} view, {} sheet cũ ({}).\".format(\n                    a.name, len(views), len(sheets), u\", \".join(s.SheetNumber for s in sheets) or u\"—\")\n                delete_ids(views + sheets)\n                a.notes.append(note)\n                ready.append(a)\n        # Sheet cùng mục (VD \"A.5-…\") để chép tham số nhóm Project Browser – chọn SAU bước xóa\n        group = numbers[\"CTCH\"].split(u\"-\")[0] + u\"-\"\n        ref_sheet = next((s for s in FilteredElementCollector(doc).OfClass(ViewSheet).ToElements()\n                          if s.SheetNumber.startswith(group)), None)\n        legend = None\n        if legend_name.strip() and ready:\n            # Bảng ghi chú dùng chung: lấy type của MỌI căn trên tầng, không chỉ các căn đang dàn\n            all_names = sorted(set(norm(comment_of(f)).split()[1].upper() for f in\n                                   FilteredElementCollector(doc).OfClass(Floor).ToElements()\n                                   if f.LevelId == level.Id and len(norm(comment_of(f)).split()) >= 3\n                                   and norm(comment_of(f)).split()[0] == FLOOR_TAG))\n            legend, notes = ensure_notes_legend(ctx, level, collect_apartments(level, all_names), legend_name.strip(),\n                                                rebuild)\n            warns.extend(notes)\n        for a in ready:\n            if build_apartment(ctx, a, level, circuits, placed, scales_ch, scales_dt, numbers, margin, legend,\n                               ref_sheet, height_mm, bld):\n                done.append(a)\n        # Ghi nhận trước khi hoàn tác (dry-run) vì sau RollBack phần tử không còn\n        rows, summary = [], []\n        for a in todo:\n            for row in a.views:\n                rows.append([a.name, row[0], get_name(row[1]), u\"1/{}\".format(row[1].Scale), row[2]])\n            if a in done:\n                scales = []\n                for key in (u\"CTCH\", u\"WC\", u\"LG\"):\n                    ss = sorted(set(r[1].Scale for r in a.views if r[0] == key))\n                    if ss:\n                        scales.append(u\"{} 1/{}\".format(key, u\",\".join(str(s) for s in ss)))\n                summary.append(u\"{}: Room {} ({}), sheet {}, {} view ({}), {} tag\".format(\n                    a.name, len(a.rooms), u\", \".join(u\"{}{}\".format(c, u\"*\" if n else u\"\") for c, _r, n in a.rooms),\n                    u\" / \".join(s.SheetNumber for _k, s in a.sheets), len(a.views), u\"; \".join(scales),\n                    getattr(a, \"n_tag\", 0)))\n            warns.extend(a.notes)\n        if dry_run:\n            tx.RollBack()\n        else:\n            tx.Commit()\n    except Exception:\n        if tx.HasStarted() and not tx.HasEnded():\n            tx.RollBack()\n        raise\n\n    report = [u\"{} – {} – Làm lại (IN[9]): {}\".format(\n        TRANSACTION_NAME, u\"CHẠY THỬ (đã dựng rồi hoàn tác)\" if dry_run else u\"ĐÃ THỰC HIỆN\",\n        u\"CÓ\" if rebuild else u\"KHÔNG\")]\n    report.append(u\"Level: {} – tỷ lệ thử: căn hộ 1/{}, chi tiết 1/{} – khung {} – viewport '{}'\".format(\n        level.Name, u\",\".join(str(s) for s in scales_ch), u\",\".join(str(s) for s in scales_dt),\n        ctx.title_block.FamilyName, get_name(ctx.vp_type)))\n    report += summary\n    report.append(u\"(* = Room mới tạo. Mã: KA khách-ăn, NG ngủ, WC, LG1 logia khách, LG2 logia phơi – KTS soát lại)\")\n    if ctx.missing_tags:\n        warns.append(u\"Thiếu tag type (bỏ qua tag đó): \" + u\"; \".join(ctx.missing_tags))\n    for w in warns:\n        report.append(u\"CẢNH BÁO: \" + w)\n    report.append(u\"CHƯA LÀM: dim tường / cửa, cao độ, ghi chú vật liệu tường – bổ sung tay.\")\n    try:\n        report.append(u\"Log: \" + write_log(rows, level.Name, dry_run))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Đúng thì đổi Dry-run = False và Run lại. Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows]\n    return report, []\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\nif DYNAMO:\n    import traceback\n    try:\n        OUT = list(main(\n            IN[0] or u\"\",\n            IN[1] or u\"50;60;65;70;75;80;90;100;125;150\",\n            IN[2] or u\"20;25;30;40;50\",\n            IN[3] or u\"\",\n            (IN[4] or u\"\").strip(),\n            (IN[5] or u\"\").strip(),\n            IN[6] or u\"300\",\n            u\"GHI CHÚ CĂN HỘ\" if IN[7] is None else IN[7],\n            True if IN[8] is None else bool(IN[8]),\n            bool(IN[9]) if len(IN) > 9 else False,\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"DanTrangCanHo_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "02146a87eef8467991d00d793a3481d6",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "dbdb773afcd24f84a7984f36c03cc5ad",
+          "Name": "IN[0]",
+          "Description": "IN[0] Căn hộ (cách ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c7916c9d1a4d4232869fcef98af0c855",
+          "Name": "IN[1]",
+          "Description": "IN[1] Tỷ lệ sheet căn hộ – thử lần lượt, lấy lớn nhất vừa khung",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4a701e11d74c4fafad6eb588bf98da24",
+          "Name": "IN[2]",
+          "Description": "IN[2] Tỷ lệ chi tiết WC / logia – thử lần lượt",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d936d3084f5146d18c010ddf10d82e57",
+          "Name": "IN[3]",
+          "Description": "IN[3] Số hiệu sheet ({nn} = số căn)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9f65f9e47a53402c836166d08bb03b71",
+          "Name": "IN[4]",
+          "Description": "IN[4] Khung tên (family)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "542577385be54f0a876f6851067ea064",
+          "Name": "IN[5]",
+          "Description": "IN[5] Viewport type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "cd8e53ba20214a3d9bd2d45ee2230334",
+          "Name": "IN[6]",
+          "Description": "IN[6] Lề crop quanh căn / WC / logia (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "cbf07fcab9534ac09f6b2ffb5508ffa1",
+          "Name": "IN[7]",
+          "Description": "IN[7] Legend ghi chú cột phải (chưa có → tự sinh; trống = không đặt)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1b758894fd784a9f974f72d608a2e778",
+          "Name": "IN[8]",
+          "Description": "IN[8] Dry-run (True = dựng thử rồi hoàn tác)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a5f1779c61a54eee9a79f716c8576528",
+          "Name": "IN[9]",
+          "Description": "IN[9] Làm lại (True = xóa view/sheet cũ của căn, vẽ lại legend)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a439109ba5c5413ea7907d9d7b685d93",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "882e5ddacad0402d8d9f417d94bf2b55",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "8db0329e468043bc894bce0b7d3b42b1",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "efb77a449513418e9b499f89b8547a81",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c8e18e972a39484ebcca571b6d89019d",
+      "End": "dbdb773afcd24f84a7984f36c03cc5ad",
+      "Id": "7e8f2d77b4354eed9f9c6c3b55fd9520",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a38f2fd0df0646139900672d736bbdbf",
+      "End": "c7916c9d1a4d4232869fcef98af0c855",
+      "Id": "0bb6918fa0354f16be118a7b75a701e6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e3e81cb115b24551a45851681f9ab28d",
+      "End": "4a701e11d74c4fafad6eb588bf98da24",
+      "Id": "75be3087bccc4664a1e8d92d4eb93f22",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "c0139e3977564108a0025bd7210e057a",
+      "End": "d936d3084f5146d18c010ddf10d82e57",
+      "Id": "5bd4aacb522545d6a0f9f6f684a0eca8",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "7288960c55c94629a636ca9c1bee79fc",
+      "End": "9f65f9e47a53402c836166d08bb03b71",
+      "Id": "871f98f1357a4980aed71d53b1e1278a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0ebf1887647f4b0eac0a090acde91138",
+      "End": "542577385be54f0a876f6851067ea064",
+      "Id": "20c50d747eca4fa384eff51ce573a904",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b651003b14a84ac98a7e50b97e84e3c3",
+      "End": "cd8e53ba20214a3d9bd2d45ee2230334",
+      "Id": "07ed789c157c48fab3a077f41b81c346",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6d23f3b3868044229148243aa6a00f13",
+      "End": "cbf07fcab9534ac09f6b2ffb5508ffa1",
+      "Id": "437cc977153844c781cb3db94189f101",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fe703f6bf56645baadb6364fff645c7e",
+      "End": "1b758894fd784a9f974f72d608a2e778",
+      "Id": "150f36d856064e88b75dc021be07bfe5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e58bac4147fb4c71b814649fed2df874",
+      "End": "a5f1779c61a54eee9a79f716c8576528",
+      "Id": "bccfc896652a40ab919e211e9c37b600",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a439109ba5c5413ea7907d9d7b685d93",
+      "End": "8db0329e468043bc894bce0b7d3b42b1",
+      "Id": "57a943573edf4f1186812f06dd3b043c",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "962f6926ebbf4852bf9774f60b2c3619",
+        "Name": "IN[0] Căn hộ (cách ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "cffc2df265c94e408349d7f601e3a4cc",
+        "Name": "IN[1] Tỷ lệ sheet căn hộ – thử lần lượt, lấy lớn nhất vừa khung",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "00ffa48142a84b1380c9fbf4ea01e66a",
+        "Name": "IN[2] Tỷ lệ chi tiết WC / logia – thử lần lượt",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "bf528654e9c242f0a545de9893ae87d1",
+        "Name": "IN[3] Số hiệu sheet ({nn} = số căn)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "b6dedcdf87fe4bb9946e57f0b10313e5",
+        "Name": "IN[4] Khung tên (family)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "687ad1844a8f4e7eb63ffdacfcf386c9",
+        "Name": "IN[5] Viewport type",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "0648d04467b74f86acd55ceac0afca81",
+        "Name": "IN[6] Lề crop quanh căn / WC / logia (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "3896dfe6982948b78def4fad93e841ec",
+        "Name": "IN[7] Legend ghi chú cột phải (chưa có → tự sinh; trống = không đặt)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "a1c9d928c18d4f4287ae830245d4bb54",
+        "Name": "IN[8] Dry-run (True = dựng thử rồi hoàn tác)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "4a3ec7db55c647f4a64ed434b3d3790b",
+        "Name": "IN[9] Làm lại (True = xóa view/sheet cũ của căn, vẽ lại legend)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "02146a87eef8467991d00d793a3481d6",
+        "Name": "Dàn trang chi tiết căn hộ (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 750.0,
+        "Y": 400.0
+      },
+      {
+        "Id": "882e5ddacad0402d8d9f417d94bf2b55",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1150.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "38b51f0b2791403191a19b7c99bd966c",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Mở view MẶT BẰNG của tầng có căn hộ. Mô hình phải có sàn hoàn thiện (ARV_TaoSanCanHoTuCAD_v1) và trần (ARV_TaoTranCanHo_v1). Giữ Dry-run = True cho lần chạy đầu, đọc Báo cáo rồi mới đổi False.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "962f6926ebbf4852bf9774f60b2c3619",
+          "cffc2df265c94e408349d7f601e3a4cc",
+          "00ffa48142a84b1380c9fbf4ea01e66a",
+          "bf528654e9c242f0a545de9893ae87d1",
+          "b6dedcdf87fe4bb9946e57f0b10313e5",
+          "687ad1844a8f4e7eb63ffdacfcf386c9",
+          "0648d04467b74f86acd55ceac0afca81",
+          "3896dfe6982948b78def4fad93e841ec",
+          "a1c9d928c18d4f4287ae830245d4bb54",
+          "4a3ec7db55c647f4a64ed434b3d3790b"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 606.0,
+        "Height": 1204.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1135.0,
+        "TextblockHeight": 72.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "92ff7e768550452b93deeb0e8da694ce",
+        "Title": "2. Dàn trang (Python)",
+        "DescriptionText": "Room + view + tag + sheet CTCH / WC / logia theo mẫu CAD CT1-CH02-CTCH.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "02146a87eef8467991d00d793a3481d6"
+        ],
+        "HasNestedGroups": false,
+        "Left": 740.0,
+        "Top": 275.0,
+        "Width": 347.0,
+        "Height": 557.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 400.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 115.0,
+        "Background": "#FFB9F9E1"
+      },
+      {
+        "Id": "bc27b9a5cc4f493eba492a13e7242f18",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "Đọc cảnh báo + log trong Documents\\ARV_Logs.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "882e5ddacad0402d8d9f417d94bf2b55"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1140.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFFFB8D8"
+      }
+    ],
+    "X": 275.0,
+    "Y": 170.0,
+    "Zoom": 0.6
+  }
+}

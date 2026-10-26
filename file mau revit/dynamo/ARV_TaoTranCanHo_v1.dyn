@@ -1,0 +1,616 @@
+{
+  "Uuid": "31213254-d2c2-435a-b5b6-bb79104fca63",
+  "IsCustomNode": false,
+  "Description": "Tạo trần hoàn thiện cho phòng ngủ, khách, WC, logia của các căn hộ trên level của view đang mở, theo biên sàn hoàn thiện ARV-SanCanHo; type + cao độ đáy trần theo loại phòng. Dry-run mặc định.",
+  "Name": "ARV_TaoTranCanHo_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "1a9f4257e202479f8046759f24a95039",
+      "Name": "IN[0] Comments sàn nguồn bắt đầu bằng",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "ARV-SanCanHo",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "0ac5b0908c53446098124101c36e2148",
+      "Name": "IN[1] Loại theo floor type (khi Comments không có loại)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "KHO=SHT-Gỗ Công Nghiệp;WC=SHT-Gach Lat WC-300x600;LOGIA=SHT-Gach Lat Logia-300x600",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "3ec9f81404064e59ac66c75a3bb4baaf",
+      "Name": "IN[2] Ceiling type theo loại",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "KHO=TR-Thạch cao khung chìm;WC=TR-Thạch cao chịu ẩm;LOGIA=TR-Thạch cao chịu nước",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "3865ff266aad4294b8b4a6db65954d47",
+      "Name": "IN[3] Cao độ ĐÁY trần so với Level (mm) – chỉnh theo dự án",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "KHO=2700;WC=2400;LOGIA=2700",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "32746f7a107a4266bd472613500c3a36",
+      "Name": "IN[4] Ceiling type mẫu để nhân bản type thiếu",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Plain",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "a203744100f64b2088c398342a9a4be4",
+      "Name": "IN[5] Chỉ làm các căn (trống = tất cả)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "29ebab434e694f4fafd1d7e5f924dc32",
+      "Name": "IN[6] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "5ab156bf91ac4512bd57037c5be1150a",
+      "Name": "Báo cáo",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "1a9f4257e202479f8046759f24a95039",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "58e06e84897845bda62172346ddd6d82",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "ARV-SanCanHo"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "0ac5b0908c53446098124101c36e2148",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2f902dcff771426aa91a981569b903ce",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "KHO=SHT-Gỗ Công Nghiệp;WC=SHT-Gach Lat WC-300x600;LOGIA=SHT-Gach Lat Logia-300x600"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "3ec9f81404064e59ac66c75a3bb4baaf",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "95de30ecbd8e4715bdbc0e4727a383cc",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "KHO=TR-Thạch cao khung chìm;WC=TR-Thạch cao chịu ẩm;LOGIA=TR-Thạch cao chịu nước"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "3865ff266aad4294b8b4a6db65954d47",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3343034c29054dc8bc9ecc5afa46359f",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "KHO=2700;WC=2400;LOGIA=2700"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "32746f7a107a4266bd472613500c3a36",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e6281a71069447ff80cc3d69c4b41afa",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Plain"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "a203744100f64b2088c398342a9a4be4",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e11050c56c1f4a60af021877a5c12408",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "29ebab434e694f4fafd1d7e5f924dc32",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d74a221ee1ef40cabc213d1a323a8e88",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoTranCanHo_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n# Revit 2026 / Dynamo 3.6 (CPython3)\n#\n# Tạo trần hoàn thiện (Ceiling) cho phòng ngủ, phòng khách, WC, logia của các căn hộ trên level của view mặt bằng /\n# mặt bằng trần đang mở, theo biên các tấm SÀN HOÀN THIỆN đã có (ARV_TaoSanCanHoTuCAD_v1 / ARV_TaoSanHoanThien_v1):\n#   1. Sàn nguồn = Floor trên level có Comments bắt đầu bằng IN[0] (mặc định \"ARV-SanCanHo\").\n#      Comments dạng \"ARV-SanCanHo CH07 KHO\" → căn = từ thứ 2, loại = từ cuối (KHO / WC / LOGIA).\n#      Loại không đọc được từ Comments → tra theo floor type (IN[1]).\n#   2. Mỗi tấm sàn → một tấm trần cùng biên (kể cả lỗ; WC giữ biên lùi 25 mm khỏi mặt thô như sàn).\n#   3. Ceiling type + cao độ ĐÁY trần so với Level theo loại (IN[2], IN[3]) – KTS chỉnh theo từng dự án.\n#      Type ở IN[2] chưa có → nhân bản từ type mẫu IN[4] đúng tên đó (giữ cấu tạo lớp), chỉ khi chạy thật.\n#   4. Bỏ qua tấm sàn đã có trần phía trên (điểm trong sàn nằm dưới mặt đáy một trần cùng level).\n#      Comments trần = \"ARV-TranCanHo <căn> <loại>\".\n#   5. Cảnh báo khi mặt trên trần (đáy + chiều dày type) vượt Level kế trên.\n# INPUT\n#   IN[0] (str)  Comments của sàn nguồn bắt đầu bằng (VD \"ARV-SanCanHo\"; cách ';' nếu nhiều)\n#   IN[1] (str)  Loại theo floor type khi Comments không có loại: \"KHO=…;WC=…;LOGIA=…\" (tên floor type, cách ',')\n#   IN[2] (str)  Ceiling type theo loại: \"KHO=…;WC=…;LOGIA=…\"\n#   IN[3] (str)  Cao độ đáy trần so với Level (mm) theo loại: \"KHO=2700;WC=2400;LOGIA=2700\"\n#   IN[4] (str)  Ceiling type mẫu để nhân bản type thiếu (VD \"Plain\"; trống = dừng khi thiếu type)\n#   IN[5] (str)  Chỉ làm các căn (cách ';', VD \"CH01;CH02\"; trống = tất cả)\n#   IN[6] (bool) Dry-run: True = chỉ báo cáo + xem trước (mặc định True)\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, cảnh báo, đường dẫn log, từng tấm trần\n#   OUT[1] (list[Line]) Xem trước: biên các tấm trần sẽ tạo (mm, tại cao độ đáy trần)\n\nimport os\nimport io\nimport csv\nimport math\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, CurveLoop, Transform, Transaction, UnitUtils,\n                                   UnitTypeId, ModelPathUtils, BuiltInParameter, Floor, Ceiling, CeilingType,\n                                   Level, Sketch, HostObjectUtils, Face, ViewType)\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    from System.Collections.Generic import List\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo trần căn hộ\"\nSCRIPT_TAG = u\"ARV_TaoTranCanHo_v1\"\nCOMMENT_TAG = u\"ARV-TranCanHo\"\nKINDS = (\"KHO\", \"WC\", \"LOGIA\")\nKIND_LABEL = {\"KHO\": u\"Ngủ / khách\", \"WC\": u\"WC\", \"LOGIA\": u\"Logia\"}\nINNER_MM = 20.0           # Điểm đại diện: lùi vào trong từ trung điểm cạnh dài nhất\n\n\n# --- Hình học 2D thuần (mm) ---------------------------------------------------------\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef signed_area(pts):\n    return sum(pts[i][0] * pts[(i + 1) % len(pts)][1] - pts[(i + 1) % len(pts)][0] * pts[i][1]\n               for i in range(len(pts))) / 2.0\n\n\ndef point_in(pt, pts):\n    x, y = pt\n    inside = False\n    j = len(pts) - 1\n    for i in range(len(pts)):\n        xi, yi = pts[i]\n        xj, yj = pts[j]\n        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi:\n            inside = not inside\n        j = i\n    return inside\n\n\ndef interior_point(outer, holes):\n    \"\"\"Điểm nằm trong vòng ngoài, ngoài các lỗ: trung điểm cạnh dài lùi vào trong INNER_MM.\"\"\"\n    ccw = signed_area(outer) > 0\n    edges = sorted(range(len(outer)), key=lambda i: -math.hypot(outer[(i + 1) % len(outer)][0] - outer[i][0],\n                                                                outer[(i + 1) % len(outer)][1] - outer[i][1]))\n    for i in edges:\n        a, b = outer[i], outer[(i + 1) % len(outer)]\n        l = math.hypot(b[0] - a[0], b[1] - a[1])\n        if l < 3 * INNER_MM:\n            continue\n        s = 1.0 if ccw else -1.0\n        p = ((a[0] + b[0]) / 2.0 - s * (b[1] - a[1]) / l * INNER_MM,\n             (a[1] + b[1]) / 2.0 + s * (b[0] - a[0]) / l * INNER_MM)\n        if point_in(p, outer) and not any(point_in(p, h) for h in holes):\n            return p\n    return (sum(p[0] for p in outer) / len(outer), sum(p[1] for p in outer) / len(outer))\n\n\ndef parse_map(text):\n    result = {}\n    for part in (text or u\"\").split(u\";\"):\n        if u\"=\" in part:\n            k, v = part.split(u\"=\", 1)\n            if k.strip():\n                result[k.strip().upper()] = v.strip()\n    return result\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef split_filters(text):\n    return [s.strip() for s in (text or u\"\").split(u\";\") if s.strip()]\n\n\ndef parse_comment(comment, prefixes):\n    \"\"\"'ARV-SanCanHo CH07 KHO' → (căn, loại hoặc None). Không khớp tiền tố → None.\"\"\"\n    c = norm(comment)\n    if not any(c.startswith(norm(p)) for p in prefixes):\n        return None\n    words = c.split()\n    apt = words[1] if len(words) > 1 else u\"—\"\n    kind = words[-1].upper() if len(words) > 2 and words[-1].upper() in KINDS else None\n    return apt, kind\n\n\n# =====================================================================================\n# PHẦN REVIT\n# =====================================================================================\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef type_name(t):\n    p = t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)\n    return p.AsString() if p else get_name(t)\n\n\ndef id_value(eid):\n    v = getattr(eid, \"Value\", None)\n    return v if v is not None else eid.IntegerValue\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef comment_of(el):\n    p = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    return (p.AsString() if p else u\"\") or u\"\"\n\n\ndef type_thickness(ctype):\n    cs = ctype.GetCompoundStructure()\n    return cs.GetWidth() if cs is not None else 0.0\n\n\nclass Job(object):\n    def __init__(self, floor, apt, kind):\n        self.floor = floor\n        self.apt = apt\n        self.kind = kind\n        self.loops = []       # [[Curve]] (feet) theo sketch sàn\n        self.outer = []       # [(x, y)] mm – vòng ngoài (để xem trước / điểm đại diện)\n        self.holes = []\n        self.ip = (0.0, 0.0)\n        self.area = 0.0\n        self.status = u\"\"\n        self.id = u\"\"\n\n\ndef floor_loops(floor):\n    \"\"\"Biên sketch của sàn → [[Curve]] và các vòng điểm (mm, đã tessellate).\"\"\"\n    sk = doc.GetElement(floor.SketchId)\n    if not isinstance(sk, Sketch):\n        return [], []\n    curves, pts = [], []\n    for arr in sk.Profile:\n        cs = list(arr)\n        if not cs:\n            continue\n        curves.append(cs)\n        loop = []\n        for c in cs:\n            loop.extend([(to_mm(p.X), to_mm(p.Y)) for p in list(c.Tessellate())[:-1]])\n        pts.append(loop)\n    return curves, pts\n\n\ndef build_loops(curves, z):\n    \"\"\"Đưa các cạnh sketch về cao độ z → List[CurveLoop].\"\"\"\n    out = List[CurveLoop]()\n    for cs in curves:\n        loop = CurveLoop()\n        for c in cs:\n            dz = z - c.GetEndPoint(0).Z\n            loop.Append(c.CreateTransformed(Transform.CreateTranslation(XYZ(0, 0, dz))) if abs(dz) > 1e-9 else c)\n        out.Add(loop)\n    return out\n\n\ndef ceiling_above(ceilings, p_mm):\n    \"\"\"Trần đã có (cùng level) phủ điểm p (mm) – kiểm tra bằng hình chiếu lên mặt đáy trần.\"\"\"\n    x, y = from_mm(p_mm[0]), from_mm(p_mm[1])\n    for cg in ceilings:\n        bb = cg.get_BoundingBox(None)\n        if bb is None or not (bb.Min.X <= x <= bb.Max.X and bb.Min.Y <= y <= bb.Max.Y):\n            continue\n        for ref in HostObjectUtils.GetBottomFaces(cg):\n            face = cg.GetGeometryObjectFromReference(ref)\n            # Face.Project trả về None khi hình chiếu nằm ngoài mặt\n            if isinstance(face, Face) and face.Project(XYZ(x, y, bb.Min.Z - 1.0)) is not None:\n                return cg\n    return None\n\n\ndef preview_lines(jobs, heights):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n        out = []\n        for j in jobs:\n            z = heights.get(j.kind, 0.0)\n            for loop in [j.outer] + j.holes:\n                for i in range(len(loop)):\n                    a, b = loop[i], loop[(i + 1) % len(loop)]\n                    out.append(DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(a[0], a[1], z),\n                                                           DSPoint.ByCoordinates(b[0], b[1], z)))\n        return out\n    except Exception:\n        return []\n\n\nLOG_HEADER = [u\"Căn\", u\"Loại\", u\"Id sàn nguồn\", u\"Điểm trong phòng (mm)\", u\"Ceiling type\", u\"Đáy trần (mm)\",\n              u\"DT (m²)\", u\"Kết quả\", u\"ElementId\"]\n\n\ndef write_log(rows, level_name, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoTranCanHo_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# Level: {}\\n\".format(level_name))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm, m²\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef main(prefixes, floor_kind_text, type_text, height_text, template_name, only_text, dry_run):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    view = doc.ActiveView\n    level = view.GenLevel if view.ViewType in (ViewType.FloorPlan, ViewType.CeilingPlan) else None\n    if level is None:\n        return [u\"DỪNG: hãy mở view mặt bằng / mặt bằng trần của tầng cần tạo trần rồi Run lại.\"], []\n    if not prefixes:\n        raise StopReport([u\"DỪNG: IN[0] trống – nhập Comments của sàn nguồn (VD ARV-SanCanHo).\"])\n\n    # Đầu vào\n    floor_kind = {}\n    for k, v in parse_map(floor_kind_text).items():\n        if k not in KINDS:\n            raise StopReport([u\"DỪNG: IN[1] có loại '{}' không hợp lệ (chỉ dùng {}).\".format(k, u\"/\".join(KINDS))])\n        for name in v.split(u\",\"):\n            if name.strip():\n                floor_kind[norm(name)] = k\n    type_names = dict((k, norm(v)) for k, v in parse_map(type_text).items() if v.strip())\n    heights = {}\n    for k, v in parse_map(height_text).items():\n        try:\n            heights[k] = float(v)\n        except ValueError:\n            raise StopReport([u\"DỪNG: IN[3] cao độ '{}={}' không phải số.\".format(k, v)])\n    lack = [k for k in KINDS if k not in type_names or k not in heights]\n    if lack:\n        raise StopReport([u\"DỪNG: chưa khai báo ceiling type (IN[2]) hoặc cao độ đáy trần (IN[3]) cho: {}.\".format(\n            u\", \".join(lack))])\n    only = set(s.upper() for s in split_filters(only_text.replace(u\",\", u\";\")))\n\n    all_types = dict((norm(type_name(t)), t) for t in FilteredElementCollector(doc).OfClass(CeilingType).ToElements())\n    template = all_types.get(norm(template_name)) if template_name else None\n    if template_name and template is None:\n        raise StopReport([u\"DỪNG: không có ceiling type mẫu '{}' (IN[4]). Các ceiling type: {}\".format(\n            template_name, u\", \".join(sorted(all_types.keys())))])\n    ctypes, pending, missing = {}, {}, []\n    for k in KINDS:\n        name = type_names[k]\n        if name in all_types:\n            ctypes[k] = all_types[name]\n        elif template is not None:\n            pending[k] = name      # nhân bản khi chạy thật; dry-run tạm tính theo type mẫu\n            ctypes[k] = template\n        else:\n            missing.append(u\"{}='{}'\".format(k, name))\n    if missing:\n        raise StopReport([u\"DỪNG: không có ceiling type {} (IN[2]) và chưa có type mẫu để nhân bản (IN[4]). \"\n                          u\"Các ceiling type: {}\".format(u\", \".join(missing), u\", \".join(sorted(all_types.keys())))])\n\n    def ct_label(k):\n        if k in pending:\n            return u\"{} (sẽ nhân bản từ {})\".format(pending[k], type_name(template))\n        return type_name(ctypes[k])\n\n    # Sàn nguồn\n    jobs, unknown, warns = [], [], []\n    for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        if fl.LevelId != level.Id:\n            continue\n        parsed = parse_comment(comment_of(fl), prefixes)\n        if parsed is None:\n            continue\n        apt, kind = parsed\n        if only and apt.upper() not in only:\n            continue\n        if kind is None:\n            kind = floor_kind.get(norm(type_name(doc.GetElement(fl.GetTypeId()))))\n        if kind is None:\n            unknown.append(fl)\n            continue\n        j = Job(fl, apt, kind)\n        j.loops, pts = floor_loops(fl)\n        if not pts:\n            warns.append(u\"Sàn Id {}: không đọc được biên sketch\".format(id_value(fl.Id)))\n            continue\n        k_out = max(range(len(pts)), key=lambda i: abs(signed_area(pts[i])))\n        j.outer = pts[k_out]\n        j.holes = [p for i, p in enumerate(pts) if i != k_out]\n        j.ip = interior_point(j.outer, j.holes)\n        j.area = (abs(signed_area(j.outer)) - sum(abs(signed_area(h)) for h in j.holes)) / 1e6\n        jobs.append(j)\n    if not jobs and not unknown:\n        raise StopReport([u\"DỪNG: level '{}' không có sàn nào có Comments bắt đầu bằng {}{}. Chạy tool tạo sàn \"\n                          u\"hoàn thiện trước, hoặc sửa IN[0].\".format(\n                              level.Name, u\" / \".join(prefixes), u\" thuộc căn \" + u\", \".join(sorted(only)) if only else u\"\")])\n\n    # Bỏ qua sàn đã có trần phía trên\n    old = [c for c in FilteredElementCollector(doc).OfClass(Ceiling).ToElements() if c.LevelId == level.Id]\n    todo = []\n    for j in jobs:\n        cg = ceiling_above(old, j.ip) if old else None\n        if cg is not None:\n            j.status, j.id = u\"Bỏ qua: đã có trần\", id_value(cg.Id)\n        else:\n            todo.append(j)\n\n    # Kiểm tra trần vượt level kế trên\n    above = sorted([l for l in FilteredElementCollector(doc).OfClass(Level).ToElements()\n                    if l.Elevation > level.Elevation + 1e-6], key=lambda l: l.Elevation)\n    if above:\n        room_h = to_mm(above[0].Elevation - level.Elevation)\n        for k in KINDS:\n            top = heights[k] + to_mm(type_thickness(ctypes[k]))\n            if top > room_h:\n                warns.append(u\"{}: mặt trên trần {:.0f} mm vượt Level kế trên '{}' (+{:.0f})\".format(\n                    KIND_LABEL[k], top, above[0].Name, room_h))\n\n    # Ghi vào mô hình\n    created_types = []\n    n_err = 0\n    if not dry_run and todo:\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            for k in sorted(set(pending) & set(j.kind for j in todo)):\n                name = pending.pop(k)\n                ctypes[k] = template.Duplicate(name)\n                created_types.append(u\"{} = '{}' (nhân bản từ '{}')\".format(k, name, type_name(template)))\n            for j in todo:\n                try:\n                    cg = Ceiling.Create(doc, build_loops(j.loops, level.Elevation), ctypes[j.kind].Id, level.Id)\n                except Exception as ex:\n                    j.status = u\"LỖI Ceiling.Create: {}\".format(ex)\n                    n_err += 1\n                    continue\n                cg.get_Parameter(BuiltInParameter.CEILING_HEIGHTABOVELEVEL_PARAM).Set(from_mm(heights[j.kind]))\n                cm = cg.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n                if cm is not None and not cm.IsReadOnly:\n                    cm.Set(u\"{} {} {}\".format(COMMENT_TAG, j.apt, j.kind))\n                j.status, j.id = u\"Đã tạo\", id_value(cg.Id)\n            tx.Commit()\n        except Exception as ex:\n            tx.RollBack()\n            return [u\"LỖI khi tạo trần, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n    elif dry_run:\n        for j in todo:\n            j.status = u\"Sẽ tạo\"\n\n    # Báo cáo\n    order = {\"KHO\": 0, \"WC\": 1, \"LOGIA\": 2}\n    rows = []\n    for j in sorted(jobs, key=lambda j: (j.apt, order.get(j.kind, 3), -j.area)):\n        rows.append([j.apt, KIND_LABEL[j.kind], id_value(j.floor.Id), fmt(j.ip), ct_label(j.kind),\n                     u\"{:.0f}\".format(heights[j.kind]), u\"{:.2f}\".format(j.area), j.status, j.id])\n    for fl in unknown:\n        rows.append([u\"—\", u\"—\", id_value(fl.Id), u\"—\", u\"—\", u\"—\", u\"—\",\n                     u\"Bỏ qua: không rõ loại (floor type '{}' không có trong IN[1])\".format(\n                         type_name(doc.GetElement(fl.GetTypeId()))), u\"\"])\n\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\")]\n    apts = sorted(set(j.apt for j in jobs))\n    report.append(u\"Level: {} – {} căn ({}) – {} tấm sàn nguồn\".format(level.Name, len(apts), u\", \".join(apts),\n                                                                      len(jobs)))\n    counts = {}\n    for j in todo:\n        counts[j.kind] = counts.get(j.kind, 0) + 1\n    report.append(u\"Tấm trần {}: {} (ngủ/khách {}, WC {}, logia {}) – bỏ qua đã có trần: {}{}\".format(\n        u\"sẽ tạo\" if dry_run else u\"đã tạo\", len(todo) - n_err, counts.get(\"KHO\", 0), counts.get(\"WC\", 0),\n        counts.get(\"LOGIA\", 0), len(jobs) - len(todo), u\" – LỖI: {}\".format(n_err) if n_err else u\"\"))\n    for k in KINDS:\n        report.append(u\"  {}: {} – đáy trần +{:.0f} mm, dày {:.0f} mm\".format(\n            KIND_LABEL[k], ct_label(k), heights[k], to_mm(type_thickness(ctypes[k]))))\n    for line in created_types:\n        report.append(u\"ĐÃ NHÂN BẢN ceiling type: \" + line)\n    for k in sorted(pending):\n        report.append(u\"Ceiling type {} = '{}' chưa có → {} từ '{}'\".format(\n            k, pending[k], u\"sẽ nhân bản khi chạy thật\" if dry_run else u\"không có trần dùng, không nhân bản\",\n            type_name(template)))\n    if unknown:\n        warns.append(u\"{} sàn không rõ loại – xem log\".format(len(unknown)))\n    for a in apts:\n        ks = set(j.kind for j in jobs if j.apt == a)\n        for k in KINDS:\n            if k not in ks:\n                warns.append(u\"{}: không có sàn {}\".format(a, KIND_LABEL[k]))\n    for w in warns:\n        report.append(u\"CẢNH BÁO: \" + w)\n    try:\n        report.append(u\"Log: \" + write_log(rows, level.Name, dry_run))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra biên trần (OUT[1]) + log. Đúng thì đổi Dry-run = False và Run lại. \"\n                      u\"Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows]\n    return report, preview_lines(todo, heights)\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\nif DYNAMO:\n    import traceback\n    try:\n        OUT = list(main(\n            split_filters(IN[0] if IN[0] is not None else u\"ARV-SanCanHo\"),\n            IN[1] or u\"\",\n            IN[2] or u\"\",\n            IN[3] or u\"\",\n            (IN[4] or u\"\").strip(),\n            IN[5] or u\"\",\n            True if IN[6] is None else bool(IN[6]),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoTranCanHo_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "273bb033e238445f998342558c4d11d5",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "4c8666282dd24c1aa90b2ab63f585ff6",
+          "Name": "IN[0]",
+          "Description": "IN[0] Comments sàn nguồn bắt đầu bằng",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f7f545792d3c46b2b14ebc8dab6efa4f",
+          "Name": "IN[1]",
+          "Description": "IN[1] Loại theo floor type (khi Comments không có loại)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a6ce305490194327a4a14b3f152dbb93",
+          "Name": "IN[2]",
+          "Description": "IN[2] Ceiling type theo loại",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a306ab26d28b410d8ab490a5e8824842",
+          "Name": "IN[3]",
+          "Description": "IN[3] Cao độ ĐÁY trần so với Level (mm) – chỉnh theo dự án",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "632fa4ec915b4e7297bc7c444f56fd7e",
+          "Name": "IN[4]",
+          "Description": "IN[4] Ceiling type mẫu để nhân bản type thiếu",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2585c3db0f304d1f896c13a83030bb1e",
+          "Name": "IN[5]",
+          "Description": "IN[5] Chỉ làm các căn (trống = tất cả)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c03228a0d8a74ca28f4e8ac4ad437cde",
+          "Name": "IN[6]",
+          "Description": "IN[6] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "02a36869cc5e43cb8eee5347cfcc7d42",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "5ab156bf91ac4512bd57037c5be1150a",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "6712c329cb9d48d7a5d2206ef982cc47",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fbf670eade694469b94edad50d53bf10",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "58e06e84897845bda62172346ddd6d82",
+      "End": "4c8666282dd24c1aa90b2ab63f585ff6",
+      "Id": "c121de426cdb4b52bd05d5f494651494",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2f902dcff771426aa91a981569b903ce",
+      "End": "f7f545792d3c46b2b14ebc8dab6efa4f",
+      "Id": "8b1d8211b89649dd9373bcc52ef316d8",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "95de30ecbd8e4715bdbc0e4727a383cc",
+      "End": "a6ce305490194327a4a14b3f152dbb93",
+      "Id": "8ee0d4f514934d0d912484a313abd735",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "3343034c29054dc8bc9ecc5afa46359f",
+      "End": "a306ab26d28b410d8ab490a5e8824842",
+      "Id": "6745ac01f390476dbd1024b877cb35ed",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e6281a71069447ff80cc3d69c4b41afa",
+      "End": "632fa4ec915b4e7297bc7c444f56fd7e",
+      "Id": "5064571e45da42daa3580095f5324c17",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e11050c56c1f4a60af021877a5c12408",
+      "End": "2585c3db0f304d1f896c13a83030bb1e",
+      "Id": "2543bcac54064a449b106dcfd3906ab9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d74a221ee1ef40cabc213d1a323a8e88",
+      "End": "c03228a0d8a74ca28f4e8ac4ad437cde",
+      "Id": "d48cd462a5f04fc580fcfb19f52b3c42",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "02a36869cc5e43cb8eee5347cfcc7d42",
+      "End": "6712c329cb9d48d7a5d2206ef982cc47",
+      "Id": "3297979c498a4405978f8feb585ad4ff",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "1a9f4257e202479f8046759f24a95039",
+        "Name": "IN[0] Comments sàn nguồn bắt đầu bằng",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "0ac5b0908c53446098124101c36e2148",
+        "Name": "IN[1] Loại theo floor type (khi Comments không có loại)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "3ec9f81404064e59ac66c75a3bb4baaf",
+        "Name": "IN[2] Ceiling type theo loại",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "3865ff266aad4294b8b4a6db65954d47",
+        "Name": "IN[3] Cao độ ĐÁY trần so với Level (mm) – chỉnh theo dự án",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "32746f7a107a4266bd472613500c3a36",
+        "Name": "IN[4] Ceiling type mẫu để nhân bản type thiếu",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "a203744100f64b2088c398342a9a4be4",
+        "Name": "IN[5] Chỉ làm các căn (trống = tất cả)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "29ebab434e694f4fafd1d7e5f924dc32",
+        "Name": "IN[6] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "273bb033e238445f998342558c4d11d5",
+        "Name": "Tạo trần căn hộ (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 750.0,
+        "Y": 300.0
+      },
+      {
+        "Id": "5ab156bf91ac4512bd57037c5be1150a",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1150.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "5e6d402eba8a47c28b804e4a8e76ede7",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Mở view MẶT BẰNG hoặc MẶT BẰNG TRẦN của tầng cần làm (trần tạo trên level của view). Mô hình phải có sàn hoàn thiện (ARV_TaoSanCanHoTuCAD_v1). IN[3] là cao độ ĐÁY trần – chỉnh theo từng dự án. Giữ Dry-run = True cho lần chạy đầu, đọc Báo cáo rồi mới đổi False.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "1a9f4257e202479f8046759f24a95039",
+          "0ac5b0908c53446098124101c36e2148",
+          "3ec9f81404064e59ac66c75a3bb4baaf",
+          "3865ff266aad4294b8b4a6db65954d47",
+          "32746f7a107a4266bd472613500c3a36",
+          "a203744100f64b2088c398342a9a4be4",
+          "29ebab434e694f4fafd1d7e5f924dc32"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -96.0,
+        "Width": 537.0,
+        "Height": 888.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 805.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "3c5f9c4114e74b898402436c5257803f",
+        "Title": "2. Tạo trần (Python)",
+        "DescriptionText": "Mỗi tấm sàn ARV-SanCanHo → một tấm trần cùng biên. Mã nguồn: ARV_TaoTranCanHo_v1.py",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "273bb033e238445f998342558c4d11d5"
+        ],
+        "HasNestedGroups": false,
+        "Left": 740.0,
+        "Top": 161.0,
+        "Width": 278.0,
+        "Height": 481.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 300.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 129.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "e926e8c2d2e64d05baa836075fff37c1",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "OUT[0] báo cáo, OUT[1] biên trần xem trước. Log: Documents\\ARV_Logs",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "5ab156bf91ac4512bd57037c5be1150a"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1140.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 275.01122799999996,
+    "Y": 169.82738700000004,
+    "Zoom": 0.9063352
+  }
+}

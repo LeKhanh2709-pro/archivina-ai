@@ -1,0 +1,776 @@
+{
+  "Uuid": "fa408ffe-b434-4e9e-8a51-2ba63452b62c",
+  "IsCustomNode": false,
+  "Description": "Tạo cột và vách/lõi kết cấu từ mặt bằng định vị cột vách lõi (DWG đã link). Mặc định dry-run. TRẠNG THÁI: CHƯA DUYỆT.",
+  "Name": "ARV_TaoCotVachTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "c54d0a876abd4141a2702aa645650e25",
+      "Name": "IN[0] Tên bản CAD (để trống nếu chỉ có 1)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "150_goc0",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "00e81c09ccc84372997456a48d2ce73f",
+      "Name": "IN[1] Lọc layer (cách nhau bằng ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "S-Wall 2",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "cdea0bf709084fa7856ebd8ff4d060dd",
+      "Name": "IN[2] Tỉ lệ cạnh dài/ngắn để là vách",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "4",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "b670656bc3d94d4a9dd01b0727f0eb06",
+      "Name": "IN[3] Tên family cột",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "M_Concrete-Rectangular-Column",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "85e3536ea0254703b51e45aeac2db5ba",
+      "Name": "IN[4] Parameter cạnh X (b)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "b",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "b58f45985e4a4592bfb9916976911cb6",
+      "Name": "IN[5] Parameter cạnh Y (h)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "h",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "7946aeb9a6564f9bb0179d46cff914bf",
+      "Name": "IN[6] Tên wall type mẫu",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "VBT-200",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "0dd5636f5d5a4e2fab0de0159424a1bf",
+      "Name": "IN[7] Level chân",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Tầng 1\t",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "0d314228559e45c18a741a9917cf785e",
+      "Name": "IN[8] Level đỉnh",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Tầng 2",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "ab258bdde1f8432fad78ec1158768b00",
+      "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c54d0a876abd4141a2702aa645650e25",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2c530bedf8234379bd707d08558cf29c",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "150_goc0"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "00e81c09ccc84372997456a48d2ce73f",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "bd5c7792c63c41148ed060838f2e8b3d",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "S-Wall 2"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "cdea0bf709084fa7856ebd8ff4d060dd",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "af1322c85f8b47418a5c52bb62a2b5ae",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 4.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b670656bc3d94d4a9dd01b0727f0eb06",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "efd321600b0045fb975a825f4b655855",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "M_Concrete-Rectangular-Column"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "85e3536ea0254703b51e45aeac2db5ba",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "633926c402a34b22aac1cd6151f8f3f6",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "b"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b58f45985e4a4592bfb9916976911cb6",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0c9280c071db47cb92e8000c3f287f5d",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "h"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "7946aeb9a6564f9bb0179d46cff914bf",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f637cca72b744b769a9b9793e9165523",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "VBT-200"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "0dd5636f5d5a4e2fab0de0159424a1bf",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cb5f256b773349238bbf615744dda914",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Tầng 1\t"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "0d314228559e45c18a741a9917cf785e",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f1c1037052f24dfe957ddee378ad6ad8",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Tầng 2"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "ab258bdde1f8432fad78ec1158768b00",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6fb5976ef4834423ae184eb79dc76252",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoCotVachTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo cột và vách/lõi kết cấu từ mặt bằng định vị cột vách lõi (DWG đã Link/Import vào Revit).\n#   - Hình chữ nhật đơn có cạnh dài / cạnh ngắn < tỉ lệ  → CỘT (đúng b × h, góc xoay)\n#   - Hình chữ nhật dài hơn                            → VÁCH\n#   - Lõi hình L, T, U, lõi rỗng (cạnh vuông góc)        → tách thành các đoạn VÁCH chữ nhật\n#   - Hình tròn, hình có cạnh xiên                      → bỏ qua, ghi vào báo cáo\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (để trống nếu mô hình chỉ có 1 bản CAD)\n#   IN[1] (str)   Chuỗi lọc layer, nhiều chuỗi cách nhau bằng ';' – layer chứa một trong các chuỗi sẽ được dùng\n#                 (ví dụ \"$0$S-Cot vach\" lấy cả \"...$0$S-Cot vach\" và \"...$0$S-Cot vach dung\")\n#   IN[2] (float) Tỉ lệ cạnh dài / cạnh ngắn để coi là vách (mặc định 4)\n#   IN[3] (str)   Tên family cột kết cấu tiết diện chữ nhật\n#   IN[4] (str)   Tên parameter type cạnh theo trục X của family (ví dụ \"b\")\n#   IN[5] (str)   Tên parameter type cạnh theo trục Y của family (ví dụ \"h\")\n#   IN[6] (str)   Tên wall type mẫu (Basic) cho vách kết cấu\n#   IN[7] (str)   Tên level chân cột / vách\n#   IN[8] (str)   Tên level đỉnh cột / vách\n#   IN[9] (bool)  Dry-run: True = chỉ báo cáo, không ghi vào mô hình (mặc định True)\n# OUTPUT\n#   OUT (list[str]) Báo cáo: tóm tắt, layer đã dùng, đường dẫn log, rồi từng cấu kiện:\n#                   Loại | Tâm | Kích thước | Góc | Type | Kết quả | ElementId\n\nimport clr\nimport os\nimport io\nimport csv\nimport math\nimport datetime\n\nclr.AddReference(\"RevitAPI\")\nfrom Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, Options, GeometryInstance, PolyLine,\n                               Line, Arc, XYZ, Transaction, UnitUtils, UnitTypeId, ModelPathUtils,\n                               BuiltInParameter, BuiltInCategory, Level, Wall, WallType, WallKind,\n                               LocationPoint, LocationCurve, StorageType, ElementTransformUtils)\nfrom Autodesk.Revit.DB.Structure import StructuralType\nclr.AddReference(\"RevitServices\")\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo cột vách kết cấu từ CAD\"\nJOIN_TOL_MM = 1.0          # Sai số nối đầu mút line / gộp toạ độ\nDUP_TOL_MM = 5.0           # Khoảng cách coi là trùng cấu kiện\nANGLE_TOL = 1e-3           # Sai số vuông góc / thẳng hàng (rad)\n# [cần xác nhận] standards chưa quy định tên type cột / vách; BIM Manager chốt rồi sửa tại đây\nCOLUMN_TYPE_NAME = u\"{b}x{h}\"\nWALL_TYPE_NAME = u\"{base}_{t}\"\n\ncad_filter = (IN[0] or u\"\").strip()\nlayer_filters = [s.strip() for s in (IN[1] or u\"\").split(u\";\") if s.strip()]\nwall_ratio = float(IN[2]) if IN[2] else 4.0\nfamily_name = (IN[3] or u\"\").strip()\nparam_b = (IN[4] or u\"b\").strip()\nparam_h = (IN[5] or u\"h\").strip()\nwall_type_name = (IN[6] or u\"\").strip()\nbase_level_name = (IN[7] or u\"\").strip()\ntop_level_name = (IN[8] or u\"\").strip()\ndry_run = True if IN[9] is None else bool(IN[9])\n\n\n# --- Tiện ích ---------------------------------------------------------------------\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef flat(p):\n    return XYZ(p.X, p.Y, 0)\n\n\ndef fmt_xy(p):\n    return u\"({:.0f}, {:.0f})\".format(to_mm(p.X), to_mm(p.Y))\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef model_role(document):\n    # Trường Bộ môn (Role) theo tên file ISO 19650: PRJ-ARV-T1-ZZ-M3-S-0001\n    parts = (document.Title or \"\").split(\"-\")\n    return parts[5].upper() if len(parts) >= 7 else None\n\n\n# --- Đọc hình học CAD -------------------------------------------------------------\ndef pick_cad():\n    instances = list(FilteredElementCollector(doc).OfClass(ImportInstance).ToElements())\n    if cad_filter:\n        instances = [i for i in instances\n                     if cad_filter.lower() in get_name(doc.GetElement(i.GetTypeId())).lower()]\n    if len(instances) != 1:\n        names = [get_name(doc.GetElement(i.GetTypeId())) for i in\n                 FilteredElementCollector(doc).OfClass(ImportInstance).ToElements()]\n        raise Exception(u\"Tìm thấy {} bản CAD khớp '{}'. Nhập tên bản CAD vào ô IN[0]. Các bản CAD: {}\".format(\n            len(instances), cad_filter, u\", \".join(names) or u\"không có\"))\n    return instances[0]\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return style.GraphicsStyleCategory.Name\n    return None\n\n\ndef cad_objects(cad):\n    \"\"\"Mọi đối tượng hình học của CAD, kể cả trong block lồng nhau.\"\"\"\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            else:\n                result.append(obj)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef simplify_loop(points):\n    \"\"\"Bỏ điểm trùng, điểm đóng vòng và điểm thẳng hàng.\"\"\"\n    tol = from_mm(0.1)\n    pts = []\n    for p in points:\n        p = flat(p)\n        if not pts or not pts[-1].IsAlmostEqualTo(p, tol):\n            pts.append(p)\n    if len(pts) > 1 and pts[0].IsAlmostEqualTo(pts[-1], tol):\n        pts.pop()\n    changed = True\n    while changed and len(pts) > 3:\n        changed = False\n        n = len(pts)\n        for i in range(n):\n            a, b, c = pts[i - 1], pts[i], pts[(i + 1) % n]\n            if b.Subtract(a).Normalize().CrossProduct(c.Subtract(b).Normalize()).GetLength() < ANGLE_TOL:\n                del pts[i]\n                changed = True\n                break\n    return pts\n\n\ndef loops_from_lines(lines):\n    \"\"\"Nối các line rời thành các vòng khép kín.\"\"\"\n    step = from_mm(JOIN_TOL_MM)\n\n    def key(p):\n        return (int(round(p.X / step)), int(round(p.Y / step)))\n\n    segs = [(flat(l.GetEndPoint(0)), flat(l.GetEndPoint(1))) for l in lines]\n    by_key = {}\n    for idx, (a, b) in enumerate(segs):\n        by_key.setdefault(key(a), []).append(idx)\n        by_key.setdefault(key(b), []).append(idx)\n    used, loops = set(), []\n    for start in range(len(segs)):\n        if start in used:\n            continue\n        used.add(start)\n        first, current = segs[start]\n        loop, closed = [first], False\n        while True:\n            if key(current) == key(first):\n                closed = True\n                break\n            nxt = [i for i in by_key.get(key(current), []) if i not in used]\n            if not nxt:\n                break\n            used.add(nxt[0])\n            a, b = segs[nxt[0]]\n            loop.append(current)\n            current = b if key(a) == key(current) else a\n        if closed and len(loop) >= 3:\n            loops.append(loop)\n    return loops\n\n\ndef polygon_area(pts):\n    n = len(pts)\n    return abs(sum(pts[i].X * pts[(i + 1) % n].Y - pts[(i + 1) % n].X * pts[i].Y for i in range(n))) / 2.0\n\n\ndef centroid(pts):\n    return XYZ(sum(p.X for p in pts) / len(pts), sum(p.Y for p in pts) / len(pts), 0)\n\n\ndef point_in_poly(x, y, poly):\n    \"\"\"Ray casting; poly là danh sách (x, y).\"\"\"\n    inside = False\n    n = len(poly)\n    for i in range(n):\n        x0, y0 = poly[i]\n        x1, y1 = poly[(i + 1) % n]\n        if (y0 > y) != (y1 > y) and x < x0 + (y - y0) * (x1 - x0) / (y1 - y0):\n            inside = not inside\n    return inside\n\n\ndef read_loops(objects, layers):\n    polylines, lines, circles = [], [], 0\n    for obj in objects:\n        if layer_of(obj) not in layers:\n            continue\n        if isinstance(obj, PolyLine):\n            polylines.append(list(obj.GetCoordinates()))\n        elif isinstance(obj, Line):\n            lines.append(obj)\n        elif isinstance(obj, Arc) and not obj.IsBound:\n            circles += 1\n    loops = []\n    tol = from_mm(DUP_TOL_MM)\n    for raw in polylines + loops_from_lines(lines):\n        pts = simplify_loop(raw)\n        if len(pts) < 3:\n            continue\n        area, c = polygon_area(pts), centroid(pts)\n        # Bỏ vòng vẽ chồng (cùng số đỉnh, cùng tâm, cùng diện tích) – kể cả ở hai layer khác nhau\n        if any(len(o) == len(pts) and c.IsAlmostEqualTo(centroid(o), tol)\n               and abs(polygon_area(o) - area) < tol * tol for o in loops):\n            continue\n        loops.append(pts)\n    return loops, circles\n\n\ndef build_regions(loops):\n    \"\"\"Ghép vòng ngoài với các vòng lỗ nằm hẳn bên trong. Trả về [(outer, [holes])].\"\"\"\n    xy = [[(p.X, p.Y) for p in l] for l in loops]\n    areas = [polygon_area(l) for l in loops]\n    parents = []\n    for i in range(len(loops)):\n        parents.append([j for j in range(len(loops))\n                        if j != i and areas[j] > areas[i] and all(point_in_poly(x, y, xy[j]) for x, y in xy[i])])\n    regions = []\n    for i, loop in enumerate(loops):\n        if len(parents[i]) % 2 == 0:\n            holes = [loops[k] for k in range(len(loops))\n                     if len(parents[k]) == len(parents[i]) + 1 and i in parents[k]]\n            regions.append((loop, holes))\n    return regions\n\n\ndef unique_sorted(values, tol):\n    result = []\n    for v in sorted(values):\n        if not result or v - result[-1] > tol:\n            result.append(v)\n    return result\n\n\ndef decompose(outer, holes):\n    \"\"\"Tách vùng có cạnh vuông góc thành các hình chữ nhật lớn nhất có thể.\n\n    Trả về [(tâm, cạnh dài, cạnh ngắn, vector phương cạnh dài)] hoặc None nếu có cạnh xiên.\n    \"\"\"\n    ux = outer[1].Subtract(outer[0]).Normalize()\n    uy = XYZ(-ux.Y, ux.X, 0)\n    polys = [[(p.DotProduct(ux), p.DotProduct(uy)) for p in loop] for loop in [outer] + holes]\n    tol = from_mm(JOIN_TOL_MM)\n    for poly in polys:\n        for i in range(len(poly)):\n            (x0, y0), (x1, y1) = poly[i], poly[(i + 1) % len(poly)]\n            if abs(x1 - x0) > tol and abs(y1 - y0) > tol:\n                return None\n    xs = unique_sorted([x for poly in polys for x, _ in poly], tol)\n    ys = unique_sorted([y for poly in polys for _, y in poly], tol)\n    free = set()\n    for i in range(len(xs) - 1):\n        for j in range(len(ys) - 1):\n            cx, cy = (xs[i] + xs[i + 1]) / 2.0, (ys[j] + ys[j + 1]) / 2.0\n            if point_in_poly(cx, cy, polys[0]) and not any(point_in_poly(cx, cy, h) for h in polys[1:]):\n                free.add((i, j))\n    pieces = []\n    while free:\n        # Chọn hình chữ nhật diện tích lớn nhất trong các ô còn lại (ô gốc ở góc dưới trái)\n        best = None\n        for (i0, j0) in free:\n            min_h, i = None, i0\n            while (i, j0) in free:\n                h = 0\n                while (i, j0 + h) in free:\n                    h += 1\n                min_h = h if min_h is None else min(min_h, h)\n                area = (xs[i + 1] - xs[i0]) * (ys[j0 + min_h] - ys[j0])\n                if best is None or area > best[0] + 1e-9:\n                    best = (area, i0, i, j0, j0 + min_h - 1)\n                i += 1\n        _, i0, i1, j0, j1 = best\n        for i in range(i0, i1 + 1):\n            for j in range(j0, j1 + 1):\n                free.discard((i, j))\n        x0, x1, y0, y1 = xs[i0], xs[i1 + 1], ys[j0], ys[j1 + 1]\n        center = ux.Multiply((x0 + x1) / 2.0).Add(uy.Multiply((y0 + y1) / 2.0))\n        lx, ly = x1 - x0, y1 - y0\n        pieces.append((center, lx, ly, ux) if lx >= ly else (center, ly, lx, uy))\n    return pieces\n\n\ndef column_frame(direction, along, across):\n    \"\"\"Đưa góc xoay về [-45°, 45°); mỗi lần xoay 90° thì đổi chỗ b và h.\"\"\"\n    angle = math.atan2(direction.Y, direction.X)\n    w, d = along, across\n    while angle >= math.pi / 4:\n        angle -= math.pi / 2\n        w, d = d, w\n    while angle < -math.pi / 4:\n        angle += math.pi / 2\n        w, d = d, w\n    return w, d, (0.0 if abs(angle) < 1e-6 else angle)\n\n\n# --- Type, level ----------------------------------------------------------------\ndef find_level(name):\n    for l in FilteredElementCollector(doc).OfClass(Level).ToElements():\n        if l.Name == name:\n            return l\n    names = sorted(l.Name for l in FilteredElementCollector(doc).OfClass(Level).ToElements())\n    raise Exception(u\"Không có level '{}'. Các level: {}\".format(name, u\", \".join(names)))\n\n\ndef column_symbols():\n    symbols = list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns)\n                   .WhereElementIsElementType().ToElements())\n    result = [s for s in symbols if s.Family.Name == family_name]\n    if not result:\n        names = sorted(set(s.Family.Name for s in symbols))\n        raise Exception(u\"Không có family cột '{}'. Các family cột: {}\".format(\n            family_name, u\", \".join(names) or u\"không có\"))\n    for pname in (param_b, param_h):\n        p = result[0].LookupParameter(pname)\n        if p is None or p.StorageType != StorageType.Double:\n            raise Exception(u\"Family '{}' không có parameter type '{}' kiểu chiều dài.\".format(family_name, pname))\n    return result\n\n\ndef wall_types():\n    types = [t for t in FilteredElementCollector(doc).OfClass(WallType).ToElements() if t.Kind == WallKind.Basic]\n    by_name = dict((get_name(t), t) for t in types)\n    if wall_type_name not in by_name:\n        raise Exception(u\"Không có wall type '{}'. Các wall type Basic: {}\".format(\n            wall_type_name, u\", \".join(sorted(by_name))))\n    return by_name[wall_type_name], by_name\n\n\ndef set_wall_thickness(wall_type, total_ft):\n    \"\"\"Đổi chiều dày lớp kết cấu để tổng chiều dày tường bằng giá trị yêu cầu.\"\"\"\n    cs = wall_type.GetCompoundStructure()\n    idx = cs.StructuralMaterialIndex\n    if idx < 0:\n        idx = cs.GetFirstCoreLayerIndex()\n    others = sum(cs.GetLayerWidth(i) for i in range(cs.LayerCount) if i != idx)\n    core = total_ft - others\n    if core < from_mm(1.0):\n        raise Exception(u\"Type '{}' có lớp hoàn thiện dày hơn chiều dày vách {:.0f} mm\".format(\n            get_name(wall_type), to_mm(total_ft)))\n    cs.SetLayerWidth(idx, core)\n    wall_type.SetCompoundStructure(cs)\n\n\n# --- Log ----------------------------------------------------------------------------\nLOG_HEADER = [u\"Loại\", u\"Tâm (mm)\", u\"Kích thước (mm)\", u\"Góc (°)\", u\"Type\", u\"Kết quả\",\n              u\"ElementId\", u\"Giá trị cũ\", u\"Giá trị mới\"]\n\n\ndef write_log(rows, source):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoCotVachTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    # CSV UTF-8 có BOM để Excel đọc đúng tiếng Việt\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# File nguồn: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm, độ\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\n# --- Chương trình chính -----------------------------------------------------------\ndef main():\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"]\n    warnings = []\n    if model_role(doc) == \"A\":\n        warnings.append(u\"CẢNH BÁO: đây có vẻ là mô hình Kiến trúc (A). Cột và vách kết cấu thuộc mô hình Kết cấu (S).\")\n\n    cad = pick_cad()\n    cad_name = get_name(doc.GetElement(cad.GetTypeId()))\n    objects = cad_objects(cad)\n    all_layers = sorted(set(l for l in (layer_of(o) for o in objects) if l))\n    layers = set(l for l in all_layers if any(f.lower() in l.lower() for f in layer_filters))\n    if not layers:\n        return [u\"DỪNG: không có layer nào chứa '{}'. Các layer trong CAD:\".format(u\"; \".join(layer_filters))] \\\n            + all_layers\n\n    base_level = find_level(base_level_name)\n    top_level = find_level(top_level_name)\n    if top_level.Elevation <= base_level.Elevation:\n        raise Exception(u\"Level đỉnh '{}' phải cao hơn level chân '{}'.\".format(top_level_name, base_level_name))\n\n    # Phân tích hình học\n    loops, circles = read_loops(objects, layers)\n    columns, walls, skewed = [], [], []\n    for outer, holes in build_regions(loops):\n        pieces = decompose(outer, holes)\n        if pieces is None:\n            skewed.append(centroid(outer))\n            continue\n        single = len(pieces) == 1\n        for center, along, across, direction in pieces:\n            if single and along / across < wall_ratio:\n                columns.append((center,) + column_frame(direction, along, across))\n            else:\n                walls.append((center, along, across, direction, single))\n\n    z = base_level.Elevation\n    dup_tol = from_mm(DUP_TOL_MM)\n    rows, col_jobs, wall_jobs = [], [], []\n\n    # --- Lập kế hoạch cột\n    col_types, new_col_types, symbols = {}, {}, []\n    if columns:\n        symbols = column_symbols()\n        used_names = set(get_name(s) for s in symbols)\n        for s in symbols:\n            pb, ph = s.LookupParameter(param_b), s.LookupParameter(param_h)\n            if pb is not None and ph is not None:\n                col_types.setdefault((int(round(to_mm(pb.AsDouble()))), int(round(to_mm(ph.AsDouble())))), s)\n        existing = [flat(c.Location.Point) for c in\n                    FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns)\n                    .WhereElementIsNotElementType().ToElements()\n                    if c.LevelId == base_level.Id and isinstance(c.Location, LocationPoint)]\n        for center, w, d, angle in columns:\n            k = (int(round(to_mm(w))), int(round(to_mm(d))))\n            if k in col_types:\n                type_name = get_name(col_types[k])\n            elif k in new_col_types:\n                type_name = new_col_types[k]\n            else:\n                type_name = COLUMN_TYPE_NAME.format(b=k[0], h=k[1])\n                suffix = 1\n                while type_name in used_names:\n                    type_name = COLUMN_TYPE_NAME.format(b=k[0], h=k[1]) + u\"_{}\".format(suffix)\n                    suffix += 1\n                used_names.add(type_name)\n                new_col_types[k] = type_name\n            row = [u\"Cột\", fmt_xy(center), u\"{} x {}\".format(*k), u\"{:.2f}\".format(math.degrees(angle)),\n                   type_name + (u\" (mới)\" if k in new_col_types else u\"\"), u\"\", u\"\", u\"—\", type_name]\n            if any(center.IsAlmostEqualTo(p, dup_tol) for p in existing):\n                row[5] = u\"Bỏ qua – đã có cột\"\n            else:\n                row[5] = u\"Sẽ tạo\" if dry_run else u\"Chờ tạo\"\n                col_jobs.append((center, k, angle, len(rows)))\n            rows.append(row)\n\n    # --- Lập kế hoạch vách\n    wall_by_t, new_wall_types, wall_template = {}, {}, None\n    if walls:\n        wall_template, types_by_name = wall_types()\n        base_name = get_name(wall_template)\n        existing = []\n        for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n            loc = wl.Location\n            if wl.LevelId == base_level.Id and isinstance(loc, LocationCurve) and isinstance(loc.Curve, Line):\n                existing.append((flat(loc.Curve.Evaluate(0.5, True)), loc.Curve.Direction))\n        for center, length, thick, direction, single in walls:\n            t = int(round(to_mm(thick)))\n            if t not in wall_by_t and t not in new_wall_types:\n                if int(round(to_mm(wall_template.Width))) == t:\n                    wall_by_t[t] = wall_template\n                else:\n                    name = WALL_TYPE_NAME.format(base=base_name, t=t)\n                    if name in types_by_name:\n                        wall_by_t[t] = types_by_name[name]\n                    else:\n                        new_wall_types[t] = name\n            wtype = wall_by_t.get(t)\n            type_name = get_name(wtype) if wtype else new_wall_types[t]\n            row = [u\"Vách\" if single else u\"Vách (tách từ lõi)\", fmt_xy(center),\n                   u\"L={:.0f}, t={}\".format(to_mm(length), t),\n                   u\"{:.2f}\".format(math.degrees(math.atan2(direction.Y, direction.X))),\n                   type_name + (u\" (mới)\" if wtype is None else u\"\"), u\"\", u\"\", u\"—\", type_name]\n            if wtype is not None and int(round(to_mm(wtype.Width))) != t:\n                row[5] = u\"Bỏ qua – type '{}' đã có nhưng dày {:.0f} mm\".format(type_name, to_mm(wtype.Width))\n            elif any(center.IsAlmostEqualTo(p, dup_tol) and direction.CrossProduct(dv).GetLength() < ANGLE_TOL\n                     for p, dv in existing):\n                row[5] = u\"Bỏ qua – đã có vách\"\n            else:\n                row[5] = u\"Sẽ tạo\" if dry_run else u\"Chờ tạo\"\n                half = direction.Multiply(length / 2.0)\n                p0, p1 = center.Subtract(half), center.Add(half)\n                wall_jobs.append((XYZ(p0.X, p0.Y, z), XYZ(p1.X, p1.Y, z), t, len(rows)))\n            rows.append(row)\n\n    for p in skewed:\n        rows.append([u\"?\", fmt_xy(p), u\"\", u\"\", u\"\", u\"Bỏ qua – hình có cạnh xiên, cần vẽ tay\", u\"\", u\"—\", u\"—\"])\n\n    # --- Ghi vào mô hình\n    if not dry_run and (col_jobs or wall_jobs):\n        # Đóng transaction của Dynamo để dùng Transaction có tên riêng (Undo được trong Revit)\n        TransactionManager.Instance.ForceCloseTransaction()\n        t = Transaction(doc, TRANSACTION_NAME)\n        t.Start()\n        try:\n            for k, name in new_col_types.items():\n                sym = symbols[0].Duplicate(name)\n                sym.LookupParameter(param_b).Set(from_mm(k[0]))\n                sym.LookupParameter(param_h).Set(from_mm(k[1]))\n                col_types[k] = sym\n            for th, name in new_wall_types.items():\n                wtype = wall_template.Duplicate(name)\n                set_wall_thickness(wtype, from_mm(th))\n                wall_by_t[th] = wtype\n\n            for center, k, angle, idx in col_jobs:\n                sym = col_types[k]\n                if not sym.IsActive:\n                    sym.Activate()\n                    doc.Regenerate()\n                pt = XYZ(center.X, center.Y, z)\n                inst = doc.Create.NewFamilyInstance(pt, sym, base_level, StructuralType.Column)\n                inst.get_Parameter(BuiltInParameter.FAMILY_BASE_LEVEL_OFFSET_PARAM).Set(0.0)\n                inst.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_PARAM).Set(top_level.Id)\n                inst.get_Parameter(BuiltInParameter.FAMILY_TOP_LEVEL_OFFSET_PARAM).Set(0.0)\n                if angle:\n                    ElementTransformUtils.RotateElement(doc, inst.Id, Line.CreateBound(pt, pt.Add(XYZ.BasisZ)), angle)\n                rows[idx][5] = u\"Đã tạo\"\n                rows[idx][6] = inst.Id.Value\n\n            height = top_level.Elevation - base_level.Elevation\n            for p0, p1, th, idx in wall_jobs:\n                wall = Wall.Create(doc, Line.CreateBound(p0, p1), wall_by_t[th].Id, base_level.Id,\n                                   height, 0.0, False, True)\n                wall.get_Parameter(BuiltInParameter.WALL_BASE_OFFSET).Set(0.0)\n                wall.get_Parameter(BuiltInParameter.WALL_HEIGHT_TYPE).Set(top_level.Id)\n                wall.get_Parameter(BuiltInParameter.WALL_TOP_OFFSET).Set(0.0)\n                rows[idx][5] = u\"Đã tạo\"\n                rows[idx][6] = wall.Id.Value\n            t.Commit()\n        except Exception as ex:\n            t.RollBack()\n            return warnings + [u\"LỖI khi tạo cột vách, mọi thay đổi đã được hoàn tác: {}\".format(ex)]\n\n    summary = (u\"{} – {}: {} cột, {} vách; bỏ qua {} hình tròn, {} hình cạnh xiên. Tỉ lệ vách ≥ {}. \"\n               u\"Level {} → {}. Type cột mới: {}. Type vách mới: {}.\").format(\n        TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\",\n        len(columns), len(walls), circles, len(skewed), wall_ratio, base_level.Name, top_level.Name,\n        u\", \".join(sorted(new_col_types.values())) or u\"không có\",\n        u\", \".join(sorted(new_wall_types.values())) or u\"không có\")\n    try:\n        log_line = u\"Log: \" + write_log(rows, cad_name)\n    except Exception as ex:\n        log_line = u\"Không ghi được file log: {}\".format(ex)\n    return warnings + [summary, u\"Layer đã dùng: \" + u\"; \".join(sorted(layers)), log_line] \\\n        + [u\" | \".join(u\"{}\".format(v) for v in r[:7]) for r in rows]\n\n\ntry:\n    OUT = main()\nexcept Exception as ex:\n    OUT = [u\"LỖI: {}\".format(ex)]\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "2060a93b617a45e48b00e402e3a9dad6",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "5707760a7296409c8d655b645261c0af",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tên bản CAD (để trống nếu chỉ có 1)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b170cfbf1d7e464a84e52f51784ccfba",
+          "Name": "IN[1]",
+          "Description": "IN[1] Lọc layer (cách nhau bằng ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "82d5ce955dfc4fec9f5ef57824ceca72",
+          "Name": "IN[2]",
+          "Description": "IN[2] Tỉ lệ cạnh dài/ngắn để là vách",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e0e444087fa94e6598f884224687a586",
+          "Name": "IN[3]",
+          "Description": "IN[3] Tên family cột",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fa4e6aeef9da4285b293a75cf48abac0",
+          "Name": "IN[4]",
+          "Description": "IN[4] Parameter cạnh X (b)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "62df4f23c704419ba879ebb619ad0caf",
+          "Name": "IN[5]",
+          "Description": "IN[5] Parameter cạnh Y (h)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e019c388acc743ee9d59486c70e63ec0",
+          "Name": "IN[6]",
+          "Description": "IN[6] Tên wall type mẫu",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4d8703e922584429a5c45b4c3c6f34d6",
+          "Name": "IN[7]",
+          "Description": "IN[7] Level chân",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9f75d7542b3f4898ae219f631e257aa7",
+          "Name": "IN[8]",
+          "Description": "IN[8] Level đỉnh",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5b9766d321fb43b7b7434617576b4dca",
+          "Name": "IN[9]",
+          "Description": "IN[9] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2d362ce704f54e018a5013fdb17ff930",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "2f6a79daf4e14f7287046b6c405de16f",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "85b9e57293f448e58463f67ecef88ea2",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "60e35de0392142ad9916d34f4b080909",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "2c530bedf8234379bd707d08558cf29c",
+      "End": "5707760a7296409c8d655b645261c0af",
+      "Id": "0d9175d889c44bd18be976201a6979c0",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "bd5c7792c63c41148ed060838f2e8b3d",
+      "End": "b170cfbf1d7e464a84e52f51784ccfba",
+      "Id": "3d33721ad16b45e2929aed173c787f89",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "af1322c85f8b47418a5c52bb62a2b5ae",
+      "End": "82d5ce955dfc4fec9f5ef57824ceca72",
+      "Id": "36e5b65a6ce846bcb22600aad05acd5e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "efd321600b0045fb975a825f4b655855",
+      "End": "e0e444087fa94e6598f884224687a586",
+      "Id": "4b15ccb6922949519a714bdeb215e37a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "633926c402a34b22aac1cd6151f8f3f6",
+      "End": "fa4e6aeef9da4285b293a75cf48abac0",
+      "Id": "6814710c0421410d8c55171bcecee05a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0c9280c071db47cb92e8000c3f287f5d",
+      "End": "62df4f23c704419ba879ebb619ad0caf",
+      "Id": "a35c92b6348b4ca797dec9d52b930f1a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f637cca72b744b769a9b9793e9165523",
+      "End": "e019c388acc743ee9d59486c70e63ec0",
+      "Id": "7e5e4b25c9944b758e0e4754109c1e04",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "cb5f256b773349238bbf615744dda914",
+      "End": "4d8703e922584429a5c45b4c3c6f34d6",
+      "Id": "ae4ea77375bd4bfeb60328fe91d711d0",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f1c1037052f24dfe957ddee378ad6ad8",
+      "End": "9f75d7542b3f4898ae219f631e257aa7",
+      "Id": "07c3ef130ec64824924b3f05b8010e84",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6fb5976ef4834423ae184eb79dc76252",
+      "End": "5b9766d321fb43b7b7434617576b4dca",
+      "Id": "cec8ca9494a8477787f0672ba6e51f7a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2d362ce704f54e018a5013fdb17ff930",
+      "End": "85b9e57293f448e58463f67ecef88ea2",
+      "Id": "ec1899cf229e4d1dacb5ef65f5ab04b5",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "c54d0a876abd4141a2702aa645650e25",
+        "Name": "IN[0] Tên bản CAD (để trống nếu chỉ có 1)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "00e81c09ccc84372997456a48d2ce73f",
+        "Name": "IN[1] Lọc layer (cách nhau bằng ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "cdea0bf709084fa7856ebd8ff4d060dd",
+        "Name": "IN[2] Tỉ lệ cạnh dài/ngắn để là vách",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "b670656bc3d94d4a9dd01b0727f0eb06",
+        "Name": "IN[3] Tên family cột",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "85e3536ea0254703b51e45aeac2db5ba",
+        "Name": "IN[4] Parameter cạnh X (b)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "b58f45985e4a4592bfb9916976911cb6",
+        "Name": "IN[5] Parameter cạnh Y (h)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "7946aeb9a6564f9bb0179d46cff914bf",
+        "Name": "IN[6] Tên wall type mẫu",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "0dd5636f5d5a4e2fab0de0159424a1bf",
+        "Name": "IN[7] Level chân",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "0d314228559e45c18a741a9917cf785e",
+        "Name": "IN[8] Level đỉnh",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "ab258bdde1f8432fad78ec1158768b00",
+        "Name": "IN[9] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "2060a93b617a45e48b00e402e3a9dad6",
+        "Name": "ARV - Tạo cột vách kết cấu từ CAD",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 650.0,
+        "Y": 400.0
+      },
+      {
+        "Id": "2f6a79daf4e14f7287046b6c405de16f",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 630.2820661093381,
+        "Y": 70.93341789058479
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "e4b58e1e4132494ea7dbf7ba660b5317",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Điền tên family cột, wall type mẫu, level chân/đỉnh. Ô để trống hoặc sai thì node Báo cáo liệt kê các giá trị hợp lệ. Giữ Dry-run = True cho lần chạy đầu.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "c54d0a876abd4141a2702aa645650e25",
+          "00e81c09ccc84372997456a48d2ce73f",
+          "cdea0bf709084fa7856ebd8ff4d060dd",
+          "b670656bc3d94d4a9dd01b0727f0eb06",
+          "85e3536ea0254703b51e45aeac2db5ba",
+          "b58f45985e4a4592bfb9916976911cb6",
+          "7946aeb9a6564f9bb0179d46cff914bf",
+          "0dd5636f5d5a4e2fab0de0159424a1bf",
+          "0d314228559e45c18a741a9917cf785e",
+          "ab258bdde1f8432fad78ec1158768b00"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -96.0,
+        "Width": 402.0,
+        "Height": 1218.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1135.0,
+        "TextblockHeight": 86.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "5398da432f5740d6a51745a189d9c6b0",
+        "Title": "2. Tạo cột vách (Python)",
+        "DescriptionText": "Chặn file central, phân loại cột/vách theo tỉ lệ cạnh, tách lõi thành đoạn vách, bỏ qua cấu kiện trùng, ghi log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: CHƯA DUYỆT.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "2060a93b617a45e48b00e402e3a9dad6"
+        ],
+        "HasNestedGroups": false,
+        "Left": 640.0,
+        "Top": 246.0,
+        "Width": 343.0,
+        "Height": 586.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 400.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 144.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "6a39968e65a44318b4332c630f3d1746",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "Tóm tắt, layer đã dùng, đường dẫn log và kết quả từng cấu kiện.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "2f6a79daf4e14f7287046b6c405de16f"
+        ],
+        "HasNestedGroups": false,
+        "Left": 620.2820661093381,
+        "Top": -2.066582109415208,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 70.93341789058479,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 220.90360377219122,
+    "Y": 345.8579013872013,
+    "Zoom": 0.46811870531481925
+  }
+}
