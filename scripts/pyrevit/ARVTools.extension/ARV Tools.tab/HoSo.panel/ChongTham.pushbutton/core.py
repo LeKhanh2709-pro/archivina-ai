@@ -35,9 +35,22 @@ import clr
 clr.AddReference("RevitAPI")
 clr.AddReference("RevitServices")
 from Autodesk.Revit.DB import *
+import Autodesk.Revit.DB as _RevitDB
+# pythonnet 3.0: tên đã được import đích danh trước đó trong phiên (vd. ở script khác) bị loại khỏi "import *"
+# → bổ sung đủ tên của namespace để không phụ thuộc thứ tự import
+globals().update({_n: getattr(_RevitDB, _n) for _n in dir(_RevitDB) if not _n.startswith("_") and _n not in globals()})
 from RevitServices.Persistence import DocumentManager
 from RevitServices.Transactions import TransactionManager
 from System.Collections.Generic import List as NetList
+
+
+def ds_id(ids):
+    """List[ElementId] tạo rỗng rồi Add (pythonnet của pyRevit không nhận List[T](list Python))"""
+    kq = NetList[ElementId]()
+    for i in ids:
+        kq.Add(i)
+    return kq
+
 
 doc = DocumentManager.Instance.CurrentDBDocument
 
@@ -421,7 +434,7 @@ def kieu_hatch(view, loai):
 
 def gom_nhom(ids, ten_goc):
     """Gom phần tử vào Detail Group, đặt tên kiểu group (trùng thì thêm _2, _3…)"""
-    g = doc.Create.NewGroup(NetList[ElementId](ids))
+    g = doc.Create.NewGroup(ds_id(ids))
     ten_nhom = ten_goc
     da_dung = set(ten(t) for t in FilteredElementCollector(doc).OfClass(GroupType))
     i = 1
@@ -686,7 +699,7 @@ def chinh():
     if id_hatch:
         try:     # hatch xuống dưới cùng để không đè nét vén (làm trước khi gom group)
             doc.Regenerate()
-            DetailElementOrderUtils.SendToBack(doc, view, NetList[ElementId](id_hatch))
+            DetailElementOrderUtils.SendToBack(doc, view, ds_id(id_hatch))
         except Exception as ex:
             bao_cao.append("Không đưa hatch xuống dưới được: %s" % str(ex).splitlines()[0])
     moi = []
@@ -708,7 +721,7 @@ def chinh():
         bao_cao.append("Không gom group được: %s" % ex)
     if AN_THIET_BI and an:
         try:
-            view.HideElements(NetList[ElementId]([e.Id for e in an]))
+            view.HideElements(ds_id([e.Id for e in an]))
             bao_cao.append("ĐÃ ẨN %d thiết bị vệ sinh trong view" % len(an))
         except Exception as ex:
             bao_cao.append("Không ẩn được thiết bị: %s" % ex)
@@ -724,7 +737,7 @@ def xuat_anh(view):
         TransactionManager.Instance.ForceCloseTransaction()
         opt = ImageExportOptions()
         opt.ExportRange = ExportRange.SetOfViews
-        opt.SetViewsAndSheets(NetList[ElementId]([view.Id]))
+        opt.SetViewsAndSheets(ds_id([view.Id]))
         opt.FilePath = os.path.join(THU_MUC, "chong_tham")
         opt.ZoomType = ZoomFitType.FitToPage
         opt.PixelSize = 6000

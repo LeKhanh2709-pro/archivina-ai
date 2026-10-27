@@ -44,6 +44,11 @@ BUTTONS = [
     ("MEP", "TaoOngGioTuCAD", u"Ống gió\ntừ CAD", "ARV_TaoOngGioTuCAD_v1"),
     ("HoSo", "ChongTham", u"Chống\nthấm", "../dynamo/ChongTham_VeVenChanTuong"),
 ]
+# Nút "một chạm" (người dùng chốt 2026-10-27 cho Chống thấm): bấm là ghi luôn vào mô hình, không hộp thoại, trên view
+# đang mở nếu là view có chữ <tu_khoa> (tên view hoặc tên view template), không thì chọn trong các view đó.
+# Shift+bấm (config.py) = hộp thoại đầy đủ như các nút khác (Dry-run bật sẵn).
+#   view_in: chỉ số IN[] nhận tên view; tu_khoa: từ khoá (không dấu) nhận view
+MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm"}}
 PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện", "MEP": u"MEP",
                 "HoSo": u"Hồ sơ"}
 TAB = "ARV Tools.tab"
@@ -67,6 +72,155 @@ if _lib not in sys.path:
 
 import arv_dynamo_host
 arv_dynamo_host.run_button(_here, __revit__)
+'''
+
+
+SCRIPT_MOT_CHAM = u'''#! python3
+# -*- coding: utf-8 -*-
+# File sinh tự động bởi scripts/pyrevit/build_from_dynamo.py – không sửa tay.
+"""@@DOC@@"""
+__title__ = "@@TITLE@@"
+# Bấm: ghi luôn vào mô hình (không hộp thoại, không Dry-run) trên view @@TEN_VIEW@@ – Ctrl+Z một lần là hoàn tác.
+#   View đang mở là view @@TEN_VIEW@@ (tên view / view template có chữ "@@TEN_VIEW@@") thì vẽ vào đó;
+#   không thì: có đúng 1 view như vậy → vẽ vào view đó; nhiều view → hỏi chọn; không có → báo, không làm gì.
+# Shift+bấm (config.py): hộp thoại đầy đủ như các nút khác, mặc định Dry-run.
+import os
+import sys
+import unicodedata
+import traceback
+
+_here = os.path.dirname(os.path.abspath(__file__))
+_lib = os.path.normpath(os.path.join(_here, "..", "..", "..", "lib"))
+if _lib not in sys.path:
+    sys.path.insert(0, _lib)
+
+import arv_dynamo_host
+import clr
+clr.AddReference("RevitAPI")
+clr.AddReference("RevitAPIUI")
+# Không dùng "from Autodesk.Revit.DB import <tên>": pythonnet 3.0 loại tên import đích danh đầu tiên khỏi "import *" của core.py
+import Autodesk.Revit.DB as DB
+import Autodesk.Revit.UI as UI
+
+VIEW_IN = @@VIEW_IN@@
+TU_KHOA = u"@@TU_KHOA@@"
+TIEU_DE = u"@@TITLE1@@"
+
+
+def khong_dau(s):
+    s = unicodedata.normalize("NFD", u"{}".format(s or u"")).replace(u"đ", u"d").replace(u"Đ", u"D")
+    return u"".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+
+
+def la_view_dich(doc, v):
+    tpl = doc.GetElement(v.ViewTemplateId) if v.ViewTemplateId != DB.ElementId.InvalidElementId else None
+    return TU_KHOA in khong_dau(v.Name) or (tpl is not None and TU_KHOA in khong_dau(tpl.Name))
+
+
+def hoi_chon_view(ten_views):
+    """Danh sách view để chọn (bấm đúp hoặc nút Vẽ). Trả về tên view hoặc None nếu Huỷ."""
+    clr.AddReference("System.Windows.Forms")
+    clr.AddReference("System.Drawing")
+    from System.Windows.Forms import (Form, ListBox, Button, Label, DialogResult, DockStyle, FormStartPosition,
+                                      FlowLayoutPanel, FlowDirection, Padding)
+    from System.Drawing import Size, Font
+    f = Form()
+    f.Text = TIEU_DE
+    f.StartPosition = FormStartPosition.CenterScreen
+    f.Size = Size(520, 460)
+    f.Font = Font("Segoe UI", 9.0)
+    lab = Label()
+    lab.Text = u"View đang mở không phải view @@TEN_VIEW@@. Chọn view để vẽ:"
+    lab.Dock = DockStyle.Top
+    lab.Height = 36
+    lab.Padding = Padding(8, 10, 8, 0)
+    lb = ListBox()
+    lb.Dock = DockStyle.Fill
+    lb.IntegralHeight = False
+    for t in ten_views:
+        lb.Items.Add(t)
+    lb.SelectedIndex = 0
+    bottom = FlowLayoutPanel()
+    bottom.Dock = DockStyle.Bottom
+    bottom.Height = 48
+    bottom.FlowDirection = FlowDirection.RightToLeft
+    bottom.Padding = Padding(8)
+    ok = Button()
+    ok.Text = u"Vẽ"
+    ok.Size = Size(100, 30)
+    ok.DialogResult = DialogResult.OK
+    huy = Button()
+    huy.Text = u"Huỷ"
+    huy.Size = Size(100, 30)
+    huy.DialogResult = DialogResult.Cancel
+    bottom.Controls.Add(huy)
+    bottom.Controls.Add(ok)
+    f.AcceptButton = ok
+    f.CancelButton = huy
+
+    def bam_dup(sender, e):
+        f.DialogResult = DialogResult.OK
+        f.Close()
+
+    lb.DoubleClick += bam_dup
+    f.Controls.Add(lb)
+    f.Controls.Add(lab)
+    f.Controls.Add(bottom)
+    if f.ShowDialog() == DialogResult.OK and lb.SelectedItem is not None:
+        return u"{}".format(lb.SelectedItem)
+    return None
+
+
+def chay():
+    uiapp = __revit__
+    uidoc = uiapp.ActiveUIDocument
+    if uidoc is None:
+        UI.TaskDialog.Show(TIEU_DE, u"Chưa mở dự án nào.")
+        return
+    doc = uidoc.Document
+    av = doc.ActiveView
+    ds = sorted([v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan) if not v.IsTemplate and la_view_dich(doc, v)],
+                key=lambda v: v.Name)
+    view = None
+    for v in ds:
+        if av is not None and v.Id.Value == av.Id.Value:
+            view = v
+    if view is None:
+        if not ds:
+            UI.TaskDialog.Show(TIEU_DE, u"Chưa có view mặt bằng @@TEN_VIEW@@ (tên view hoặc view template có chữ "
+                                     u"'@@TEN_VIEW@@'). Tạo view, gán view template rồi bấm lại.")
+            return
+        if len(ds) == 1:
+            view = ds[0]
+        else:
+            ten_chon = hoi_chon_view([v.Name for v in ds])
+            if ten_chon is None:
+                return
+            view = [v for v in ds if v.Name == ten_chon][0]
+    lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={VIEW_IN: view.Name, "@@DRY_IN@@": False})
+    try:
+        from pyrevit import script
+        out = script.get_output()
+        out.set_title(TIEU_DE)
+        out.print_md(u"## {} – view: {}".format(TIEU_DE, view.Name))
+    except Exception:
+        pass
+    for ln in lines or []:
+        print(ln)
+    if av is None or view.Id.Value != av.Id.Value:
+        try:
+            uidoc.RequestViewChange(view)
+        except Exception:
+            pass
+
+
+if os.environ.get("ARV_TOOLS_AUTO_REPORT"):
+    arv_dynamo_host.run_button(_here, __revit__)     # chạy thử tự động: giữ dry-run như mọi nút
+else:
+    try:
+        chay()
+    except Exception:
+        print(traceback.format_exc())
 '''
 
 
@@ -212,7 +366,20 @@ def main():
         doc = (spec["summary"] or title).replace(u'"""', u"'''").replace(u"\\", u"/")
         tip = u"{} Mặc định chạy thử (dry-run). Nguồn: {}. TRẠNG THÁI: CHƯA DUYỆT.".format(
             spec["summary"][:400], tool + ".dyn")
-        write(os.path.join(bdir, "script.py"), SCRIPT_PY.format(doc=doc, title=title.replace(u"\n", u"\\n")))
+        script_py = SCRIPT_PY.format(doc=doc, title=title.replace(u"\n", u"\\n"))
+        mc = MOT_CHAM.get(name)
+        if mc:
+            dry_in = [it["index"] for it in spec["inputs"] if it["kind"] == "dry_run"]
+            assert len(dry_in) == 1, name + u": nút một chạm cần đúng 1 ô Dry-run"
+            write(os.path.join(bdir, "config.py"), script_py)
+            script_py = (SCRIPT_MOT_CHAM.replace(u"@@DOC@@", doc).replace(u"@@TITLE@@", title.replace(u"\n", u"\\n"))
+                         .replace(u"@@TITLE1@@", title.replace(u"\n", u" ")).replace(u"@@VIEW_IN@@", str(mc["view_in"]))
+                         .replace(u'"@@DRY_IN@@"', str(dry_in[0])).replace(u"@@TU_KHOA@@", mc["tu_khoa"])
+                         .replace(u"@@TEN_VIEW@@", mc["ten_view"]))
+            tip = u"Bấm: vẽ luôn trên view {} đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). " \
+                  u"Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. {} Nguồn: {}.".format(
+                      mc["ten_view"], spec["summary"][:300], tool + ".dyn")
+        write(os.path.join(bdir, "script.py"), script_py)
         write(os.path.join(bdir, "bundle.yaml"),
               u"title: {}\ntooltip: {}\nauthor: Archivina BIM\n".format(json.dumps(title, ensure_ascii=False),
                                                                        json.dumps(tip, ensure_ascii=False)))

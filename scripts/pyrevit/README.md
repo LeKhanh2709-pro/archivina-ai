@@ -52,6 +52,21 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
 | MEP | Ống gió từ CAD | `ARV_TaoOngGioTuCAD_v1` |
 | Hồ sơ | Chống thấm | `scripts\dynamo\ChongTham_VeVenChanTuong` (nét vén + hatch Filled Region trên view chống thấm; người dùng duyệt trên G19 2026-10-27) |
 
+**Nút Chống thấm là nút "một chạm"** (người dùng chốt 2026-10-27; khai báo trong `MOT_CHAM` của builder):
+- **Bấm**: vẽ luôn vào mô hình, không hộp thoại, không Dry-run (Ctrl+Z một lần là hoàn tác), trên view chống thấm. Người dùng tự tạo view (gán template `1.7 Mặt Bằng Chống thấm`) và tự đặt lên sheet.
+  - View đang mở có chữ "chống thấm" trong tên view hoặc tên view template → vẽ vào view đó.
+  - Không thì: có đúng 1 view như vậy → vẽ vào view đó rồi chuyển sang view đó; nhiều view → hiện danh sách để chọn; không có view nào → báo, không làm gì.
+  - Bấm lại trên view đã vẽ: không vẽ lại vén, không xoá gì, chỉ bổ sung hatch cho phòng chưa có.
+- **Shift+bấm** (`config.py`): hộp thoại đầy đủ `IN[0…9]` như các nút khác, Dry-run bật sẵn.
+- Giá trị các ô khác (từ khoá sàn, khoảng lùi, line style, thư mục log…) lấy theo lần nhập gần nhất trong hộp thoại Shift+bấm, chưa nhập thì lấy mặc định.
+- Đã thử 2026-10-27 (Revit 2027.3 + pyRevit 6.5.5, bản sao G19 chưa vẽ `_backup\G19_20261027_1405.rvt`, chạy nguyên `script.py` của nút khi đang mở view `Tầng 1`): tự chọn view `Level 1 Copy 1 Copy 2`, vẽ 364 nét vén + 59 hatch Filled Region (2 group), ẩn 64 thiết bị; bấm lần 2 không vẽ thêm gì. Kết quả ở `_tmp\pyrevit_chongtham\motcham\kq\`. Chưa thử hộp thoại chọn view (khi có nhiều view chống thấm) và Shift+bấm.
+
+**Bẫy pythonnet 3.0.3 (CPython của pyRevit), gặp khi làm nút một chạm:**
+- Tên nào bị `from Autodesk.Revit.DB import <tên>` **đầu tiên** trong phiên Revit thì bị loại khỏi `from Autodesk.Revit.DB import *` về sau. Ví dụ `lib\arv_dynamo_host.py` import `Transaction, TransactionStatus` trước, nên `core.py` dùng `import *` sẽ thiếu 2 tên này.
+  - Đã kiểm chứng: `__all__` còn 1323/1326 tên.
+  - Cách tránh: script nút dùng `import Autodesk.Revit.DB as DB`; `core.py` chống thấm bổ sung đủ tên bằng `dir()` ngay sau `import *`.
+- `List[T](list Python)` không chạy. Thư viện chỉ thay khi dòng import đúng dạng `from System.Collections.Generic import List`; viết `... import List as NetList` thì không được thay. `core.py` chống thấm tự tạo List rỗng rồi `Add` (hàm `ds_id`).
+
 Nút nguồn ngoài `file mau revit\dynamo` (vd. Chống thấm) khai báo trong `BUTTONS` bằng đường dẫn `../dynamo/<tên>`. Sinh lại riêng 1 nút, không đụng các nút khác:
 ```
 D:\AI\_tools\venv\Scripts\python.exe build_from_dynamo.py "D:\AI\file mau revit\dynamo" --chi ChongTham
