@@ -1,0 +1,97 @@
+{
+ "key": "TaoCotVachTuCAD",
+ "title": "Cột vách từ CAD",
+ "summary": "Tạo cột và vách/lõi kết cấu từ mặt bằng định vị cột vách lõi (DWG đã Link/Import vào Revit). - Hình chữ nhật đơn có cạnh dài / cạnh ngắn < tỉ lệ  → CỘT (đúng b × h, góc xoay) - Hình chữ nhật dài hơn                            → VÁCH - Lõi hình L, T, U, lõi rỗng (cạnh vuông góc)        → tách thành các đoạn VÁCH chữ nhật - Hình tròn, hình có cạnh xiên                      → bỏ qua, ghi vào báo cáo",
+ "transaction": "ARV - Tạo cột vách kết cấu từ CAD",
+ "source": "ARV_TaoCotVachTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống nếu mô hình chỉ có 1 bản CAD)",
+   "default": "150_goc0",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Chuỗi lọc layer, nhiều chuỗi cách nhau bằng ';' – layer chứa một trong các chuỗi sẽ được dùng (ví dụ \"$0$S-Cot vach\" lấy cả \"...$0$S-Cot vach\" và \"...$0$S-Cot vach dung\")",
+   "default": "S-Wall 2",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "float",
+   "decl": "float",
+   "label": "Tỉ lệ cạnh dài / cạnh ngắn để coi là vách (mặc định 4)",
+   "default": 4.0,
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên family cột kết cấu tiết diện chữ nhật (để trống = lấy theo tên file ở IN[10])",
+   "default": "M_Concrete-Rectangular-Column",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên parameter type cạnh theo trục X của family (ví dụ \"b\")",
+   "default": "b",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên parameter type cạnh theo trục Y của family (ví dụ \"h\")",
+   "default": "h",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên wall type mẫu (Basic) cho vách kết cấu",
+   "default": "VBT-200",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level chân cột / vách",
+   "default": "Tầng 1\t",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level đỉnh cột / vách",
+   "default": "Tầng 2",
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo, không ghi vào mô hình (mặc định True)",
+   "default": false,
+   "kind": "dry_run"
+  },
+  {
+   "index": 10,
+   "type": "str",
+   "decl": "str",
+   "label": "Đường dẫn file .rfa của family cột (tuỳ chọn). Nếu mô hình chưa có family ở IN[3] thì load từ file này; khi dry-run, family được load tạm để kiểm tra rồi hoàn tác.",
+   "default": null,
+   "kind": "normal"
+  }
+ ]
+}

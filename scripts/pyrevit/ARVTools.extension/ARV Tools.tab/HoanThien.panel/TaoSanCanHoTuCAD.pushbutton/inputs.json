@@ -1,0 +1,145 @@
+{
+ "key": "TaoSanCanHoTuCAD",
+ "title": "Sàn căn hộ từ CAD",
+ "summary": "Tạo sàn hoàn thiện kiến trúc (Floor) cho phòng ngủ, phòng khách, WC, logia của các căn hộ trên level của view mặt bằng đang mở, lấy thông tin từ bản CAD mặt bằng đã Link (không cần đường bo phòng / hatch trong CAD): 1. Căn hộ  = polyline kín layer IN[1] (mặc định \"00 do dt\", > 20 m²); tên căn = TEXT/MTEXT layer IN[2] khớp mẫu IN[3] (mặc định CH01…), gán cho polyline gần nhất. Chữ đọc từ bản sao DWG qua AutoCAD Core Console. 2. Biên sàn = mặt hoàn thiện tường Revit (tường thẳng, tường liền qua ô cửa): vùng bao các căn trừ khối tường (dài tới mặt tường nối ở hai đầu) và trừ cột CAD layer IN[4] nới thêm IN[5] mm (lớp trát, mặc định 15) → tách thành các vùng rời. Vùng kín nằm trong căn giữ nguyên; vùng hở (logia không có tường lan can, sảnh hở ra hành lang, phía ngoài nhà) cắt theo polyline căn. 3. Loại phòng: có điểm dò cửa ra logia (family chứa IN[6], dò IN[7] mm về phía Facing) → LOGIA; có ≥ 5 điểm nét thiết bị CAD layer IN[8] → WC (> 10 m² → chỉ báo \"KIỂM TRA\", không tạo); vùng hở ≤ 6 m² (không có tường Revit bao kín, VD logia giặt có máy giặt, cửa đi mở quay) → LOGIA; còn lại → phòng khô (lớn nhất căn = khách, ≥ 6 m² = ngủ, nhỏ hơn = sảnh / kho). Phòng khô dùng chung một floor type. 4. WC lùi biên thêm IN[11] = 10 mm khỏi mặt trát (= dày gạch ốp, KTS chốt 2026-10-20). Tường ốp mỏng < 30 mm (VD \"GO-Gạch ốp-300x600\" 10 mm) không làm biên sàn → biên WC trùng mặt gạch ốp. 5. Floor type / cao độ mặt sàn theo loại (IN[9], IN[10]). Bỏ qua vùng < 0,5 m² (hộp kỹ thuật) và dải mảnh rộng TB < 300 mm. Bỏ qua phòng đã có sàn tạo bởi tool này. Comments = \"ARV-SanCanHo <căn> <loại>\".",
+ "transaction": "ARV - Tạo sàn căn hộ từ CAD",
+ "source": "ARV_TaoSanCanHoTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (trống = bản CAD duy nhất)",
+   "default": "G19",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer polyline căn hộ (khớp chuỗi con, cách ';'), VD \"00 do dt\"",
+   "default": "00 do dt",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer chữ tên căn, VD \"A-Text\"",
+   "default": "A-Text",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Mẫu tên căn (regex), VD \"^CH\\d+\"",
+   "default": "^CH\\d+",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer cột CAD khoét khỏi sàn, VD \"A-Column\" (trống = không khoét)",
+   "default": "A-Column",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "float",
+   "decl": "num",
+   "label": "Sàn cách mặt cột CAD (mm), VD 15",
+   "default": 15.0,
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Nhận cửa ra logia theo tên family/type (chuỗi con, cách ';'), VD \"trượt\"",
+   "default": "trượt",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "float",
+   "decl": "num",
+   "label": "Điểm dò logia cách tâm cửa về phía Facing (mm), VD 400",
+   "default": 400.0,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer thiết bị WC trong CAD, VD \"A-Interior WC\"",
+   "default": "A-Interior WC",
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "str",
+   "decl": "str",
+   "label": "Floor type theo loại: \"KHO=…;WC=…;LOGIA=…\"",
+   "default": "KHO=SHT-Gỗ Công Nghiệp;WC=SHT-Gach Lat WC-300x600;LOGIA=SHT-Gach Lat Logia-300x600;CHANCUA=FF-Đá Granite tự nhiên",
+   "kind": "normal"
+  },
+  {
+   "index": 10,
+   "type": "str",
+   "decl": "str",
+   "label": "Cao độ mặt sàn so với Level (mm): \"KHO=0;WC=-15;LOGIA=-30\"",
+   "default": "KHO=0;WC=-15;LOGIA=-30;CHANCUA=0",
+   "kind": "normal"
+  },
+  {
+   "index": 11,
+   "type": "float",
+   "decl": "num",
+   "label": "WC lùi biên khỏi mặt trát (mm) = dày gạch ốp, VD 10",
+   "default": 10.0,
+   "kind": "normal"
+  },
+  {
+   "index": 12,
+   "type": "str",
+   "decl": "str",
+   "label": "Chỉ làm các căn (cách ';', VD \"CH01;CH02\"; trống = tất cả)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 13,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước (mặc định True)",
+   "default": false,
+   "kind": "dry_run"
+  },
+  {
+   "index": 14,
+   "type": "str",
+   "decl": "str",
+   "label": "Floor type kiến trúc mẫu: type ở IN[9] chưa có → nhân bản từ type này đúng tên đó, giữ cấu tạo lớp (chỉ khi chạy thật và có tấm sàn dùng). Trống = dừng khi thiếu type.",
+   "default": "SHT-Gach Lat-600x600",
+   "kind": "normal"
+  },
+  {
+   "index": 15,
+   "type": "str",
+   "decl": "str",
+   "label": "Line style vẽ đường bo phòng (Detail Line trên view đang mở, theo đúng biên từng tấm sàn tạo, kể cả lỗ), VD \"AV.Nét Hatch Lát Sàn\" – phải có sẵn trong file. Trống = không vẽ. Ô cửa (luôn làm): lỗ cửa đo trên tường Revit × bề dày tường. Phòng khô ↔ phòng khô (ngủ ↔ khách) → sàn phòng khô (Comments …KHO-CUA); phòng khô ↔ WC → đá chân cửa CHANCUA (IN[9]/IN[10], kéo thêm IN[11] mm về phía WC). Chiều hatch: Revit đặt hatch song song cạnh dài nhất của biên → sàn khô của căn được chia cạnh (force_dir) để cùng chiều cạnh dài nhất phòng khách.",
+   "default": "AV.Nét Hatch Lát Sàn",
+   "kind": "normal"
+  },
+  {
+   "index": 16,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Tạo lại: xoá sàn cũ của tool (Comments ARV-SanCanHo) trong các căn đang làm + mọi Detail Line line style IN[15] trên view nằm trong các căn đó (cách polyline căn ≤ 300 mm), rồi tạo lại (mặc định False). Không bật: nét bo đã có trùng vị trí được giữ, không vẽ chồng.",
+   "default": false,
+   "kind": "destructive"
+  }
+ ]
+}

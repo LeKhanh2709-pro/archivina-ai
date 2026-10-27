@@ -1,0 +1,105 @@
+{
+ "key": "TaoLanCanLouverLogia",
+ "title": "Lan can louver logia",
+ "summary": "Tạo lan can + louver che cục nóng điều hòa cho logia, lấy thông tin từ mặt bằng DWG đã Link (KTS chốt 2026-10-21): 1. Logia = sàn (Floor) trên level IN[9] có tên type chứa IN[2] (VD \"SHT-Gach Lat Logia-300x600\"), lấy hộp bao. 2. Mặt ngoài logia = cặp nét song song cách nhau 150 mm (± 3) trên layer IN[1], nằm sát cạnh hộp bao logia (≤ 300 mm) và phủ ≥ 50 % cạnh đó. Tuyến lan can = đường giữa cặp nét, dài từ tường đến tường (đầu nét CAD). Nét dài hơn logia (chạy qua phòng bên cạnh) → cắt ở cạnh logia rồi bắt vào đầu tường Revit nằm trên tuyến (≤ 400 mm); không có tường → giữ mép logia, báo \"KIỂM TRA ĐẦU\". 3. Cục nóng = cụm nét layer IN[6] nằm gọn trong khung IN[7] (dài x rộng, xoay 0/90°) có ≥ IN[8] nét. - Logia không có cục nóng: lan can suốt chiều dài. - Logia có cục nóng: louver (family IN[4], type IN[5], rộng = Width của type) đặt sát đầu tường GẦN cục nóng hơn, lan can = tổng chiều dài − rộng louver (một đoạn). - Lan can còn lại < IN[11] (1200) → bỏ lan can, louver kéo dài hết tuyến (KTS chốt 2026-10-21). Type louver đúng bề rộng (Height như type IN[5]) có sẵn thì dùng, chưa có → nhân bản IN[5] thành \"{rộng}X{cao}\". 4. Lan can: Railing type IN[3], chân tại level, tuyến trên đường giữa cặp nét. Louver: family không host, điểm chèn ở một đầu, phát triển theo +Hand, Facing quay ra ngoài nhà; đặt xong đo khối đặc theo phương vuông góc tuyến rồi dời cho tâm bề dày lam nằm đúng giữa cặp nét 150 (AV-Lam Thép Logia2: khối 0…80 mm về phía Facing). Chân lan can + louver (KTS chốt 2026-10-21): logia có gờ bê tông (tường Comments \"ARV-GoLogia\" của ARV_TaoGoLogia_v1) trên cùng tuyến → đặt ở đỉnh gờ (VD +70 so với level); không có gờ → ở cao độ level (0). 5. Phần tử tạo ra có Comments \"ARV-LanCanLogia\". Chạy lại, trong phạm vi tuyến từng logia: - Lan can / louver có Comments đó mà đúng kế hoạch (đầu tuyến ± 20 mm, louver đúng bề rộng) → giữ; chỉ sai chân (lệch > 2 mm so với đỉnh gờ / level) → nâng / hạ chân tại chỗ (giữ Id, báo \"nâng chân\"). - Có Comments đó mà sai kế hoạch (VD lan can ngắn của lần chạy trước) → XOÁ rồi tạo lại (báo \"thay\"). - Không có Comments đó (dựng tay) → không đụng; phần tương ứng bỏ qua, báo \"đã có (dựng tay)\".",
+ "transaction": "ARV - Tạo lan can và louver logia từ CAD",
+ "source": "ARV_TaoLanCanLouverLogia_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (trống = bản CAD duy nhất có layer khớp IN[1])",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer nét mặt ngoài logia, cách nhau ';' (khớp đúng tên) – VD \"A-Line;A-line1;A-line2\"",
+   "default": "A-Line;A-line1;A-line2",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Chuỗi con tên floor type sàn logia – VD \"Logia\"",
+   "default": "Logia",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Railing type lan can – VD \"Glass Panel - Bottom Fill\" (sau thay \"AV_Lan Can Kính Cường Lực\")",
+   "default": "Glass Panel - Bottom Fill",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Family louver – VD \"AV-Lam Thép Logia2\"",
+   "default": "AV-Lam Thép Logia2",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Type louver – VD \"1000X2800\"",
+   "default": "1000X2800",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer nét cục nóng – VD \"0\" (block cục nóng vẽ trên layer 0)",
+   "default": "0",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Khung cục nóng dài x rộng (mm) – VD \"974x400\"",
+   "default": "974x400",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "int",
+   "label": "Số nét tối thiểu trong khung để nhận là cục nóng – VD 150 (G19: 213 nét / cục)",
+   "default": "150",
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "str",
+   "decl": "str",
+   "label": "Level – VD \"Tầng 1\"",
+   "default": "Tầng 1",
+   "kind": "normal"
+  },
+  {
+   "index": 10,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 11,
+   "type": "str",
+   "decl": "float",
+   "label": "Lan can ngắn nhất (mm); ngắn hơn → louver kéo dài hết tuyến – VD 1200",
+   "default": "1200",
+   "kind": "normal"
+  }
+ ]
+}

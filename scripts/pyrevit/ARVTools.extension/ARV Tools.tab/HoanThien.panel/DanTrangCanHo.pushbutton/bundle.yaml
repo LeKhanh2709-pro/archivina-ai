@@ -1,0 +1,3 @@
+title: "Dàn trang\ncăn hộ"
+tooltip: "Dàn trang hồ sơ chi tiết căn hộ theo mẫu CAD CT1-CH02-CTCH (TAOVP / TAOVPWC / TAOVPLG bên ACA), trên level của view mặt bằng đang mở. Căn hộ nhận theo sàn hoàn thiện \"ARV-SanCanHo <căn> <loại>\" (ARV_TaoSanCanHoTuCAD_v1). 1. Room: mỗi vùng kín (PlanCircuit ≥ 1 m²) nằm trong sàn của căn mà chưa có Room → tạo Room. Tên theo Room mẫu của template: sàn KHO lớn nhất = Phòng khách-ăn (KA), còn lại Phòng  Mặc định chạy thử (dry-run). Nguồn: ARV_DanTrangCanHo_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

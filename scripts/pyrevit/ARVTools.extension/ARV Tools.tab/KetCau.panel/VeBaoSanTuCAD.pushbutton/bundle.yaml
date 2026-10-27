@@ -1,0 +1,3 @@
+title: "Bao sàn\ntừ CAD"
+tooltip: "Vẽ đường bao sàn kết cấu (Detail Line) và tạo sàn (Floor) theo vùng hatch của ghi chú, từ mặt bằng kết cấu sàn (DWG đã Link vào Revit). Đường bao vẽ (Detail Line, trong view mặt bằng đang mở): - BAO NGOÀI: mép ngoài cùng của mặt bằng (mép ngoài dầm biên / mép sàn) – bỏ mọi nét bên trong. - BAO LỖ MỞ: quanh từng lỗ mở có gạch chéo X (hai ô lỗ chung cạnh gộp một). - BAO VÙNG HATCH: quanh từng vùng h Mặc định chạy thử (dry-run). Nguồn: ARV_VeBaoSanTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

@@ -1,0 +1,584 @@
+{
+  "Uuid": "1018ce7b-59d9-45f6-b4ea-4e26c8785d69",
+  "IsCustomNode": false,
+  "Description": "Vẽ nét vén chân tường chống thấm (Detail Line 'AV.Nét chống thấm') theo biên sàn hoàn thiện WC / lô gia, lùi vào 50 mm, ngắt tại cửa đi, gom group ARV_ChongTham_Ven. Hatch giữ nguyên filter sàn của template chống thấm. Mặc định Dry-run.",
+  "Name": "ChongTham_VeVenChanTuong",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "38d2d8a7544e4cc6821251b82499a79f",
+      "Name": "Tên view (trống = view chống thấm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "c75441dffff040c19cb5a6ea29c5f1d4",
+      "Name": "Từ khoá kiểu sàn ướt (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Gach Lat WC;Gach Lat Logia",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "3df20730eb994b29ab3758b5dc98f0e7",
+      "Name": "Lùi vén vào trong (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "50",
+      "Description": "Creates a number"
+    },
+    {
+      "Id": "40f2a87059e64ba6a0e6b8becb8ac07e",
+      "Name": "Line style nét vén",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV.Nét chống thấm",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "bce55a356c06463fb0a6c95d1960ec49",
+      "Name": "Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "d73af23ff143468d8032f64f3eb27438",
+      "Name": "Vẽ cả khi view đã có nét vén",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "76f7b8e01b2c4423af123f9dc3cfa508",
+      "Name": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "38d2d8a7544e4cc6821251b82499a79f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9b0701850fc3440a94f476feacfd7e00",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "Gach Lat WC;Gach Lat Logia",
+      "Id": "c75441dffff040c19cb5a6ea29c5f1d4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "2bf110d989284c688454279929c6ddaa",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "Description": "Creates a number",
+      "InputValue": 50.0,
+      "Id": "3df20730eb994b29ab3758b5dc98f0e7",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "63132e7fcca84bae82d5f579553e1438",
+          "Name": "",
+          "Description": "number",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "AV.Nét chống thấm",
+      "Id": "40f2a87059e64ba6a0e6b8becb8ac07e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6dc2eb779ec14d96880f0f4410d1a462",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "bce55a356c06463fb0a6c95d1960ec49",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b4f64aa5c30e4e6d96608a83927268a7",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": false,
+      "Id": "d73af23ff143468d8032f64f3eb27438",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8cbe93fbcfc84e2dad6d353a9988027d",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "76f7b8e01b2c4423af123f9dc3cfa508",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6a4ff09458684d1492a6442a3066cae2",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Vẽ nét vén chân tường chống thấm (Detail Line) trên view mặt bằng chống thấm của Revit.\n# Hatch chống thấm giữ nguyên cách đang dùng (filter sàn SHT-WC / SHT-Logia trong view template) → công cụ CHỈ vẽ nét vén.\n#   - Lấy các sàn hoàn thiện ướt trên level của view (tên kiểu sàn chứa từ khoá, vd. \"Gach Lat WC\", \"Gach Lat Logia\")\n#   - Mỗi đường biên sàn (cả lỗ trong) lùi vào trong sàn một khoảng (mặc định 50 mm) → nét vén\n#   - Bỏ nét vén ở cạnh giáp một sàn ướt khác (sàn WC chia nhiều tấm)\n#   - Ngắt nét vén tại cửa đi (cạnh song song với tường chứa cửa, trong bề rộng cửa)\n#   - Vẽ Detail Line kiểu nét \"AV.Nét chống thấm\", gom vào 1 Detail Group \"ARV_ChongTham_Ven\"\n# Dry-run (mặc định) chỉ báo cáo, không sửa mô hình. Không xoá gì: view đã có nét vén cùng kiểu thì dừng và báo.\n# INPUT\n#   IN[0] (str)   Tên view (để trống = view đang mở nếu template có \"chống thấm\", không thì view đầu tiên có template đó)\n#   IN[1] (str)   Từ khoá tên kiểu sàn ướt, cách nhau bằng ;  (không phân biệt dấu / hoa thường)\n#   IN[2] (float) Khoảng lùi nét vén vào trong sàn (mm)\n#   IN[3] (str)   Tên line style nét vén\n#   IN[4] (bool)  Dry-run (True = chỉ báo cáo)\n#   IN[5] (bool)  Vẽ cả khi view đã có nét vén cùng kiểu\n#   IN[6] (str)   Thư mục ghi log + ảnh (để trống = Documents\\ARV_Logs\\chong_tham)\n# OUTPUT\n#   OUT (list[str])  Báo cáo\nimport math\nimport os\nimport traceback\nimport unicodedata\nfrom datetime import datetime\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\nfrom System.Collections.Generic import List as NetList\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\n\ndef gia_tri(i, mac_dinh):\n    try:\n        v = IN[i]\n        return mac_dinh if v is None or (isinstance(v, str) and not v.strip()) else v\n    except Exception:\n        return mac_dinh\n\n\nTEN_VIEW = gia_tri(0, \"\")\nTU_KHOA_SAN = [k for k in str(gia_tri(1, \"Gach Lat WC;Gach Lat Logia\")).split(\";\") if k.strip()]\nLUI_MM = float(gia_tri(2, 50))\nTEN_NET = str(gia_tri(3, \"AV.Nét chống thấm\"))\nDRY_RUN = bool(gia_tri(4, True))\nVE_CA_KHI_CO = bool(gia_tri(5, False))\nTHU_MUC = str(gia_tri(6, os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\", \"chong_tham\")))\nos.makedirs(THU_MUC, exist_ok=True)\n\nGOC_SONG_SONG = 20.0      # độ: cạnh vén lệch tường chứa cửa dưới góc này mới bị cắt\nVUOT_CUA_MM = 150.0       # dải cắt vươn ra ngoài mặt tường mỗi bên (ngoài khoảng lùi)\nNGAN_NHAT_MM = 5.0        # đoạn vén ngắn hơn thì bỏ\nbao_cao = []\n\n\ndef mm(v):\n    return UnitUtils.ConvertToInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ra_mm(v):\n    return UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef khong_dau(s):\n    s = unicodedata.normalize(\"NFD\", s or \"\").replace(\"đ\", \"d\").replace(\"Đ\", \"D\")\n    return \"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower()\n\n\ndef ten(e):\n    try:\n        return e.Name\n    except Exception:\n        return \"?\"\n\n\ndef ten_kieu(e):\n    return ten(doc.GetElement(e.GetTypeId()))\n\n\ndef ten_tpl(v):\n    return ten(doc.GetElement(v.ViewTemplateId)) if v.ViewTemplateId != ElementId.InvalidElementId else \"\"\n\n\n# ---------- chọn view ----------\ndef chon_view():\n    plans = [v for v in FilteredElementCollector(doc).OfClass(ViewPlan) if not v.IsTemplate]\n    if TEN_VIEW:\n        for v in plans:\n            if v.Name == TEN_VIEW:\n                return v\n        raise Exception(\"Không tìm thấy view mặt bằng tên '%s'\" % TEN_VIEW)\n    la_ct = [v for v in plans if \"chong tham\" in khong_dau(ten_tpl(v)) or \"chong tham\" in khong_dau(v.Name)]\n    av = doc.ActiveView\n    for v in la_ct:\n        if v.Id == av.Id:\n            return v\n    if not la_ct:\n        raise Exception(\"Không có view mặt bằng nào dùng template chống thấm; nhập tên view vào IN[0]\")\n    return la_ct[0]\n\n\n# ---------- hình học 2D ----------\ndef diem_loop(curves):\n    pts = []\n    for c in curves:\n        for p in list(c.Tessellate())[:-1]:\n            pts.append((p.X, p.Y))\n    return pts\n\n\ndef trong_da_giac(x, y, pts):\n    ben_trong = False\n    n = len(pts)\n    for i in range(n):\n        x1, y1 = pts[i]\n        x2, y2 = pts[(i + 1) % n]\n        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:\n            ben_trong = not ben_trong\n    return ben_trong\n\n\ndef trong_san(x, y, loops_pts):\n    # điểm nằm trong số lẻ vòng biên = nằm trong sàn (vòng ngoài trừ lỗ)\n    return sum(1 for pts in loops_pts if trong_da_giac(x, y, pts)) % 2 == 1\n\n\ndef loop_lui_vao(curves, loops_pts, d):\n    cl = CurveLoop()\n    for c in curves:\n        cl.Append(c)\n    for dau in (1, -1):\n        try:\n            kq = CurveLoop.CreateViaOffset(cl, dau * d, XYZ.BasisZ)\n        except Exception:\n            continue\n        ok = True\n        for c in kq:\n            m = c.Evaluate(0.5, True)\n            if not trong_san(m.X, m.Y, loops_pts):\n                ok = False\n                break\n        if ok:\n            return list(kq)\n    return None\n\n\n# ---------- cửa ----------\ndef be_rong_cua(d):\n    for nguon in (d, doc.GetElement(d.GetTypeId())):\n        for bip in (BuiltInParameter.DOOR_WIDTH, BuiltInParameter.FAMILY_WIDTH_PARAM,\n                    BuiltInParameter.FAMILY_ROUGH_WIDTH_PARAM):\n            try:\n                prm = nguon.get_Parameter(bip)\n                if prm and prm.HasValue and prm.AsDouble() > 0:\n                    return prm.AsDouble()\n            except Exception:\n                pass\n    return None\n\n\ndef vung_cua(d):\n    \"\"\"(gốc, hướng dọc tường u, hướng vuông góc v, nửa rộng, nửa dày dải cắt) theo đơn vị feet\"\"\"\n    p = d.Location.Point\n    u = XYZ(d.HandOrientation.X, d.HandOrientation.Y, 0).Normalize()\n    v = XYZ(-u.Y, u.X, 0)\n    w = be_rong_cua(d)\n    if w is None:\n        return None\n    try:\n        day = d.Host.Width\n    except Exception:\n        day = mm(250)\n    return (XYZ(p.X, p.Y, 0), u, v, w / 2.0, day / 2.0 + mm(LUI_MM) + mm(VUOT_CUA_MM))\n\n\ndef cat_doan(a, b, vung):\n    \"\"\"Phần [t0, t1] của đoạn a→b nằm trong dải cắt (Liang–Barsky), None nếu không giao\"\"\"\n    g, u, v, nr, nd = vung\n    pa, pb = a - g, b - g\n    ua, ub = pa.DotProduct(u), pb.DotProduct(u)\n    va, vb = pa.DotProduct(v), pb.DotProduct(v)\n    t0, t1 = 0.0, 1.0\n    for p0, dp, lim in ((ua, ub - ua, nr), (va, vb - va, nd)):\n        for q, r in ((-dp, p0 + lim), (dp, lim - p0)):\n            if abs(q) < 1e-12:\n                if r < 0:\n                    return None\n            else:\n                t = r / q\n                if q < 0:\n                    t0 = max(t0, t)\n                else:\n                    t1 = min(t1, t)\n    return (t0, t1) if t1 - t0 > 1e-9 else None\n\n\ndef ngat_tai_cua(line, cac_vung):\n    \"\"\"Trả về danh sách Line còn lại sau khi cắt tại các cửa\"\"\"\n    doan = [(line.GetEndPoint(0), line.GetEndPoint(1))]\n    so_cat = 0\n    for vung in cac_vung:\n        u = vung[1]\n        moi = []\n        for a, b in doan:\n            dirv = (b - a)\n            if dirv.GetLength() < 1e-9:\n                continue\n            cos = abs(dirv.Normalize().DotProduct(u))\n            k = cat_doan(a, b, vung)\n            if k is None:\n                moi.append((a, b))\n                continue\n            t0, t1 = k\n            if cos >= math.cos(math.radians(GOC_SONG_SONG)):\n                so_cat += 1\n                if t0 > 0:\n                    moi.append((a, a + (b - a) * t0))\n                if t1 < 1:\n                    moi.append((a + (b - a) * t1, b))\n            elif t0 <= 1e-6 and t1 >= 1 - 1e-6:\n                so_cat += 1          # đoạn ngắn vuông góc nằm gọn trong ô cửa (má cửa) → bỏ\n            else:\n                moi.append((a, b))\n        doan = moi\n    kq = [Line.CreateBound(a, b) for a, b in doan if (b - a).GetLength() >= mm(NGAN_NHAT_MM)]\n    return kq, so_cat\n\n\n# ---------- chạy ----------\ndef chinh():\n    view = chon_view()\n    lv = view.GenLevel\n    bao_cao.append(\"View: %s (template %s, level %s)\" % (view.Name, ten_tpl(view) or \"-\", lv.Name if lv else \"-\"))\n    if lv is None:\n        raise Exception(\"View không gắn level\")\n\n    # line style\n    gs = None\n    for sc in doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines).SubCategories:\n        if sc.Name == TEN_NET:\n            gs = sc.GetGraphicsStyle(GraphicsStyleType.Projection)\n    if gs is None:\n        raise Exception(\"Không có line style '%s' trong model\" % TEN_NET)\n\n    # nét vén đã có?\n    da_co = [c for c in FilteredElementCollector(doc, view.Id).OfClass(CurveElement)\n             if c.CurveElementType == CurveElementType.DetailCurve and c.LineStyle.Id == gs.Id]\n    bao_cao.append(\"Nét '%s' đã có trong view: %d\" % (TEN_NET, len(da_co)))\n\n    # sàn ướt\n    kh = [khong_dau(k.strip()) for k in TU_KHOA_SAN]\n    sans = [f for f in FilteredElementCollector(doc).OfClass(Floor)\n            if f.LevelId == lv.Id and any(k in khong_dau(ten_kieu(f)) for k in kh)]\n    bao_cao.append(\"Sàn ướt trên level: %d (%s)\" % (len(sans), \"; \".join(\n        \"%s=%d\" % (t, n) for t, n in sorted(dict((ten_kieu(f), sum(1 for g in sans if ten_kieu(g) == ten_kieu(f)))\n                                                 for f in sans).items()))))\n\n    # cửa đi trên level\n    cua = [d for d in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Doors).WhereElementIsNotElementType()\n           if d.LevelId == lv.Id]\n    vung_cuas, cua_loi = [], []\n    for d in cua:\n        try:\n            vg = vung_cua(d)\n        except Exception:\n            vg = None\n        if vg is None:\n            cua_loi.append(str(d.Id.Value))\n        else:\n            vung_cuas.append(vg)\n    bao_cao.append(\"Cửa đi trên level: %d (không đọc được bề rộng: %s)\" % (len(cua), \", \".join(cua_loi) or \"0\"))\n\n    d = mm(LUI_MM)\n    z = lv.Elevation\n    bien = {}\n    for f in sans:\n        try:\n            loops = [[c for c in ca] for ca in doc.GetElement(f.SketchId).Profile]\n            bien[f.Id.Value] = (loops, [diem_loop(l) for l in loops])\n        except Exception:\n            pass\n\n    def giap_san_khac(ln, id_san):\n        \"\"\"Cạnh vén nằm sát một sàn ướt khác (phía ngoài sàn đang xét) → không vẽ\"\"\"\n        a, b = ln.GetEndPoint(0), ln.GetEndPoint(1)\n        m = (a + b) * 0.5\n        n = XYZ(-(b - a).Y, (b - a).X, 0).Normalize() * (d + mm(60))\n        for q in (m + n, m - n):\n            if trong_san(q.X, q.Y, bien[id_san][1]):\n                continue\n            for k, (_, pts) in bien.items():\n                if k != id_san and trong_san(q.X, q.Y, pts):\n                    return True\n        return False\n\n    net_ve, san_loi, tong_cat, bo_giap = [], [], 0, 0\n    for f in sans:\n        try:\n            if f.Id.Value not in bien:\n                raise Exception(\"không đọc được sketch\")\n            loops, loops_pts = bien[f.Id.Value]\n            for l in loops:\n                lui = loop_lui_vao(l, loops_pts, d)\n                if lui is None:\n                    san_loi.append(\"%s (lùi vòng biên lỗi)\" % f.Id.Value)\n                    continue\n                for c in lui:\n                    if isinstance(c, Line) or c.GetType().Name == \"Line\":\n                        a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n                        ln = Line.CreateBound(XYZ(a.X, a.Y, z), XYZ(b.X, b.Y, z))\n                        if giap_san_khac(ln, f.Id.Value):\n                            bo_giap += 1\n                            continue\n                        con, nc = ngat_tai_cua(ln, vung_cuas)\n                        tong_cat += nc\n                        net_ve += con\n                    else:\n                        net_ve.append(c.CreateTransformed(Transform.CreateTranslation(XYZ(0, 0, z - c.GetEndPoint(0).Z))))\n        except Exception as ex:\n            san_loi.append(\"%s (%s)\" % (f.Id.Value, ex))\n    bao_cao.append(\"Nét vén sẽ vẽ: %d đoạn, tổng %.1f m; số lần cắt tại cửa: %d; cạnh giáp sàn ướt khác bỏ: %d\" % (\n        len(net_ve), sum(ra_mm(c.Length) for c in net_ve) / 1000.0, tong_cat, bo_giap))\n    if san_loi:\n        bao_cao.append(\"Sàn lỗi (bỏ qua, cần xem lại): \" + \"; \".join(san_loi))\n\n    if DRY_RUN:\n        bao_cao.append(\"DRY-RUN: chưa vẽ gì. Đặt IN[4] = False để vẽ.\")\n        return view, []\n    if da_co and not VE_CA_KHI_CO:\n        bao_cao.append(\"DỪNG: view đã có %d nét '%s' (không tự xoá). Xoá tay hoặc đặt IN[5] = True để vẽ thêm.\"\n                       % (len(da_co), TEN_NET))\n        return view, []\n\n    TransactionManager.Instance.EnsureInTransaction(doc)\n    moi = []\n    for c in net_ve:\n        try:\n            dc = doc.Create.NewDetailCurve(view, c)\n            dc.LineStyle = gs\n            moi.append(dc.Id)\n        except Exception as ex:\n            bao_cao.append(\"Không vẽ được 1 đoạn: %s\" % ex)\n    nhom = None\n    if moi:\n        try:\n            g = doc.Create.NewGroup(NetList[ElementId](moi))\n            ten_nhom = \"ARV_ChongTham_Ven\"\n            da_dung = set(ten(t) for t in FilteredElementCollector(doc).OfClass(GroupType))\n            i = 1\n            while ten_nhom in da_dung:\n                i += 1\n                ten_nhom = \"ARV_ChongTham_Ven_%d\" % i\n            doc.GetElement(g.GetTypeId()).Name = ten_nhom\n            nhom = ten_nhom\n        except Exception as ex:\n            bao_cao.append(\"Không gom group được: %s\" % ex)\n    TransactionManager.Instance.TransactionTaskDone()\n    bao_cao.append(\"ĐÃ VẼ %d nét vén%s\" % (len(moi), (\", group '%s'\" % nhom) if nhom else \"\"))\n    return view, moi\n\n\ndef xuat_anh(view):\n    try:\n        TransactionManager.Instance.ForceCloseTransaction()\n        opt = ImageExportOptions()\n        opt.ExportRange = ExportRange.SetOfViews\n        opt.SetViewsAndSheets(NetList[ElementId]([view.Id]))\n        opt.FilePath = os.path.join(THU_MUC, \"chong_tham\")\n        opt.ZoomType = ZoomFitType.FitToPage\n        opt.PixelSize = 6000\n        opt.ImageResolution = ImageResolution.DPI_300\n        opt.HLRandWFViewsFileType = ImageFileType.PNG\n        opt.ShadowViewsFileType = ImageFileType.PNG\n        doc.ExportImage(opt)\n        bao_cao.append(\"Ảnh: %s*.png\" % opt.FilePath)\n    except Exception as ex:\n        bao_cao.append(\"Không xuất được ảnh: %s\" % ex)\n\n\ntry:\n    v, moi = chinh()\n    xuat_anh(v)\nexcept Exception:\n    bao_cao.append(\"LỖI: \" + traceback.format_exc())\n\nlog = os.path.join(THU_MUC, \"chong_tham_%s.txt\" % datetime.now().strftime(\"%Y%m%d_%H%M%S\"))\nwith open(log, \"w\", encoding=\"utf-8\") as f:\n    f.write(\"\\n\".join(bao_cao))\nbao_cao.append(\"Log: \" + log)\nOUT = bao_cao\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "240bc871d9d2499fac1207dd26966e2f",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "1d9b9449a26d43ae9999da63d00abf94",
+          "Name": "IN[0]",
+          "Description": "Tên view (trống = view chống thấm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d07a7d5d6c1a420c9ec143bd70cdbb68",
+          "Name": "IN[1]",
+          "Description": "Từ khoá kiểu sàn ướt (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8d92cae839964876918d376a8c5aa62e",
+          "Name": "IN[2]",
+          "Description": "Lùi vén vào trong (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c727d265e0f64d10ae379e04d4d47338",
+          "Name": "IN[3]",
+          "Description": "Line style nét vén",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3808d98bad484560aed63ffcdfd44f59",
+          "Name": "IN[4]",
+          "Description": "Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "acfde9d464ff4464871fa3e6d372cf0a",
+          "Name": "IN[5]",
+          "Description": "Vẽ cả khi view đã có nét vén",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8818f07df797473ab32db589d47e80b5",
+          "Name": "IN[6]",
+          "Description": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d0376e0b87c34315b6531968940bcaad",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "ac0c148f866549a3a4ddb41dd6600b55",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "518345f3962a4979841ca0bd2998f72c",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e2feba7e59b645938f2878b555cb8574",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "9b0701850fc3440a94f476feacfd7e00",
+      "End": "1d9b9449a26d43ae9999da63d00abf94",
+      "Id": "7b1ca5aae3ec4332bbdc5c48d0048442",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2bf110d989284c688454279929c6ddaa",
+      "End": "d07a7d5d6c1a420c9ec143bd70cdbb68",
+      "Id": "8cf2bb63fce949b1bd2cee688aab088f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "63132e7fcca84bae82d5f579553e1438",
+      "End": "8d92cae839964876918d376a8c5aa62e",
+      "Id": "980eacab1e9c4e8dae289637955a6921",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6dc2eb779ec14d96880f0f4410d1a462",
+      "End": "c727d265e0f64d10ae379e04d4d47338",
+      "Id": "a90c44b9530e4d22a27fcc6e28c9b6d4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b4f64aa5c30e4e6d96608a83927268a7",
+      "End": "3808d98bad484560aed63ffcdfd44f59",
+      "Id": "bcfa2849ec674cba88b6b4d018629d80",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8cbe93fbcfc84e2dad6d353a9988027d",
+      "End": "acfde9d464ff4464871fa3e6d372cf0a",
+      "Id": "3579632ee0364c9aad600334a0843e93",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6a4ff09458684d1492a6442a3066cae2",
+      "End": "8818f07df797473ab32db589d47e80b5",
+      "Id": "ed577cb12c9c46229207b5d200cb8e9f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d0376e0b87c34315b6531968940bcaad",
+      "End": "518345f3962a4979841ca0bd2998f72c",
+      "Id": "572f8367fe474c479cc18254e4e4b6f8",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "38d2d8a7544e4cc6821251b82499a79f",
+        "Name": "Tên view (trống = view chống thấm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "c75441dffff040c19cb5a6ea29c5f1d4",
+        "Name": "Từ khoá kiểu sàn ướt (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 130.0
+      },
+      {
+        "Id": "3df20730eb994b29ab3758b5dc98f0e7",
+        "Name": "Lùi vén vào trong (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Id": "40f2a87059e64ba6a0e6b8becb8ac07e",
+        "Name": "Line style nét vén",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 390.0
+      },
+      {
+        "Id": "bce55a356c06463fb0a6c95d1960ec49",
+        "Name": "Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Id": "d73af23ff143468d8032f64f3eb27438",
+        "Name": "Vẽ cả khi view đã có nét vén",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 650.0
+      },
+      {
+        "Id": "76f7b8e01b2c4423af123f9dc3cfa508",
+        "Name": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 780.0
+      },
+      {
+        "Id": "240bc871d9d2499fac1207dd26966e2f",
+        "Name": "ChongTham_VeVenChanTuong",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "ac0c148f866549a3a4ddb41dd6600b55",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "2dac3479790147338b46df8f4f97f6f8",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "38d2d8a7544e4cc6821251b82499a79f",
+          "c75441dffff040c19cb5a6ea29c5f1d4",
+          "3df20730eb994b29ab3758b5dc98f0e7",
+          "40f2a87059e64ba6a0e6b8becb8ac07e",
+          "bce55a356c06463fb0a6c95d1960ec49",
+          "d73af23ff143468d8032f64f3eb27438",
+          "76f7b8e01b2c4423af123f9dc3cfa508"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 950.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 950.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "b506af77ae3a4d36b545e6c8f2695551",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "240bc871d9d2499fac1207dd26966e2f"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "fbdb2667699648919c5fb0a8207f0a92",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "ac0c148f866549a3a4ddb41dd6600b55"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

@@ -1,0 +1,65 @@
+{
+ "key": "TaoLenGachLogia",
+ "title": "Len gạch logia",
+ "summary": "Nhân bản từ ARV_TaoLenGo_v1 (không sửa bản gốc) – thêm chia viên len trùng mạch lát sàn logia. Tạo len gạch chân tường logia (Basic Wall mỏng, type có sẵn \"LCT-Gạch\"), mỗi viên len một đoạn tường: 1. Nguồn biên: sàn hoàn thiện logia (Floor, VD do ARV_TaoSanCanHoTuCAD_v1 tạo – type \"SHT-Gach Lat Logia-300x600\", Comments \"ARV-SanCanHo CHxx LOGIA\"). Phạm vi: phần tử đang chọn / Id ở IN[3]; không chọn gì → mọi sàn logia trên level của view đang mở. 2. Kích thước viên: đọc Model pattern của vật liệu lớp mặt floor type (VD \"300x600\": lưới 0° cách 300, lưới 90° cách 600). Không có pattern 2 lưới vuông góc → dừng. 3. Mạch lát sàn (đã đo trên G19 2026-10-21, 9 tấm sàn logia, khớp 100%): Revit đặt mẫu sàn với trục 0° của pattern SONG SONG CẠNH DÀI NHẤT của biên sàn, mạch đi qua TÂM HỘP BAO của biên (theo hệ trục cạnh dài nhất). → mạch dọc cạnh dài cách đều lưới 90° (600), mạch ngang cách đều lưới 0° (300). Sàn đã Align mẫu bằng tay thì tool không biết – kiểm tra 3D sau khi tạo. 4. Mỗi cạnh biên: bắn tia vuông góc ra ngoài ở giữa chiều cao len, tìm mặt tường / cột Revit trong 60 mm → len áp mặt tường (gồm cả gờ bê tông ARV-GoLogia mặt ngoài logia). Đoạn không có tường → không len. 5. Ngắt len tại cửa đi / cửa lùa: dải dọc tường bằng phủ bì khối cửa, bề ngang = dày tường + 60 mm mỗi bên. 6. Góc: hai đoạn len kề nhau gặp tại giao tim, kéo thêm nửa chiều dày (góc lồi không hở). 7. Chia mỗi đoạn len tại mạch lát sàn cắt ngang nó → mỗi viên một Basic Wall, không tự nối đầu (thấy mạch). Viên vụn < IN[5] ở đầu đoạn (thường là phần kéo góc) gộp vào viên kề. 8. Tường len: không Room Bounding, mặt Exterior quay vào phòng, Comments \"ARV-LenGachLogia <Id sàn>\". Sàn đã có len của tool → bỏ qua (xoá len cũ để làm lại). Wall type phải có sẵn (template công ty) – tool không tạo / đổi type.",
+ "transaction": "ARV - Tạo len gạch logia",
+ "source": "ARV_TaoLenGachLogia_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "float",
+   "decl": "float",
+   "label": "Chiều cao len (mm), mặc định 100",
+   "default": 100.0,
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "float",
+   "decl": "float",
+   "label": "Chân len so với mặt sàn hoàn thiện (mm), mặc định 0",
+   "default": 0.0,
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Nhận sàn logia: chuỗi con trong Comments / tên type sàn, cách nhau ';' (mặc định \"Logia\")",
+   "default": "Logia",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Id sàn, cách nhau ';' (trống = đang chọn trong Revit; không chọn = cả level của view)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Wall type len (có sẵn), mặc định \"LCT-Gạch\"",
+   "default": "LCT-Gạch",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "float",
+   "decl": "float",
+   "label": "Viên vụn tối thiểu (mm), mặc định 20 – viên ngắn hơn ở đầu đoạn gộp vào viên kề",
+   "default": 20.0,
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  }
+ ]
+}

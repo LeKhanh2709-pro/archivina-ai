@@ -1,0 +1,97 @@
+{
+ "key": "TaoSanHoanThien",
+ "title": "Sàn hoàn thiện (có hatch)",
+ "summary": "Tạo sàn hoàn thiện (Floor) cho từng CĂN HỘ theo bản CAD mặt bằng lát sàn đã Link (chuẩn CAD công ty): 1. Đọc bản sao DWG qua AutoCAD Core Console (model space + block lồng nhau): - polyline kín layer bo phòng (IN[2], mặc định \"A-duong bo phong\") = biên sàn hoàn thiện từng phòng; - polyline kín layer căn hộ (IN[3], mặc định \"A-Area\") = phạm vi căn; - hatch layer lát sàn (IN[4], mặc định \"A-Hoan thien san\"): mẫu hatch → loại phòng (IN[5]), hatch AR-CONC = đá chân cửa FP-06 (cửa WC, cửa vào căn). 2. Phạm vi: phần tử đang chọn trong Revit (hoặc Id ở IN[1]) – thường chọn CỬA VÀO CĂN. Căn = polyline IN[3] chứa phía trong cửa (hoặc chứa điểm của phần tử). Không có layer căn → lan từ phòng chứa điểm qua các cửa Revit, không đi qua cửa vào căn (IN[8]). 3. Mỗi phòng một tấm sàn: type + cao độ theo loại (IN[6], IN[7]; mặc định khô 0 / WC −15 / logia −30). Phòng không có hatch trong IN[5] → \"chưa rõ loại\", không tạo. 4. Ô cửa (đo trên hình khối tường Revit, không theo tham số family): - hai bên đều phòng khô (cửa phòng ngủ) → sàn mỗi bên kéo vào ô cửa tới tim tường; - một bên logia, một bên phòng khô       → sàn trong nhà phủ hết ô tường, sàn logia dừng ở bo phòng; - cửa WC / cửa vào căn                    → không kéo sàn; tấm đá chân cửa lấy theo hatch AR-CONC của CAD (thiếu hatch → báo \"thiếu đá chân cửa\"). 5. Bỏ qua phòng / ô đá đã có sàn (cùng level). Comments = \"ARV-SanHoanThien\".",
+ "transaction": "ARV - Tạo sàn hoàn thiện",
+ "source": "ARV_TaoSanHoanThien_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống = bản CAD duy nhất trong mô hình)",
+   "default": "G19",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Id phần tử trong căn, cách nhau ';' (để trống = các phần tử đang chọn trong Revit)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Lọc layer đường bo phòng (khớp chuỗi con, VD \"A-duong bo phong\")",
+   "default": "A-duong bo phong",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Lọc layer polyline căn hộ (VD \"A-Area\"; để trống = lan theo cửa)",
+   "default": "A-Area",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Lọc layer hatch lát sàn (VD \"A-Hoan thien san\")",
+   "default": "A-Hoan thien san",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Mẫu hatch = loại: \"WOODS_BOARD_WIDE=KHO;300X600=WC;2X4=LOGIA;AR-CONC=CHANCUA\"",
+   "default": "WOODS_BOARD_WIDE=KHO;300X600=WC;2X4=LOGIA;AR-CONC=CHANCUA",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Floor type theo loại: \"KHO=…;WC=…;LOGIA=…;CHANCUA=FF-Đá Granite tự nhiên\"",
+   "default": "KHO=;WC=;LOGIA=;CHANCUA=FF-Đá Granite tự nhiên",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Cao độ mặt sàn so với Level (mm) theo loại: \"KHO=0;WC=-15;LOGIA=-30;CHANCUA=0\"",
+   "default": "KHO=0;WC=-15;LOGIA=-30;CHANCUA=0",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "str",
+   "label": "Nhận cửa vào căn theo tên family/type, cách nhau ';' (VD \"khóa thông minh;DW03\")",
+   "default": "khóa thông minh;DW03",
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 10,
+   "type": "str",
+   "decl": "str",
+   "label": "Floor type kiến trúc mẫu: type ở IN[6] chưa có → nhân bản từ type này (giữ cấu tạo lớp; đá chân cửa đổi vật liệu lớp hoàn thiện sang vật liệu có tên chứa \"granite\" nếu mô hình có). Trống = dừng.",
+   "default": "SHT-Gach Lat-600x600",
+   "kind": "normal"
+  }
+ ]
+}

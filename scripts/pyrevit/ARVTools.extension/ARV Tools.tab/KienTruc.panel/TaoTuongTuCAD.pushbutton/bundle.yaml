@@ -1,0 +1,3 @@
+title: "Tường\ntừ CAD"
+tooltip: "Bản Dynamo của nút pyRevit KienTruc.panel/TaoTuongTuCAD – mỗi chiều dày CAD một wall type (bảng IN[2]). Tạo tường kiến trúc từ mặt bằng tường xây (DWG đã Link/Import vào Revit): 1. Đọc đoạn thẳng (line, polyline, kể cả trong block) trên layer tường. 2. Ghép cặp hai nét song song cách nhau trong dải chiều dày → đường tim tường. Cặp gần nhau nhất trước; không ghép hai nét có nét thứ ba nằm giữa (tườ Mặc định chạy thử (dry-run). Nguồn: ARV_TaoTuongTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

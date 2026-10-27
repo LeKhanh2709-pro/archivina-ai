@@ -1,0 +1,81 @@
+{
+ "key": "TaoOngGioTuCAD",
+ "title": "Ống gió từ CAD",
+ "summary": "Tạo ống gió chữ nhật (Duct) từ mặt bằng thông gió (DWG đã Link vào Revit). Đọc từ BẢN SAO DWG qua AutoCAD Core Console (chữ trong bản link Revit không đọc được): - Nổ (explode) mọi block trên bản sao; nét ở layer 0 trong block nhận layer của block cha (như AutoCAD hiển thị); toạ độ LWPOLYLINE đổi OCS → WCS (block mirror). - Ống: thành ống là cặp nét thẳng song song trên layer IN[1] (LINE / cạnh thẳng LWPOLYLINE). Đoạn thẳng hàng nối nhau qua mặt bích (khe ≤ 60 mm) được gộp. Mỗi thành ống ghép với nét song song gần nhất theo từng khoảng dọc tuyến → tim ống + bề rộng W. - Lọc: ống thật phải có ≥ 1 vạch ngang (mặt bích / đầu ống) dài ≈ W nối hai thành; cặp có tim nằm trong ống dài hơn (cặp vạch mặt bích, nét trong quạt / van) bị loại. - Phụ kiện (theo Routing Preferences của duct type): ghép cặp đầu ống cùng layer, gần nhất trước – thẳng hàng khe ≤ 3 m (chỗ van / đổi tiết diện) → nối liền, cùng cỡ đặt bích, khác cỡ đặt côn (lệch tâm ≤ |ΔW|/2 + 30 mm); trục giao nhau → cút; 2 đầu thẳng hàng + 1 đầu vuông góc → tê (không được thì nối thẳng ống chính + chân rẽ); đầu ống đâm vào thân ống khác → chân rẽ. Khác cao độ → đầu ống cao hơn (nhánh với tê) hạ bằng đoạn dốc ≈ 45° + 2 cút. Mỗi mối nối một SubTransaction; lỗi → hoàn tác, ghi log. - Kích thước + cao độ: chữ \"WxH ... BOD: FL+2.300\" trên layer IN[3]; gán cho ống gần nhất có cạnh khớp W (±15 mm, ≤ 6 m); ống chưa có chữ nhận theo ống cùng layer, cùng W nối liền (qua cút/côn); tuyến dài ≥ 3 m tìm chữ trong 15 m. Bỏ chữ của thiết bị (SAG, EAG, PAG, OBD, MFD, PRD, TA, NRD…). Ống không có chữ / không có BOD → không dựng, ghi log để vẽ tay. - Cao độ: đáy ống = Level IN[4] + BOD + IN[6]; tâm ống = đáy + H/2.",
+ "transaction": "ARV - Tạo ống gió từ CAD",
+ "source": "ARV_TaoOngGioTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (trống = bản CAD duy nhất)",
+   "default": "new block",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer ống gió, cách ';' (khớp đúng tên)",
+   "default": "AV-M-TG-CAP KHI BU;AV-M-TG-HUT KHOI;AV-M-TG-TANG AP",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "System theo chuỗi con trong tên layer: \"HUT KHOI=AV_M_Hút khói;TANG AP=AV_M_Tăng áp;...\"",
+   "default": "CAP KHI BU=AV_M_Gió Tươi;HUT KHOI=AV_M_Hút khói;TANG AP=AV_M_Tăng áp",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer chữ kích thước ống (cách ';'; trống = mọi layer)",
+   "default": "AV-M-AC-text 1",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Level gốc FL (trống = level của view đang mở)",
+   "default": "Test",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên Duct type chữ nhật (Rectangular Duct)",
+   "default": "Standard",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "float",
+   "decl": "float",
+   "label": "Cộng thêm vào cao độ đáy ống (mm), mặc định 0",
+   "default": 0.0,
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Xoá ống + phụ kiện 'ARV-OG' của lần chạy trước rồi dựng lại (mặc định False)",
+   "default": false,
+   "kind": "destructive"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo (mặc định True)",
+   "default": false,
+   "kind": "dry_run"
+  }
+ ]
+}

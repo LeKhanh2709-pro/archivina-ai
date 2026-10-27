@@ -1,0 +1,15 @@
+#! python3
+# -*- coding: utf-8 -*-
+# File sinh tự động bởi scripts/pyrevit/build_from_dynamo.py – không sửa tay.
+"""Đặt thiết bị vệ sinh (bệt xí + lavabo) trong WC theo vị trí trên bản CAD đã Link: 1. Lavabo: polyline chữ nhật kín trên layer IN[1] (khung ngoài block lavabo, VD block động 半挂式台盆), cạnh dài 800–1100, cạnh ngắn 400–650 mm. Lưng lavabo = cạnh dài phía có vòi (trọng tâm các nét thiết bị trong khung lệch về phía vòi). Kích thước lấy theo khung CAD (trạng thái hiển thị của block động). 2. Bệt xí: cung đầu bệt (≈ nửa vòng tròn, R 150–230) trên layer IN[2] + nét két nước vuông góc trục bệt (dài ≈ 2R, nằm sau cung 1,8R–3,5R). Lưng bệt = nét két xa nhất; tổng sâu 600–800 mm. Cung không có két → bỏ. 3. Đặt family: tâm thiết bị theo trục CAD, lưng áp mặt hoàn thiện tường gần nhất (tia dò ≤ IN[7] mm sau lưng CAD; CAD vẽ sát mặt tường thô, mô hình có trát + ốp) – không gặp tường thì giữ đúng vị trí CAD. Lavabo lấn mặt hoàn thiện tường bên (CAD vẽ kín tới mặt thô) → dời ngang ra ≤ LAT_MAX_MM, giữ kích thước CAD; lấn nhiều hơn / kẹp hai bên → giữ CAD, báo KIỂM TRA. Lưng / tâm đo trên khối đặc của family sau khi đặt (không phụ thuộc điểm chèn của family). 4. Lavabo: type của family IN[4] có Width × Depth đúng khung CAD thì dùng; chưa có → nhân bản type mẫu IN[5] thành "{rộng}x{sâu}". Bệt: một type IN[3] cho mọi WC (kích thước CAD chỉ ghi vào log). 5. Cao độ = mặt sàn hoàn thiện WC (sàn có Comments chứa "WC" dưới thiết bị): bệt (family Work Plane) host lên mặt trên sàn WC, lavabo (family theo level) Offset from Host = cao độ sàn WC. Không có sàn WC → đặt theo level, lavabo Offset = IN[6], bệt Work Plane nằm ở level (báo cáo). Comments "ARV-ThietBiWC <loại> <căn>". Đã có thiết bị cùng family tại chỗ (khối đặc phủ ≥ 30 % khung CAD): đúng hướng → bỏ qua; sai hướng → xoá cái cũ, đặt lại (báo trước trong dry-run). Mỗi thiết bị một SubTransaction – lỗi thì hoàn tác riêng cái đó."""
+__title__ = "Thiết bị WC\ntừ CAD"
+import os
+import sys
+
+_here = os.path.dirname(os.path.abspath(__file__))
+_lib = os.path.normpath(os.path.join(_here, "..", "..", "..", "lib"))
+if _lib not in sys.path:
+    sys.path.insert(0, _lib)
+
+import arv_dynamo_host
+arv_dynamo_host.run_button(_here, __revit__)

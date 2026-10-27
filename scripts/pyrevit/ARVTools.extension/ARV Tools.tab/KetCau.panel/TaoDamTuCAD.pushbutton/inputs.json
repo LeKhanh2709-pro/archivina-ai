@@ -1,0 +1,97 @@
+{
+ "key": "TaoDamTuCAD",
+ "title": "Dầm từ CAD",
+ "summary": "Tạo dầm kết cấu từ mặt bằng kết cấu sàn (DWG đã Link vào Revit). Cách nhận dầm (theo NHÃN, không đoán theo nét): - Mỗi nhãn tiết diện \"bxh\" (VD \"25X40\", \"D1 (220x500)\") trên layer nhãn là một dầm. - Phương dầm = phương chữ của nhãn. Tìm cặp nét song song (layer cạnh dầm) cách nhau đúng b, nằm sát nhãn → trục dầm là đường giữa cặp nét. - Chiều dài dầm = đoạn hai cạnh cùng có nét; chỗ một cạnh bị ngắt do dầm khác đâm vào (cạnh kia liền) được nối qua. Đầu dầm chạm cạnh một dầm vuông góc thì kéo tới trục dầm đó. - Dầm liên tục ghi 1 nhãn: các nhịp tiếp theo của cùng cặp nét (cách nhau qua cột ≤ IN[10]) được tạo theo nhãn đó cho tới nhịp có nhãn khác. - Nhãn không tìm được cặp nét → bỏ qua, ghi vào báo cáo để vẽ tay. Chữ trong bản link Revit không đọc được nên nhãn được đọc từ BẢN SAO file DWG qua AutoCAD Core Console.",
+ "transaction": "ARV - Tạo dầm kết cấu từ CAD",
+ "source": "ARV_TaoDamTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống nếu mô hình chỉ có 1 bản CAD)",
+   "default": "150_GOC0",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer cạnh dầm, nhiều chuỗi cách nhau bằng ';' – layer chứa một trong các chuỗi được dùng",
+   "default": "S-Khuat;S-Thay",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer nhãn tiết diện dầm (khớp chuỗi con)",
+   "default": "S-Text",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "float",
+   "decl": "float",
+   "label": "Hệ số đổi số trong nhãn ra mm (nhãn ghi cm → 10; ghi mm → 1)",
+   "default": 10.0,
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên family dầm kết cấu tiết diện chữ nhật",
+   "default": "M_Concrete-Rectangular Beam",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên parameter type bề rộng (VD \"b\")",
+   "default": "b",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên parameter type chiều cao (VD \"h\")",
+   "default": "h",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level tham chiếu của dầm",
+   "default": "Tầng 1",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "float",
+   "decl": "float",
+   "label": "Cao độ đỉnh dầm so với level (mm), mặc định 0",
+   "default": 0.0,
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo, không ghi vào mô hình (mặc định True)",
+   "default": false,
+   "kind": "dry_run"
+  },
+  {
+   "index": 10,
+   "type": "float",
+   "decl": "float",
+   "label": "Nối nhịp không nhãn qua cột: khe tối đa (mm) giữa hai nhịp thẳng hàng cùng cặp nét (bề rộng cột / vách / nút dầm). Một nhãn áp cho cả dầm liên tục, mỗi nhịp tạo một dầm. 0 = tắt (chỉ tạo nhịp có nhãn). Mặc định 2500.",
+   "default": 2500.0,
+   "kind": "normal"
+  }
+ ]
+}

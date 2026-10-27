@@ -1,0 +1,14 @@
+{
+  "ten": "ChongTham_VeVenChanTuong",
+  "mo_ta": "Vẽ nét vén chân tường chống thấm (Detail Line 'AV.Nét chống thấm') theo biên sàn hoàn thiện WC / lô gia, lùi vào 50 mm, ngắt tại cửa đi, gom group ARV_ChongTham_Ven. Hatch giữ nguyên filter sàn của template chống thấm. Mặc định Dry-run.",
+  "py": "ChongTham_VeVenChanTuong.py",
+  "dau_vao": [
+    {"ten": "Tên view (trống = view chống thấm)", "kieu": "string", "gia_tri": ""},
+    {"ten": "Từ khoá kiểu sàn ướt (;)", "kieu": "string", "gia_tri": "Gach Lat WC;Gach Lat Logia"},
+    {"ten": "Lùi vén vào trong (mm)", "kieu": "number", "gia_tri": 50},
+    {"ten": "Line style nét vén", "kieu": "string", "gia_tri": "AV.Nét chống thấm"},
+    {"ten": "Dry-run (True = chỉ báo cáo)", "kieu": "bool", "gia_tri": true},
+    {"ten": "Vẽ cả khi view đã có nét vén", "kieu": "bool", "gia_tri": false},
+    {"ten": "Thư mục log + ảnh (trống = Documents, ARV_Logs)", "kieu": "string", "gia_tri": ""}
+  ]
+}

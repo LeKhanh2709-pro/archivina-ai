@@ -1,0 +1,3 @@
+title: "Cửa sổ\ntừ CAD"
+tooltip: "Tạo cửa sổ và cửa lùa (ra logia) gắn vào tường Revit có sẵn từ mặt bằng DWG đã Link. Tường Revit phải LIỀN qua ô cửa (VD dựng bằng ARV_TaoTuongTuCAD_v1). Ô cửa nhận theo cụm nét nằm TRONG DẢI BỀ DÀY tường chủ: 1. Tường chủ = tường thẳng Revit trên level IN[5]. Nét CAD (line / polyline) trên layer cửa sổ IN[1], cửa lùa IN[2], chỉ báo cáo IN[3] mà mọi đỉnh nằm trong dải bề dày tường (± nửa dày + 30  Mặc định chạy thử (dry-run). Nguồn: ARV_TaoCuaSoTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

@@ -1,0 +1,3 @@
+title: "Sàn hoàn thiện\n(có hatch)"
+tooltip: "Tạo sàn hoàn thiện (Floor) cho từng CĂN HỘ theo bản CAD mặt bằng lát sàn đã Link (chuẩn CAD công ty): 1. Đọc bản sao DWG qua AutoCAD Core Console (model space + block lồng nhau): - polyline kín layer bo phòng (IN[2], mặc định \"A-duong bo phong\") = biên sàn hoàn thiện từng phòng; - polyline kín layer căn hộ (IN[3], mặc định \"A-Area\") = phạm vi căn; - hatch layer lát sàn (IN[4], mặc định \"A-Hoan thi Mặc định chạy thử (dry-run). Nguồn: ARV_TaoSanHoanThien_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

@@ -1,0 +1,3 @@
+title: "Ốp tường\nWC"
+tooltip: "Tạo lớp ốp gạch tường WC (Basic Wall mỏng, type \"GO-Gạch ốp-…\") cao IN[2] tính từ mặt sàn hoàn thiện WC: 1. Nguồn biên WC: sàn hoàn thiện WC (Floor, VD do ARV_TaoSanCanHoTuCAD_v1 tạo – Comments \"ARV-SanCanHo CHxx WC\") hoặc Room tên WC / vệ sinh (biên \"At wall finish\"). Phạm vi: phần tử đang chọn / Id ở IN[5]; không chọn gì → mọi WC trên level của view đang mở (ưu tiên sàn; không có sàn WC mới lấy  Mặc định chạy thử (dry-run). Nguồn: ARV_OpTuongWC_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

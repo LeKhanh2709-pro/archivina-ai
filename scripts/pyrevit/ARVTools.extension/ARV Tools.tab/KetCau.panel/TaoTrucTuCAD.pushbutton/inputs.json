@@ -1,0 +1,57 @@
+{
+ "key": "TaoTrucTuCAD",
+ "title": "Tạo trục từ CAD",
+ "summary": "Tạo lưới trục (Grid) từ bản CAD đã Link/Import trong Revit. - Đường trục: lấy từ layer trục của bản CAD, gộp các đoạn thẳng hàng, bỏ đoạn ngắn hơn 1 m. - Tên trục: Revit API không đọc được chữ trong CAD, nên script gọi AutoCAD Core Console trên BẢN SAO file DWG đang link, đọc attribute / TEXT / MTEXT trên layer ký hiệu trục rồi gán cho trục gần nhất. Không có Core Console hoặc CAD dạng Import (không có file) → đánh tên tự động theo tiền tố: trục đứng trái → phải, trục ngang trên → dưới.",
+ "transaction": "ARV - Tạo lưới trục từ CAD",
+ "source": "ARV_TaoTrucTuCSV_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống nếu mô hình chỉ có 1 bản CAD)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer trục, nhiều layer cách nhau dấu phẩy, khớp theo chuỗi con (mặc định \"S-Truc\")",
+   "default": "S-Truc",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer ký hiệu trục chứa tên trục (mặc định \"S-Kyhieu\"; để trống = mọi layer)",
+   "default": "S-Kyhieu",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tiền tố tên trục đứng khi đánh tên tự động (mặc định \"X\")",
+   "default": "X",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Tiền tố tên trục ngang khi đánh tên tự động (mặc định \"Y\")",
+   "default": "Y",
+   "kind": "normal"
+  }
+ ]
+}

@@ -1,0 +1,89 @@
+{
+ "key": "VeBaoSanTuCAD",
+ "title": "Bao sàn từ CAD",
+ "summary": "Vẽ đường bao sàn kết cấu (Detail Line) và tạo sàn (Floor) theo vùng hatch của ghi chú, từ mặt bằng kết cấu sàn (DWG đã Link vào Revit). Đường bao vẽ (Detail Line, trong view mặt bằng đang mở): - BAO NGOÀI: mép ngoài cùng của mặt bằng (mép ngoài dầm biên / mép sàn) – bỏ mọi nét bên trong. - BAO LỖ MỞ: quanh từng lỗ mở có gạch chéo X (hai ô lỗ chung cạnh gộp một). - BAO VÙNG HATCH: quanh từng vùng hatch có trong ghi chú (VD ANSI31 = sàn DƯL dày 230). Nét chung giữa các đường bao chỉ vẽ một lần. Sàn tạo (Floor kết cấu, level của view): - Mỗi vùng hatch một tấm sàn, chiều dày / hạ cốt theo ghi chú (IN[4]). - Sàn nền (phần không hatch, IN[5]) = bao ngoài − lỗ mở − vùng hatch (khoét, không chồng khối lượng). - Type sàn: dùng type có sẵn đúng chiều dày (ưu tiên tên FLOOR_TYPE_NAME); chưa có → nhân bản type mẫu (IN[6]) và chỉnh lớp kết cấu cho đúng chiều dày. Cách dò: - Nét trên layer mép sàn (mặc định S-Thay + S-Cot vach) tách tại giao điểm, dò ô kín nhỏ nhất. Bao ngoài = biên ngoài của cụm nét không nằm lọt trong ô nào. Lỗ mở = ô chứa tâm dấu X. - Hatch không đọc được trong bản link Revit nên được đọc từ BẢN SAO file DWG qua AutoCAD Core Console (model space + trong block lồng nhau). Biên hatch được hút về nét mép sàn gần nhất (≤ HATCH_SNAP_MM), rồi chia mặt bằng thành ô: ô trong lỗ mở → lỗ; ô trong hatch có ghi chú → vùng đó; còn lại → sàn nền.",
+ "transaction": "ARV - Vẽ đường bao sàn từ CAD",
+ "source": "ARV_VeBaoSanTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống nếu mô hình chỉ có 1 bản CAD)",
+   "default": "150_goc0",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer mép sàn, nhiều chuỗi cách nhau ';' (khớp chuỗi con). Mặc định \"S-Thay;S-Cot vach\"",
+   "default": "S-Thay;S-Cot vach;S-Wall",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer dấu X lỗ mở. Mặc định \"S-Manh\"",
+   "default": "S-Manh",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer hatch vùng sàn (khớp chuỗi con). Mặc định \"S-Hatch\"",
+   "default": "S-Hatch;S-Hach",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Ghi chú hatch: \"MẪU=dày[/cốt];...\" mm, cốt âm = hạ cốt. Vùng hai hatch chồng nhau: \"A+B=dày[/cốt]\" (VD ANSI37+ANGLE=170/-30). Mặc định \"ANSI31=230;STARS=250;TRIANG=500;ANSI37=450/-50\"",
+   "default": "ANGLE=120/-30;ANSI37=200;ANSI37+ANGLE=170/-30;ANSI31=250;ANSI31+ANGLE=220/-30;STARS=300;CROSS=400;CROSS+ANGLE=370/-30",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Sàn nền (khu vực không hatch): \"dày[/cốt]\". Mặc định \"230/-50\"",
+   "default": "150",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên type sàn mẫu để nhân bản khi thiếu type đúng chiều dày. Mặc định \"Generic 200\"",
+   "default": "SBT-200",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Line style của đường bao (phải có sẵn; để trống = mặc định của view)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "float",
+   "decl": "float",
+   "label": "Diện tích bao ngoài tối thiểu (m²). Mặc định 10",
+   "default": 10.0,
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo, không ghi vào mô hình (mặc định True) False = vẽ đường bao + tạo sàn.",
+   "default": false,
+   "kind": "dry_run"
+  }
+ ]
+}

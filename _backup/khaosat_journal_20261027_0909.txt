@@ -1,0 +1,7 @@
+'Dim Jrn
+Set Jrn = CrsJournalScript
+  Jrn.Command "Ribbon"  , "Open an existing project , ID_REVIT_FILE_OPEN"
+  Jrn.Data  "File Name"  , "IDOK" , "D:\AI\_tmp\revit_g19\G19.rvt"
+  Jrn.Command "Ribbon"  , "Launch Dynamo , ID_VISUAL_PROGRAMMING_DYNAMO"
+  Jrn.Data "APIStringStringMapJournalData"  , 5, "dynPath", "D:\AI\scripts\dynamo\ChongTham_KhaoSatModel.dyn", "dynShowUI", "false", "dynAutomation", "true", "dynPathExecute", "true", "dynModelShutDown", "true"
+  Jrn.Command "Internal"  , "Exit the application , ID_APP_EXIT"

@@ -1,0 +1,105 @@
+{
+ "key": "TaoOngThoatNuocWC",
+ "title": "Ống thoát nước WC",
+ "summary": "Dựng ống thoát nước WC (uPVC) theo TUYẾN ĐÃ DUYỆT nhập dạng toạ độ – không đọc CAD: - Ống đứng (IN[1]): xí / rửa / thông hơi trong HKT, từ level + IN[2] (dưới) tới level + IN[2] (trên), cắt tại chỗ nhánh vào, đặt tê u.PVC_BEND TEE 90 (rule Junctions của pipe type). - Tuyến nhánh (IN[0]): polyline mặt bằng x,y (mm, toạ độ Revit của mô hình đang mở), điểm cuối là tâm một ống đứng hoặc một đỉnh của tuyến khác (→ Y 45°, tuyến kia phải đi thẳng qua đỉnh đó). Đầu tuyến: '@' = ống xuống từ connector Sanitary của thiết bị (kể cả trong file link) gần điểm đầu ≤ 150 mm; số = cao độ (mm so với level) đỉnh ống xuống tại điểm đầu; 'PHEU=-15' = đặt phễu thu IN[8] tại điểm đầu, chân ở cao độ −15, ống nối vào connector phễu; 'PHEUD=-15' = phễu ĐẤU TỪ TRÊN XUỐNG: tuyến 2 điểm \"phễu;điểm Y\", phễu nằm ngay trên ống chính, thượng lưu điểm Y ≥ 137 mm – ống xuống → co 45° → nhánh nghiêng 45° theo phương đứng vào Y (cho phễu đặt sát góc tường, KTS 2026-10-21); 'TT' = thông tắc: nút bịt (Caps của pipe type) ở điểm đầu; trống = không có ống xuống. - Cao độ: dốc IN[4] % về ống đứng; điểm cao nhất của mỗi cây nhánh có tâm ống = level − IN[3]. - Co 45° / 90° bằng NewElbowFitting (rule Elbows); Y / tê đặt thủ công, mỗi phụ kiện một SubTransaction. Không nối được với thiết bị trong file link (Revit không cho) → đầu ống đặt trùng connector thiết bị.",
+ "transaction": "ARV - Tạo ống thoát nước WC",
+ "source": "ARV_TaoOngThoatNuocWC_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Tuyến nhánh, mỗi dòng: \"Tên|System|DN|Đầu|x,y;x,y;…[|Vào=z]\" – DN theo từng đoạn: \"60/75\" (thiếu = lặp số cuối); 'Vào=-700' = tuyến vào ống đứng bằng tê riêng ở cao độ −700 (không theo cao độ chung)",
+   "default": "WC-1043712 Xí|AV_P_Nước Thải Xí|110|@|15364,1459;15150,850|Vào=-560\nWC-1043712 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|15450,300;16000,300;16100,400;16100,850;16000,950;15750,950;15600,800\nWC-1043712 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|15600,2100;15600,1750;15600,1500;15600,800;15600,600;15350,350;15150,350|TT=15600,600\nWC-1043712 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|15364,1459;15364,1100;15364,600;15150,600\nWC-1043712 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|15600,2100;15600,1100;15364,1100\nWC-1043712 Lavabo|AV_P_Nước Thải Rửa|60|465|15025,2325;15600,1750\nWC-1043712 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|15200,1150;15200,1550;15300,1650;15450,1650;15600,1500\nWC-1043721 Xí|AV_P_Nước Thải Xí|110|@|49286,1439;49500,850|Vào=-560\nWC-1043721 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|49200,300;48650,300;48550,400;48550,850;48650,950;48900,950;49050,800\nWC-1043721 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|49050,2100;49050,1750;49050,1500;49050,800;49050,600;49300,350;49500,350|TT=49050,600\nWC-1043721 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|49286,1439;49286,1100;49286,600;49500,600\nWC-1043721 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|49050,2100;49050,1100;49286,1100\nWC-1043721 Lavabo|AV_P_Nước Thải Rửa|60|465|49625,2325;49050,1750\nWC-1043721 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|49450,1150;49450,1550;49350,1650;49200,1650;49050,1500\nWC-1044664 Xí|AV_P_Nước Thải Xí|110|@|15364,30111;15150,30700|Vào=-560\nWC-1044664 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|15450,31250;16000,31250;16100,31150;16100,30700;16000,30600;15750,30600;15600,30750\nWC-1044664 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|15600,29450;15600,29800;15600,30050;15600,30750;15600,30950;15350,31200;15150,31200|TT=15600,30950\nWC-1044664 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|15364,30111;15364,30450;15364,30950;15150,30950\nWC-1044664 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|15600,29450;15600,30450;15364,30450\nWC-1044664 Lavabo|AV_P_Nước Thải Rửa|60|465|15025,29225;15600,29800\nWC-1044664 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|15200,30400;15200,30000;15300,29900;15450,29900;15600,30050\nWC-CH04 Xí|AV_P_Nước Thải Xí|110|@|49296,30091;49500,30700|Vào=-560\nWC-CH04 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|49200,31250;48650,31250;48550,31150;48550,30700;48650,30600;48900,30600;49050,30750\nWC-CH04 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|49050,29450;49050,29800;49050,30050;49050,30750;49050,30950;49300,31200;49500,31200|TT=49050,30950\nWC-CH04 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|49296,30091;49296,30450;49296,30950;49500,30950\nWC-CH04 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|49050,29450;49050,30450;49296,30450\nWC-CH04 Lavabo|AV_P_Nước Thải Rửa|60|465|49625,29215;49050,29800\nWC-CH04 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|49450,30400;49450,30000;49350,29900;49200,29900;49050,30050\nWC-1043703 Xí|AV_P_Nước Thải Xí|110|@|6536,1540;7000,1350|Vào=-600\nWC-1043703 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|6960,265;6960,650;6960,800;6700,1060;6700,1335;6700,1550;7000,1850|TT=6700,1550\nWC-1043703 Rửa chính|AV_P_Nước Thải Rửa|60|TT|5400,450;5925,450;6760,450;6960,650\nWC-1043703 Lavabo|AV_P_Nước Thải Rửa|60|465|5550,75;5925,450\nWC-1043703 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|6700,1185;6700,1335\nWC-1043703 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|6536,1540;6800,1540;7000,1540\nWC-1043703 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|5400,450;5400,1300;6800,1300;6800,1540\nWC-1043730 Xí|AV_P_Nước Thải Xí|110|@|58114,1560;57650,1350|Vào=-600\nWC-1043730 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|57690,265;57690,650;57690,800;57950,1060;57950,1335;57950,1550;57650,1850|TT=57950,1550\nWC-1043730 Rửa chính|AV_P_Nước Thải Rửa|60|TT|59250,450;58725,450;57890,450;57690,650\nWC-1043730 Lavabo|AV_P_Nước Thải Rửa|60|465|59100,75;58725,450\nWC-1043730 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|57950,1185;57950,1335\nWC-1043730 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|58114,1560;57850,1560;57650,1560\nWC-1043730 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|59250,450;59250,1300;57850,1300;57850,1560\nWC-1044655 Xí|AV_P_Nước Thải Xí|110|@|6536,29990;7000,30200|Vào=-600\nWC-1044655 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|6960,31285;6960,30900;6960,30750;6700,30490;6700,30215;6700,30000;7000,29700|TT=6700,30000\nWC-1044655 Rửa chính|AV_P_Nước Thải Rửa|60|TT|5400,31100;5925,31100;6760,31100;6960,30900\nWC-1044655 Lavabo|AV_P_Nước Thải Rửa|60|465|5550,31475;5925,31100\nWC-1044655 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|6700,30365;6700,30215\nWC-1044655 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|6536,29990;6800,29990;7000,29990\nWC-1044655 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|5400,31100;5400,30250;6800,30250;6800,29990\nWC-1044673 Xí|AV_P_Nước Thải Xí|110|@|58114,30010;57650,30200|Vào=-600\nWC-1044673 Phễu thu tắm|AV_P_Nước Thải Rửa|60/75/75/75/75/75|PHEU=-15|57690,31285;57690,30900;57690,30750;57950,30490;57950,30215;57950,30000;57650,29700|TT=57950,30000\nWC-1044673 Rửa chính|AV_P_Nước Thải Rửa|60|TT|59250,31100;58725,31100;57890,31100;57690,30900\nWC-1044673 Lavabo|AV_P_Nước Thải Rửa|60|465|59100,31475;58725,31100\nWC-1044673 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEUD=-15|57950,30365;57950,30215\nWC-1044673 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|58114,30010;57850,30010;57650,30010\nWC-1044673 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|59250,31100;59250,30250;57850,30250;57850,30010\nWC-1044323 Xí|AV_P_Nước Thải Xí|110|@|30858,13711;31600,13850|Vào=-560\nWC-1044323 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|30400,13300;30715,13300;31430,13300;31665,13300;31850,13300;32100,13550;32100,13850|TT=31850,13300\nWC-1044323 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|30400,13300;30858,13300;31850,13300;31850,13850\nWC-1044323 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|30858,13711;30858,13300\nWC-1044323 Lavabo|AV_P_Nước Thải Rửa|60|465|29940,14075;30715,13300\nWC-1044323 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|31250,13850;31250,13480;31430,13300\nWC-1044323 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|31480,13485;31665,13300\nWC-1044314 Xí|AV_P_Nước Thải Xí|110|@|33811,13711;33050,13850|Vào=-560\nWC-1044314 Rửa chính|AV_P_Nước Thải Rửa|60/60/60/75/75/75|TT|34250,13300;33935,13300;33220,13300;32985,13300;32800,13300;32550,13550;32550,13850|TT=32800,13300\nWC-1044314 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|34250,13300;33811,13300;32800,13300;32800,13850\nWC-1044314 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|33811,13711;33811,13300\nWC-1044314 Lavabo|AV_P_Nước Thải Rửa|60|465|34710,14075;33935,13300\nWC-1044314 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|33400,13850;33400,13480;33220,13300\nWC-1044314 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEU=-15|33170,13485;32985,13300\nWC-1044346 Xí|AV_P_Nước Thải Xí|110|@|26514,17269;26325,16600|Vào=-560\nWC-1044346 Rửa chính|AV_P_Nước Thải Rửa|60/60/75/75/75/75|TT|26980,18000;26980,17370;26980,16800;26980,16115;26880,16015;26530,16015;26325,16015|TT=26880,16015\nWC-1044346 Lavabo|AV_P_Nước Thải Rửa|60|465|26150,18200;26980,17370\nWC-1044346 Thoát sàn cạnh xí|AV_P_Nước Thải Rửa|60|PHEU=-15|26340,17000;26780,17000;26980,16800\nWC-1044346 Phễu thu tắm|AV_P_Nước Thải Rửa|60|PHEUD=-15|26680,16015;26530,16015\nWC-1044346 Thông hơi xí|AV_P_Thông hơi Xí|60|THX|26514,17269;26514,17000;26514,16300;26325,16300\nWC-1044346 Thông hơi rửa|AV_P_Thông hơi Xí|60|THR|26980,18000;26980,17000;26514,17000",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Ống đứng, mỗi dòng: \"Tên|System|DN|x,y\"",
+   "default": "WC-1043712 Ống đứng xí|AV_P_Nước Thải Xí|110|15150,850\nWC-1043712 Thông hơi|AV_P_Thông hơi Xí|75|15150,600\nWC-1043712 Ống đứng rửa|AV_P_Nước Thải Rửa|90|15150,350\nWC-1043721 Ống đứng xí|AV_P_Nước Thải Xí|110|49500,850\nWC-1043721 Thông hơi|AV_P_Thông hơi Xí|75|49500,600\nWC-1043721 Ống đứng rửa|AV_P_Nước Thải Rửa|90|49500,350\nWC-1044664 Ống đứng xí|AV_P_Nước Thải Xí|110|15150,30700\nWC-1044664 Thông hơi|AV_P_Thông hơi Xí|75|15150,30950\nWC-1044664 Ống đứng rửa|AV_P_Nước Thải Rửa|90|15150,31200\nWC-CH04 Ống đứng xí|AV_P_Nước Thải Xí|110|49500,30700\nWC-CH04 Thông hơi|AV_P_Thông hơi Xí|75|49500,30950\nWC-CH04 Ống đứng rửa|AV_P_Nước Thải Rửa|90|49500,31200\nWC-1043703 Ống đứng rửa|AV_P_Nước Thải Rửa|90|7000,1850\nWC-1043703 Thông hơi|AV_P_Thông hơi Xí|75|7000,1540\nWC-1043703 Ống đứng xí|AV_P_Nước Thải Xí|110|7000,1350\nWC-1043730 Ống đứng rửa|AV_P_Nước Thải Rửa|90|57650,1850\nWC-1043730 Thông hơi|AV_P_Thông hơi Xí|75|57650,1560\nWC-1043730 Ống đứng xí|AV_P_Nước Thải Xí|110|57650,1350\nWC-1044655 Ống đứng rửa|AV_P_Nước Thải Rửa|90|7000,29700\nWC-1044655 Thông hơi|AV_P_Thông hơi Xí|75|7000,29990\nWC-1044655 Ống đứng xí|AV_P_Nước Thải Xí|110|7000,30200\nWC-1044673 Ống đứng rửa|AV_P_Nước Thải Rửa|90|57650,29700\nWC-1044673 Thông hơi|AV_P_Thông hơi Xí|75|57650,30010\nWC-1044673 Ống đứng xí|AV_P_Nước Thải Xí|110|57650,30200\nWC-1044323 Ống đứng xí|AV_P_Nước Thải Xí|110|31600,13850\nWC-1044323 Thông hơi|AV_P_Thông hơi Xí|75|31850,13850\nWC-1044323 Ống đứng rửa|AV_P_Nước Thải Rửa|90|32100,13850\nWC-1044314 Ống đứng xí|AV_P_Nước Thải Xí|110|33050,13850\nWC-1044314 Thông hơi|AV_P_Thông hơi Xí|75|32800,13850\nWC-1044314 Ống đứng rửa|AV_P_Nước Thải Rửa|90|32550,13850\nWC-1044346 Ống đứng xí|AV_P_Nước Thải Xí|110|26325,16600\nWC-1044346 Thông hơi|AV_P_Thông hơi Xí|75|26325,16300\nWC-1044346 Ống đứng rửa|AV_P_Nước Thải Rửa|90|26325,16015",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Đoạn ống đứng so với level: \"-3300>3300\" (dưới>trên, mm)",
+   "default": "-3300>3300",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "float",
+   "decl": "float",
+   "label": "Level → tâm ống tại điểm cao nhất của nhánh (mm), mặc định 400",
+   "default": 400.0,
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "float",
+   "decl": "float",
+   "label": "Độ dốc nhánh (%), mặc định 2",
+   "default": 2.0,
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Pipe type (phải có sẵn), mặc định \"AV_u.PVC PN6\"",
+   "default": "AV_u.PVC PN6",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Level (trống = level của view đang mở)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Màu trong view đang mở theo chuỗi con tên system: \"Thông hơi=128,0,128;Xí=255,255,0;Rửa=0,0,255\"",
+   "default": "Thông hơi=128,0,128;Xí=255,255,0;Rửa=0,0,255",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "str",
+   "label": "Phễu thu \"Family : Type\" – chưa có trong mô hình thì chép từ file link",
+   "default": "AV-Phễu thoát sàn : 100",
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 10,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Thay lần chạy trước: True = xoá ống / phễu có Comments ARV-THOATWC + phụ kiện nối vào chúng rồi dựng lại (cùng một Undo); False = gặp lần chạy trước thì dừng",
+   "default": false,
+   "kind": "destructive"
+  },
+  {
+   "index": 11,
+   "type": "float",
+   "decl": "float",
+   "label": "Cao độ tâm ống thông hơi ngang (mm so với level), mặc định −220 – đầu tuyến 'THX' = thông hơi từ ống xuống bệt (tê cắt vào ống xuống), 'THR' = thông hơi từ đầu ống rửa (tê + ống đứng lên, thông tắc lùi ra sau tê); thông hơi gấp 90° được, nhập nhau bằng tê, 1 tê vào ống đứng TH (mẫu HN Garden City). Trường 'TT=x,y' của tuyến = thông tắc ở chỗ gấp x,y: Y + ống chạy thẳng tới nút bịt, nhánh rẽ vào trục.",
+   "default": -220.0,
+   "kind": "normal"
+  }
+ ]
+}

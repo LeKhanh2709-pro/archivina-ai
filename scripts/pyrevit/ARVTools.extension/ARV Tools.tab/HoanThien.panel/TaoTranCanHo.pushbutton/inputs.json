@@ -1,0 +1,65 @@
+{
+ "key": "TaoTranCanHo",
+ "title": "Trần căn hộ",
+ "summary": "Tạo trần hoàn thiện (Ceiling) cho phòng ngủ, phòng khách, WC, logia của các căn hộ trên level của view mặt bằng / mặt bằng trần đang mở, theo biên các tấm SÀN HOÀN THIỆN đã có (ARV_TaoSanCanHoTuCAD_v1 / ARV_TaoSanHoanThien_v1): 1. Sàn nguồn = Floor trên level có Comments bắt đầu bằng IN[0] (mặc định \"ARV-SanCanHo\"). Comments dạng \"ARV-SanCanHo CH07 KHO\" → căn = từ thứ 2, loại = từ cuối (KHO / WC / LOGIA). Loại không đọc được từ Comments → tra theo floor type (IN[1]). 2. Mỗi tấm sàn → một tấm trần cùng biên (kể cả lỗ; WC giữ biên lùi 25 mm khỏi mặt thô như sàn). 3. Ceiling type + cao độ ĐÁY trần so với Level theo loại (IN[2], IN[3]) – KTS chỉnh theo từng dự án. Type ở IN[2] chưa có → nhân bản từ type mẫu IN[4] đúng tên đó (giữ cấu tạo lớp), chỉ khi chạy thật. 4. Bỏ qua tấm sàn đã có trần phía trên (điểm trong sàn nằm dưới mặt đáy một trần cùng level). Comments trần = \"ARV-TranCanHo <căn> <loại>\". 5. Cảnh báo khi mặt trên trần (đáy + chiều dày type) vượt Level kế trên.",
+ "transaction": "ARV - Tạo trần căn hộ",
+ "source": "ARV_TaoTranCanHo_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Comments của sàn nguồn bắt đầu bằng (VD \"ARV-SanCanHo\"; cách ';' nếu nhiều)",
+   "default": "ARV-SanCanHo",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Loại theo floor type khi Comments không có loại: \"KHO=…;WC=…;LOGIA=…\" (tên floor type, cách ',')",
+   "default": "KHO=SHT-Gỗ Công Nghiệp;WC=SHT-Gach Lat WC-300x600;LOGIA=SHT-Gach Lat Logia-300x600",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Ceiling type theo loại: \"KHO=…;WC=…;LOGIA=…\"",
+   "default": "KHO=TR-Thạch cao khung chìm;WC=TR-Thạch cao chịu ẩm;LOGIA=TR-Thạch cao chịu nước",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Cao độ đáy trần so với Level (mm) theo loại: \"KHO=2700;WC=2400;LOGIA=2700\"",
+   "default": "KHO=2700;WC=2400;LOGIA=2700",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Ceiling type mẫu để nhân bản type thiếu (VD \"Plain\"; trống = dừng khi thiếu type)",
+   "default": "Plain",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Chỉ làm các căn (cách ';', VD \"CH01;CH02\"; trống = tất cả)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước (mặc định True)",
+   "default": false,
+   "kind": "dry_run"
+  }
+ ]
+}

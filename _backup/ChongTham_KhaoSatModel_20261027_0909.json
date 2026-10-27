@@ -1,0 +1,8 @@
+{
+  "ten": "ChongTham_KhaoSatModel",
+  "mo_ta": "CHỈ ĐỌC: khảo sát model (Room, sàn, cửa, thiết bị, trục / hộp kỹ thuật, kiểu hatch / nét / template) + xuất ảnh view đang mở, để viết công cụ chống thấm / ngăn cháy / lỗ mở bản Revit. Không sửa model.",
+  "py": "ChongTham_KhaoSatModel.py",
+  "dau_vao": [
+    {"ten": "Thư mục ghi kết quả", "kieu": "string", "gia_tri": "D:\\AI\\_tmp\\revit_khaosat"}
+  ]
+}

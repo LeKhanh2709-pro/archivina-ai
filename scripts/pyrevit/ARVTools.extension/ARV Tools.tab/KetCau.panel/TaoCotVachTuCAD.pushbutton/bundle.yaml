@@ -1,0 +1,3 @@
+title: "Cột vách\ntừ CAD"
+tooltip: "Tạo cột và vách/lõi kết cấu từ mặt bằng định vị cột vách lõi (DWG đã Link/Import vào Revit). - Hình chữ nhật đơn có cạnh dài / cạnh ngắn < tỉ lệ  → CỘT (đúng b × h, góc xoay) - Hình chữ nhật dài hơn                            → VÁCH - Lõi hình L, T, U, lõi rỗng (cạnh vuông góc)        → tách thành các đoạn VÁCH chữ nhật - Hình tròn, hình có cạnh xiên                      → bỏ qua, ghi vào báo cáo Mặc định chạy thử (dry-run). Nguồn: ARV_TaoCotVachTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

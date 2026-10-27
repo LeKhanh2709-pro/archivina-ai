@@ -1,0 +1,113 @@
+{
+ "key": "TaoOngThoatNuocTuCAD",
+ "title": "Ống thoát nước từ CAD",
+ "summary": "Tạo ống thoát nước uPVC + phụ kiện (co, Y 45°, tê, côn) từ mặt bằng cấp thoát nước (DWG CTN đã Link vào Revit). Đọc từ BẢN SAO DWG qua AutoCAD Core Console (chữ, dim, block trong bản link Revit không đọc được): - Ống: LINE 1 nét trên các layer IN[1]. Đoạn tách tại nút T, khe hở cùng layer ≤ 50 mm được nối. - DN: dimension có dimstyle chứa \"Dxxx\" (VD \"AV-Dim 1-75 (D160)\", \"0.T D110 (1-200)\") gán cho đoạn giữa 2 điểm đo; chữ \"D75-2%\" gán DN + độ dốc cho ống gần nhất; còn lại lan theo tuyến, rồi theo ống hạ lưu; không có → D75. DN không được giảm về hạ lưu: đoạn nhỏ hơn ống đổ vào nó được nâng lên (ghi log). - Hướng chảy: block mũi tên IN[5]. Điểm xả của mỗi cụm ống = tổ hợp đầu cụt (ống đứng R100, điểm rơi xuống lớp dưới, đầu cụt có mũi tên chỉ vào) khớp mũi tên nhiều nhất. - Cao độ: dốc theo chữ ghi chú, mặc định DN ≤ 90 → 2 %, còn lại 1 %; điểm cao nhất mỗi cụm cách level trên IN[4]. - Nhóm cao độ theo hậu tố layer (IN[3]): VD \"T5\" = dưới sàn TẦNG 5; layer không hậu tố = dưới sàn TẦNG chuyển. Đầu cụt lớp có hậu tố trùng ống lớp thường cùng loại → ống đứng rơi xuống, nối tê. - Ống đứng: tại điểm xả xuống tới level dưới; tại vòng tròn ống đứng là đầu thượng lưu → lên tới level trên. Phụ kiện: co / côn dùng routing preference của pipe type; Y 45° và tê đặt thủ công (xoay theo 3 ống, đặt bán kính từng cổng) vì NewTeeFitting không làm góc 45° (đã thử cả family công ty u.PVC_WYE) và tra bảng kích thước family thư viện thiếu cỡ uPVC. Family Y / tê lấy từ rule Junctions của pipe type (nhận theo góc nhánh 45° / 90°); pipe type chưa có thì tạo type uPVC + nạp family thư viện ở IN[6]. Mỗi phụ kiện trong một SubTransaction: ống bị cắt lẹm / đổi chiều → hoàn tác phụ kiện đó, ghi vào báo cáo.",
+ "transaction": "ARV - Tạo ống thoát nước từ CAD",
+ "source": "ARV_TaoOngThoatNuocTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (VD \"ctn\"; trống = bản CAD duy nhất)",
+   "default": "ctn",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer ống, cách ';' (khớp đúng tên). Mặc định 7 layer DR + VE-Hơi.",
+   "default": "AV-P-DR-Nước thải phân;AV-P-DR-Nước thải rửa;AV-P-DR-Nước thải bếp;AV-P-DR-Nước thải mưa;AV-P-DR-Nước xả;AV-P-VE-Hơi;AV-P-DR-Nước thải phân T5;AV-P-DR-Nước thải rửa T5;AV-P-DR-Nước thải mưa T5",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Piping system theo chuỗi con trong tên layer (lấy luật đầu tiên khớp, '*' = còn lại)",
+   "default": "phân=AV_P_Nước Thải Xí;rửa=AV_P_Nước Thải Rửa;bếp=AV_P_Nước Thải Bếp;mưa=AV_P_Nước Mưa;Hơi=AV_P_Thông hơi Chung;*=AV_P_Nước Xả khác",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Nhóm cao độ theo hậu tố layer: \"T5=TẦNG 5>TẦNG chuye;*=TẦNG chuye>TẦNG 4\" (level trên > level dưới); level kèm độ lệch mm được: \"Test+3000>Test\"; \"CAD\" = level của mặt bằng chứa link CAD. Level không có trong mô hình → tự vẽ trên mặt bằng chứa link CAD (level trên = level kế trên hoặc +3000 mm), ghi trong báo cáo.",
+   "default": "T5=TẦNG 5>TẦNG chuye;*=TẦNG chuye>TẦNG 4",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "float",
+   "decl": "float",
+   "label": "Khoảng cách level trên → tâm ống tại điểm cao nhất của cụm (mm), mặc định 400",
+   "default": 400.0,
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên block mũi tên hướng nước chảy",
+   "default": "AV-P-Hướng nước chảy",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Thư mục family phụ kiện PVC DWV (chỉ dùng khi phải tạo pipe type mới)",
+   "default": "C:\\ProgramData\\Autodesk\\RVT 2021\\Libraries\\English\\Pipe\\Fittings\\PVC\\Sch 40\\Socket-Type\\DWV",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Pipe type: có sẵn thì dùng (VD \"AV_u.PVC PN6\"), chưa có thì tạo (segment uPVC, OD 60…315)",
+   "default": "AV_u.PVC PN6",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 9,
+   "type": "str",
+   "decl": "str",
+   "label": "Chỉ dựng tuyến đi qua điểm DWG \"x,y\" (mm, cách ';' nhiều điểm; trống = toàn bộ). Ống rơi xuống lớp dưới không nằm trong phạm vi dựng → thay bằng ống đứng xuống level dưới.",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 10,
+   "type": "str",
+   "decl": "str",
+   "label": "Màu trong view đang mở theo chuỗi con tên layer: \"phân=255,255,0;Hơi=128,0,128\" (trống = không tô)",
+   "default": "phân=255,255,0;Hơi=128,0,128;rửa=0,0,255",
+   "kind": "normal"
+  },
+  {
+   "index": 11,
+   "type": "str",
+   "decl": "str",
+   "label": "DN theo layer: \"phân=110;*=75\" – luật có tên = DN tối thiểu của layer đó, '*' = DN cho đoạn không nhãn",
+   "default": "phân=110;*=75",
+   "kind": "normal"
+  },
+  {
+   "index": 12,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer dựng phẳng, không dốc (chuỗi con, cách ';'), VD \"Nước xả\" = ống đẩy bơm",
+   "default": "Nước xả",
+   "kind": "normal"
+  }
+ ]
+}

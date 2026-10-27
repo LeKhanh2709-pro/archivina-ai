@@ -1,0 +1,3 @@
+title: "Lan can\nlouver logia"
+tooltip: "Tạo lan can + louver che cục nóng điều hòa cho logia, lấy thông tin từ mặt bằng DWG đã Link (KTS chốt 2026-10-21): 1. Logia = sàn (Floor) trên level IN[9] có tên type chứa IN[2] (VD \"SHT-Gach Lat Logia-300x600\"), lấy hộp bao. 2. Mặt ngoài logia = cặp nét song song cách nhau 150 mm (± 3) trên layer IN[1], nằm sát cạnh hộp bao logia (≤ 300 mm) và phủ ≥ 50 % cạnh đó. Tuyến lan can = đường giữa cặp né Mặc định chạy thử (dry-run). Nguồn: ARV_TaoLanCanLouverLogia_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

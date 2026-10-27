@@ -1,0 +1,3 @@
+title: "Cửa đi\ntừ CAD"
+tooltip: "Tạo cửa đi gắn vào tường Revit có sẵn từ mặt bằng DWG đã Link (cửa trong CAD là nét rời / block ẩn danh, nên nhận cửa theo CUNG MỞ CÁNH trên layer cửa): 1. Đọc cung tròn trên layer cửa (IN[1]): bán kính 300–1500 mm, góc quét 30°–100° (cửa vẽ mở 90° hoặc 45°). Tâm cung = bản lề, bán kính = bề rộng cánh. Cung trùng nhau (cùng tâm, cùng bán kính) tính một lần. 2. Tường chủ: tường Revit trên level IN[ Mặc định chạy thử (dry-run). Nguồn: ARV_TaoCuaTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

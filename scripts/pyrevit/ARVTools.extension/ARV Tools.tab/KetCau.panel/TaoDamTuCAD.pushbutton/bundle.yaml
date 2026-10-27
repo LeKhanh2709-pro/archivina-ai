@@ -1,0 +1,3 @@
+title: "Dầm\ntừ CAD"
+tooltip: "Tạo dầm kết cấu từ mặt bằng kết cấu sàn (DWG đã Link vào Revit). Cách nhận dầm (theo NHÃN, không đoán theo nét): - Mỗi nhãn tiết diện \"bxh\" (VD \"25X40\", \"D1 (220x500)\") trên layer nhãn là một dầm. - Phương dầm = phương chữ của nhãn. Tìm cặp nét song song (layer cạnh dầm) cách nhau đúng b, nằm sát nhãn → trục dầm là đường giữa cặp nét. - Chiều dài dầm = đoạn hai cạnh cùng có nét; chỗ một cạnh bị ng Mặc định chạy thử (dry-run). Nguồn: ARV_TaoDamTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

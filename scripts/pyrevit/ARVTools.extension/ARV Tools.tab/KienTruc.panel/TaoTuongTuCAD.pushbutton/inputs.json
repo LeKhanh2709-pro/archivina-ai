@@ -1,0 +1,89 @@
+{
+ "key": "TaoTuongTuCAD",
+ "title": "Tường từ CAD",
+ "summary": "Bản Dynamo của nút pyRevit KienTruc.panel/TaoTuongTuCAD – mỗi chiều dày CAD một wall type (bảng IN[2]). Tạo tường kiến trúc từ mặt bằng tường xây (DWG đã Link/Import vào Revit): 1. Đọc đoạn thẳng (line, polyline, kể cả trong block) trên layer tường. 2. Ghép cặp hai nét song song cách nhau trong dải chiều dày → đường tim tường. Cặp gần nhau nhất trước; không ghép hai nét có nét thứ ba nằm giữa (tường vẽ cả mặt thô lẫn mặt hoàn thiện không bị tạo đôi). 3. Gộp đoạn thẳng hàng cùng chiều dày bị ngắt tại chỗ giao tường. 4. Tường liền qua ô cửa: hai đoạn thẳng hàng cách nhau ≤ IN[7] mà trong khe có nét của layer cửa (IN[6]) → nối thành tường liền (chèn cửa sau). Khe không có nét cửa (lối đi mở) giữ nguyên. Khe ≤ 150 mm giữa hai tường thẳng hàng khác chiều dày cũng được nối. 5. Kéo dài đầu tường tới tim tường không song song để nối góc L / chữ T (cả khi đầu tường hụt mặt tường giao ≤ 50 mm). Bỏ mẩu tường nằm trọn trong thân tường khác (cặp nét giả ở nút giao), kéo dài lại; cắt chỗ hai tường thẳng hàng chồng đầu nhau → không có tường đè. 6. Tạo tường theo wall type gán cho chiều dày CAD (IN[2]), chân / đỉnh theo level, Location Line = Core Centerline (lõi tường trùng hai nét CAD, lớp trát chia đều hai bên). Chiều dày CAD = chiều dày LÕI (nét A-Wall là mặt thô; nét trát nằm ở layer khác). Type trong IN[2] chưa có → nhân bản type mẫu IN[3], đổi lõi = chiều dày CAD. Chiều dày không có trong IN[2] chỉ báo cáo. Bỏ qua tường chồng lên tường đã có.",
+ "transaction": "ARV - Tạo tường kiến trúc từ CAD",
+ "source": "ARV_TaoTuongTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống = bản CAD duy nhất có layer khớp IN[1])",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Chuỗi lọc layer tường, nhiều chuỗi cách nhau bằng ';' (khớp chuỗi con, không phân biệt hoa thường)",
+   "default": "A-Wall",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Bảng chiều dày lõi CAD (mm) = wall type (Basic), cách nhau bằng ';' VD \"150=WB 15-150-15;100=WB 15-100-15\". Khớp chiều dày ±2 mm.",
+   "default": "150=WB 15-150-15;100=WB 15-100-15;200=WB 15-200-15",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Wall type mẫu để nhân bản khi type trong IN[2] chưa có (VD \"WB 15-220-15\"); trống = không tự tạo",
+   "default": "T2-V15-G100-V15",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level chân tường",
+   "default": "Tầng 1",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level đỉnh tường",
+   "default": "Tầng 2",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Chuỗi lọc layer cửa đi / cửa sổ, cách nhau bằng ';', khớp chuỗi con (VD \"Door;Window;Glaz;Cửa\" lấy cả A-Door, A-Window(s), A-Glaz, A-Cửa, 23-DOOR trong xref); trống = không nối",
+   "default": "Door;Window;Glaz;Cửa",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "float",
+   "decl": "float",
+   "label": "Ô cửa rộng tối đa được nối tường liền (mm), 0 = không nối",
+   "default": 3000.0,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "float",
+   "decl": "float",
+   "label": "Top Offset so với level đỉnh (mm), VD -120 nếu xây tới đáy sàn dày 120",
+   "default": 0.0,
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước đường tim, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  }
+ ]
+}

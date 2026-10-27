@@ -1,0 +1,3 @@
+title: "Ống thoát\nnước WC"
+tooltip: "Dựng ống thoát nước WC (uPVC) theo TUYẾN ĐÃ DUYỆT nhập dạng toạ độ – không đọc CAD: - Ống đứng (IN[1]): xí / rửa / thông hơi trong HKT, từ level + IN[2] (dưới) tới level + IN[2] (trên), cắt tại chỗ nhánh vào, đặt tê u.PVC_BEND TEE 90 (rule Junctions của pipe type). - Tuyến nhánh (IN[0]): polyline mặt bằng x,y (mm, toạ độ Revit của mô hình đang mở), điểm cuối là tâm một ống đứng hoặc một đỉnh của t Mặc định chạy thử (dry-run). Nguồn: ARV_TaoOngThoatNuocWC_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

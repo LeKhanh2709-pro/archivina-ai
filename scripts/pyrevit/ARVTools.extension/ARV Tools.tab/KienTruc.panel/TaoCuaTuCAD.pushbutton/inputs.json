@@ -1,0 +1,81 @@
+{
+ "key": "TaoCuaTuCAD",
+ "title": "Cửa đi từ CAD",
+ "summary": "Tạo cửa đi gắn vào tường Revit có sẵn từ mặt bằng DWG đã Link (cửa trong CAD là nét rời / block ẩn danh, nên nhận cửa theo CUNG MỞ CÁNH trên layer cửa): 1. Đọc cung tròn trên layer cửa (IN[1]): bán kính 300–1500 mm, góc quét 30°–100° (cửa vẽ mở 90° hoặc 45°). Tâm cung = bản lề, bán kính = bề rộng cánh. Cung trùng nhau (cùng tâm, cùng bán kính) tính một lần. 2. Tường chủ: tường Revit trên level IN[4] có tim đi qua bản lề (lệch ≤ nửa bề dày tường + 60 mm) và một đầu cung nằm dọc theo tim tường (cánh ở vị trí đóng). Không có → báo cáo, không tạo. 3. Cửa 2 cánh: hai cung trên cùng tường, bản lề hai đầu, cánh đóng gặp nhau giữa ô → chỉ báo cáo (chưa có family 2 cánh). 4. Bề rộng = PHỦ BÌ KHUÔN CỬA CAD (= Width của family; khuôn cách mặt tường ~10 mm nên khe tường lớn hơn 20 mm): khe lỗ tường = đầu mút nét layer IN[2] trong dải bề dày tường gần nhất phía bản lề / phía đối diện; khuôn = nét layer cửa IN[1] trong dải đó, nằm trong khe – từ bản lề lùi về sau và từ đầu cánh tiến ra, lấy mép xa nhất. Làm tròn IN[6] mm. Thiếu đầu tường hoặc khuôn ở một bên → báo cáo, không tạo. 5. Type: type có sẵn của family IN[3] có Width khớp (±IN[6]/2 mm) và Height = IN[7] → dùng; chưa có → nhân bản type mẫu IN[5] thành \"DW01_{rộng}X{cao}\", đặt Width / Height. 6. Đặt cửa giữa ô (trên tim tường chủ), Sill = 0, lật hướng mở (Facing) và bản lề (Hand) theo cung CAD. Bỏ qua ô đã có cửa (cửa cùng tường, tâm cách ≤ 100 mm); cửa cũ khác bề rộng → báo \"SAI RỘNG\" kèm Id để xoá.",
+ "transaction": "ARV - Tạo cửa đi từ CAD",
+ "source": "ARV_TaoCuaTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống = bản CAD duy nhất có layer khớp IN[1])",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Chuỗi lọc layer cửa đi, nhiều chuỗi cách nhau bằng ';' (VD \"A-Door\"; khớp chuỗi con)",
+   "default": "A-Door",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Chuỗi lọc layer tường CAD để đo khe lỗ cửa (VD \"A-Wall\")",
+   "default": "A-Wall",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên family cửa 1 cánh (VD \"D1_WO_OP1\")",
+   "default": "D1_WO_OP1",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level của tường chủ (VD \"TẦNG 2\")",
+   "default": "Tầng 1",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Type mẫu để nhân bản khi chưa có type đúng bề rộng (VD \"DW01_900X2200 2\")",
+   "default": "DW01_900X2200 2",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "float",
+   "decl": "float",
+   "label": "Làm tròn bề rộng (mm), VD 5",
+   "default": 5.0,
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "float",
+   "decl": "float",
+   "label": "Chiều cao cửa (mm), VD 2200",
+   "default": 2200.0,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)",
+   "default": false,
+   "kind": "dry_run"
+  }
+ ]
+}

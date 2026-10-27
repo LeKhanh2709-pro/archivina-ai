@@ -1,0 +1,97 @@
+{
+ "key": "OpTuongWC",
+ "title": "Ốp tường WC",
+ "summary": "Tạo lớp ốp gạch tường WC (Basic Wall mỏng, type \"GO-Gạch ốp-…\") cao IN[2] tính từ mặt sàn hoàn thiện WC: 1. Nguồn biên WC: sàn hoàn thiện WC (Floor, VD do ARV_TaoSanCanHoTuCAD_v1 tạo – Comments \"ARV-SanCanHo CHxx WC\") hoặc Room tên WC / vệ sinh (biên \"At wall finish\"). Phạm vi: phần tử đang chọn / Id ở IN[5]; không chọn gì → mọi WC trên level của view đang mở (ưu tiên sàn; không có sàn WC mới lấy Room). 2. Mỗi cạnh biên: bắn tia vuông góc ra phía ngoài (ở cao 300 trên chân ốp và sát đỉnh ốp) tìm mặt tường / cột Revit → khoảng hở d (sàn WC lùi 10 mm so với mặt tường; Room = 0). Lớp ốp: mặt ngoài áp mặt tường, dày bằng type. Đoạn không có tường ở cả hai cao độ (lối mở, hộp kỹ thuật hở) → không ốp. Ô cửa (có lanh tô) ốp liền rồi nối khối (Join) với tường chủ → cửa đi / cửa sổ tự cắt lớp ốp (đã kiểm: cửa 830 cắt 1,87 m²). 3. Góc: hai lớp ốp kề nhau gặp nhau tại giao tim, kéo thêm nửa chiều dày (không hở góc lồi / cột). 4. Wall type theo kích thước gạch IN[0] + hướng IN[1]: \"GO-Gạch ốp-{nhỏ}x{lớn}\" (+ \"-dọc\"). Chưa có → nhân bản type mẫu IN[6], vật liệu \"Gạch Ceramic {nhỏ}x{lớn}mm\" (+ \" dọc\") với mẫu Model pattern đúng ô gạch (lưới ngang cách = cao viên, lưới đứng cách = rộng viên; dùng lại pattern có sẵn nếu trùng lưới). 5. Tường ốp: không Room Bounding, không tự nối đầu (DisallowWallJoinAtEnd), Comments \"ARV-OpTuongWC <Id nguồn>\". WC đã có ốp của tool (tường ốp nằm trong biên WC, không phụ thuộc Id sàn – sàn dựng lại đổi Id) → bỏ qua, hoặc xoá ốp cũ rồi dựng lại khi IN[10] = True (chỉ xoá tường có Comments \"ARV-OpTuongWC…\"). 6. Căn mạch theo lát sàn (IN[9], thêm 2026-10-21) – đã đo trên G19: - Mạch ĐỨNG của mẫu gạch trên tường bắt đầu từ ĐIỂM ĐẦU đường định vị tường (dời điểm đầu → mạch dời theo, Flip không đổi). Vị trí mạch sàn đo trực tiếp trên mặt sàn WC (Dimension tới đường mạch của Model pattern trên view mặt bằng tạm, rồi hoàn tác) → mỗi đoạn ốp tách đôi tại một mạch sàn, hai nửa cùng bắt đầu từ điểm đó → mạch đứng ốp nối tiếp mạch sàn (bước gạch tường / sàn là bội của nhau thì mọi mạch sàn đều có mạch tường). - Mạch NGANG bắt đầu từ cốt LEVEL chân tường (không theo Base Offset). Sàn WC −15 → dùng Model pattern có gốc lưới ngang dời −15 (Origin V) để hàng gạch đầu tiên bắt đầu từ mặt sàn: type \"GO-Gạch ốp-300x600 (mạch -15)\". Nguồn là Room (không có sàn) → không căn được mạch đứng, báo cáo.",
+ "transaction": "ARV - Tạo ốp tường WC",
+ "source": "ARV_OpTuongWC_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Kích thước gạch ốp (mm), VD \"300x600\", \"300x300\", \"600x600\", \"400x800\"",
+   "default": "300x600",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Hướng lát: \"NGANG\" (cạnh dài nằm ngang) / \"DOC\" (cạnh dài đứng); gạch vuông bỏ qua",
+   "default": "NGANG",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "float",
+   "decl": "float",
+   "label": "Chiều cao ốp (mm), mặc định 2400",
+   "default": 2400.0,
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "float",
+   "decl": "float",
+   "label": "Chân ốp so với mặt sàn hoàn thiện WC (mm), mặc định 0",
+   "default": 0.0,
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Nhận WC: chuỗi con trong Comments / tên type sàn / tên phòng, cách nhau ';' (mặc định \"WC;vệ sinh\")",
+   "default": "WC;vệ sinh",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Id sàn / phòng WC, cách nhau ';' (trống = đang chọn trong Revit; không chọn = cả level của view)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Wall type ốp mẫu để nhân bản (mặc định \"GO-Gạch ốp-300x600\")",
+   "default": "GO-Gạch ốp-300x600",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Nối khối lớp ốp với tường chủ để cửa đi / cửa sổ cắt lớp ốp (mặc định True)",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 9,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Căn mạch ốp trùng mạch lát sàn (mạch đứng + hàng gạch đầu từ mặt sàn) (mặc định True)",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 10,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Xoá ốp cũ của tool trong các WC được chọn rồi dựng lại (mặc định False = bỏ qua WC đã có ốp)",
+   "default": false,
+   "kind": "destructive"
+  }
+ ]
+}

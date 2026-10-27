@@ -1,0 +1,3 @@
+title: "Len\ngỗ"
+tooltip: "Tạo len gỗ chân tường (Basic Wall mỏng, type có sẵn \"LCT-Gỗ\") cho phòng khách + phòng ngủ: 1. Nguồn biên: sàn gỗ hoàn thiện (Floor, VD do ARV_TaoSanCanHoTuCAD_v1 tạo – type \"SHT-Gỗ Công Nghiệp\", Comments \"ARV-SanCanHo CHxx KHO\"). Phạm vi: phần tử đang chọn / Id ở IN[3]; không chọn gì → mọi sàn gỗ trên level của view đang mở. 2. Mỗi cạnh biên: bắn tia vuông góc ra ngoài ở giữa chiều cao len, tìm mặ Mặc định chạy thử (dry-run). Nguồn: ARV_TaoLenGo_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

@@ -10,7 +10,7 @@ spec.json:
     {"ten": "ChongTham_KhaoSatModel", "mo_ta": "...", "py": "ChongTham_KhaoSatModel.py",
      "dau_vao": [{"ten": "Thu muc ket qua", "kieu": "string", "gia_tri": "D:\\AI\\_tmp\\revit_khaosat"},
                  {"ten": "Dry-run", "kieu": "bool", "gia_tri": true}]}
-Kieu: string / bool / number. File .dyn ghi canh spec (khong ghi de: da co thi chep ban cu vao <goc>\_backup truoc).
+Kieu: string / bool / number. "engine" (tuy chon): PythonNet3 (mac dinh, Revit 2027) / CPython3 (Revit 2025-2026). File .dyn ghi canh spec (khong ghi de: da co thi chep ban cu vao <goc>\_backup truoc).
 """
 import json
 import os
@@ -66,7 +66,9 @@ def build(spec_path):
         inputs.append({"Id": n["Id"], "Name": dv["ten"], "Type": t, "Type2": t,
                        "Value": ("true" if gt else "false") if t == "boolean" else str(gt),
                        "Description": n["Description"]})
-    py = {"ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels", "Code": code, "Engine": "CPython3",
+    # Revit 2027 (Dynamo 4.x) chỉ còn engine PythonNet3; Revit 2025/2026 (Dynamo 3.x) dùng CPython3
+    py = {"ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels", "Code": code,
+          "Engine": spec.get("engine", "PythonNet3"),
           "VariableInputPorts": True, "Id": _id(), "NodeType": "PythonScriptNode", "Inputs": py_in,
           "Outputs": [_cong("Result of the python script")], "Replication": "Disabled",
           "Description": "Runs an embedded Python script."}

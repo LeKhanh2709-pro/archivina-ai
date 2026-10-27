@@ -1,0 +1,3 @@
+title: "Ống gió\ntừ CAD"
+tooltip: "Tạo ống gió chữ nhật (Duct) từ mặt bằng thông gió (DWG đã Link vào Revit). Đọc từ BẢN SAO DWG qua AutoCAD Core Console (chữ trong bản link Revit không đọc được): - Nổ (explode) mọi block trên bản sao; nét ở layer 0 trong block nhận layer của block cha (như AutoCAD hiển thị); toạ độ LWPOLYLINE đổi OCS → WCS (block mirror). - Ống: thành ống là cặp nét thẳng song song trên layer IN[1] (LINE / cạnh th Mặc định chạy thử (dry-run). Nguồn: ARV_TaoOngGioTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM
