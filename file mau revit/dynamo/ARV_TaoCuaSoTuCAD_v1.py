@@ -18,7 +18,10 @@
 #      nhân bản type mẫu, tên "<tiền tố>{khe}X<cao trong tên mẫu>". Sill 0. Facing → logia. Hand theo CAD: cánh vẽ
 #      phía logia nằm bên nào của ô thì cánh phía Facing của family nằm bên đó (DA01: cánh phía Facing ở phía +Hand).
 #   6. Sau khi lật, đo khối đặc của cửa dọc tường rồi dời cửa cho tâm khối trùng tâm ô (SA01 có điểm chèn lệch tâm).
-#      Ô đã có cửa sổ / cửa đi trên cùng tường (tâm cách ≤ 100 mm) → bỏ qua; khác bề rộng → báo "SAI RỘNG" kèm Id.
+#      Ô đã có cửa sổ / cửa đi (gắn vào bất kỳ tường nào, kể cả lớp ốp: tâm khối cửa nằm trong dải bề dày tường chủ
+#      + 100 mm và cách tâm ô ≤ max(100 mm, nửa bề rộng ô)) → bỏ qua; khác bề rộng → báo "SAI RỘNG" kèm Id.
+#   Tường dày < 30 mm (lớp ốp / hoàn thiện, VD "GO-Gạch ốp-300x600" 10 mm) không làm tường chủ: cửa đặt vào lớp ốp
+#   bị Revit xoá ("Can't cut instance out of Wall").
 # INPUT
 #   IN[0]  (str)   Một phần tên bản CAD (trống = bản CAD duy nhất có layer khớp IN[1])
 #   IN[1]  (str)   Layer cửa sổ, cách nhau ';' (khớp đúng tên, kể cả trong xref "...$0$<tên>" bị loại) – VD "A-Window;A-Windows"
@@ -74,6 +77,8 @@ MIN_OPEN_MM = 300.0       # Cụm ngắn hơn → khuôn cửa đi mở quay, b�
 GAP_SEARCH_MM = 300.0     # Tìm đầu tường CAD quanh ô
 SIDE_MIN_DIFF_MM = 500.0  # Hai phía chênh ít hơn → KIỂM TRA HƯỚNG
 EXIST_MM = 100.0          # Ô đã có cửa
+EXIST_BAND_MM = 100.0     #   … tâm cửa cũ lệch khỏi mặt tường chủ tối đa
+THIN_WALL_MM = 30.0       # Tường mỏng hơn = lớp ốp / hoàn thiện, không làm tường chủ
 FAR_MM = 1.0e6            # Tia không gặp tường
 
 KIND_WIN, KIND_SLIDE, KIND_REPORT = u"Cửa sổ", u"Cửa lùa", u"Chỉ báo cáo"
@@ -259,10 +264,17 @@ def analyse(walls, ents, arcs, wall_segs, round_mm, existing=None):
         if op.kind == KIND_REPORT:
             op.status = u"Bỏ qua – layer chỉ báo cáo ({})".format(u"; ".join(op.layers))
             continue
-        c = op.center()
-        old = [e for e in (existing or {}).get(op.wall.id, []) if math.hypot(*sub(c, e[0])) <= EXIST_MM]
+        w = op.wall
+        old = []
+        for e in existing or []:
+            for p in e[0]:
+                s, dn = w.local(p)
+                ds = abs(s - op.s_center)
+                if abs(dn) <= w.width / 2.0 + EXIST_BAND_MM and ds <= max(EXIST_MM, op.raw_width / 2.0):
+                    old.append((ds, e))
+                    break
         if old:
-            p, eid, tname, ow = old[0]
+            p, eid, tname, ow = min(old, key=lambda x: x[0])[1]
             op.eid = eid
             target = op.width if op.kind == KIND_WIN else None
             if target is not None and ow is not None and abs(ow - target) > 1.0:
@@ -415,7 +427,8 @@ def host_walls(level):
     result, by_id = [], {}
     for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():
         loc = wl.Location
-        if wl.LevelId == level.Id and isinstance(loc, LocationCurve) and isinstance(loc.Curve, Line):
+        if wl.LevelId == level.Id and isinstance(loc, LocationCurve) and isinstance(loc.Curve, Line) \
+                and to_mm(wl.Width) >= THIN_WALL_MM:
             c = loc.Curve
             hw = HostWall(wl.Id.Value, xy(c.GetEndPoint(0)), xy(c.GetEndPoint(1)), to_mm(wl.Width), get_name(wl))
             result.append(hw)
@@ -429,19 +442,30 @@ def symbol_size(s):
     return (to_mm(w.AsDouble()) if w else None, to_mm(h.AsDouble()) if h else None)
 
 
+def instance_points(fi):
+    """Điểm đại diện của cửa: điểm chèn + tâm hộp bao (điểm chèn SA01 lệch tâm ô, hộp bao của family có cánh mở 3D
+    lại lệch khỏi tường) – khớp một trong hai là đủ."""
+    pts = []
+    loc = getattr(fi, "Location", None)
+    if loc is not None and hasattr(loc, "Point"):
+        pts.append(xy(loc.Point))
+    bb = fi.get_BoundingBox(None)
+    if bb is not None:
+        pts.append(xy(bb.Min.Add(bb.Max).Multiply(0.5)))
+    return pts
+
+
 def existing_openings():
-    """{id tường chủ: [(tâm mm, Id, tên type, rộng mm)]} của mọi cửa sổ + cửa đi đã có."""
-    result = {}
+    """[([điểm mm], Id, tên type, rộng mm)] của mọi cửa sổ + cửa đi đã có (mọi tường chủ, kể cả lớp ốp)."""
+    result = []
     for bic in (BuiltInCategory.OST_Windows, BuiltInCategory.OST_Doors):
         for fi in FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType().ToElements():
-            host = getattr(fi, "Host", None)
-            loc = getattr(fi, "Location", None)
-            if host is None or loc is None or not hasattr(loc, "Point"):
+            c = instance_points(fi)
+            if not c:
                 continue
             sym = getattr(fi, "Symbol", None)
             width = symbol_size(sym)[0] if sym is not None else None
-            result.setdefault(host.Id.Value, []).append(
-                (xy(loc.Point), fi.Id.Value, get_name(sym) if sym is not None else u"?", width))
+            result.append((c, fi.Id.Value, get_name(sym) if sym is not None else u"?", width))
     return result
 
 

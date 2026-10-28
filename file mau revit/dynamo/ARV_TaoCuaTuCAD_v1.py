@@ -16,7 +16,10 @@
 #   5. Type: type có sẵn của family IN[3] có Width khớp (±IN[6]/2 mm) và Height = IN[7] → dùng; chưa có → nhân bản
 #      type mẫu IN[5] thành "DW01_{rộng}X{cao}", đặt Width / Height.
 #   6. Đặt cửa giữa ô (trên tim tường chủ), Sill = 0, lật hướng mở (Facing) và bản lề (Hand) theo cung CAD.
-#      Bỏ qua ô đã có cửa (cửa cùng tường, tâm cách ≤ 100 mm); cửa cũ khác bề rộng → báo "SAI RỘNG" kèm Id để xoá.
+#      Bỏ qua ô đã có cửa (cửa bất kỳ, kể cả gắn vào tường khác như lớp ốp: tâm khối cửa nằm trong dải bề dày tường
+#      chủ + 100 mm và cách tâm ô ≤ max(100 mm, nửa bề rộng)); cửa cũ khác bề rộng → báo "SAI RỘNG" kèm Id để xoá.
+#   Tường dày < 30 mm (lớp ốp / hoàn thiện, VD "GO-Gạch ốp-300x600" 10 mm) không làm tường chủ: cửa đặt vào lớp ốp
+#   bị Revit xoá ("not cutting anything").
 # INPUT
 #   IN[0] (str)   Một phần tên bản CAD (để trống = bản CAD duy nhất có layer khớp IN[1])
 #   IN[1] (str)   Chuỗi lọc layer cửa đi, nhiều chuỗi cách nhau bằng ';' (VD "A-Door"; khớp chuỗi con)
@@ -69,6 +72,8 @@ BAND_TOL_MM = 30.0               # Dải bề dày tường để lấy đầu m
 FRAME_TOL_MM = 2.0               # Khuôn cửa được chạm mép khe tường
 FRAME_NEAR_MAX_MM = 5.0          # Nét khuôn phía bản lề: tới bản lề (+5); phía đối diện: từ đầu cánh (−5)
 EXIST_DOOR_MM = 100.0            # Ô đã có cửa
+EXIST_BAND_MM = 100.0            #   … tâm cửa cũ lệch khỏi mặt tường chủ tối đa
+THIN_WALL_MM = 30.0              # Tường mỏng hơn = lớp ốp / hoàn thiện, không làm tường chủ
 TYPE_PATTERN = u"DW01_{w}X{h}"
 
 
@@ -229,7 +234,7 @@ def round_to(x, step):
 
 def analyse(arcs, segs, door_segs, walls, round_mm, existing=None):
     """arcs: [{"c","r","p0","p1"}] mm; segs: nét tường CAD [(a, b)]; door_segs: nét thẳng layer cửa (khuôn);
-    walls: [HostWall]. existing: {wall_id: [(x, y)]} tâm cửa đã có. Trả về (doors, thống kê)."""
+    walls: [HostWall]. existing: [([(x, y)], Id, tên type, rộng)] điểm cửa đã có. Trả về (doors, thống kê)."""
     stats = {}
     kept, stats["arc_skipped"] = door_arcs(arcs)
     stats["arcs"] = len(kept)
@@ -277,10 +282,16 @@ def analyse(arcs, segs, door_segs, walls, round_mm, existing=None):
         if not (0 <= d.s_center <= w.length):
             d.status = u"Bỏ qua – tâm ô cửa nằm ngoài tường chủ"
             continue
-        c = d.center()
-        old = [e for e in (existing or {}).get(w.id, []) if math.hypot(*sub(c, e[0])) <= EXIST_DOOR_MM]
+        old = []
+        for e in existing or []:
+            for p in e[0]:
+                s, dn = w.local(p)
+                ds = abs(s - d.s_center)
+                if abs(dn) <= w.width / 2.0 + EXIST_BAND_MM and ds <= max(EXIST_DOOR_MM, d.width / 2.0):
+                    old.append((ds, e))
+                    break
         if old:
-            p, eid, tname, ow = old[0]
+            p, eid, tname, ow = min(old, key=lambda x: x[0])[1]
             d.eid = eid
             if ow is not None and abs(ow - d.width) > max(round_mm / 2.0, 1.0):
                 d.status = u"Bỏ qua – ô đã có cửa SAI RỘNG (Id {}, {} rộng {:.0f} ≠ {}) – xoá cửa cũ rồi Run lại".format(
@@ -423,7 +434,8 @@ def host_walls(level):
     result, by_id = [], {}
     for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():
         loc = wl.Location
-        if wl.LevelId == level.Id and isinstance(loc, LocationCurve) and isinstance(loc.Curve, Line):
+        if wl.LevelId == level.Id and isinstance(loc, LocationCurve) and isinstance(loc.Curve, Line) \
+                and to_mm(wl.Width) >= THIN_WALL_MM:
             c = loc.Curve
             hw = HostWall(wl.Id.Value, xy(c.GetEndPoint(0)), xy(c.GetEndPoint(1)), to_mm(wl.Width), get_name(wl))
             result.append(hw)
@@ -431,19 +443,30 @@ def host_walls(level):
     return result, by_id
 
 
+def instance_points(fi):
+    """Điểm đại diện của cửa: điểm chèn + tâm hộp bao (điểm chèn của một số family lệch tâm ô, hộp bao của family có
+    cánh mở 3D lại lệch khỏi tường) – khớp một trong hai là đủ."""
+    pts = []
+    loc = getattr(fi, "Location", None)
+    if loc is not None and hasattr(loc, "Point"):
+        pts.append(xy(loc.Point))
+    bb = fi.get_BoundingBox(None)
+    if bb is not None:
+        pts.append(xy(bb.Min.Add(bb.Max).Multiply(0.5)))
+    return pts
+
+
 def existing_doors():
-    """{id tường chủ: [(tâm cửa mm, Id, tên type, rộng mm)]} của mọi cửa đi đã có."""
-    result = {}
+    """[([điểm mm], Id, tên type, rộng mm)] của mọi cửa đi đã có (mọi tường chủ, kể cả lớp ốp)."""
+    result = []
     for fi in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Doors).WhereElementIsNotElementType() \
             .ToElements():
-        host = getattr(fi, "Host", None)
-        loc = getattr(fi, "Location", None)
-        if host is None or loc is None or not hasattr(loc, "Point"):
+        c = instance_points(fi)
+        if not c:
             continue
         sym = getattr(fi, "Symbol", None)
         width = symbol_size(sym)[0] if sym is not None else None
-        result.setdefault(host.Id.Value, []).append(
-            (xy(loc.Point), fi.Id.Value, get_name(sym) if sym is not None else u"?", width))
+        result.append((c, fi.Id.Value, get_name(sym) if sym is not None else u"?", width))
     return result
 
 

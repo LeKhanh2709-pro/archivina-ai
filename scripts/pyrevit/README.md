@@ -119,6 +119,26 @@ Mở Revit bằng journal, bấm nút thử chạy lần lượt 22 nút với g
 - Sàn hoàn thiện: cần chọn cửa vào căn trước khi bấm → chưa thử phần dựng sàn.
 - Chưa thử chế độ ghi thật (Dry-run tắt) trong pyRevit. Hộp thoại đã chụp ảnh kiểm tra (Cửa sổ 18 ô, Dàn trang có ô xoá chữ đỏ).
 
+## Kết quả chạy thử trên `G19 CAD.rvt` (2026-10-28, bản sao `_tmp\pyrevit_cad\`)
+Model có 1 CAD link `G19.dwg` (chỉ trong view Tầng 1). File DWG gốc nằm ở máy khác (`C:\Users\dungb\...`, Revit báo NotFound): hình học vẫn đọc được, nhưng chữ trong DWG thì không đọc được. Model đã dựng gần hết, nên phần lớn đối tượng được báo "đã có, bỏ qua".
+- Dry-run 24/24 nút: không lỗi vỏ.
+  - Tạo trục bị crash vì đoạn nét CAD ngắn hơn dung sai của Revit → đã sửa ở `ARV_TaoTrucTuCSV_v1.py` / `.dyn` (bỏ đoạn < `ShortCurveTolerance`), sinh lại nút.
+- Ghi thật 19 nút, kết quả lưu ở `_tmp\pyrevit_cad\G19_CAD_ghi_thu.rvt`. Đối chiếu Id trong log với model sau khi lưu:
+  - **Chạy đúng:** Trục (16; layer `A-axis`, tên tự động), Sàn căn hộ (10), Trần (10), Len gỗ (66), Len gạch logia (553 viên), Lan can (chỉnh chân 27), Chống thấm (369 nét + 60 hatch), Ngăn cháy lan (36 hatch), Lỗ mở shaft (1 shaft / 36 vòng), Dàn trang CH02 (3 sheet, 16 view).
+  - **Cửa đi:** báo tạo 28, Revit xoá 26 (`not cutting anything`). **Cửa sổ:** báo tạo 65, Revit xoá 32 (`Can't cut instance out of Wall`).
+    - Nguyên nhân: nút lấy cả tường ốp gạch `GO-Gạch ốp-300x600` (10 mm) làm tường chủ, nên mỗi ô cửa sổ bị nhận thêm một lần trên lớp ốp. Ngoài ra nút chỉ coi là "ô đã có cửa" khi cửa cũ nằm cùng tường.
+    - **Đã sửa 2026-10-28:** tường < 30 mm không làm tường chủ. Ô đã có cửa = cửa bất kỳ (kể cả gắn vào lớp ốp) có điểm chèn hoặc tâm hộp bao nằm trong dải bề dày tường + 100 mm và cách tâm ô ≤ max(100 mm, nửa bề rộng ô).
+    - Thử lại trên bản sao: chạy trên model đầy đủ thì cửa đi nhận 74 ô đã có và tạo 1 (tại (10250, 21490), tường 1005836, model chưa có cửa ở đó, `Cần xác nhận lại`), cửa sổ 44/44 và cửa lùa 18/18 đã có.
+    - Xoá hết cửa rồi dựng lại (`_tmp\pyrevit_cad\G19_CAD_cua_dung_lai.rvt`): 75 cửa đi + 18 cửa lùa + 44 cửa sổ, Revit không xoá cái nào, không báo lỗi. Model gốc có 61 cửa sổ trên toàn bộ các tầng; CAD Tầng 1 có 44 ô cửa sổ + 6 ô `A-Glaz` (chỉ báo cáo).
+  - **Tường:** 9 → mất 3 (`Can't make Wall`).
+  - **Cột vách** theo layer `A-Column`: 36 vách / 2 cột. Cảnh báo tường chồng nhau tăng 32 → 44.
+- Không chạy được vì file thiếu dữ liệu:
+  - Dầm, Bao sàn: CAD không có layer `S-…`.
+  - Ống thoát nước từ CAD, Ống gió: không có CAD MEP và DWG phải còn ở đường dẫn gốc.
+  - Sàn hoàn thiện: CAD không có layer `A-duong bo phong` / `A-Area`, và phải chọn cửa vào căn.
+  - Ống thoát nước WC: model không có pipe type `AV_u.PVC PN6`.
+- Khi chạy tự động bằng journal, hộp lỗi của Revit được tự bấm, nên phần tử lỗi bị xoá ngay. Chạy bằng tay thì người dùng sẽ thấy hộp lỗi đó.
+
 ## Giới hạn đã biết
 - Các công cụ đọc chữ trong DWG gọi AutoCAD Core Console (`C:\Program Files\Autodesk\AutoCAD *\accoreconsole.exe`, lấy bản mới nhất) – máy không có AutoCAD thì công cụ báo dừng hoặc đặt tên tự động.
 - Giá trị mặc định trong `inputs.json` là giá trị đang đặt trong `.dyn` (dự án G19: level `Tầng 1`, tên type `AV-…`, đường dẫn template MEP `C:\ProgramData\Autodesk\RVT 20…`) – dự án khác phải sửa trong hộp thoại.

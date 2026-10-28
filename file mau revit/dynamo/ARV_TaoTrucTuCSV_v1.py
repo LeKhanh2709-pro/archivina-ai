@@ -144,7 +144,8 @@ def iter_cad_curves(geom_elem):
             name = layer_name(g)
             pts = list(g.GetCoordinates())
             for p0, p1 in zip(pts[:-1], pts[1:]):
-                if p0.DistanceTo(p1) > 1e-6:
+                # đoạn ngắn hơn dung sai của Revit (~0,8 mm) thì Line.CreateBound báo lỗi → bỏ qua
+                if p0.DistanceTo(p1) > doc.Application.ShortCurveTolerance:
                     yield name, Line.CreateBound(p0, p1)
         elif isinstance(g, (Line, Arc)):
             yield layer_name(g), g
