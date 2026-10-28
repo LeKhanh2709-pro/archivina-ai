@@ -44,13 +44,16 @@ BUTTONS = [
     ("MEP", "TaoOngGioTuCAD", u"Ống gió\ntừ CAD", "ARV_TaoOngGioTuCAD_v1"),
     ("HoSo", "ChongTham", u"Chống\nthấm", "../dynamo/ChongTham_VeVenChanTuong"),
     ("HoSo", "NganChay", u"Ngăn\ncháy lan", "../dynamo/NganChay_TrucHKT"),
+    ("HoSo", "LoMoShaft", u"Lỗ mở\nshaft", "../dynamo/LoMo_ShaftOpening"),
 ]
 # Nút "một chạm" (người dùng chốt 2026-10-27 cho Chống thấm): bấm là ghi luôn vào mô hình, không hộp thoại, trên view
 # đang mở nếu là view có chữ <tu_khoa> (tên view hoặc tên view template), không thì chọn trong các view đó.
 # Shift+bấm (config.py) = hộp thoại đầy đủ như các nút khác (Dry-run bật sẵn).
 #   view_in: chỉ số IN[] nhận tên view; tu_khoa: từ khoá (không dấu) nhận view
+#   tu_khoa rỗng: làm trên mặt bằng tầng đang mở (không phải mặt bằng tầng thì báo); view_in None: không truyền tên view
 MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm"},
-            "NganChay": {"view_in": 0, "tu_khoa": u"chay lan", "ten_view": u"chống cháy lan"}}
+            "NganChay": {"view_in": 0, "tu_khoa": u"chay lan", "ten_view": u"chống cháy lan"},
+            "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"}}
 PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện", "MEP": u"MEP",
                 "HoSo": u"Hồ sơ"}
 TAB = "ARV Tools.tab"
@@ -181,8 +184,14 @@ def chay():
         return
     doc = uidoc.Document
     av = doc.ActiveView
-    ds = sorted([v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan) if not v.IsTemplate and la_view_dich(doc, v)],
-                key=lambda v: v.Name)
+    if not TU_KHOA:            # làm trên mặt bằng tầng đang mở (vd. Lỗ mở shaft)
+        if av is None or av.ViewType not in (DB.ViewType.FloorPlan, DB.ViewType.EngineeringPlan) or av.GenLevel is None:
+            UI.TaskDialog.Show(TIEU_DE, u"Hãy mở mặt bằng tầng cần làm rồi bấm lại.")
+            return
+        ds = [av]
+    else:
+        ds = sorted([v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
+                     if not v.IsTemplate and la_view_dich(doc, v)], key=lambda v: v.Name)
     view = None
     for v in ds:
         if av is not None and v.Id.Value == av.Id.Value:
@@ -199,7 +208,10 @@ def chay():
             if ten_chon is None:
                 return
             view = [v for v in ds if v.Name == ten_chon][0]
-    lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={VIEW_IN: view.Name, "@@DRY_IN@@": False})
+    ov = {"@@DRY_IN@@": False}
+    if VIEW_IN is not None:
+        ov[VIEW_IN] = view.Name
+    lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
     try:
         from pyrevit import script
         out = script.get_output()

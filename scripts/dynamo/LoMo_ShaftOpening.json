@@ -1,0 +1,57 @@
+{
+  "ten": "LoMo_ShaftOpening",
+  "mo_ta": "Tạo lỗ mở bằng MỘT Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở (mỗi ô một vòng biên, nhận trục như công cụ Ngăn cháy lan), biên = mép tường thô; Base / Top Constraint = level mặt bằng, Base Offset -100, Top Offset 1500; tầng đã có shaft lỗ mở thì thêm vòng vào shaft đó; dấu X (Symbolic Line chép từ shaft mẫu vẽ tay) cho mọi vòng; bấm lại không tạo trùng, không xoá. Mặc định Dry-run.",
+  "py": "LoMo_ShaftOpening.py",
+  "dau_vao": [
+    {
+      "ten": "Tên mặt bằng tầng (trống = view đang mở)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Từ khoá tên room trục / HKT (;)",
+      "kieu": "string",
+      "gia_tri": "HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft"
+    },
+    {
+      "ten": "Diện tích lớn nhất ô / khe theo hình học (m2)",
+      "kieu": "number",
+      "gia_tri": 3
+    },
+    {
+      "ten": "Bề rộng lòng nhỏ nhất (mm)",
+      "kieu": "number",
+      "gia_tri": 80
+    },
+    {
+      "ten": "Dry-run (True = chỉ báo cáo)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Từ khoá loại trừ thang máy / thang bộ (;)",
+      "kieu": "string",
+      "gia_tri": "Thang máy;Elevator;Lift;Thang bộ;Stair"
+    },
+    {
+      "ten": "Base Offset (mm)",
+      "kieu": "number",
+      "gia_tri": -100
+    },
+    {
+      "ten": "Top Offset (mm)",
+      "kieu": "number",
+      "gia_tri": 1500
+    },
+    {
+      "ten": "Gắn dấu X (Symbolic Line chép từ shaft mẫu)",
+      "kieu": "bool",
+      "gia_tri": true
+    }
+  ]
+}

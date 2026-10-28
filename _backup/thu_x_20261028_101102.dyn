@@ -1,0 +1,259 @@
+{
+  "Uuid": "2ff8eb10-ab64-4312-a366-c181b3d90f87",
+  "IsCustomNode": false,
+  "Description": "Thử dấu X",
+  "Name": "thu_x",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "8cf324c570364947a3254a50283df166",
+      "Name": "Thư mục",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "D:\\AI\\_tmp\\revit_lomo_x",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "D:\\AI\\_tmp\\revit_lomo_x",
+      "Id": "8cf324c570364947a3254a50283df166",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6c90558833dc4948885402434822d641",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# -*- coding: utf-8 -*-\n# THỬ API trên BẢN SAO G19: thêm Symbolic Line dấu X vào sketch của 1 shaft opening (SketchEditScope).\nimport os, traceback\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\ndoc = DocumentManager.Instance.CurrentDBDocument\nOUTD = IN[0]\nbc = []\n\n\ndef ten(e):\n    try:\n        return e.Name\n    except Exception:\n        return \"?\"\n\n\nclass BoQua(IFailuresPreprocessor):\n    __namespace__ = \"ARV.ThuX\"\n\n    def PreprocessFailures(self, fa):\n        for m in fa.GetFailureMessages():\n            bc.append(\"  failure: %s | %s\" % (m.GetSeverity(), m.GetDescriptionText()))\n            if m.GetSeverity() == FailureSeverity.Warning:\n                fa.DeleteWarning(m)\n        return FailureProcessingResult.Continue\n\n\ntry:\n    TransactionManager.Instance.ForceCloseTransaction()\n    bc.append(\"BuiltInCategory có Shaft/Symbolic: %s\" % [n for n in dir(BuiltInCategory) if \"Shaft\" in n or \"Symbolic\" in n or \"SketchLines\" in n])\n    sh = list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ShaftOpening).WhereElementIsNotElementType())\n    bc.append(\"Shaft: %d\" % len(sh))\n    op = sh[0]\n    bc.append(\"Opening: %s | thuộc tính có SketchId: %s\" % (op.GetType().Name, hasattr(op, \"SketchId\")))\n    sk = [doc.GetElement(i) for i in op.GetDependentElements(ElementClassFilter(Sketch))]\n    bc.append(\"Sketch phụ thuộc: %d\" % len(sk))\n    sketch = sk[0]\n    for i in sketch.GetAllElements():\n        e = doc.GetElement(i)\n        bc.append(\"  phần tử sketch: %s | cat %s | style %s\" % (e.GetType().Name, e.Category.Name if e.Category else \"-\",\n                  e.LineStyle.Name if hasattr(e, \"LineStyle\") and e.LineStyle else \"-\"))\n    cat = op.Category\n    bc.append(\"Subcategory của %s: %s\" % (cat.Name, [c.Name for c in cat.SubCategories]))\n    bc.append(\"doc.Create có NewSymbolicCurve: %s; FamilyCreate: %s\" % (hasattr(doc.Create, \"NewSymbolicCurve\"), doc.FamilyCreate))\n    pts = []\n    for c in op.BoundaryCurves:\n        pts.append(c.GetEndPoint(0))\n    xs = [p.X for p in pts]; ys = [p.Y for p in pts]; z = sketch.SketchPlane.GetPlane().Origin.Z\n    a, b = XYZ(min(xs), min(ys), z), XYZ(max(xs), max(ys), z)\n    c_, d = XYZ(min(xs), max(ys), z), XYZ(max(xs), min(ys), z)\n    # thử: SketchEditScope + NewModelCurve, xem phần tử tạo ra và line style chọn được\n    ses = SketchEditScope(doc, \"Thu X\")\n    ses.Start(sketch.Id)\n    t = Transaction(doc, \"Thu X\")\n    t.Start()\n    mc = doc.Create.NewModelCurve(Line.CreateBound(a, b), sketch.SketchPlane)\n    bc.append(\"Tạo: %s | cat %s | style %s\" % (mc.GetType().Name, mc.Category.Name if mc.Category else \"-\", mc.LineStyle.Name))\n    ids = mc.GetLineStyleIds()\n    bc.append(\"Line style chọn được: %s\" % [ten(doc.GetElement(i)) for i in ids])\n    hop = [i for i in ids if \"symbol\" in ten(doc.GetElement(i)).lower() or \"shaft\" in ten(doc.GetElement(i)).lower()]\n    if hop:\n        mc.LineStyle = doc.GetElement(hop[0])\n        bc.append(\"Đổi style → %s | type %s\" % (mc.LineStyle.Name, mc.GetType().Name))\n    mc2 = doc.Create.NewModelCurve(Line.CreateBound(c_, d), sketch.SketchPlane)\n    if hop:\n        mc2.LineStyle = doc.GetElement(hop[0])\n    t.Commit()\n    ses.Commit(BoQua())\n    bc.append(\"Commit sketch OK\")\n    op2 = doc.GetElement(op.Id)\n    bc.append(\"Sau commit: opening còn: %s; số cạnh biên: %d\" % (op2 is not None, op2.BoundaryCurves.Size if op2 else -1))\n    for i in sketch.GetAllElements():\n        e = doc.GetElement(i)\n        bc.append(\"  phần tử sketch sau: %s | cat %s | style %s\" % (e.GetType().Name, e.Category.Name if e.Category else \"-\",\n                  e.LineStyle.Name if hasattr(e, \"LineStyle\") and e.LineStyle else \"-\"))\n    doc.Save()\n    bc.append(\"ĐÃ LƯU bản sao\")\nexcept Exception:\n    bc.append(traceback.format_exc())\nopen(os.path.join(OUTD, \"thu_x.txt\"), \"w\", encoding=\"utf-8\").write(\"\\n\".join(bc))\nOUT = bc\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "059951c44448486ba0e3c9b37238ea1b",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "1ebbb372e4394e0e9adc6d75f8e09243",
+          "Name": "IN[0]",
+          "Description": "Thư mục",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2d222e959df44cb985afc7c942f2270e",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "463c85efb15a4ee6a2a1045dfd915c02",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "5ccf8ec1f8674a82bc10edb5641488bb",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8e88920c697f44fc8759fee1097ed32b",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "6c90558833dc4948885402434822d641",
+      "End": "1ebbb372e4394e0e9adc6d75f8e09243",
+      "Id": "23ce834dde9f473d813ea9d04c216e72",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2d222e959df44cb985afc7c942f2270e",
+      "End": "5ccf8ec1f8674a82bc10edb5641488bb",
+      "Id": "ab3d0fe6bf024426909be5df1696a341",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "8cf324c570364947a3254a50283df166",
+        "Name": "Thư mục",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "059951c44448486ba0e3c9b37238ea1b",
+        "Name": "thu_x",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "463c85efb15a4ee6a2a1045dfd915c02",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "c8229118be5c488b9fbd9ec26f8a6fae",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "8cf324c570364947a3254a50283df166"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 170.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 170.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "76717ad8dc214ca3bbb12fdb5f2a2a91",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "059951c44448486ba0e3c9b37238ea1b"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "4c21f7b981af4b91b3dd866fb3284218",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "463c85efb15a4ee6a2a1045dfd915c02"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

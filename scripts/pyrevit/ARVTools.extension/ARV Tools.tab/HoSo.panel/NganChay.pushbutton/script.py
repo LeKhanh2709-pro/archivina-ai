@@ -1,7 +1,7 @@
 #! python3
 # -*- coding: utf-8 -*-
 # File sinh tự động bởi scripts/pyrevit/build_from_dynamo.py – không sửa tay.
-"""Hatch ngăn cháy lan trục / hộp kỹ thuật (Filled Region 2D) trên view mặt bằng chống cháy lan của Revit. Thể hiện theo skill CAD ngan-chay-truc-hkt: lưới NET 125 mm xoay 45° màu 220,30,30, viền tím (màu 6), chỉ hatch trong lòng ô. - Vùng = khoảng trống khép kín giữa tường / cột trên level của view: quét lưới 20 mm theo dấu chân thật của tường (mặt đáy khối tường, đã trừ lỗ cửa), lưới xoay theo phương chính của tường → bắt được cả khe hộp gen hẹp ~120 mm mà room của Revit không bắt được; biên = mặt tường trong lòng ô (sai số ≤ 1 ô lưới). Chỉ đọc, không tạo room. - Nhận trục / hộp kỹ thuật theo thứ tự bằng chứng: a) tên room có từ khoá (HKT, hộp kỹ thuật, trục kỹ thuật, shaft…) hoặc chứa Shaft Opening b) chứa ống / ống gió / ống luồn dây đi đứng, ô không có cửa đi và thiết bị vệ sinh c) không có ống, dấu X trong model (như G19): ô / khe kín KHÔNG có cửa đi, cửa sổ, thiết bị vệ sinh, sàn hoàn thiện, diện tích ≤ ngưỡng (mặc định 3 m2: ô 1770 x 2520 ở hành lang G19 không phải trục), bề rộng lòng ≥ ngưỡng - Loại: ô chứa thang máy / thang bộ (tên family / type / room có từ khoá loại trừ) - Ô lớn hơn 1400 x 1400 mm vẫn hatch nhưng liệt kê riêng để xem lại (như bản CAD) - Kiểu Filled Region + mẫu lưới + line style viền chưa có thì tự tạo; Filled Region gom group "ARV_NganChay" - Ẩn thiết bị vệ sinh / nội thất trong view (Hide in View từng đối tượng, không sửa template) - Bấm lại: ô đã có hatch cùng kiểu thì bỏ qua, không vẽ trùng, không xoá gì Dry-run (mặc định) chỉ báo cáo, không sửa mô hình."""
+"""Hatch ngăn cháy lan trục / hộp kỹ thuật (Filled Region 2D) trên view mặt bằng chống cháy lan của Revit. Thể hiện theo skill CAD ngan-chay-truc-hkt: lưới NET 125 mm xoay 45° màu 220,30,30, viền tím (màu 6), chỉ hatch trong lòng ô. - Vùng = khoảng trống khép kín giữa tường / cột trên level của view: quét lưới 20 mm theo DẢI LÕI của tường (mép tường thô theo cấu tạo lớp của kiểu tường, bỏ lớp trát / hoàn thiện và tường ốp mỏng), lưới xoay theo phương chính của tường → bắt được cả khe hộp gen hẹp ~120 mm mà room của Revit không bắt được. Biên = mép tường thô trong lòng ô, sai số ≤ 1 ô lưới (người dùng chốt 2026-10-28: trong hộp kỹ thuật không có lớp trát, không bao giờ bo vào mặt hoàn thiện). Tường cong / không có cấu tạo lớp: lấy mặt đáy khối. Chỉ đọc. - Nhận trục / hộp kỹ thuật theo thứ tự bằng chứng: a) tên room có từ khoá (HKT, hộp kỹ thuật, trục kỹ thuật, shaft…) hoặc chứa Shaft Opening b) chứa ống / ống gió / ống luồn dây đi đứng, ô không có cửa đi và thiết bị vệ sinh c) không có ống, dấu X trong model (như G19): ô / khe kín KHÔNG có cửa đi, cửa sổ, thiết bị vệ sinh, sàn hoàn thiện, diện tích ≤ ngưỡng (mặc định 3 m2: ô 1770 x 2520 ở hành lang G19 không phải trục), bề rộng lòng ≥ ngưỡng - Loại: ô chứa thang máy / thang bộ (tên family / type / room có từ khoá loại trừ) - Ô lớn hơn 1400 x 1400 mm vẫn hatch nhưng liệt kê riêng để xem lại (như bản CAD) - Kiểu Filled Region + mẫu lưới + line style viền chưa có thì tự tạo; Filled Region gom group "ARV_NganChay" - Ẩn thiết bị vệ sinh / nội thất trong view (Hide in View từng đối tượng, không sửa template) - Bấm lại: ô đã có hatch cùng kiểu thì bỏ qua, không vẽ trùng, không xoá gì Dry-run (mặc định) chỉ báo cáo, không sửa mô hình."""
 __title__ = "Ngăn\ncháy lan"
 # Bấm: ghi luôn vào mô hình (không hộp thoại, không Dry-run) trên view chống cháy lan – Ctrl+Z một lần là hoàn tác.
 #   View đang mở là view chống cháy lan (tên view / view template có chữ "chống cháy lan") thì vẽ vào đó;
@@ -102,8 +102,14 @@ def chay():
         return
     doc = uidoc.Document
     av = doc.ActiveView
-    ds = sorted([v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan) if not v.IsTemplate and la_view_dich(doc, v)],
-                key=lambda v: v.Name)
+    if not TU_KHOA:            # làm trên mặt bằng tầng đang mở (vd. Lỗ mở shaft)
+        if av is None or av.ViewType not in (DB.ViewType.FloorPlan, DB.ViewType.EngineeringPlan) or av.GenLevel is None:
+            UI.TaskDialog.Show(TIEU_DE, u"Hãy mở mặt bằng tầng cần làm rồi bấm lại.")
+            return
+        ds = [av]
+    else:
+        ds = sorted([v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
+                     if not v.IsTemplate and la_view_dich(doc, v)], key=lambda v: v.Name)
     view = None
     for v in ds:
         if av is not None and v.Id.Value == av.Id.Value:
@@ -120,7 +126,10 @@ def chay():
             if ten_chon is None:
                 return
             view = [v for v in ds if v.Name == ten_chon][0]
-    lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={VIEW_IN: view.Name, 4: False})
+    ov = {4: False}
+    if VIEW_IN is not None:
+        ov[VIEW_IN] = view.Name
+    lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
     try:
         from pyrevit import script
         out = script.get_output()

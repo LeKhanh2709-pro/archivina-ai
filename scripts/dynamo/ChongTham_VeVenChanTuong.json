@@ -1,6 +1,6 @@
 {
   "ten": "ChongTham_VeVenChanTuong",
-  "mo_ta": "Vẽ nét vén chân tường chống thấm (Detail Line 'AV.Nét chống thấm') bám mặt hoàn thiện tường của phòng ướt (nhận theo sàn WC / lô gia và theo bồn cầu), lùi 50 mm, ngắt tại cửa đi; hatch chống thấm bằng Filled Region 2D cho mọi phòng ướt (không sửa sàn / filter model); ẩn thiết bị vệ sinh trong view. View đã có vén thì chỉ bổ sung hatch, không xoá. Mặc định Dry-run.",
+  "mo_ta": "Vẽ nét vén chân tường chống thấm (Detail Line 'AV.Nét chống thấm') bám mép tường thô (mặt lõi tường, không bo vào lớp trát / hoàn thiện) của phòng ướt (nhận theo sàn WC / lô gia và theo bồn cầu), lùi 50 mm, ngắt tại cửa đi; hatch chống thấm bằng Filled Region 2D cho mọi phòng ướt (không sửa sàn / filter model); ẩn thiết bị vệ sinh trong view. View đã có vén thì chỉ bổ sung hatch, không xoá. Mặc định Dry-run.",
   "py": "ChongTham_VeVenChanTuong.py",
   "dau_vao": [
     {

@@ -52,6 +52,7 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
 | MEP | Ống gió từ CAD | `ARV_TaoOngGioTuCAD_v1` |
 | Hồ sơ | Chống thấm | `scripts\dynamo\ChongTham_VeVenChanTuong` (nét vén + hatch Filled Region trên view chống thấm; người dùng duyệt trên G19 2026-10-27) |
 | Hồ sơ | Ngăn cháy lan | `scripts\dynamo\NganChay_TrucHKT` (hatch Filled Region lưới NET 125 / 45° đỏ trong lòng trục / hộp kỹ thuật trên view chống cháy lan; 2026-10-28, chưa duyệt) |
+| Hồ sơ | Lỗ mở shaft | `scripts\dynamo\LoMo_ShaftOpening` (Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở; file gộp, xem dưới; 2026-10-28) |
 
 **Nút Chống thấm là nút "một chạm"** (người dùng chốt 2026-10-27; khai báo trong `MOT_CHAM` của builder):
 - **Bấm**: vẽ luôn vào mô hình, không hộp thoại, không Dry-run (Ctrl+Z một lần là hoàn tác), trên view chống thấm. Người dùng tự tạo view (gán template `1.7 Mặt Bằng Chống thấm`) và tự đặt lên sheet.
@@ -73,6 +74,32 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
   - bỏ ô > 3 m², tức ô 1770×2520 ở hành lang mà người dùng chỉ là sai.
   
   Người dùng chưa duyệt bản 2 (`Cần xác nhận lại`).
+
+**Bo sát mép tường thô** (người dùng chốt 2026-10-28, áp cho cả Chống thấm và Ngăn cháy lan): vùng hatch và nét bo theo mặt lõi tường, không theo lớp trát / hoàn thiện.
+- Chống thấm: room dùng `CoreBoundary`.
+- Ngăn cháy lan: quét theo dải lõi tường, rồi bắt cạnh vùng vào đúng mép lõi.
+- Khe hộp gen G19 ra đúng 150×800 mm (lõi–lõi).
+
+**Nút Lỗ mở shaft** (2026-10-28, một chạm, làm trên **mặt bằng tầng đang mở**; không mở mặt bằng tầng thì nút báo và không làm gì):
+- **MỘT Shaft Opening cho cả tầng**, mỗi trục / hộp kỹ thuật là một vòng biên trong sketch (người dùng chốt 2026-10-28, theo mẫu tự vẽ: "1 lệnh shaft để dễ kiểm soát").
+  - Nhận trục giống hệt nút Ngăn cháy lan (dùng chung hàm `tim_truc`).
+  - Tầng đã có shaft lỗ mở cục bộ (Base và Top cùng là level đó) thì thêm vòng vào shaft đó (shaft nhiều vòng nhất); chưa có thì tạo 1 shaft mới.
+  - Phần thêm vòng + dấu X là 1 lần sửa sketch (1 bước Undo); tạo shaft mới là 1 bước riêng.
+- Biên lỗ mở = mép tường thô.
+- Base Constraint = Top Constraint = level của mặt bằng; Base Offset -100 mm, Top Offset 1500 mm (người dùng chốt; đổi được qua Shift+bấm).
+- Bấm lại: ô đã có vòng lỗ mở (theo tâm từng vòng của mọi shaft cắt qua tầng) thì bỏ qua, không tạo trùng, không xoá.
+- **Dấu X nhận biết lỗ mở** = 2 Symbolic Line trong sketch shaft (người dùng chốt 2026-10-28).
+  - Revit API không tạo được Symbolic Line trong file dự án. Trong sketch, Symbolic Line là `ModelLine` mang line style khác `<Sketch>`; tạo bằng `NewModelCurve` thì luôn thành nét biên, không đổi style được.
+  - Cách làm: chép 2 nét X của một **shaft mẫu** (người dùng vẽ tay 1 lần) vào sketch từng lỗ bằng `SketchEditScope` + `CopyElements`, rồi `SetGeometryCurve` về 2 đường chéo theo phương cạnh dài.
+  - Chưa có shaft mẫu thì vẫn tạo lỗ mở, báo cách vẽ mẫu. Bấm lại thì bổ sung X cho vòng chưa có X.
+  - Phải đóng hẳn transaction trước `SketchEditScope.Start` (Dynamo giữ transaction tới cuối lượt chạy).
+- Mã nguồn:
+  - `LoMo_ShaftOpening.py` là **file gộp, không sửa tay**. Phần riêng sửa ở `LoMo_ShaftOpening_nguon.py`; quy tắc nhận trục sửa trong khối `PHẦN CHUNG` của `NganChay_TrucHKT.py`.
+  - Sau khi sửa thì gộp lại bằng `python scripts\dynamo\gop_lomo_shaft.py`, rồi `build_dyn.py LoMo_ShaftOpening.json` và builder `--chi LoMoShaft`.
+- Thử trên bản sao G19 (Tầng 1):
+  - 38 lỗ mở, đọc lại đúng Base Tầng 1 / -100, Top Tầng 1 / 1500 (cao độ -100…1500 mm); bấm lần 2 không tạo thêm.
+  - Sau đó nút Ngăn cháy lan nhận đủ 38 trục theo bằng chứng shaft opening.
+  - Bản lưu `_tmp\pyrevit_lomo\G19_lo_mo_ngan_chay_thu.rvt`. Shaft opening không có tham số Comments.
 
 **Bẫy pythonnet 3.0.3 (CPython của pyRevit), gặp khi làm nút một chạm:**
 - Tên nào bị `from Autodesk.Revit.DB import <tên>` **đầu tiên** trong phiên Revit thì bị loại khỏi `from Autodesk.Revit.DB import *` về sau. Ví dụ `lib\arv_dynamo_host.py` import `Transaction, TransactionStatus` trước, nên `core.py` dùng `import *` sẽ thiếu 2 tên này.

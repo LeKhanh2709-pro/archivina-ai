@@ -3,9 +3,9 @@
 #   - Nhận phòng ướt theo 2 nguồn:
 #       a) sàn hoàn thiện ướt trên level (tên kiểu sàn chứa từ khoá, vd. "Gach Lat WC", "Gach Lat Logia")
 #       b) bồn cầu / sen tắm / bồn tắm nằm ngoài mọi sàn ướt → WC chưa có sàn ướt (không dùng phễu thoát sàn)
-#   - Biên phòng = mặt hoàn thiện tường (room có sẵn tại điểm đó, hoặc room tạm trong SubTransaction rồi rollback,
-#     không để lại gì trong model) → không bám theo khấc / lỗ của sàn. Room hở (không khép kín) hoặc tràn sang
-#     phòng lớn thì quay về biên sàn.
+#   - Biên phòng = mép tường thô / mặt lõi tường (room có sẵn tại điểm đó, hoặc room tạm trong SubTransaction rồi
+#     rollback, không để lại gì trong model) → không bám theo khấc / lỗ của sàn. Room hở (không khép kín) hoặc tràn
+#     sang phòng lớn thì quay về biên sàn. Không bao giờ bo vào lớp trát / hoàn thiện (người dùng chốt 2026-10-28).
 #   - Mỗi vòng biên lùi vào trong phòng một khoảng (mặc định 50 mm) → nét vén, ngắt tại cửa đi
 #   - Mọi phòng ướt được hatch bằng Filled Region theo biên mặt tường: kiểu "AV_Hatch Chống Thấm WC" / "... Logia"
 #     (chưa có thì tạo, mẫu + màu lấy theo filter sàn SHT-WC / SHT-Logia của template), đưa xuống dưới nét vén
@@ -293,9 +293,9 @@ def ngat_tai_cua(line, cac_vung):
 
 # ---------- phòng (room) ----------
 def bien_room(r, z):
-    """Các vòng biên mặt hoàn thiện của room, đã đưa về cao độ z; None nếu room hở"""
+    """Các vòng biên mặt lõi tường (mép tường thô) của room, đã đưa về cao độ z; None nếu room hở"""
     opt = SpatialElementBoundaryOptions()
-    opt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish
+    opt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.CoreBoundary
     loops = []
     for segs in r.GetBoundarySegments(opt) or []:
         l = [phang(s.GetCurve(), z) for s in segs]
@@ -500,6 +500,10 @@ def chinh():
     co = set(e.Id.Value for e in tb_all)
     tb_all += [e for e in FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_PlumbingFixtures)
                .WhereElementIsNotElementType() if e.Id.Value not in co]     # thiết bị không host / không level
+    co = set(e.Id.Value for e in tb_all)
+    # thiết bị đã bị ẩn trong view (lần chạy trước ẩn đi) vẫn phải dùng để nhận WC (G19 2026-10-28: sót 1 WC không sàn)
+    tb_all += [e for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_PlumbingFixtures)
+               .WhereElementIsNotElementType() if e.Id.Value not in co and e.IsHidden(view)]
     khtb = [khong_dau(k.strip()) for k in TU_KHOA_TB]
     tb_wc = [e for e in tb_all if any(k in khong_dau(ten_family(e)) for k in khtb)]
     bao_cao.append("Thiết bị vệ sinh trên level: %d; dùng để nhận WC: %d (%s)" % (
