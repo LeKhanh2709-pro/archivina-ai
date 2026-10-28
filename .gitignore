@@ -33,3 +33,6 @@ __pycache__/
 _tools/CHONGTHAM_python/
 _tools/CHONGTHAM_python.zip
 _tools/chongtham_*/
+
+# Bản nén hồ sơ mẫu (185 MB, vượt giới hạn 100 MB của GitHub)
+file mau.rar
