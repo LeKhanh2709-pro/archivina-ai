@@ -51,6 +51,7 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
 | MEP | Ống thoát nước từ CAD | `ARV_TaoOngThoatNuocTuCAD_v1` |
 | MEP | Ống gió từ CAD | `ARV_TaoOngGioTuCAD_v1` |
 | Hồ sơ | Chống thấm | `scripts\dynamo\ChongTham_VeVenChanTuong` (nét vén + hatch Filled Region trên view chống thấm; người dùng duyệt trên G19 2026-10-27) |
+| Hồ sơ | Ngăn cháy lan | `scripts\dynamo\NganChay_TrucHKT` (hatch Filled Region lưới NET 125 / 45° đỏ trong lòng trục / hộp kỹ thuật trên view chống cháy lan; 2026-10-28, chưa duyệt) |
 
 **Nút Chống thấm là nút "một chạm"** (người dùng chốt 2026-10-27; khai báo trong `MOT_CHAM` của builder):
 - **Bấm**: vẽ luôn vào mô hình, không hộp thoại, không Dry-run (Ctrl+Z một lần là hoàn tác), trên view chống thấm. Người dùng tự tạo view (gán template `1.7 Mặt Bằng Chống thấm`) và tự đặt lên sheet.
@@ -60,6 +61,18 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
 - **Shift+bấm** (`config.py`): hộp thoại đầy đủ `IN[0…9]` như các nút khác, Dry-run bật sẵn.
 - Giá trị các ô khác (từ khoá sàn, khoảng lùi, line style, thư mục log…) lấy theo lần nhập gần nhất trong hộp thoại Shift+bấm, chưa nhập thì lấy mặc định.
 - Đã thử 2026-10-27 (Revit 2027.3 + pyRevit 6.5.5, bản sao G19 chưa vẽ `_backup\G19_20261027_1405.rvt`, chạy nguyên `script.py` của nút khi đang mở view `Tầng 1`): tự chọn view `Level 1 Copy 1 Copy 2`, vẽ 364 nét vén + 59 hatch Filled Region (2 group), ẩn 64 thiết bị; bấm lần 2 không vẽ thêm gì. Kết quả ở `_tmp\pyrevit_chongtham\motcham\kq\`. Chưa thử hộp thoại chọn view (khi có nhiều view chống thấm) và Shift+bấm.
+
+**Nút Ngăn cháy lan cũng là nút một chạm** (2026-10-28), cách chọn view giống Chống thấm nhưng với chữ "cháy lan" (template `1.8 Mặt Bằng Chống Cháy Lan`).
+- Đã thử trên bản sao G19 (`_tmp\pyrevit_nganchay\`), bấm khi đang mở `Tầng 1`:
+  - tự chọn view `Level 1 Copy 1 Copy 2 Copy 1`;
+  - vẽ 38 hatch (group `ARV_NganChay`), ẩn 65 thiết bị;
+  - bấm lần 2 không vẽ thêm gì.
+- G19 không có ống đứng / shaft / dấu X, nên mọi ô được nhận theo hình học. Bản 2 (sửa theo góp ý người dùng 2026-10-28) **quét lưới 20 mm dấu chân thật của tường** thay cho room tạm:
+  - bắt được khe hộp gen ~120 mm, là chỗ room của Revit bỏ sót;
+  - nối đầu tường hở ≤ 400 mm, đóng miệng hốc chữ U;
+  - bỏ ô > 3 m², tức ô 1770×2520 ở hành lang mà người dùng chỉ là sai.
+  
+  Người dùng chưa duyệt bản 2 (`Cần xác nhận lại`).
 
 **Bẫy pythonnet 3.0.3 (CPython của pyRevit), gặp khi làm nút một chạm:**
 - Tên nào bị `from Autodesk.Revit.DB import <tên>` **đầu tiên** trong phiên Revit thì bị loại khỏi `from Autodesk.Revit.DB import *` về sau. Ví dụ `lib\arv_dynamo_host.py` import `Transaction, TransactionStatus` trước, nên `core.py` dùng `import *` sẽ thiếu 2 tên này.

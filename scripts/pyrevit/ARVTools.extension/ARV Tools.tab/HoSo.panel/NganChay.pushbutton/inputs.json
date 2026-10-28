@@ -1,0 +1,89 @@
+{
+ "key": "NganChay",
+ "title": "Ngăn cháy lan",
+ "summary": "Hatch ngăn cháy lan trục / hộp kỹ thuật (Filled Region 2D) trên view mặt bằng chống cháy lan của Revit. Thể hiện theo skill CAD ngan-chay-truc-hkt: lưới NET 125 mm xoay 45° màu 220,30,30, viền tím (màu 6), chỉ hatch trong lòng ô. - Vùng = khoảng trống khép kín giữa tường / cột trên level của view: quét lưới 20 mm theo dấu chân thật của tường (mặt đáy khối tường, đã trừ lỗ cửa), lưới xoay theo phương chính của tường → bắt được cả khe hộp gen hẹp ~120 mm mà room của Revit không bắt được; biên = mặt tường trong lòng ô (sai số ≤ 1 ô lưới). Chỉ đọc, không tạo room. - Nhận trục / hộp kỹ thuật theo thứ tự bằng chứng: a) tên room có từ khoá (HKT, hộp kỹ thuật, trục kỹ thuật, shaft…) hoặc chứa Shaft Opening b) chứa ống / ống gió / ống luồn dây đi đứng, ô không có cửa đi và thiết bị vệ sinh c) không có ống, dấu X trong model (như G19): ô / khe kín KHÔNG có cửa đi, cửa sổ, thiết bị vệ sinh, sàn hoàn thiện, diện tích ≤ ngưỡng (mặc định 3 m2: ô 1770 x 2520 ở hành lang G19 không phải trục), bề rộng lòng ≥ ngưỡng - Loại: ô chứa thang máy / thang bộ (tên family / type / room có từ khoá loại trừ) - Ô lớn hơn 1400 x 1400 mm vẫn hatch nhưng liệt kê riêng để xem lại (như bản CAD) - Kiểu Filled Region + mẫu lưới + line style viền chưa có thì tự tạo; Filled Region gom group \"ARV_NganChay\" - Ẩn thiết bị vệ sinh / nội thất trong view (Hide in View từng đối tượng, không sửa template) - Bấm lại: ô đã có hatch cùng kiểu thì bỏ qua, không vẽ trùng, không xoá gì Dry-run (mặc định) chỉ báo cáo, không sửa mô hình.",
+ "transaction": "ARV - Ngăn cháy lan",
+ "source": "NganChay_TrucHKT.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên view (để trống = view đang mở nếu là view chống cháy lan, không thì view đầu tiên có chữ \"cháy lan\" trong tên view / template)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Từ khoá tên room là trục / hộp kỹ thuật, cách nhau bằng ;  (không phân biệt dấu / hoa thường)",
+   "default": "HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "float",
+   "decl": "float",
+   "label": "Diện tích lớn nhất của ô / khe kín nhận theo hình học (m2)",
+   "default": 3.0,
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "float",
+   "decl": "float",
+   "label": "Bề rộng lòng nhỏ nhất của ô / khe (mm)",
+   "default": 80.0,
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run (True = chỉ báo cáo)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Thư mục ghi log + ảnh (để trống = Documents\\ARV_Logs\\ngan_chay)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Từ khoá loại trừ (thang máy, thang bộ) trong tên family / type / room, cách nhau bằng ;",
+   "default": "Thang máy;Elevator;Lift;Thang bộ;Stair",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Ẩn thiết bị vệ sinh / nội thất trong view",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên kiểu Filled Region hatch ngăn cháy",
+   "default": "AV_Hatch Ngăn Cháy Lan",
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên line style viền hatch",
+   "default": "AV.Nét ngăn cháy lan",
+   "kind": "normal"
+  }
+ ]
+}

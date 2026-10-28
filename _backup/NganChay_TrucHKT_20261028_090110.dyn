@@ -1,0 +1,747 @@
+{
+  "Uuid": "370443fe-2ec4-41f5-855c-50c52641cae0",
+  "IsCustomNode": false,
+  "Description": "Hatch ngăn cháy lan trục / hộp kỹ thuật bằng Filled Region 2D (lưới NET 125 mm xoay 45°, màu 220,30,30, viền tím) trên view mặt bằng chống cháy lan; nhận ô theo tên room / shaft opening / ống đứng, không có thì theo hình học (ô kín không cửa, cửa sổ, thiết bị, sàn); loại thang máy / thang bộ; ẩn thiết bị vệ sinh trong view. Bấm lại không vẽ trùng, không xoá. Mặc định Dry-run.",
+  "Name": "NganChay_TrucHKT",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "71c048c9192746df8769b689cdbad6cc",
+      "Name": "Tên view (trống = view chống cháy lan)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "c030561c43444b2d8caefd90799cf9db",
+      "Name": "Từ khoá tên room trục / HKT (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "58e97b0fcb7e45d7a87e79a0f0b0d9c1",
+      "Name": "Diện tích lớn nhất ô theo hình học (m2)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "6",
+      "Description": "Creates a number"
+    },
+    {
+      "Id": "41ed0570428a4766b16c2958951d014e",
+      "Name": "Bề rộng lòng nhỏ nhất (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "200",
+      "Description": "Creates a number"
+    },
+    {
+      "Id": "812e0a2293c74e32b1f2820c932b6bf2",
+      "Name": "Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "dc1895ac77284d98a0047d102d8ee33c",
+      "Name": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "f9c4896c8c4d43be920c29de3f27f6cb",
+      "Name": "Từ khoá loại trừ thang máy / thang bộ (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Thang máy;Elevator;Lift;Thang bộ;Stair",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "7761b380ca454be48185355a5473d454",
+      "Name": "Ẩn thiết bị vệ sinh / nội thất trong view",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "5419813ed7f64cd0a2cc991a182c90c6",
+      "Name": "Tên kiểu Filled Region",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV_Hatch Ngăn Cháy Lan",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "cff220d5641047329e0e43f5a932c90d",
+      "Name": "Tên line style viền",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV.Nét ngăn cháy lan",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "71c048c9192746df8769b689cdbad6cc",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a5e0e5337a1e496285956eaf0cac8bfd",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft",
+      "Id": "c030561c43444b2d8caefd90799cf9db",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d12e1414bc874b5da1883309a1eea49b",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "Description": "Creates a number",
+      "InputValue": 6.0,
+      "Id": "58e97b0fcb7e45d7a87e79a0f0b0d9c1",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c8bbdb3573134667b6ec52681f00183d",
+          "Name": "",
+          "Description": "number",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "Description": "Creates a number",
+      "InputValue": 200.0,
+      "Id": "41ed0570428a4766b16c2958951d014e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "29a4704397d9491a965d5cee06b55e4c",
+          "Name": "",
+          "Description": "number",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "812e0a2293c74e32b1f2820c932b6bf2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "352347dc940649579a21b4edf9a7670a",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "dc1895ac77284d98a0047d102d8ee33c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "daf0caedeca84749bc1aafa6d3650070",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "Thang máy;Elevator;Lift;Thang bộ;Stair",
+      "Id": "f9c4896c8c4d43be920c29de3f27f6cb",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "113201cbf0a244bbb00e983566179c4d",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "7761b380ca454be48185355a5473d454",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ca7f7f4b25d7494d83d8c9b63d0913ad",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "AV_Hatch Ngăn Cháy Lan",
+      "Id": "5419813ed7f64cd0a2cc991a182c90c6",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "dd0e9e04eded4fff9b2d3ce350d9eeed",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "AV.Nét ngăn cháy lan",
+      "Id": "cff220d5641047329e0e43f5a932c90d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4da8d431a2554875ac822cd9c4eb2e04",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Hatch ngăn cháy lan trục / hộp kỹ thuật (Filled Region 2D) trên view mặt bằng chống cháy lan của Revit.\n# Thể hiện theo skill CAD ngan-chay-truc-hkt: lưới NET 125 mm xoay 45° màu 220,30,30, viền tím (màu 6), chỉ hatch trong lòng ô.\n#   - Vùng = ô khép kín bởi tường trên level của view (room có sẵn + room tạm NewRooms2 trong SubTransaction rồi rollback,\n#     không để lại gì trong model); biên = mặt hoàn thiện trong lòng ô.\n#   - Nhận trục / hộp kỹ thuật theo thứ tự bằng chứng:\n#       a) tên room có từ khoá (HKT, hộp kỹ thuật, trục kỹ thuật, shaft…) hoặc chứa Shaft Opening\n#       b) chứa ống / ống gió / ống luồn dây đi đứng, ô không có cửa đi và thiết bị vệ sinh\n#       c) không có ống, dấu X trong model (như G19): ô kín KHÔNG có cửa đi, cửa sổ, thiết bị vệ sinh, sàn hoàn thiện,\n#          diện tích ≤ ngưỡng, bề rộng lòng ≥ ngưỡng (suy luận hình học, người dùng xem ảnh duyệt)\n#   - Loại: ô chứa thang máy / thang bộ (tên family / type / room có từ khoá loại trừ)\n#   - Ô lớn hơn 1400 x 1400 mm vẫn hatch nhưng liệt kê riêng để xem lại (như bản CAD)\n#   - Kiểu Filled Region + mẫu lưới + line style viền chưa có thì tự tạo; Filled Region gom group \"ARV_NganChay\"\n#   - Ẩn thiết bị vệ sinh / nội thất trong view (Hide in View từng đối tượng, không sửa template)\n#   - Bấm lại: ô đã có hatch cùng kiểu thì bỏ qua, không vẽ trùng, không xoá gì\n# Dry-run (mặc định) chỉ báo cáo, không sửa mô hình.\n# INPUT\n#   IN[0] (str)   Tên view (để trống = view đang mở nếu là view chống cháy lan, không thì view đầu tiên có chữ \"cháy lan\" trong tên view / template)\n#   IN[1] (str)   Từ khoá tên room là trục / hộp kỹ thuật, cách nhau bằng ;  (không phân biệt dấu / hoa thường)\n#   IN[2] (float) Diện tích lớn nhất của ô kín nhận theo hình học (m2)\n#   IN[3] (float) Bề rộng lòng nhỏ nhất của ô (mm)\n#   IN[4] (bool)  Dry-run (True = chỉ báo cáo)\n#   IN[5] (str)   Thư mục ghi log + ảnh (để trống = Documents\\ARV_Logs\\ngan_chay)\n#   IN[6] (str)   Từ khoá loại trừ (thang máy, thang bộ) trong tên family / type / room, cách nhau bằng ;\n#   IN[7] (bool)  Ẩn thiết bị vệ sinh / nội thất trong view\n#   IN[8] (str)   Tên kiểu Filled Region hatch ngăn cháy\n#   IN[9] (str)   Tên line style viền hatch\n# OUTPUT\n#   OUT (list[str])  Báo cáo\nimport math\nimport os\nimport traceback\nimport unicodedata\nfrom datetime import datetime\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nimport Autodesk.Revit.DB as _RevitDB\n# pythonnet 3.0: tên đã được import đích danh trước đó trong phiên (vd. ở script khác) bị loại khỏi \"import *\"\n# → bổ sung đủ tên của namespace để không phụ thuộc thứ tự import\nglobals().update({_n: getattr(_RevitDB, _n) for _n in dir(_RevitDB) if not _n.startswith(\"_\") and _n not in globals()})\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\nfrom System.Collections.Generic import List as NetList\n\n\ndef ds_id(ids):\n    \"\"\"List[ElementId] tạo rỗng rồi Add (pythonnet của pyRevit không nhận List[T](list Python))\"\"\"\n    kq = NetList[ElementId]()\n    for i in ids:\n        kq.Add(i)\n    return kq\n\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\n\ndef gia_tri(i, mac_dinh):\n    try:\n        v = IN[i]\n        return mac_dinh if v is None or (isinstance(v, str) and not v.strip()) else v\n    except Exception:\n        return mac_dinh\n\n\ndef tach(s):\n    return [k.strip() for k in str(s).split(\";\") if k.strip()]\n\n\nTEN_VIEW = gia_tri(0, \"\")\nTU_KHOA_HKT = tach(gia_tri(1, \"HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft\"))\nDT_MAX_M2 = float(gia_tri(2, 6.0))\nRONG_MIN_MM = float(gia_tri(3, 200.0))\nDRY_RUN = bool(gia_tri(4, True))\nTHU_MUC = str(gia_tri(5, os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\", \"ngan_chay\")))\nTU_KHOA_LOAI = tach(gia_tri(6, \"Thang máy;Elevator;Lift;Thang bộ;Stair\"))\nAN_THIET_BI = bool(gia_tri(7, True))\nTEN_HATCH = str(gia_tri(8, \"AV_Hatch Ngăn Cháy Lan\"))\nTEN_NET = str(gia_tri(9, \"AV.Nét ngăn cháy lan\"))\nos.makedirs(THU_MUC, exist_ok=True)\n\n# Thông số thể hiện lấy theo skill CAD ngan-chay-truc-hkt (NET 125 mm / 315°, RGB 220,30,30, viền màu 6)\nLUOI_MM = 125.0\nLUOI_GOC = 45.0\nMAU_HATCH = (220, 30, 30)\nMAU_VIEN = (255, 0, 255)\nTEN_MAU_LUOI = \"AV_Lưới NET 125 xoay 45\"\nO_LON_MM = 1400.0         # ô lớn hơn 1400 x 1400 mm: vẫn hatch, liệt kê để xem lại\nDT_NHO_NHAT_M2 = 0.05     # ô nhỏ hơn coi là khe tường\nNHOM = \"ARV_NganChay\"\nCAT_AN = (BuiltInCategory.OST_PlumbingFixtures, BuiltInCategory.OST_Furniture,\n          BuiltInCategory.OST_FurnitureSystems, BuiltInCategory.OST_Casework)\nbao_cao = []\n\n\ndef mm(v):\n    return UnitUtils.ConvertToInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ra_mm(v):\n    return UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ra_m2(v):\n    return UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.SquareMeters)\n\n\ndef khong_dau(s):\n    s = unicodedata.normalize(\"NFD\", s or \"\").replace(\"đ\", \"d\").replace(\"Đ\", \"D\")\n    return \"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower()\n\n\ndef co_tu(s, tu_khoa):\n    s = khong_dau(s)\n    return any(khong_dau(k) in s for k in tu_khoa)\n\n\ndef ten(e):\n    try:\n        return e.Name\n    except Exception:\n        return \"?\"\n\n\ndef ten_kieu(e):\n    t = doc.GetElement(e.GetTypeId())\n    return ten(t) if t is not None else \"\"\n\n\ndef ten_family(e):\n    try:\n        return e.Symbol.FamilyName\n    except Exception:\n        return ten_kieu(e)\n\n\ndef ten_tpl(v):\n    return ten(doc.GetElement(v.ViewTemplateId)) if v.ViewTemplateId != ElementId.InvalidElementId else \"\"\n\n\n# ---------- chọn view ----------\ndef chon_view():\n    plans = [v for v in FilteredElementCollector(doc).OfClass(ViewPlan) if not v.IsTemplate]\n    if TEN_VIEW:\n        for v in plans:\n            if v.Name == TEN_VIEW:\n                return v\n        raise Exception(\"Không tìm thấy view mặt bằng tên '%s'\" % TEN_VIEW)\n    la_cl = [v for v in plans if \"chay lan\" in khong_dau(ten_tpl(v)) or \"chay lan\" in khong_dau(v.Name)]\n    av = doc.ActiveView\n    for v in la_cl:\n        if v.Id == av.Id:\n            return v\n    if not la_cl:\n        raise Exception(\"Không có view mặt bằng nào có chữ 'cháy lan' trong tên view / template; nhập tên view vào IN[0]\")\n    return la_cl[0]\n\n\n# ---------- hình học 2D ----------\ndef diem_loop(curves):\n    pts = []\n    for c in curves:\n        for p in list(c.Tessellate())[:-1]:\n            pts.append((p.X, p.Y))\n    return pts\n\n\ndef trong_da_giac(x, y, pts):\n    ben_trong = False\n    n = len(pts)\n    for i in range(n):\n        x1, y1 = pts[i]\n        x2, y2 = pts[(i + 1) % n]\n        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:\n            ben_trong = not ben_trong\n    return ben_trong\n\n\ndef trong_vung(x, y, loops_pts):\n    # điểm nằm trong số lẻ vòng biên = nằm trong vùng (vòng ngoài trừ lỗ)\n    return sum(1 for pts in loops_pts if trong_da_giac(x, y, pts)) % 2 == 1\n\n\ndef bao_loi(pts):\n    \"\"\"Bao lồi (monotone chain)\"\"\"\n    p = sorted(set(pts))\n    if len(p) < 3:\n        return p\n\n    def cross(o, a, b):\n        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])\n    duoi, tren = [], []\n    for q in p:\n        while len(duoi) >= 2 and cross(duoi[-2], duoi[-1], q) <= 0:\n            duoi.pop()\n        duoi.append(q)\n    for q in reversed(p):\n        while len(tren) >= 2 and cross(tren[-2], tren[-1], q) <= 0:\n            tren.pop()\n        tren.append(q)\n    return duoi[:-1] + tren[:-1]\n\n\ndef kich_thuoc(pts):\n    \"\"\"(bề rộng nhỏ nhất, chiều dài theo phương đó) của bao lồi – đo đúng cả ô xoay xiên\"\"\"\n    h = bao_loi(pts)\n    if len(h) < 3:\n        return 0.0, 0.0\n    tot = None\n    for i in range(len(h)):\n        (x1, y1), (x2, y2) = h[i], h[(i + 1) % len(h)]\n        L = math.hypot(x2 - x1, y2 - y1)\n        if L < 1e-9:\n            continue\n        ux, uy = (x2 - x1) / L, (y2 - y1) / L\n        rong = max(abs((x - x1) * uy - (y - y1) * ux) for x, y in h)\n        dai = max((x - x1) * ux + (y - y1) * uy for x, y in h) - min((x - x1) * ux + (y - y1) * uy for x, y in h)\n        if tot is None or rong < tot[0]:\n            tot = (rong, dai)\n    return tot\n\n\ndef phang(c, z):\n    return c.CreateTransformed(Transform.CreateTranslation(XYZ(0, 0, z - c.GetEndPoint(0).Z)))\n\n\ndef diem_tam(e):\n    \"\"\"Điểm đặt trên mặt bằng của đối tượng: Location.Point, không có thì tâm khung bao\"\"\"\n    try:\n        p = e.Location.Point\n        return (p.X, p.Y)\n    except Exception:\n        bb = e.get_BoundingBox(None)\n        if bb is None:\n            return None\n        return ((bb.Min.X + bb.Max.X) / 2, (bb.Min.Y + bb.Max.Y) / 2)\n\n\ndef diem_hai_ben(d):\n    \"\"\"2 điểm dò hai bên cửa đi / cửa sổ (qua bề dày tường + 200 mm)\"\"\"\n    try:\n        p = d.Location.Point\n        f = d.FacingOrientation\n        k = (d.Host.Width if d.Host is not None else mm(200)) / 2 + mm(200)\n        return [(p.X + f.X * k, p.Y + f.Y * k), (p.X - f.X * k, p.Y - f.Y * k)]\n    except Exception:\n        return []\n\n\ndef theo_level(cat, lv):\n    kq = []\n    for e in FilteredElementCollector(doc).OfCategory(cat).WhereElementIsNotElementType():\n        lid = e.LevelId\n        if lid == ElementId.InvalidElementId:\n            try:\n                lid = e.get_Parameter(BuiltInParameter.INSTANCE_SCHEDULE_ONLY_LEVEL_PARAM).AsElementId()\n            except Exception:\n                pass\n        if lid == lv.Id:\n            kq.append(e)\n    return kq\n\n\ndef vong_san(f):\n    \"\"\"Các vòng biên của sàn (theo sketch), điểm 2D\"\"\"\n    try:\n        sk = doc.GetElement(f.SketchId)\n        return [[(p.X, p.Y) for c in arr for p in list(c.Tessellate())[:-1]] for arr in sk.Profile]\n    except Exception:\n        return []\n\n\ndef la_san_ket_cau(f):\n    try:\n        return f.get_Parameter(BuiltInParameter.FLOOR_PARAMETER_IS_STRUCTURAL).AsInteger() == 1\n    except Exception:\n        return False\n\n\ndef ong_dung(lv):\n    \"\"\"Điểm 2D của ống / ống gió / ống luồn dây / máng cáp đi đứng qua cao độ level\"\"\"\n    z = lv.Elevation\n    kq = []\n    for cat in (BuiltInCategory.OST_PipeCurves, BuiltInCategory.OST_DuctCurves, BuiltInCategory.OST_Conduit,\n                BuiltInCategory.OST_CableTray):\n        for e in FilteredElementCollector(doc).OfCategory(cat).WhereElementIsNotElementType():\n            try:\n                c = e.Location.Curve\n                a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n            except Exception:\n                continue\n            dz = abs(b.Z - a.Z)\n            if dz > 2 * math.hypot(b.X - a.X, b.Y - a.Y) and min(a.Z, b.Z) - mm(500) <= z + mm(1000) <= max(a.Z, b.Z) + mm(500):\n                kq.append(((a.X + b.X) / 2, (a.Y + b.Y) / 2))\n    return kq\n\n\n# ---------- kiểu thể hiện ----------\ndef lay_line_style():\n    cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines)\n    for sc in cat.SubCategories:\n        if sc.Name == TEN_NET:\n            return sc.GetGraphicsStyle(GraphicsStyleType.Projection), \"dùng line style có sẵn '%s'\" % TEN_NET\n    if DRY_RUN:\n        return None, \"sẽ tạo line style '%s' (màu %d,%d,%d)\" % ((TEN_NET,) + MAU_VIEN)\n    sc = doc.Settings.Categories.NewSubcategory(cat, TEN_NET)\n    sc.LineColor = Color(*MAU_VIEN)\n    sc.SetLineWeight(1, GraphicsStyleType.Projection)\n    return sc.GetGraphicsStyle(GraphicsStyleType.Projection), \"đã tạo line style '%s' (màu %d,%d,%d)\" % ((TEN_NET,) + MAU_VIEN)\n\n\ndef lay_mau_luoi():\n    for p in FilteredElementCollector(doc).OfClass(FillPatternElement):\n        if ten(p) == TEN_MAU_LUOI:\n            return p.Id, \"dùng mẫu có sẵn '%s'\" % TEN_MAU_LUOI\n    if DRY_RUN:\n        return None, \"sẽ tạo mẫu model '%s' (lưới %g mm, %g°)\" % (TEN_MAU_LUOI, LUOI_MM, LUOI_GOC)\n    fp = FillPattern(TEN_MAU_LUOI, FillPatternTarget.Model, FillPatternHostOrientation.ToView,\n                     math.radians(LUOI_GOC), mm(LUOI_MM), mm(LUOI_MM))\n    pe = FillPatternElement.Create(doc, fp)\n    return pe.Id, \"đã tạo mẫu model '%s' (lưới %g mm, %g°)\" % (TEN_MAU_LUOI, LUOI_MM, LUOI_GOC)\n\n\ndef lay_kieu_hatch():\n    for t in FilteredElementCollector(doc).OfClass(FilledRegionType):\n        if ten(t) == TEN_HATCH:\n            return t, \"dùng kiểu có sẵn '%s'\" % TEN_HATCH\n    pid, ghi_chu = lay_mau_luoi()\n    if DRY_RUN:\n        return None, \"sẽ tạo kiểu '%s' (màu %d,%d,%d); %s\" % ((TEN_HATCH,) + MAU_HATCH + (ghi_chu,))\n    goc = FilteredElementCollector(doc).OfClass(FilledRegionType).FirstElement()\n    t = goc.Duplicate(TEN_HATCH)\n    t.ForegroundPatternId = pid\n    t.ForegroundPatternColor = Color(*MAU_HATCH)\n    t.BackgroundPatternId = ElementId.InvalidElementId\n    t.IsMasking = False\n    return t, \"đã tạo kiểu '%s' (màu %d,%d,%d); %s\" % ((TEN_HATCH,) + MAU_HATCH + (ghi_chu,))\n\n\ndef gom_nhom(ids, ten_goc):\n    \"\"\"Gom phần tử vào Detail Group, đặt tên kiểu group (trùng thì thêm _2, _3…)\"\"\"\n    g = doc.Create.NewGroup(ds_id(ids))\n    ten_nhom = ten_goc\n    da_dung = set(ten(t) for t in FilteredElementCollector(doc).OfClass(GroupType))\n    i = 1\n    while ten_nhom in da_dung:\n        i += 1\n        ten_nhom = \"%s_%d\" % (ten_goc, i)\n    doc.GetElement(g.GetTypeId()).Name = ten_nhom\n    return ten_nhom\n\n\ndef toa_do(p):\n    return \"(%d, %d)\" % (round(ra_mm(p[0])), round(ra_mm(p[1])))\n\n\n# ---------- chạy ----------\ndef chinh():\n    view = chon_view()\n    lv = view.GenLevel\n    if lv is None:\n        raise Exception(\"View '%s' không gắn level\" % view.Name)\n    z = lv.Elevation\n    bao_cao.append(\"View: %s (template %s, level %s)\" % (view.Name, ten_tpl(view) or \"-\", lv.Name))\n\n    # ---- dữ liệu trên level ----\n    cua = [p for d in theo_level(BuiltInCategory.OST_Doors, lv) for p in diem_hai_ben(d)]\n    cua_so = [p for d in theo_level(BuiltInCategory.OST_Windows, lv) for p in diem_hai_ben(d)]\n    tb = []\n    da_xet = set()\n    for e in list(theo_level(BuiltInCategory.OST_PlumbingFixtures, lv)) + list(\n            FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_PlumbingFixtures)\n            .WhereElementIsNotElementType()):\n        if e.Id.Value in da_xet:\n            continue\n        da_xet.add(e.Id.Value)\n        p = diem_tam(e)\n        if p is None:\n            continue\n        try:     # bồn cầu host trên sàn: điểm đặt sát tường → dò thêm 200 mm theo hướng mặt\n            f = e.FacingOrientation\n            p = (p[0] + f.X * mm(200), p[1] + f.Y * mm(200))\n        except Exception:\n            pass\n        tb.append(p)\n    san = [vong_san(f) for f in FilteredElementCollector(doc).OfClass(Floor)\n           if f.LevelId == lv.Id and not la_san_ket_cau(f)]\n    san = [s for s in san if s]\n    ong = ong_dung(lv)\n    shaft = [diem_tam(e) for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ShaftOpening)\n             .WhereElementIsNotElementType()]\n    shaft = [p for p in shaft if p]\n    loai = []\n    for cat in (BuiltInCategory.OST_SpecialityEquipment, BuiltInCategory.OST_GenericModel,\n                BuiltInCategory.OST_MechanicalEquipment, BuiltInCategory.OST_Stairs):\n        for e in FilteredElementCollector(doc).OfCategory(cat).WhereElementIsNotElementType():\n            if cat == BuiltInCategory.OST_Stairs or co_tu(ten_family(e) + \" \" + ten_kieu(e), TU_KHOA_LOAI):\n                p = diem_tam(e)\n                bb = e.get_BoundingBox(None)\n                if p and bb and bb.Min.Z - mm(500) <= z + mm(1000) <= bb.Max.Z + mm(500):\n                    loai.append(p)\n    da_hatch = []\n    for r in FilteredElementCollector(doc, view.Id).OfClass(FilledRegion):\n        if ten(doc.GetElement(r.GetTypeId())) == TEN_HATCH:\n            try:\n                da_hatch.append([diem_loop(list(cl)) for cl in r.GetBoundaries()])\n            except Exception:\n                pass\n    bao_cao.append(\"Trên level: cửa đi %d, cửa sổ %d, thiết bị vệ sinh %d, sàn hoàn thiện %d, ống đứng %d, \"\n                   \"shaft opening %d, thang máy / thang bộ %d; hatch ngăn cháy đã có trong view: %d\" % (\n                       len(cua) // 2, len(cua_so) // 2, len(tb), len(san), len(ong), len(shaft), len(loai),\n                       len(da_hatch)))\n    if not ong and not shaft:\n        bao_cao.append(\"Model không có ống đứng / shaft opening → trục, hộp nhận theo tên room hoặc hình học \"\n                       \"(ô kín không cửa, cửa sổ, thiết bị, sàn) – xem ảnh để duyệt (Cần xác nhận lại).\")\n\n    # ---- các ô khép kín: room có sẵn + room tạm (rollback) ----\n    TransactionManager.Instance.EnsureInTransaction(doc)\n    vung = []\n    st = SubTransaction(doc)\n    st.Start()\n    try:\n        co_san = set(r.Id.Value for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms)\n                     .WhereElementIsNotElementType() if r.LevelId == lv.Id)\n        try:\n            doc.Create.NewRooms2(lv)\n        except Exception as ex:\n            bao_cao.append(\"Không tạo được room tạm: %s\" % ex)\n        doc.Regenerate()\n        opt = SpatialElementBoundaryOptions()\n        opt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish\n        for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType():\n            if r.LevelId != lv.Id or r.Area <= 0 or r.Location is None:\n                continue\n            loops = []\n            for segs in r.GetBoundarySegments(opt) or []:\n                l = [phang(s.GetCurve(), z) for s in segs]\n                if len(l) >= 2:\n                    loops.append(l)\n            if not loops:\n                continue\n            ten_r = r.get_Parameter(BuiltInParameter.ROOM_NAME).AsString() if r.Id.Value in co_san else \"\"\n            p0 = r.Location.Point\n            vung.append({\"loops\": loops, \"pts\": [diem_loop(l) for l in loops], \"m2\": ra_m2(r.Area),\n                         \"ten\": ten_r or \"\", \"diem\": (p0.X, p0.Y)})\n    finally:\n        st.RollBack()\n    bao_cao.append(\"Ô khép kín trên level: %d\" % len(vung))\n\n    # ---- phân loại ----\n    se_ve, da_co, bi_loai, xem_lai = [], 0, [], []\n    for v in vung:\n        pts = v[\"pts\"]\n        x, y = v[\"diem\"]\n        trong = lambda ds: [p for p in ds if trong_vung(p[0], p[1], pts)]\n        rong, dai = kich_thuoc(max(pts, key=len))\n        v[\"kt\"] = (ra_mm(rong), ra_mm(dai))\n        if v[\"ten\"] and co_tu(v[\"ten\"], TU_KHOA_LOAI) or trong(loai):\n            if v[\"m2\"] < 30:\n                bi_loai.append((v, \"thang máy / thang bộ\"))\n            continue\n        if v[\"ten\"] and co_tu(v[\"ten\"], TU_KHOA_HKT):\n            nguon = \"tên room '%s'\" % v[\"ten\"]\n        elif trong(shaft):\n            nguon = \"shaft opening\"\n        elif trong(ong) and not trong(cua) and not trong(tb):\n            nguon = \"ống đứng\"\n        elif v[\"ten\"] and khong_dau(v[\"ten\"]) not in (\"room\", \"phong\"):\n            continue          # room đã đặt tên chức năng khác (phòng ngủ, WC…)\n        elif (not trong(cua) and not trong(cua_so) and not trong(tb)\n              and not any(trong_vung(x, y, s) for s in san)\n              and DT_NHO_NHAT_M2 <= v[\"m2\"] <= DT_MAX_M2 and v[\"kt\"][0] >= RONG_MIN_MM):\n            nguon = \"hình học\"\n        else:\n            continue\n        if any(trong_vung(x, y, h) for h in da_hatch):\n            da_co += 1\n            continue\n        v[\"nguon\"] = nguon\n        se_ve.append(v)\n        if v[\"kt\"][0] > O_LON_MM:\n            xem_lai.append(v)\n    dem_nguon = {}\n    for v in se_ve:\n        dem_nguon[v[\"nguon\"].split(\" '\")[0]] = dem_nguon.get(v[\"nguon\"].split(\" '\")[0], 0) + 1\n    bao_cao.append(\"Trục / hộp kỹ thuật sẽ hatch: %d (%s); đã có hatch: %d; loại vì thang: %d\" % (\n        len(se_ve), \", \".join(\"%s %d\" % kv for kv in sorted(dem_nguon.items())) or \"-\", da_co, len(bi_loai)))\n    for v in sorted(se_ve, key=lambda v: -v[\"m2\"]):\n        bao_cao.append(\"   %5.2f m2  %4d x %4d mm  %-14s tại %s\" % (\n            v[\"m2\"], round(v[\"kt\"][0]), round(v[\"kt\"][1]), v[\"nguon\"], toa_do(v[\"diem\"])))\n    if xem_lai:\n        bao_cao.append(\"CẦN XEM LẠI (ô lớn hơn %d x %d mm, vẫn hatch): %s\" % (\n            O_LON_MM, O_LON_MM, \"; \".join(\"%.2f m2 tại %s\" % (v[\"m2\"], toa_do(v[\"diem\"])) for v in xem_lai)))\n    for v, ly_do in bi_loai:\n        bao_cao.append(\"Loại (%s): %.2f m2 tại %s\" % (ly_do, v[\"m2\"], toa_do(v[\"diem\"])))\n\n    an = []\n    if AN_THIET_BI:\n        for cat in CAT_AN:\n            for e in FilteredElementCollector(doc, view.Id).OfCategory(cat).WhereElementIsNotElementType():\n                try:\n                    if e.CanBeHidden(view) and not e.IsHidden(view):\n                        an.append(e)\n                except Exception:\n                    pass\n        bao_cao.append(\"Thiết bị vệ sinh / nội thất sẽ ẩn trong view: %d\" % len(an))\n\n    kieu, ghi_chu = lay_kieu_hatch() if se_ve else (None, \"\")\n    gs, ghi_chu_net = lay_line_style() if se_ve else (None, \"\")\n    if se_ve:\n        bao_cao.append(\"Hatch: %s\" % ghi_chu)\n        bao_cao.append(\"Viền: %s\" % ghi_chu_net)\n\n    if DRY_RUN:\n        TransactionManager.Instance.TransactionTaskDone()\n        bao_cao.append(\"DRY-RUN: chưa vẽ gì. Đặt IN[4] = False để vẽ.\")\n        return view, []\n\n    moi = []\n    for v in se_ve:\n        try:\n            cls = NetList[CurveLoop]()\n            for l in v[\"loops\"]:\n                cl = CurveLoop()\n                for c in l:\n                    cl.Append(c)\n                cls.Add(cl)\n            fr = FilledRegion.Create(doc, kieu.Id, view.Id, cls)\n            if gs is not None:\n                fr.SetLineStyleId(gs.Id)\n            moi.append(fr.Id)\n        except Exception as ex:\n            bao_cao.append(\"Không hatch được ô %.2f m2 tại %s: %s\" % (v[\"m2\"], toa_do(v[\"diem\"]), ex))\n    nhom = None\n    if moi:\n        try:\n            nhom = gom_nhom(moi, NHOM)\n        except Exception as ex:\n            bao_cao.append(\"Không gom group được: %s\" % ex)\n    if an:\n        try:\n            view.HideElements(ds_id([e.Id for e in an]))\n            bao_cao.append(\"ĐÃ ẨN %d thiết bị vệ sinh / nội thất trong view\" % len(an))\n        except Exception as ex:\n            bao_cao.append(\"Không ẩn được thiết bị: %s\" % ex)\n    TransactionManager.Instance.TransactionTaskDone()\n    bao_cao.append(\"ĐÃ VẼ %d hatch ngăn cháy lan (Filled Region)%s\" % (\n        len(moi), (\" – group '%s'\" % nhom) if nhom else \"\"))\n    return view, moi\n\n\ndef xuat_anh(view):\n    try:\n        TransactionManager.Instance.ForceCloseTransaction()\n        opt = ImageExportOptions()\n        opt.ExportRange = ExportRange.SetOfViews\n        opt.SetViewsAndSheets(ds_id([view.Id]))\n        opt.FilePath = os.path.join(THU_MUC, \"ngan_chay\")\n        opt.ZoomType = ZoomFitType.FitToPage\n        opt.PixelSize = 6000\n        opt.ImageResolution = ImageResolution.DPI_300\n        opt.HLRandWFViewsFileType = ImageFileType.PNG\n        opt.ShadowViewsFileType = ImageFileType.PNG\n        doc.ExportImage(opt)\n        bao_cao.append(\"Ảnh: %s*.png\" % opt.FilePath)\n    except Exception as ex:\n        bao_cao.append(\"Không xuất được ảnh: %s\" % ex)\n\n\ntry:\n    v, moi = chinh()\n    xuat_anh(v)\nexcept Exception:\n    bao_cao.append(\"LỖI: \" + traceback.format_exc())\n\nlog = os.path.join(THU_MUC, \"ngan_chay_%s.txt\" % datetime.now().strftime(\"%Y%m%d_%H%M%S\"))\nwith open(log, \"w\", encoding=\"utf-8\") as f:\n    f.write(\"\\n\".join(bao_cao))\nbao_cao.append(\"Log: \" + log)\nOUT = bao_cao\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "2910e4898c4a40eda3ec4e393d4d4779",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "2deaadafbf5e4c8a9804f4d3e1746110",
+          "Name": "IN[0]",
+          "Description": "Tên view (trống = view chống cháy lan)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e368610db1c94c84954f9fd1fe4a51fd",
+          "Name": "IN[1]",
+          "Description": "Từ khoá tên room trục / HKT (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "65ccc45d3f5f4f4d879cb32879a82067",
+          "Name": "IN[2]",
+          "Description": "Diện tích lớn nhất ô theo hình học (m2)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8fe96c7733b74f9a91ff253bebd4994b",
+          "Name": "IN[3]",
+          "Description": "Bề rộng lòng nhỏ nhất (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d14f65f3cdb3461188016e8e071d70b0",
+          "Name": "IN[4]",
+          "Description": "Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "19935621e05c40e88d5220db6b8846a3",
+          "Name": "IN[5]",
+          "Description": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fa39a5cd06df4c2e93638d0742651261",
+          "Name": "IN[6]",
+          "Description": "Từ khoá loại trừ thang máy / thang bộ (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6fb4cef956114b0a8024ffb1612cb89f",
+          "Name": "IN[7]",
+          "Description": "Ẩn thiết bị vệ sinh / nội thất trong view",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8493219ddbc7460e97172ea833b1452f",
+          "Name": "IN[8]",
+          "Description": "Tên kiểu Filled Region",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c9cd7ad4928449c79681e0285a2ec2f6",
+          "Name": "IN[9]",
+          "Description": "Tên line style viền",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1674c4bf516c4906986bb5112557c980",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "7fc4c6d14301412a9e7f730ff64a41b8",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "6c02ca78530945cea6209b9e4add11c4",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6147be3ab70c4bb9af24bbed012edbe9",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "a5e0e5337a1e496285956eaf0cac8bfd",
+      "End": "2deaadafbf5e4c8a9804f4d3e1746110",
+      "Id": "021318ea80954e12927f0a1d90be3c55",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d12e1414bc874b5da1883309a1eea49b",
+      "End": "e368610db1c94c84954f9fd1fe4a51fd",
+      "Id": "4b720c1ef6e24528b2594b257a30cff0",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "c8bbdb3573134667b6ec52681f00183d",
+      "End": "65ccc45d3f5f4f4d879cb32879a82067",
+      "Id": "e5b8b6d4ab52427e8eeb934f6517d809",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "29a4704397d9491a965d5cee06b55e4c",
+      "End": "8fe96c7733b74f9a91ff253bebd4994b",
+      "Id": "d7817a8e9ae6402ebfa29de5f1c72e32",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "352347dc940649579a21b4edf9a7670a",
+      "End": "d14f65f3cdb3461188016e8e071d70b0",
+      "Id": "d4ac31c6f67540d2a65d5bad24503f0b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "daf0caedeca84749bc1aafa6d3650070",
+      "End": "19935621e05c40e88d5220db6b8846a3",
+      "Id": "973fb639822b45d38b1e56a452149b97",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "113201cbf0a244bbb00e983566179c4d",
+      "End": "fa39a5cd06df4c2e93638d0742651261",
+      "Id": "51e2556f4cce483fa8ca5d8e436af84e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "ca7f7f4b25d7494d83d8c9b63d0913ad",
+      "End": "6fb4cef956114b0a8024ffb1612cb89f",
+      "Id": "c1341715bafa4ffb86ffe8c54a14296d",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "dd0e9e04eded4fff9b2d3ce350d9eeed",
+      "End": "8493219ddbc7460e97172ea833b1452f",
+      "Id": "2a53c106b1834ceabb047f515e5f021f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "4da8d431a2554875ac822cd9c4eb2e04",
+      "End": "c9cd7ad4928449c79681e0285a2ec2f6",
+      "Id": "944cf33859fd44d4aadd587173d4294c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1674c4bf516c4906986bb5112557c980",
+      "End": "6c02ca78530945cea6209b9e4add11c4",
+      "Id": "b7f7f676cfc0496ca7c8b9e56efb9514",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "71c048c9192746df8769b689cdbad6cc",
+        "Name": "Tên view (trống = view chống cháy lan)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "c030561c43444b2d8caefd90799cf9db",
+        "Name": "Từ khoá tên room trục / HKT (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 130.0
+      },
+      {
+        "Id": "58e97b0fcb7e45d7a87e79a0f0b0d9c1",
+        "Name": "Diện tích lớn nhất ô theo hình học (m2)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Id": "41ed0570428a4766b16c2958951d014e",
+        "Name": "Bề rộng lòng nhỏ nhất (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 390.0
+      },
+      {
+        "Id": "812e0a2293c74e32b1f2820c932b6bf2",
+        "Name": "Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Id": "dc1895ac77284d98a0047d102d8ee33c",
+        "Name": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 650.0
+      },
+      {
+        "Id": "f9c4896c8c4d43be920c29de3f27f6cb",
+        "Name": "Từ khoá loại trừ thang máy / thang bộ (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 780.0
+      },
+      {
+        "Id": "7761b380ca454be48185355a5473d454",
+        "Name": "Ẩn thiết bị vệ sinh / nội thất trong view",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 910.0
+      },
+      {
+        "Id": "5419813ed7f64cd0a2cc991a182c90c6",
+        "Name": "Tên kiểu Filled Region",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1040.0
+      },
+      {
+        "Id": "cff220d5641047329e0e43f5a932c90d",
+        "Name": "Tên line style viền",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1170.0
+      },
+      {
+        "Id": "2910e4898c4a40eda3ec4e393d4d4779",
+        "Name": "NganChay_TrucHKT",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "7fc4c6d14301412a9e7f730ff64a41b8",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "e92fae10d245427f88cfdf34e4572466",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "71c048c9192746df8769b689cdbad6cc",
+          "c030561c43444b2d8caefd90799cf9db",
+          "58e97b0fcb7e45d7a87e79a0f0b0d9c1",
+          "41ed0570428a4766b16c2958951d014e",
+          "812e0a2293c74e32b1f2820c932b6bf2",
+          "dc1895ac77284d98a0047d102d8ee33c",
+          "f9c4896c8c4d43be920c29de3f27f6cb",
+          "7761b380ca454be48185355a5473d454",
+          "5419813ed7f64cd0a2cc991a182c90c6",
+          "cff220d5641047329e0e43f5a932c90d"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 1340.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 1340.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "f6c5bac263f84fb88d73e93fc0a5513b",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "2910e4898c4a40eda3ec4e393d4d4779"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "2a109b9d61ce4bc48171b6a4ea3addba",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "7fc4c6d14301412a9e7f730ff64a41b8"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

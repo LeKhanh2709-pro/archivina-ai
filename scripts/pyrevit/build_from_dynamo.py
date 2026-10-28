@@ -43,12 +43,14 @@ BUTTONS = [
     ("MEP", "TaoOngThoatNuocTuCAD", u"Ống thoát nước\ntừ CAD", "ARV_TaoOngThoatNuocTuCAD_v1"),
     ("MEP", "TaoOngGioTuCAD", u"Ống gió\ntừ CAD", "ARV_TaoOngGioTuCAD_v1"),
     ("HoSo", "ChongTham", u"Chống\nthấm", "../dynamo/ChongTham_VeVenChanTuong"),
+    ("HoSo", "NganChay", u"Ngăn\ncháy lan", "../dynamo/NganChay_TrucHKT"),
 ]
 # Nút "một chạm" (người dùng chốt 2026-10-27 cho Chống thấm): bấm là ghi luôn vào mô hình, không hộp thoại, trên view
 # đang mở nếu là view có chữ <tu_khoa> (tên view hoặc tên view template), không thì chọn trong các view đó.
 # Shift+bấm (config.py) = hộp thoại đầy đủ như các nút khác (Dry-run bật sẵn).
 #   view_in: chỉ số IN[] nhận tên view; tu_khoa: từ khoá (không dấu) nhận view
-MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm"}}
+MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm"},
+            "NganChay": {"view_in": 0, "tu_khoa": u"chay lan", "ten_view": u"chống cháy lan"}}
 PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện", "MEP": u"MEP",
                 "HoSo": u"Hồ sơ"}
 TAB = "ARV Tools.tab"
