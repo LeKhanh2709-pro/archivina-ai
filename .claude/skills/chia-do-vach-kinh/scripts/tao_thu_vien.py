@@ -75,6 +75,8 @@ class Phang:
         """ents: thực thể trong hệ cha; m: ma trận cha -> hệ chuẩn; cha: (layer, color, true_color, linetype)."""
         out = []
         for e in ents:
+            if e.dxftype() == "HATCH":  # bỏ hatch trong block vách kính (người dùng chốt 28/10/2026)
+                continue
             layer = e.dxf.layer
             if cha and layer == "0":
                 layer = cha[0]

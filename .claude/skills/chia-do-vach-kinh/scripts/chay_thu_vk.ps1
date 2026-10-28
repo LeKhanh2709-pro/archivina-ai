@@ -13,10 +13,14 @@
 param(
     [Parameter(Mandatory = $true)][string]$Dwg,
     [Parameter(Mandatory = $true)][string]$OutDwg,
-    [Parameter(Mandatory = $true)][string]$Lisp,
+    [string]$Lisp = '',
+    # file chua bieu thuc thu (tranh loi dau ngoac kep khi truyen qua dong lenh)
+    [string]$LispFile = '',
     [int]$TimeoutSec = 300
 )
 $ErrorActionPreference = 'Stop'
+if ($LispFile) { $Lisp = Get-Content -LiteralPath $LispFile -Raw -Encoding UTF8 }
+if (-not $Lisp) { throw "Can -Lisp hoac -LispFile" }
 
 # AutoCAD / thu muc tam tu tim tren may (moi_truong.ps1), khong gan cung duong dan
 . (Join-Path $PSScriptRoot 'moi_truong.ps1')

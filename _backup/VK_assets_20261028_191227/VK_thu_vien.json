@@ -1,0 +1,33 @@
+{
+  "nguon": {
+    "thanh_dung": "ACAD-block thanh dung.dxf",
+    "cua_so": "ACAD-block cua so mo.dxf",
+    "cua_di": "ACAD-block cua di.dxf"
+  },
+  "do_dung": {
+    "block": "VK_DoDung",
+    "rong_do_duoc": 65.74,
+    "sau_do_duoc": 187.19
+  },
+  "cua_so": {
+    "block": "VK_CuaSoMo",
+    "tam_tam": 1000.0
+  },
+  "cua_di": {
+    "block": "VK_CuaDi",
+    "tam_tam": 1665.0
+  },
+  "kinh_cua_so": [
+    [
+      42.04,
+      48.04,
+      151
+    ],
+    [
+      56.86,
+      62.86,
+      151
+    ]
+  ],
+  "ghi_chu": "Điểm chèn = tâm đố trái; vách theo trục X; Y = chiều sâu đố (mặt kẹp kính +Y)."
+}

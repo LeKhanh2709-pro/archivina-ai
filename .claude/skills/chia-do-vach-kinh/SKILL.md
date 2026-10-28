@@ -17,6 +17,7 @@ Người dùng chỉ cấp **chiều dài vách** (mép ngoài – mép ngoài) 
 
 ## Công cụ
 - `<python>` = Python có ezdxf + matplotlib (máy này `D:\AI\_tools\venv\Scripts\python.exe`; máy khác dùng `Find-Python` trong `scripts\moi_truong.ps1`). `<skill>` = "Base directory for this skill".
+- **Block không có hatch** (người dùng chốt 28/10/2026: bỏ hatch trong block vách kính; `tao_thu_vien.py` bỏ mọi HATCH khi tạo thư viện, cả Python lẫn LISP).
 - Thư viện block: `<skill>\assets\VK_thu_vien.dxf` + `VK_thu_vien.json` (khoảng tâm-tâm, vị trí kính). Mọi block có điểm chèn = **tâm đố trái**, vách chạy theo trục X, Y = chiều sâu đố (mặt kẹp kính phía +Y); mọi nét trên layer `A-Window`, giữ màu / kiểu nét như bản gốc (đã đổi BYLAYER thành màu cụ thể).
 - Không đọc script để hiểu cách dùng: chạy `--help` hoặc theo các bước dưới.
 
@@ -34,14 +35,17 @@ Người dùng chỉ cấp **chiều dài vách** (mép ngoài – mép ngoài) 
 - Kích thước kiểm tra, kiểu `dim cua`, **nằm trong block `VACH KINH`, layer `Defpoints`** (không in; người dùng chốt 28/10/2026), **sát vách** về phía mặt kẹp kính: hàng chuỗi đố (mép ngoài – tâm các đố – mép ngoài) cách trục vách 165, hàng tổng chiều dài cách 260 (mặt đố ở +93,6).
 
 ## Lệnh LISP `VK` (người dùng tự chạy trong AutoCAD, chốt 28/10/2026)
-- File: `<skill>\lisp\VK.lsp` (bản người dùng APPLOAD: `<gốc>\scripts\lisp\VK.lsp`; sửa thì chép đồng bộ cả hai). Một file, không cần Python. Block lấy từ `<skill>\assets\VK_thu_vien.dwg` (tự tìm: biến `ARCHIVINA_VK` → Support Path → `<ARCHIVINA_AI | %USERPROFILE% | <ổ cứng>:\AI>\.claude\skills\chia-do-vach-kinh\assets\` → hỏi chọn file một lần, nhớ bằng `setenv`). Bản vẽ đã có block `VK_*` thì dùng luôn, không định nghĩa lại.
+- File: `<skill>\lisp\VK.lsp` (bản người dùng APPLOAD: `<gốc>\scripts\lisp\VK.lsp`). **VK.lsp là file sinh tự động**: sửa `lisp\vk_nguon.lsp` rồi chạy `<python> <skill>\scripts\gop_vk.py` (đổi mọi chữ có dấu trong chuỗi thành `\U+XXXX`, chỉ còn ASCII → hộp thoại / thông báo đúng dấu với cả `LISPSYS = 0` và `1`; người dùng báo lỗi font khi `LISPSYS = 0`, 28/10/2026), rồi chép `VK.lsp` sang `<gốc>\scripts\lisp\`. **Một file duy nhất, mang sang máy khác là chạy** (người dùng chốt 28/10/2026): block `VK_DoDung` / `VK_CuaSoMo` / `VK_CuaDi`, kiểu nét CENTER / HIDDEN / CENTER2, layer `A-Window`, kiểu chữ `Arch-Dim` (romans.shx) và kiểu dim `dim cua` **nhúng sẵn** ở cuối `VK.lsp` (~0,8 MB, dữ liệu entmake), không cần file thư viện hay Python. Bản vẽ đã có block / kiểu cùng tên thì dùng luôn, không định nghĩa lại.
+- Dữ liệu nhúng `lisp\vk_du_lieu.lsp` sinh bằng `scripts\nhung_block.ps1` (AutoCAD `/b` mở `assets\VK_thu_vien.dwg`, chạy `scripts\xuat_du_lieu_block.lsp`: entget từng đối tượng, bỏ handle / tham chiếu, số thực 10 chữ số lẻ) rồi `gop_vk.py` gộp vào `VK.lsp`. Đổi block: tạo lại `VK_thu_vien.dxf` → `xuat_thu_vien_lisp.py` + `dxf_to_dwg.ps1` ra `VK_thu_vien.dwg` → `nhung_block.ps1` → `gop_vk.py`.
+- Khi tạo block từ dữ liệu, HATCH phải sửa trước khi entmake (`vk:sua-hatch`): `(97 . n)` → `(97 . 0)` (tham chiếu biên liên kết không mang theo được) và góc cung biên đưa về [0, 2π). Một đối tượng entmake lỗi làm hỏng cả định nghĩa block đang tạo (ENDBLK trả nil).
 - Gõ `VK` → hộp thoại: chiều dài vách; cửa sổ mở (số lượng, rộng tâm-tâm mặc định 1000, ở ô thứ); cửa đi (số lượng, rộng mặc định 1665, ở ô thứ). Bảng tự tính lại số đố, số ô kính × khoảng chia và danh sách từng ô khi rời ô nhập hoặc bấm **Tính lại**; lỗi hiện ngay dưới bảng. Có ô **Lật vách**. OK → chọn điểm đầu vách (mép ngoài) và điểm hướng vách (Enter = trục X).
+- Ô "Ở ô thứ": để trống hoặc ghi `0` = tự đặt (người dùng nhập 0 bị báo lỗi, sửa 28/10/2026); ghi ít ô hơn số cửa thì các cửa còn lại tự đặt; ghi nhiều hơn số cửa / ô ngoài khoảng / chữ thì báo lỗi dưới bảng.
 - Ô đặt cửa bỏ trống thì tự rải đều vào các ô còn trống (cửa đi trước, cửa sổ sau; 1 cửa → ô giữa `tổng // 2 + 1`, khớp script Python).
 - **Rộng cửa khác mặc định** → tạo block `VK_CuaSoMo_<rộng>` / `VK_CuaDi_<rộng>` bằng cách kéo giãn block gốc: đố trái giữ nguyên, đố phải dời, phần cánh giữa giãn theo tỉ lệ, cung mở cánh (r > 200) nhân bán kính theo tỉ lệ; bản lề / tay nắm nằm trong vùng giãn nên cũng bị giãn nhẹ (`Cần xác nhận lại`).
 - Kết quả giống script Python: block `VACH KINH <dài>` (trùng tên thì `… (2)`) trên `A-Window`, kích thước kiểm tra trong block. AutoCAD 2027 `-BLOCK` tự đổi đối tượng thành 1 bản chèn tại 0,0 → lệnh dời bản chèn đó tới điểm chọn (bản cũ xoá đối tượng → chèn mới).
 - **Chạy thử không giao diện** (hộp thoại DCL không chạy được khi tự động): `powershell -NoProfile -ExecutionPolicy Bypass -File <skill>\scripts\chay_thu_vk.ps1 -Dwg "<bản vẽ trắng>.dwg" -OutDwg "<kết quả>.dwg" -Lisp "(vk:thu 5300.0 1 1000.0 0 1665.0 nil nil nil '(0.0 0.0 0.0) 0.0)"` — `vk:thu L số-sổ rộng-sổ số-đi rộng-đi ô-sổ ô-đi lật điểm góc(rad)`; log từng vách ở `<kết quả>.dwg_log.txt`.
 - Lưu ý khi viết LISP chạy bằng script: **không huỷ lệnh bằng `(command)`** (Esc trong script dừng cả script, AutoCAD treo); `open` có tham số mã hoá `"utf8"` lỗi khi `LISPSYS = 0` (AutoCAD 2027 chạy `/b` trên máy này đang `LISPSYS = 0`) → bọc `vl-catch-all-apply`, lỗi thì ghi thường.
-- Thư viện `VK_thu_vien.dwg` sinh từ `VK_thu_vien.dxf` bằng `scripts\xuat_thu_vien_lisp.py` (đặt sẵn 1 bản chèn mỗi block + 1 dim `dim cua` trong model để -INSERT chép đủ định nghĩa) rồi `dxf_to_dwg.ps1`.
+- `VK_thu_vien.dwg` (nguồn để nhúng) sinh từ `VK_thu_vien.dxf` bằng `scripts\xuat_thu_vien_lisp.py` (đặt sẵn 1 bản chèn mỗi block + 1 dim `dim cua` trong model) rồi `dxf_to_dwg.ps1`. Chạy thử: `-LispFile <file.lsp>` thay cho `-Lisp` khi biểu thức có dấu ngoặc kép.
 
 ## Đổi block (khi người dùng cấp block mới)
 Người dùng xuất DXF 3 file vào một thư mục (tên chứa `thanh dung`, `cua so`, `cua di`; mỗi file cửa có đúng 2 đố là block cùng tên), rồi:
@@ -55,7 +59,7 @@ Script không ghi đè: chép thư viện cũ vào `_backup\` trước (quy tắ
 - Chưa đặt vách vào bản vẽ mặt bằng có sẵn: kết quả là bản vẽ mới, người dùng tự chèn / chép vào mặt bằng.
 - Ô kính quá hẹp (cửa gần lấp hết vách) không cảnh báo; vách ngắn hơn tổng cửa thì báo lỗi.
 - Mới kiểm tra bằng ảnh PNG (ezdxf và AutoCAD in) và đọc lại DWG; chưa mở trong AutoCAD thật.
-- Lệnh `VK`: phần dựng vách đã chạy thử bằng `acad.exe /b` (5 vách, gồm cửa kéo giãn 1200 / 1400, lật + xoay 30°); **hộp thoại chưa thử** (cần người dùng bấm thử). Hộp thoại ghi file DCL UTF-8 vào `TEMPPREFIX`: `LISPSYS = 0` thì chữ có dấu trong hộp thoại và thông báo sẽ lỗi font.
+- Lệnh `VK`: phần dựng vách đã chạy thử bằng `acad.exe /b` (5 vách, gồm cửa kéo giãn 1200 / 1400, lật + xoay 30°); **hộp thoại chưa thử** (cần người dùng bấm thử). Hộp thoại ghi file DCL (ASCII, mã `\U+XXXX`) vào `TEMPPREFIX`; bản đầu ghi UTF-8 bị lỗi font khi `LISPSYS = 0`, bản mã hoá chưa được người dùng xác nhận hiển thị đúng.
 
 ## Áp dụng tại D:\AI
 - Tuân thủ các QUY TẮC BẮT BUỘC trong `D:\AI\CLAUDE.md`. Thư mục kết quả đánh số `NN_` (mẫu: `D:\AI\file mau\05_VachKinh\`). Thư mục tạm `<gốc>\_tmp\vachkinh_*` giữ lại, không xoá.
