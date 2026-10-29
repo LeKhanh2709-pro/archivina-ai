@@ -238,7 +238,10 @@
     ((= loai "D")
      (cond
        ((or (not hd) (<= hd 0)) "Nh\\U+1EADp chi\\U+1EC1u cao c\\U+1EEDa \\U+0111i")
-       ((>= (+ hd d d) H) (strcat "V\\U+00E1ch ph\\U+1EA3i cao h\\U+01A1n c\\U+1EEDa \\U+0111i + \\U+0111\\U+1ED1 ngang + khung tr\\U+00EAn = " (vkmd:so (+ hd d d))))
+       ((> hd (+ H 1e-6)) (strcat "C\\U+1EEDa \\U+0111i cao " (vkmd:so hd) " > v\\U+00E1ch " (vkmd:so H)))
+       ;; không đủ chỗ thanh ngang (cửa + 65 + khung trên 65 > vách, vd. cửa = vách): bỏ thanh ngang, đỉnh cửa sát
+       ;; dưới khung trên, cửa cao = vách - 65 (người dùng chốt 29/10/2026)
+       ((> (+ hd d d) (+ H 1e-6)) (list loai nil nil (- H d) (list 0.0 nua (- H nua) H)))
        ;; không giới hạn cao cửa: người dùng tự quy định (chốt 29/10/2026); cửa thấp thì hình cửa co theo tỉ lệ
        (T (list loai (list hd (+ hd d)) nil hd (list 0.0 nua (+ hd nua) (- H nua) H)))))
     ((and co (or (not hs) (<= hs 0))) "Nh\\U+1EADp chi\\U+1EC1u cao c\\U+1EEDa s\\U+1ED5")
@@ -450,14 +453,19 @@
   s
 )
 
-;;; Sau khi dựng mặt đứng (người dùng yêu cầu 29/10/2026, theo ảnh mẫu): dim kiểm tra trong block MẶT BẰNG (VK
-;;; đặt sát vách trên Defpoints) -> layer A-Dimension, chuyển xuống DƯỚI mặt bằng, cách đối tượng như dim mặt đứng
-;;; (gióng 80, chuỗi 200, tổng 335 từ mép ngoài cùng của vách phía đó, tính cả cung mở cánh cửa đi).
+;;; Sau khi dựng mặt đứng (người dùng yêu cầu 29/10/2026, theo ảnh mẫu): dim kiểm tra trong block MẶT BẰNG ->
+;;; layer A-Dimension, DƯỚI mặt bằng, cách đối tượng như dim mặt đứng (gióng 80, chuỗi 200, tổng 335 từ mép ngoài
+;;; cùng của vách phía đó, tính cả cung mở cánh cửa đi).
+;;;   - Chuỗi dim DỰNG LẠI theo đố thật đang có trong block (người dùng sửa tay block - thêm / dời đố - thì dim
+;;;     theo đúng; báo lỗi 29/10/2026: dim cũ không cập nhật). Dim cũ bỏ hết, vẽ lại bằng vla (sửa tại chỗ bằng
+;;;     entmod không ăn trong AutoCAD của người dùng). Dim mới không nằm trong Stretch action: kéo grip thì VK.lsp
+;;;     vẽ lại dim theo phía đã ghi trong XData.
 ;;;   - "Dưới" theo hướng thật trên bản vẽ: phía trục y block có thành phần Y thế giới âm (vách đứng: phía -X).
-;;;   - Sửa tại chỗ (entmod), không xoá vẽ lại: dim nằm trong Stretch action của block động, xoá đi thì kéo grip
-;;;     không còn kéo dim. Sửa định nghĩa block mà bản chèn đang dùng (block gốc hoặc bản *U đã kéo grip).
+;;;   - Sửa định nghĩa block mà bản chèn đang dùng (block gốc hoặc bản *U đã kéo grip).
 ;;;   - Ghi phía đặt dim vào phần tử thứ 9 XData "ARCHIVINA_VK" -> VK.lsp vẽ lại dim đúng kiểu này khi kéo grip.
-(defun vkmd:dim-mat-bang (e / ed g s42 ben blk dims lo hi mn mx m tong x d yg xd moi ma gt)
+;;; Trả về chuỗi báo.
+(defun vkmd:dim-mat-bang (e / ed g s42 ben blk dims lo hi mn mx m tam n c w kq diem doan kieu
+                             yg i xd moi ma gt bo)
   (setq ed (entget e) g (cdr (assoc 50 ed))
         s42 (if (and (assoc 42 ed) (< (cdr (assoc 42 ed)) 0)) -1.0 1.0)
         ben (cond ((> (* (cos g) s42) 1e-6) -1)
@@ -466,27 +474,43 @@
                   (T -1))
         blk (vla-Item (vla-get-Blocks (vla-get-ActiveDocument (vlax-get-acad-object))) (cdr (assoc 2 ed)))
         lo 0.0 hi 0.0)
+  ;; dim có sẵn, mép ngoài cùng (không tính dim) và tâm đố thật (toạ độ trong block)
   (vlax-for x blk
     (cond
       ((wcmatch (vla-get-ObjectName x) "*Dimension") (setq dims (cons x dims)))
-      ((not (vl-catch-all-error-p (vl-catch-all-apply 'vla-GetBoundingBox (list x 'mn 'mx))))
-       (setq lo (min lo (cadr (vlax-safearray->list mn))) hi (max hi (cadr (vlax-safearray->list mx)))))))
-  (if dims
+      (T
+       (if (not (vl-catch-all-error-p (vl-catch-all-apply 'vla-GetBoundingBox (list x 'mn 'mx))))
+         (setq lo (min lo (cadr (vlax-safearray->list mn))) hi (max hi (cadr (vlax-safearray->list mx)))))
+       (if (= "AcDbBlockReference" (vla-get-ObjectName x))
+         (progn
+           (setq n (strcase (vla-get-Name x)) c (car (vlax-get x 'InsertionPoint)))
+           (cond
+             ((= n "VK_DODUNG") (setq tam (cons c tam)))
+             ((wcmatch n "VK_CUASOMO*")
+              (setq w (vkmd:rong-ten n "VK_CUASOMO" vkmd:so-goc) tam (cons c (cons (+ c w) tam))))
+             ((wcmatch n "VK_CUADI*")
+              (setq w (vkmd:rong-ten n "VK_CUADI" vkmd:di-goc) tam (cons c (cons (+ c w) tam))))))))))
+  (setq tam (vl-sort tam '<) kq nil)
+  (foreach c tam (if (not (and kq (equal c (car kq) 0.01))) (setq kq (cons c kq))))
+  (setq tam (reverse kq))
+  (if (< (length tam) 2)
+    "kh\\U+00F4ng th\\U+1EA5y \\U+0111\\U+1ED1 trong block m\\U+1EB7t b\\U+1EB1ng, gi\\U+1EEF nguy\\U+00EAn dim"
     (progn
-      (setq m (if (> ben 0) hi lo)
+      ;; điểm chuỗi: mép đầu vách, các tâm đố, mép cuối vách
+      (setq diem (append (list (- (car tam) (/ vkmd:do 2.0))) tam (list (+ (last tam) (/ vkmd:do 2.0))))
+            i 0)
+      (repeat (1- (length diem)) (setq doan (cons (list (nth i diem) (nth (1+ i) diem)) doan) i (1+ i)))
+      (setq doan (reverse doan)
+            m (if (> ben 0) hi lo)
             yg (+ m (* ben vkmd:dim-ho-ngang))
-            ;; dim tổng = dim đo dài nhất (chạy lại MDVK lần 2 vẫn nhận đúng)
-            tong (car (vl-sort dims '(lambda (a b) (> (vla-get-Measurement a) (vla-get-Measurement b))))))
+            kieu (cond ((tblsearch "DIMSTYLE" vkmd:dimstyle) vkmd:dimstyle) (dims (vla-get-StyleName (car dims)))))
+      ;; bỏ hết dim kiểm tra cũ rồi vẽ lại bằng vla: bản sửa tại chỗ (entmod) trong AutoCAD của người dùng không
+      ;; đổi được dim (dim cũ đứng yên chỗ cũ, chỉ dim thêm mới hiện đúng; báo 29/10/2026)
+      (setq bo 0)
       (foreach x dims
-        (setq d (entget (vlax-vla-object->ename x)))
-        (foreach k '(13 14)
-          (setq d (subst (list k (cadr (assoc k d)) yg (caddr (assoc k d))) (assoc k d) d)))
-        (setq d (subst (list 10 (cadr (assoc 10 d))
-                             (+ m (* ben (if (eq x tong) vkmd:dim-ngang-tong vkmd:dim-ngang-chuoi)))
-                             (caddr (assoc 10 d)))
-                       (assoc 10 d) d)
-              d (subst (cons 8 vkmd:layer-dim) (assoc 8 d) d))
-        (entmod d))
+        (if (vl-catch-all-error-p (vl-catch-all-apply 'vla-Delete (list x))) (setq bo (1+ bo))))
+      (foreach s doan (vkmd:them-dim blk (car s) (cadr s) yg (+ m (* ben vkmd:dim-ngang-chuoi)) kieu))
+      (vkmd:them-dim blk (car diem) (last diem) yg (+ m (* ben vkmd:dim-ngang-tong)) kieu)
       ;; phía đặt dim -> phần tử thứ 9 của XData (vách bản cũ không có XData thì thôi)
       (if (setq xd (cdr (assoc "ARCHIVINA_VK" (cdr (assoc -3 (entget e '("ARCHIVINA_VK")))))))
         (progn
@@ -499,13 +523,23 @@
           (vlax-safearray-fill gt (mapcar '(lambda (p) (vlax-make-variant (cdr p))) moi))
           (vla-SetXData (vlax-ename->vla-object e) ma gt)))
       (vla-Update (vlax-ename->vla-object e))
-      (length dims)))
+      (strcat "dim m\\U+1EB7t b\\U+1EB1ng v\\U+1EBD l\\U+1EA1i " (itoa (length doan)) " \\U+0111o\\U+1EA1n + t\\U+1ED5ng " (vkmd:so (- (last diem) (car diem)))
+              " (A-Dimension, d\\U+01B0\\U+1EDBi m\\U+1EB7t b\\U+1EB1ng)"
+              (if (> bo 0) (strcat " - " (itoa bo) " dim c\\U+0169 kh\\U+00F4ng xo\\U+00E1 \\U+0111\\U+01B0\\U+1EE3c (layer b\\U+1ECB kho\\U+00E1?)") ""))))
+)
+
+;;; Thêm 1 dim ngang p..q vào block blk: gióng bắt đầu ở yg, đường dim ở y, kiểu kieu, layer A-Dimension
+(defun vkmd:them-dim (blk p q yg y kieu / x)
+  (setq x (vla-AddDimRotated blk (vlax-3d-point p yg 0.0) (vlax-3d-point q yg 0.0)
+                             (vlax-3d-point (/ (+ p q) 2.0) y 0.0) 0.0))
+  (if kieu (vla-put-StyleName x kieu))
+  (vla-put-Layer x vkmd:layer-dim)
 )
 
 ;;; Chạy đủ (dùng chung cho lệnh MDVK và chạy thử không hộp thoại).
 ;;; e: bản chèn block mặt bằng; pt: điểm đặt (nil -> hỏi). Vách nằm ngang trên mặt bằng: mặt đứng thẳng hàng
 ;;; theo X với mặt bằng, chỉ lấy cao độ Y của điểm chọn; vách xiên: góc dưới trái mặt đứng = điểm chọn.
-(defun vkmd:thuc-hien (e H hd hs co san bau pt / *error* bien cu undo ucs vach kq ngang nguoc x0 y0 ten dau ds-cu)
+(defun vkmd:thuc-hien (e H hd hs co san bau pt / *error* bien cu undo ucs vach kq ngang nguoc x0 y0 ten dau ds-cu r)
   (defun *error* (msg)
     (mapcar 'setvar bien cu)
     (if ucs (command-s "_.UCS" "_P"))
@@ -566,7 +600,13 @@
                                                                                           "x" (vkmd:so H))))
                                 (list x0 y0 0.0)))
             ;; dim kiểm tra của mặt bằng -> A-Dimension, xuống dưới mặt bằng
-            (if ten (vl-catch-all-apply 'vkmd:dim-mat-bang (list e)))
+            (if ten
+              (progn
+                (setq r (vl-catch-all-apply 'vkmd:dim-mat-bang (list e)))
+                (princ (strcat "
+MDVK: " (if (vl-catch-all-error-p r)
+                                               (strcat "l\\U+1ED7i khi s\\U+1EEDa dim m\\U+1EB7t b\\U+1EB1ng: " (vl-catch-all-error-message r))
+                                               r)))))
             (princ (if ten
                      (strcat "\nMDVK: m\\U+1EB7t \\U+0111\\U+1EE9ng " (vkmd:so (car vach)) " x " (vkmd:so H)
                              " -> block " ten "\n    Cao \\U+0111\\U+1ED9 (t\\U+1EEB d\\U+01B0\\U+1EDBi l\\U+00EAn): " (vkmd:chuoi kq))
@@ -616,10 +656,14 @@
   (if (listp kq)
     (progn
       (set_tile "thongtin" (strcat "Cao \\U+0111\\U+1ED9 t\\U+00E2m thanh ngang (t\\U+1EEB d\\U+01B0\\U+1EDBi l\\U+00EAn): " (vkmd:chuoi kq)
-                                   (if (caddr kq)
-                                     (strcat "   |   m\\U+00E9p d\\U+01B0\\U+1EDBi c\\U+00E1nh +" (vkmd:so (cadr (caddr kq)))
-                                             ", cao c\\U+1EEDa s\\U+1ED5 " (vkmd:so (- (caddr (caddr kq)) (cadr (caddr kq)))))
-                                     "")))
+                                   (cond
+                                     ((caddr kq)
+                                      (strcat "   |   m\\U+00E9p d\\U+01B0\\U+1EDBi c\\U+00E1nh +" (vkmd:so (cadr (caddr kq)))
+                                              ", cao c\\U+1EEDa s\\U+1ED5 " (vkmd:so (- (caddr (caddr kq)) (cadr (caddr kq))))))
+                                     ((and (= "D" (car kq)) (not (cadr kq)))
+                                      (strcat "   |   kh\\U+00F4ng \\U+0111\\U+1EE7 ch\\U+1ED7 thanh ngang: b\\U+1ECF thanh ngang, c\\U+1EEDa cao "
+                                              (vkmd:so (nth 3 kq)) " s\\U+00E1t d\\U+01B0\\U+1EDBi khung tr\\U+00EAn"))
+                                     (T ""))))
       (set_tile "loi" ""))
     (progn (set_tile "thongtin" "") (set_tile "loi" (strcat "L\\U+1ED7i: " kq))))
   (setq vkmd-kq kq)

@@ -332,10 +332,11 @@
 ;;; ---------------------------------------------------------------- block động (kéo grip chiều dài)
 ;;; Người dùng chốt 29/10/2026: block vách có grip ở điểm cuối; kéo grip -> đố chia lại đúng quy tắc (ô < 1200,
 ;;; chia đều), cửa sổ / cửa đi giữ đúng ô thứ k (ô không còn thì tự đặt lại).
-;;;   - Tham số Linear "ChieuDai" (0,0)-(L,0), grip ở CẢ HAI đầu (người dùng yêu cầu 29/10/2026), mỗi đầu một
-;;;     Stretch action: tạo bằng -BEDIT / BPARAMETER / BACTION (LISP không có hàm tạo tham số động). Không có
-;;;     VK.lsp thì kéo grip chỉ giãn ô đầu / ô cuối. Kéo grip đầu: điểm chèn giữ nguyên, đầu vách trong *U dời
-;;;     đi dx (vk:dau-vach đo theo đố đầu) -> vẽ lại từ dx; MDVK cũng trừ dx này.
+;;;   - Tham số Linear "ChieuDai" (0,0)-(L,0), CHỈ 1 grip ở điểm cuối, điểm đầu khoá (người dùng chốt 29/10/2026
+;;;     sau khi thử bản kéo 2 đầu), 1 Stretch action quanh đầu cuối: tạo bằng -BEDIT / BPARAMETER / BACTION (LISP
+;;;     không có hàm tạo tham số động). Không có VK.lsp thì kéo grip chỉ giãn ô cuối. Vách tạo bằng bản 2 grip
+;;;     vẫn chia lại đúng khi kéo đầu: đầu vách trong *U dời dx (vk:dau-vach đo theo đố đầu) -> vẽ lại từ dx;
+;;;     MDVK cũng trừ dx này.
 ;;;   - Thông số cửa lưu ở XData "ARCHIVINA_VK" của bản chèn. Reactor ghi lại bản chèn vách bị sửa; hết lệnh
 ;;;     (kéo grip, Properties...) thì so ChieuDai với chiều dài đã lưu, khác thì chia lại và vẽ lại nội dung
 ;;;     bản *U của bản chèn đó (block gốc giữ nguyên). Cửa không còn vừa -> trả ChieuDai về chiều dài cũ.
@@ -355,9 +356,9 @@
        nil
        (progn
          (command "_.ZOOM" "_E")
-         ;; 2 grip: kéo được cả đầu vách lẫn cuối vách (người dùng yêu cầu 29/10/2026)
+         ;; 1 grip ở điểm cuối, điểm đầu khoá (người dùng chốt 29/10/2026, sau khi thử bản kéo 2 đầu)
          (command "_.BPARAMETER" "_L" "_L" vk:tham-so "_non" '(0.0 0.0) "_non" (list L 0.0)
-                  "_non" (list (/ L 2.0) off) "2")
+                  "_non" (list (/ L 2.0) off) "1")
          (if (> (logand 1 (getvar "CMDACTIVE")) 0) (command))
          (command "_.ZOOM" "_E")
          ;; chọn tham số bằng một điểm trên đường kích thước của nó, LỆCH khỏi chữ nhãn ở giữa (bấm đúng
@@ -365,11 +366,6 @@
          (command "_.BACTION" "_non" (list (* L 0.12) off) "_T" "_S"
                   "_non" (list (- L 80.0) (- big)) "_non" (list (+ L 300.0) big)
                   "_C" "_non" (list (- L 80.0) (- big)) "_non" (list (+ L 300.0) big) "")
-         (if (> (logand 1 (getvar "CMDACTIVE")) 0) (command))
-         ;; Stretch thứ 2 gắn điểm đầu (sTart): khung quanh đầu vách
-         (command "_.BACTION" "_non" (list (* L 0.12) off) "_T" "_T"
-                  "_non" (list -300.0 (- big)) "_non" (list 80.0 big)
-                  "_C" "_non" (list -300.0 (- big)) "_non" (list 80.0 big) "")
          (if (> (logand 1 (getvar "CMDACTIVE")) 0) (command))
          (command "_.BSAVE")
          (if (> (logand 1 (getvar "CMDACTIVE")) 0) (command))
@@ -395,11 +391,11 @@
 
 (defun vk:du-grip (ten / d)
   (setq d (vk:dem-dong ten))
-  (if (and (= 2 (car d)) (= 2 (cdr d)))
+  (if (and (= 1 (car d)) (= 1 (cdr d)))
     T
     (progn
-      (princ (strcat "\nVK: block " ten " ch\\U+1EC9 c\\U+00F3 " (itoa (cdr d)) "/2 grip, " (itoa (car d))
-                     "/2 Stretch action - k\\U+00E9o grip c\\U+00F3 th\\U+1EC3 kh\\U+00F4ng \\U+0111\\U+00FAng, b\\U+00E1o l\\U+1EA1i \\U+0111\\U+1EC3 s\\U+1EEDa."))
+      (princ (strcat "\nVK: block " ten " c\\U+00F3 " (itoa (cdr d)) "/1 grip, " (itoa (car d))
+                     "/1 Stretch action - k\\U+00E9o grip c\\U+00F3 th\\U+1EC3 kh\\U+00F4ng \\U+0111\\U+00FAng, b\\U+00E1o l\\U+1EA1i \\U+0111\\U+1EC3 s\\U+1EEDa."))
       nil))
 )
 
@@ -638,59 +634,118 @@
 )
 
 ;;; ---------------------------------------------------------------- hộp thoại
+;;; Bảng các ô giữ dạng list_box như cũ (người dùng chốt 29/10/2026: "vẫn muốn giữ bảng như này, thêm ô tích
+;;; thôi"), cột cuối là ô tích [x] / [  ]: BẤM vào dòng = tích / bỏ tích ô đó (list_box không chứa được toggle
+;;; thật). Ô tích mới thành cửa sổ hay cửa đi theo lựa chọn "Ô tích sẽ là". Thay cho 2 ô "Ở ô thứ" (đã bỏ).
+(defun vk:dcl-bang ()
+  (list "  : list_box { key = \"ds\"; label = \"Kho\\U+1EA3ng c\\U+00E1ch c\\U+00E1c \\U+0111\\U+1ED1 (t\\U+00E2m - t\\U+00E2m, \\U+00F4 \\U+0111\\U+1EBFm t\\U+1EEB tr\\U+00E1i, k\\U+1EC3 c\\U+1EA3 \\U+00F4 c\\U+1EEDa) - b\\U+1EA5m v\\U+00E0o d\\U+00F2ng \\U+0111\\U+1EC3 t\\U+00EDch / b\\U+1ECF t\\U+00EDch c\\U+1EEDa:\"; height = 12; width = 70; tabs = \"6 20 125\"; }"
+        "  : row {"
+        "    : radio_row { key = \"loaitich\"; label = \"\\U+00D4 t\\U+00EDch s\\U+1EBD l\\U+00E0:\";"
+        "      : radio_button { key = \"rs\"; label = \"C\\U+1EEDa s\\U+1ED5 m\\U+1EDF\"; }"
+        "      : radio_button { key = \"rd\"; label = \"C\\U+1EEDa \\U+0111i\"; }"
+        "    }"
+        "  }"
+        "  : text { key = \"oluu\"; width = 70; }")
+)
+
 (defun vk:viet-dcl (f / h)
   ;; VK.lsp sinh từ file này đã đổi chữ có dấu thành mã \U+XXXX (chỉ còn ký tự ASCII) -> ghi DCL thường,
   ;; hộp thoại hiện đúng dấu với cả LISPSYS = 0 và 1
   (setq h (open f "w"))
   (foreach s
-    '("vk_hop_thoai : dialog {"
-      "  label = \"VK - Chia \\U+0111\\U+1ED1 v\\U+00E1ch k\\U+00EDnh\";"
-      "  : boxed_column { label = \"V\\U+00E1ch k\\U+00EDnh\";"
-      "    : row {"
-      "      : edit_box { key = \"dai\"; label = \"Chi\\U+1EC1u d\\U+00E0i v\\U+00E1ch (mm, m\\U+00E9p ngo\\U+00E0i - m\\U+00E9p ngo\\U+00E0i):\"; edit_width = 10; }"
-      "      : button { key = \"pick\"; label = \"Pick 2 \\U+0111i\\U+1EC3m <\"; fixed_width = true; }"
-      "    }"
-      "    : text { key = \"diem\"; width = 62; }"
-      "    : edit_box { key = \"ten\"; label = \"T\\U+00EAn v\\U+00E1ch (= t\\U+00EAn block; tr\\U+1ED1ng = t\\U+1EF1 \\U+0111\\U+1EB7t):\"; edit_width = 28; }"
-      "    : text { key = \"tenbao\"; width = 62; }"
-      "    : text { key = \"thongtin\"; width = 62; }"
-      "  }"
-      "  : row {"
-      "    : boxed_column { label = \"C\\U+1EEDa s\\U+1ED5 m\\U+1EDF\";"
-      "      : edit_box { key = \"ns\"; label = \"S\\U+1ED1 l\\U+01B0\\U+1EE3ng:\"; edit_width = 6; }"
-      "      : edit_box { key = \"ws\"; label = \"R\\U+1ED9ng t\\U+00E2m - t\\U+00E2m \\U+0111\\U+1ED1 (mm):\"; edit_width = 8; }"
-      "      : edit_box { key = \"vs\"; label = \"\\U+1EDE \\U+00F4 th\\U+1EE9 (vd. 1,3; tr\\U+1ED1ng ho\\U+1EB7c 0 = t\\U+1EF1 \\U+0111\\U+1EB7t):\"; edit_width = 8; }"
-      "    }"
-      "    : boxed_column { label = \"C\\U+1EEDa \\U+0111i\";"
-      "      : edit_box { key = \"nd\"; label = \"S\\U+1ED1 l\\U+01B0\\U+1EE3ng:\"; edit_width = 6; }"
-      "      : edit_box { key = \"wd\"; label = \"R\\U+1ED9ng t\\U+00E2m - t\\U+00E2m \\U+0111\\U+1ED1 (mm):\"; edit_width = 8; }"
-      "      : edit_box { key = \"vd\"; label = \"\\U+1EDE \\U+00F4 th\\U+1EE9 (vd. 2; tr\\U+1ED1ng ho\\U+1EB7c 0 = t\\U+1EF1 \\U+0111\\U+1EB7t):\"; edit_width = 8; }"
-      "    }"
-      "  }"
-      "  : list_box { key = \"ds\"; label = \"Kho\\U+1EA3ng c\\U+00E1ch c\\U+00E1c \\U+0111\\U+1ED1 (t\\U+00E2m - t\\U+00E2m, \\U+00F4 \\U+0111\\U+1EBFm t\\U+1EEB tr\\U+00E1i, k\\U+1EC3 c\\U+1EA3 \\U+00F4 c\\U+1EEDa):\"; height = 12; width = 62; tabs = \"6 20\"; }"
-      "  : row {"
-      "    : toggle { key = \"lat\"; label = \"L\\U+1EADt v\\U+00E1ch (m\\U+1EB7t k\\U+1EB9p k\\U+00EDnh sang ph\\U+00EDa b\\U+00EAn kia)\"; }"
-      "    : button { key = \"tinh\"; label = \"T\\U+00EDnh l\\U+1EA1i\"; fixed_width = true; }"
-      "  }"
-      "  : text { key = \"loi\"; width = 62; }"
-      "  ok_cancel;"
-      "}")
+    (append
+      '("vk_hop_thoai : dialog {"
+        "  label = \"VK - Chia \\U+0111\\U+1ED1 v\\U+00E1ch k\\U+00EDnh\";"
+        "  : boxed_column { label = \"V\\U+00E1ch k\\U+00EDnh\";"
+        "    : row {"
+        "      : edit_box { key = \"dai\"; label = \"Chi\\U+1EC1u d\\U+00E0i v\\U+00E1ch (mm, m\\U+00E9p ngo\\U+00E0i - m\\U+00E9p ngo\\U+00E0i):\"; edit_width = 10; }"
+        "      : button { key = \"pick\"; label = \"Pick 2 \\U+0111i\\U+1EC3m <\"; fixed_width = true; }"
+        "    }"
+        "    : text { key = \"diem\"; width = 62; }"
+        "    : edit_box { key = \"ten\"; label = \"T\\U+00EAn v\\U+00E1ch (= t\\U+00EAn block; tr\\U+1ED1ng = t\\U+1EF1 \\U+0111\\U+1EB7t):\"; edit_width = 28; }"
+        "    : text { key = \"tenbao\"; width = 62; }"
+        "    : text { key = \"thongtin\"; width = 62; }"
+        "  }"
+        "  : row {"
+        "    : boxed_column { label = \"C\\U+1EEDa s\\U+1ED5 m\\U+1EDF\";"
+        "      : edit_box { key = \"ns\"; label = \"S\\U+1ED1 l\\U+01B0\\U+1EE3ng:\"; edit_width = 6; }"
+        "      : edit_box { key = \"ws\"; label = \"R\\U+1ED9ng t\\U+00E2m - t\\U+00E2m \\U+0111\\U+1ED1 (mm):\"; edit_width = 8; }"
+        "    }"
+        "    : boxed_column { label = \"C\\U+1EEDa \\U+0111i\";"
+        "      : edit_box { key = \"nd\"; label = \"S\\U+1ED1 l\\U+01B0\\U+1EE3ng:\"; edit_width = 6; }"
+        "      : edit_box { key = \"wd\"; label = \"R\\U+1ED9ng t\\U+00E2m - t\\U+00E2m \\U+0111\\U+1ED1 (mm):\"; edit_width = 8; }"
+        "    }"
+        "    : boxed_column { label = \"Xem tr\\U+01B0\\U+1EDBc (m\\U+1EB7t b\\U+1EB1ng, tr\\U+00E1i -> ph\\U+1EA3i): xanh = c\\U+1EEDa s\\U+1ED5, \\U+0111\\U+1ECF = c\\U+1EEDa \\U+0111i\";"
+        "      : image { key = \"xem\"; width = 58; height = 5; color = 250; fixed_width = true; fixed_height = true; }"
+        "    }"
+        "  }")
+      (vk:dcl-bang)
+      '("  : row {"
+        "    : toggle { key = \"lat\"; label = \"L\\U+1EADt v\\U+00E1ch (m\\U+1EB7t k\\U+1EB9p k\\U+00EDnh sang ph\\U+00EDa b\\U+00EAn kia)\"; }"
+        "    : button { key = \"tinh\"; label = \"T\\U+00EDnh l\\U+1EA1i\"; fixed_width = true; }"
+        "  }"
+        "  : text { key = \"loi\"; width = 62; }"
+        "  ok_cancel;"
+        "}"))
     (write-line s h))
   (close h)
 )
 
-;;; Đọc các ô nhập -> kết quả chia (danh sách) hoặc chuỗi lỗi; cập nhật bảng
-;;; Tính chia với chiều dài L, thông số cửa đọc qua hàm lay (get_tile khi hộp thoại mở)
-(defun vk:tinh-tu (lay L / ns nd)
-  (setq ns (vk:doc-so (apply lay '("ns"))) nd (vk:doc-so (apply lay '("nd"))))
-  (vk:chia L (if ns (fix ns) 0) (vk:doc-so (apply lay '("ws")))
-           (if nd (fix nd) 0) (vk:doc-so (apply lay '("wd")))
-           (vk:doc-vt (apply lay '("vs"))) (vk:doc-vt (apply lay '("vd"))))
+;;; Ô xem trước (người dùng yêu cầu 29/10/2026): sơ đồ mặt bằng vách theo kết quả chia kq, vẽ lại mỗi lần bảng đổi.
+;;; Ô kính: nét xanh nhạt; cửa sổ: dải xanh dương; cửa đi: dải đỏ + 2 nét chéo (cánh mở); đố: vạch trắng.
+(defun vk:ve-xem (kq / w h L le x0 y0 tl o tam i xa xb)
+  (setq w (dimx_tile "xem") h (dimy_tile "xem") le 6 y0 (/ h 2))
+  (start_image "xem")
+  (fill_image 0 0 w h 250)
+  (if (and (listp kq) (setq o (car kq) tam (cadr kq)) o)
+    (progn
+      (setq L (+ (last tam) (/ vk:do-rong 2.0))
+            tl (/ (- w (* 2 le)) L)
+            i 0)
+      (foreach x o
+        (setq xa (+ le (fix (* tl (nth i tam)))) xb (+ le (fix (* tl (nth (1+ i) tam)))))
+        (cond
+          ((= (car x) "S") (fill_image xa (- y0 3) (max 1 (- xb xa)) 7 5))
+          ((= (car x) "D")
+           (fill_image xa (- y0 3) (max 1 (- xb xa)) 7 1)
+           ;; cánh mở 2 bên
+           (vector_image xa y0 (/ (+ xa xb) 2) (- y0 (fix (* 0.4 h))) 1)
+           (vector_image xb y0 (/ (+ xa xb) 2) (- y0 (fix (* 0.4 h))) 1))
+          (T (vector_image xa y0 xb y0 4)))
+        (setq i (1+ i)))
+      ;; đố
+      (foreach c tam
+        (setq x0 (+ le (fix (* tl c))))
+        (fill_image (max 0 (1- x0)) (- y0 6) 3 13 7))))
+  (end_image)
 )
 
-(defun vk:cap-nhat (/ L kq i tn)
+;;; Vị trí (ô thứ, đếm từ 1) các ô loại loai ("S" / "D") trong danh sách ô o
+(defun vk:vi-tri (o loai / i kq)
+  (setq i 1)
+  (foreach x o (if (= (car x) loai) (setq kq (cons i kq))) (setq i (1+ i)))
+  (reverse kq)
+)
+
+(defun vk:vt->chuoi (ds / s)
+  (foreach i ds (setq s (strcat (if s (strcat s ",") "") (itoa i))))
+  (if s s "")
+)
+
+(defun vk:dau (ds n / kq) (repeat (min n (length ds)) (setq kq (cons (car ds) kq) ds (cdr ds))) (reverse kq))
+
+;;; Đọc các ô nhập + vị trí cửa đang tích (vk-vs / vk-vd, biến của c:VK) -> kết quả chia; cập nhật bảng
+(defun vk:cap-nhat (/ L ns nd ws wd kq i x tn tu-dat)
   (setq L (vk:doc-so (get_tile "dai"))
-        kq (vk:tinh-tu 'get_tile L))
+        ns (vk:doc-so (get_tile "ns")) ns (if ns (max 0 (fix ns)) 0)
+        nd (vk:doc-so (get_tile "nd")) nd (if nd (max 0 (fix nd)) 0)
+        ws (vk:doc-so (get_tile "ws")) wd (vk:doc-so (get_tile "wd"))
+        kq (vk:chia L ns ws nd wd vk-vs vk-vd))
+  ;; vị trí đã tích không còn hợp (vd. vách ngắn đi, ít ô hơn) -> đặt lại tự động
+  (if (and (not (listp kq)) (or vk-vs vk-vd) (listp (vk:chia L ns ws nd wd nil nil)))
+    (setq kq (vk:chia L ns ws nd wd nil nil) vk-vs nil vk-vd nil tu-dat T))
+  (vk:ve-xem kq)
+  ;; bảng các ô, cột cuối là ô tích
   (start_list "ds")
   (if (listp kq)
     (progn
@@ -698,9 +753,14 @@
       (foreach x (car kq)
         (add_list (strcat "\\U+00D4 " (itoa i) "\t"
                           (cond ((= (car x) "S") "C\\U+1EEDa s\\U+1ED5 m\\U+1EDF") ((= (car x) "D") "C\\U+1EEDa \\U+0111i") (T "K\\U+00EDnh"))
-                          "\t" (vk:so (cadr x))))
+                          "\t" (vk:so (cadr x))
+                          "\t" (if (member (car x) '("S" "D")) "[x]" "[   ]")))
         (setq i (1+ i)))))
   (end_list)
+  (set_tile "oluu"
+    (cond
+      (tu-dat "V\\U+1ECB tr\\U+00ED c\\U+1EEDa \\U+0111\\U+00E3 t\\U+00EDch kh\\U+00F4ng c\\U+00F2n h\\U+1EE3p v\\U+1EDBi s\\U+1ED1 \\U+00F4 m\\U+1EDBi - \\U+0111\\U+00E3 \\U+0111\\U+1EB7t l\\U+1EA1i t\\U+1EF1 \\U+0111\\U+1ED9ng")
+      (T "")))
   (if (listp kq)
     (progn
       (set_tile "thongtin" (strcat "S\\U+1ED1 \\U+0111\\U+1ED1: " (itoa (length (cadr kq))) "   |   \\U+00D4 k\\U+00EDnh: " (itoa (nth 3 kq))
@@ -726,6 +786,43 @@
   (setq vk-kq kq vk-dai L)
 )
 
+;;; Tích / bỏ tích ô i ở cột loai ("S" / "D"): vị trí cửa = các ô đang là cửa trong bảng (+ / - ô i), số lượng
+;;; cửa = số ô tích; một ô chỉ là một loại cửa
+(defun vk:tich (loai i v / so di)
+  (if (listp vk-kq)
+    (progn
+      (setq so (vk:vi-tri (car vk-kq) "S") di (vk:vi-tri (car vk-kq) "D"))
+      (if (= v "1")
+        (if (= loai "S")
+          (setq so (vl-sort (cons i (vl-remove i so)) '<) di (vl-remove i di))
+          (setq di (vl-sort (cons i (vl-remove i di)) '<) so (vl-remove i so)))
+        (if (= loai "S") (setq so (vl-remove i so)) (setq di (vl-remove i di))))
+      (setq vk-vs so vk-vd di)
+      (set_tile "ns" (itoa (length so)))
+      (set_tile "nd" (itoa (length di)))))
+  (vk:cap-nhat)
+)
+
+;;; Bấm 1 dòng của bảng (chỉ lần bấm, $reason 1; bấm đúp bỏ qua để không tích 2 lần): ô cửa -> bỏ tích (về kính);
+;;; ô kính -> tích thành loại đang chọn ở "Ô tích sẽ là"
+(defun vk:bam-dong (v ly / i x)
+  (if (and (= ly 1) (listp vk-kq) (/= v "") (setq i (1+ (atoi v)) x (nth (1- i) (car vk-kq))))
+    (if (member (car x) '("S" "D"))
+      (vk:tich (car x) i "0")
+      (vk:tich (if (= (get_tile "loaitich") "rd") "D" "S") i "1")))
+)
+
+;;; Sửa ô Số lượng: giữ các cửa đang có (bớt thì bỏ từ cuối), cửa thêm thì tự đặt
+(defun vk:sua-sl (/ ns nd)
+  (setq ns (vk:doc-so (get_tile "ns")) ns (if ns (max 0 (fix ns)) 0)
+        nd (vk:doc-so (get_tile "nd")) nd (if nd (max 0 (fix nd)) 0))
+  (if (listp vk-kq)
+    (setq vk-vs (vk:dau (vk:vi-tri (car vk-kq) "S") ns)
+          vk-vd (vk:dau (vk:vi-tri (car vk-kq) "D") nd))
+    (setq vk-vs (vk:dau vk-vs ns) vk-vd (vk:dau vk-vd nd)))
+  (vk:cap-nhat)
+)
+
 ;;; Tên tự đặt: "VACH KINH <dài>", dấu phẩy -> "_" (tên block không được có dấu phẩy), trùng thì thêm " (2)"...
 (defun vk:ten-tu-dat (L) (vk:ten-block (strcat "VACH KINH " (vl-string-translate "," "_" (vk:so L)))))
 
@@ -733,7 +830,9 @@
 (defun vk:dung-diem (L) (and vk-diem L (equal L (caddr vk-diem) 0.006)))
 
 (defun vk:luu-nho ()
-  (setq *vk-nho* (mapcar '(lambda (k) (cons k (get_tile k))) '("dai" "ns" "ws" "vs" "nd" "wd" "vd" "lat" "ten"))))
+  ;; vị trí cửa không còn ô nhập: lấy từ các ô đang tích (vk-vs / vk-vd)
+  (setq *vk-nho* (append (mapcar '(lambda (k) (cons k (get_tile k))) '("dai" "ns" "ws" "nd" "wd" "lat" "ten"))
+                         (list (cons "vs" (vk:vt->chuoi vk-vs)) (cons "vd" (vk:vt->chuoi vk-vd))))))
 
 ;;; Ghi chiều dài 2 điểm vừa pick vào ô "dai" của bộ nhớ hộp thoại
 (defun vk:nho-dai (d)
@@ -746,9 +845,13 @@
 ;;; Gõ VK -> bảng hiện ra trước: có chiều dài thì nhập, chưa có thì bấm "Pick 2 điểm <" (bảng ẩn, chọn điểm đầu
 ;;; + điểm cuối vách, bảng mở lại với chiều dài đã điền) -> chọn cửa sổ / cửa đi -> OK dựng vách đúng 2 điểm đã
 ;;; pick (người dùng chốt 29/10/2026). Hộp thoại đóng với mã 2 khi bấm nút pick.
-(defun c:VK (/ f id kq-dlg vk-kq vk-dai vk-diem lat d vk-ten vk-ten-loi)
+(defun c:VK (/ f id kq-dlg vk-kq vk-dai vk-diem lat d vk-ten vk-ten-loi vk-vs vk-vd)
   ;; tên vách không nhớ sang vách sau (mỗi vách một tên); chỉ giữ trong lúc bảng đóng / mở lại khi pick
   (if (assoc "ten" *vk-nho*) (setq *vk-nho* (subst '("ten" . "") (assoc "ten" *vk-nho*) *vk-nho*)))
+  ;; vị trí cửa lần trước (chuỗi "2,4" trong bộ nhớ bảng)
+  (setq vk-vs (vk:doc-vt (cdr (assoc "vs" *vk-nho*))) vk-vd (vk:doc-vt (cdr (assoc "vd" *vk-nho*))))
+  (if (not (listp vk-vs)) (setq vk-vs nil))
+  (if (not (listp vk-vd)) (setq vk-vd nil))
   (setq f (strcat (getvar "TEMPPREFIX") "VK_hop_thoai.dcl"))
   (vk:viet-dcl f)
   (if (< (setq id (load_dialog f)) 0)
@@ -763,9 +866,14 @@
             (foreach x (if *vk-nho* *vk-nho*
                          '(("dai" . "") ("ns" . "0") ("ws" . "1000") ("vs" . "")
                            ("nd" . "0") ("wd" . "1665") ("vd" . "") ("lat" . "0")))
-              (set_tile (car x) (cdr x)))
-            (foreach k '("dai" "ns" "ws" "vs" "nd" "wd" "vd" "ten" "tinh")
+              (if (not (member (car x) '("vs" "vd"))) (set_tile (car x) (cdr x))))
+            (foreach k '("dai" "ws" "wd" "ten" "tinh")
               (action_tile k "(vk:cap-nhat)"))
+            (action_tile "ns" "(vk:sua-sl)")
+            (action_tile "nd" "(vk:sua-sl)")
+            ;; bấm dòng = tích / bỏ tích; ô tích mới mặc định là cửa sổ
+            (if (not (member (get_tile "loaitich") '("rs" "rd"))) (set_tile "loaitich" "rs"))
+            (action_tile "ds" "(vk:bam-dong $value $reason)")
             (action_tile "pick" "(vk:luu-nho) (done_dialog 2)")
             (action_tile "accept"
               (strcat "(vk:cap-nhat) (if (and (listp vk-kq) (not vk-ten-loi)) (progn (setq lat (= \"1\" (get_tile \"lat\"))"
