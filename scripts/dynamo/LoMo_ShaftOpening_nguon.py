@@ -228,23 +228,29 @@ def tao_shaft(lv, vung):
         raise
 
 
-def them_vong_va_x(op, vung_moi, mau_x):
-    """Trong 1 lần sửa sketch của shaft: thêm vòng biên các ô mới + dấu X cho mọi vòng chưa có X → (số vòng thêm, số X)"""
+def vong_chua_x(op):
+    """Các vòng biên đã có trong sketch nhưng chưa có dấu X (ít hơn 2 nét symbolic có trung điểm trong vòng)"""
     sk = doc.GetElement(op.SketchId)
-    zs = sk.SketchPlane.GetPlane().Origin.Z
     _, ky = tach_sketch(op)
     giua_ky = []
     for e in ky:
         c = e.GeometryCurve
         a, b = c.GetEndPoint(0), c.GetEndPoint(1)
         giua_ky.append(((a.X + b.X) / 2, (a.Y + b.Y) / 2))
-    # vòng đã có trong sketch chưa có dấu X (ít hơn 2 nét symbolic có trung điểm trong vòng)
     can_x = []
     for arr in sk.Profile:
         cs = [c for c in arr]
         pts = [(c.GetEndPoint(0).X, c.GetEndPoint(0).Y) for c in cs]
         if sum(1 for q in giua_ky if trong_da_giac(q[0], q[1], pts)) < 2:
             can_x.append(cs)
+    return can_x
+
+
+def them_vong_va_x(op, vung_moi, mau_x):
+    """Trong 1 lần sửa sketch của shaft: thêm vòng biên các ô mới + dấu X cho mọi vòng chưa có X → (số vòng thêm, số X)"""
+    sk = doc.GetElement(op.SketchId)
+    zs = sk.SketchPlane.GetPlane().Origin.Z
+    can_x = vong_chua_x(op) if mau_x is not None else []
     ses = SketchEditScope(doc, "ARV - Lỗ mở shaft")
     t = Transaction(doc, "ARV - Lỗ mở shaft")
     so_vong = 0
@@ -311,7 +317,7 @@ def chinh():
     if GAN_X:
         if mau_x is None:
             bao_cao.append("CHƯA GẮN DẤU X: model chưa có shaft mẫu có dấu X. Vẽ tay 1 lần: chọn shaft → Edit Sketch → "
-                           "Symbolic Line vẽ 2 đường chéo → Finish, rồi bấm lại (bấm lại sẽ bổ sung X cho các vòng).")
+                           "Symbolic Line vẽ 2 đường chéo của 1 ô → Finish, rồi bấm lại (bấm lại sẽ bổ sung X cho các vòng).")
         else:
             bao_cao.append("Dấu X chép từ %s" % ghi_mau)
     if DRY_RUN:

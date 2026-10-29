@@ -1,0 +1,749 @@
+{
+  "Uuid": "a43c3f19-9f16-4a1f-8ae0-07e441f5c9a3",
+  "IsCustomNode": false,
+  "Description": "Tạo lỗ mở bằng MỘT Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở (mỗi ô một vòng biên, nhận trục như công cụ Ngăn cháy lan), biên = mép tường thô; Base / Top Constraint = level mặt bằng, Base Offset -100, Top Offset 1500; tầng đã có shaft lỗ mở thì thêm vòng vào shaft đó; dấu X (Symbolic Line chép từ shaft mẫu vẽ tay) cho mọi vòng; bấm lại không tạo trùng, không xoá. Mặc định Dry-run.",
+  "Name": "test_lomo_x",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "bf1121e1053946cc966a5a4d4fad11e2",
+      "Name": "Tên mặt bằng tầng (trống = view đang mở)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Tầng 2",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "4e4814d89db646cdb42065e1514f515f",
+      "Name": "Từ khoá tên room trục / HKT (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "f4269fe449984c4da1f23864a422d3ea",
+      "Name": "Diện tích lớn nhất ô / khe theo hình học (m2)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "3",
+      "Description": "Creates a number"
+    },
+    {
+      "Id": "ad97077ff18647ab940a9bd188b8a6b0",
+      "Name": "Bề rộng lòng nhỏ nhất (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "80",
+      "Description": "Creates a number"
+    },
+    {
+      "Id": "1b897be079274bec80aa574e6f2c0db3",
+      "Name": "Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "ac4bb7e5ae9949ff9f2b0bfdafd0dc33",
+      "Name": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "D:\\AI\\_tmp\\revit_lomo_test\\log",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "fbe0f61ede7e4c11881dc427866395b3",
+      "Name": "Từ khoá loại trừ thang máy / thang bộ (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Thang máy;Elevator;Lift;Thang bộ;Stair",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "03e7b19b012640439fabfc15d5c718f7",
+      "Name": "Base Offset (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "-100",
+      "Description": "Creates a number"
+    },
+    {
+      "Id": "5b3134c3dd8148a7ac4b1859b6da626c",
+      "Name": "Top Offset (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "1500",
+      "Description": "Creates a number"
+    },
+    {
+      "Id": "d83cbd477abb42aeb56621bdb631e44d",
+      "Name": "Gắn dấu X (Symbolic Line chép từ shaft mẫu)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "Tầng 2",
+      "Id": "bf1121e1053946cc966a5a4d4fad11e2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "61676d16c69243e29eb84045733c21c3",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft",
+      "Id": "4e4814d89db646cdb42065e1514f515f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e6b9ef6fa7c944d08bc8a88e8b3ae730",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "Description": "Creates a number",
+      "InputValue": 3.0,
+      "Id": "f4269fe449984c4da1f23864a422d3ea",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "24d357f6ecf146d4858c97620cfa3147",
+          "Name": "",
+          "Description": "number",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "Description": "Creates a number",
+      "InputValue": 80.0,
+      "Id": "ad97077ff18647ab940a9bd188b8a6b0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1c2606a78dc64f34a61ed808c3bdda1f",
+          "Name": "",
+          "Description": "number",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": false,
+      "Id": "1b897be079274bec80aa574e6f2c0db3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "323a447b0b6f42dd8267b7d3bb683f50",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "D:\\AI\\_tmp\\revit_lomo_test\\log",
+      "Id": "ac4bb7e5ae9949ff9f2b0bfdafd0dc33",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "55963ca689bf4c29bed0a691b7bbd3c3",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "Thang máy;Elevator;Lift;Thang bộ;Stair",
+      "Id": "fbe0f61ede7e4c11881dc427866395b3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4c4bfe27ba42463297b957c449c15624",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "Description": "Creates a number",
+      "InputValue": -100.0,
+      "Id": "03e7b19b012640439fabfc15d5c718f7",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c2b8e4d794c249daa9d00ec870f64105",
+          "Name": "",
+          "Description": "number",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "Description": "Creates a number",
+      "InputValue": 1500.0,
+      "Id": "5b3134c3dd8148a7ac4b1859b6da626c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5fcabeaaf9eb40ed943c69df1535e12d",
+          "Name": "",
+          "Description": "number",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "d83cbd477abb42aeb56621bdb631e44d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0af6c93354454cb2aa03960976ce9f5f",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Tạo lỗ mở bằng MỘT Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở của Revit (mỗi ô là một vòng\n# biên trong sketch, như mẫu người dùng vẽ 2026-10-28: 1 lệnh shaft để dễ kiểm soát).\n# Nhận trục / hộp đúng theo quy tắc của công cụ Ngăn cháy lan (dùng chung hàm tim_truc): tên room HKT → shaft opening\n# → ống đứng → hình học (ô / khe kín giữa tường không cửa đi, cửa sổ, thiết bị, sàn hoàn thiện); loại thang máy / thang bộ.\n#   - Biên lỗ mở = mép tường thô (dải lõi tường), không bo vào lớp trát / hoàn thiện (người dùng chốt 2026-10-28)\n#   - Base Constraint = Top Constraint = level của mặt bằng đang mở; Base Offset -100 mm, Top Offset 1500 mm (mặc định,\n#     người dùng chốt 2026-10-28)\n#   - Tầng đã có shaft lỗ mở cục bộ (Base và Top cùng là level đó) thì thêm vòng vào shaft đó (shaft nhiều vòng nhất),\n#     chưa có thì tạo 1 shaft mới. Ô đã có vòng lỗ mở thì bỏ qua: bấm lại không tạo trùng, không xoá.\n#   - Dấu X nhận biết lỗ mở = 2 Symbolic Line mỗi vòng (người dùng chốt 2026-10-28). API không tạo được Symbolic Line\n#     trong file dự án → chép 2 nét X của một shaft MẪU (nét sketch mang line style khác \"<Sketch>\", người dùng vẽ tay\n#     một lần) rồi kéo về 2 đường chéo; vòng đã có trong shaft mà chưa có X cũng được bổ sung. Chưa có mẫu thì báo.\n#   - Thêm vòng + dấu X nằm trong 1 lần sửa sketch (1 bước Undo); tạo shaft mới là 1 bước Undo riêng.\n# Dry-run (mặc định) chỉ báo cáo, không sửa mô hình.\n# INPUT\n#   IN[0] (str)   Tên view mặt bằng (để trống = view đang mở, phải là mặt bằng tầng)\n#   IN[1] (str)   Từ khoá tên room là trục / hộp kỹ thuật, cách nhau bằng ;  (không phân biệt dấu / hoa thường)\n#   IN[2] (float) Diện tích lớn nhất của ô / khe kín nhận theo hình học (m2)\n#   IN[3] (float) Bề rộng lòng nhỏ nhất của ô / khe (mm)\n#   IN[4] (bool)  Dry-run (True = chỉ báo cáo)\n#   IN[5] (str)   Thư mục ghi log + ảnh (để trống = Documents\\ARV_Logs\\lo_mo)\n#   IN[6] (str)   Từ khoá loại trừ (thang máy, thang bộ) trong tên family / type / room, cách nhau bằng ;\n#   IN[7] (float) Base Offset của lỗ mở (mm)\n#   IN[8] (float) Top Offset của lỗ mở (mm)\n#   IN[9] (bool)  Gắn dấu X (Symbolic Line chép từ shaft mẫu) cho mọi vòng lỗ mở chưa có X\n# OUTPUT\n#   OUT (list[str])  Báo cáo\nimport math\nimport os\nimport traceback\nimport unicodedata\nfrom datetime import datetime\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nimport Autodesk.Revit.DB as _RevitDB\n# pythonnet 3.0: tên đã được import đích danh trước đó trong phiên (vd. ở script khác) bị loại khỏi \"import *\"\n# → bổ sung đủ tên của namespace để không phụ thuộc thứ tự import\nglobals().update({_n: getattr(_RevitDB, _n) for _n in dir(_RevitDB) if not _n.startswith(\"_\") and _n not in globals()})\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\nfrom System.Collections.Generic import List as NetList\n# File gộp tự động bằng gop_lomo_shaft.py – KHÔNG sửa tay (sửa LoMo_ShaftOpening_nguon.py / NganChay_TrucHKT.py rồi gộp lại).\n\n\ndef ds_id(ids):\n    \"\"\"List[ElementId] tạo rỗng rồi Add (pythonnet của pyRevit không nhận List[T](list Python))\"\"\"\n    kq = NetList[ElementId]()\n    for i in ids:\n        kq.Add(i)\n    return kq\n\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\n\ndef gia_tri(i, mac_dinh):\n    try:\n        v = IN[i]\n        return mac_dinh if v is None or (isinstance(v, str) and not v.strip()) else v\n    except Exception:\n        return mac_dinh\n\n\ndef tach(s):\n    return [k.strip() for k in str(s).split(\";\") if k.strip()]\n\n\nTEN_VIEW = gia_tri(0, \"\")\nTU_KHOA_HKT = tach(gia_tri(1, \"HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft\"))\nDT_MAX_M2 = float(gia_tri(2, 3.0))\nRONG_MIN_MM = float(gia_tri(3, 80.0))\nDRY_RUN = bool(gia_tri(4, True))\nTHU_MUC = str(gia_tri(5, os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\", \"lo_mo\")))\nTU_KHOA_LOAI = tach(gia_tri(6, \"Thang máy;Elevator;Lift;Thang bộ;Stair\"))\nBASE_OFFSET_MM = float(gia_tri(7, -100.0))\nTOP_OFFSET_MM = float(gia_tri(8, 1500.0))\nGAN_X = bool(gia_tri(9, True))\nos.makedirs(THU_MUC, exist_ok=True)\n\n# hằng số nhận trục (chép nguyên từ NganChay_TrucHKT.py khi gộp)\nO_LON_MM = 1400.0         # ô lớn hơn 1400 x 1400 mm: vẫn hatch, liệt kê để xem lại\nDT_NHO_NHAT_M2 = 0.03     # ô nhỏ hơn coi là khe giữa 2 lớp tường\nO_LUOI_MM = 20.0          # cạnh ô lưới quét dấu chân tường\nLOI_MONG_MM = 30.0        # tường có lõi mỏng hơn (gạch ốp, lớp gỗ…) là lớp hoàn thiện → không coi là vách\nNOI_HO_MM = 400.0         # đầu tường hở cách tường khác tới mức này thì nối (như Revit khép room)\nDT_CO_BANG_CHUNG_M2 = 30.0   # ô có ống đứng / shaft opening: nhận tới diện tích này\nTU_SAN_KC = (\"sbt\", \"ket cau\", \"btct\", \"structural\")   # sàn kết cấu: không dùng để loại ô\nbao_cao = []\n\n\n# ==== PHẦN CHUNG: nhận trục / hộp kỹ thuật (dùng chung với LoMo_ShaftOpening.py – file gộp bằng gop_lomo_shaft.py) ====\ndef mm(v):\n    return UnitUtils.ConvertToInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ra_mm(v):\n    return UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ra_m2(v):\n    return UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.SquareMeters)\n\n\ndef khong_dau(s):\n    s = unicodedata.normalize(\"NFD\", s or \"\").replace(\"đ\", \"d\").replace(\"Đ\", \"D\")\n    return \"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower()\n\n\ndef co_tu(s, tu_khoa):\n    s = khong_dau(s)\n    return any(khong_dau(k) in s for k in tu_khoa)\n\n\ndef ten(e):\n    try:\n        return e.Name\n    except Exception:\n        return \"?\"\n\n\ndef ten_kieu(e):\n    t = doc.GetElement(e.GetTypeId())\n    return ten(t) if t is not None else \"\"\n\n\ndef ten_family(e):\n    try:\n        return e.Symbol.FamilyName\n    except Exception:\n        return ten_kieu(e)\n\n\ndef ten_tpl(v):\n    return ten(doc.GetElement(v.ViewTemplateId)) if v.ViewTemplateId != ElementId.InvalidElementId else \"\"\n\n\n# ---------- chọn view ----------\ndef chon_view():\n    plans = [v for v in FilteredElementCollector(doc).OfClass(ViewPlan) if not v.IsTemplate]\n    if TEN_VIEW:\n        for v in plans:\n            if v.Name == TEN_VIEW:\n                return v\n        raise Exception(\"Không tìm thấy view mặt bằng tên '%s'\" % TEN_VIEW)\n    la_cl = [v for v in plans if \"chay lan\" in khong_dau(ten_tpl(v)) or \"chay lan\" in khong_dau(v.Name)]\n    av = doc.ActiveView\n    for v in la_cl:\n        if v.Id == av.Id:\n            return v\n    if not la_cl:\n        raise Exception(\"Không có view mặt bằng nào có chữ 'cháy lan' trong tên view / template; nhập tên view vào IN[0]\")\n    return la_cl[0]\n\n\n# ---------- hình học 2D ----------\ndef diem_loop(curves):\n    pts = []\n    for c in curves:\n        for p in list(c.Tessellate())[:-1]:\n            pts.append((p.X, p.Y))\n    return pts\n\n\ndef trong_da_giac(x, y, pts):\n    ben_trong = False\n    n = len(pts)\n    for i in range(n):\n        x1, y1 = pts[i]\n        x2, y2 = pts[(i + 1) % n]\n        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:\n            ben_trong = not ben_trong\n    return ben_trong\n\n\ndef trong_vung(x, y, loops_pts):\n    # điểm nằm trong số lẻ vòng biên = nằm trong vùng (vòng ngoài trừ lỗ)\n    return sum(1 for pts in loops_pts if trong_da_giac(x, y, pts)) % 2 == 1\n\n\ndef bao_loi(pts):\n    \"\"\"Bao lồi (monotone chain)\"\"\"\n    p = sorted(set(pts))\n    if len(p) < 3:\n        return p\n\n    def cross(o, a, b):\n        return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])\n    duoi, tren = [], []\n    for q in p:\n        while len(duoi) >= 2 and cross(duoi[-2], duoi[-1], q) <= 0:\n            duoi.pop()\n        duoi.append(q)\n    for q in reversed(p):\n        while len(tren) >= 2 and cross(tren[-2], tren[-1], q) <= 0:\n            tren.pop()\n        tren.append(q)\n    return duoi[:-1] + tren[:-1]\n\n\ndef kich_thuoc(pts):\n    \"\"\"(bề rộng nhỏ nhất, chiều dài theo phương đó) của bao lồi – đo đúng cả ô xoay xiên\"\"\"\n    h = bao_loi(pts)\n    if len(h) < 3:\n        return 0.0, 0.0\n    tot = None\n    for i in range(len(h)):\n        (x1, y1), (x2, y2) = h[i], h[(i + 1) % len(h)]\n        L = math.hypot(x2 - x1, y2 - y1)\n        if L < 1e-9:\n            continue\n        ux, uy = (x2 - x1) / L, (y2 - y1) / L\n        rong = max(abs((x - x1) * uy - (y - y1) * ux) for x, y in h)\n        dai = max((x - x1) * ux + (y - y1) * uy for x, y in h) - min((x - x1) * ux + (y - y1) * uy for x, y in h)\n        if tot is None or rong < tot[0]:\n            tot = (rong, dai)\n    return tot\n\n\ndef phang(c, z):\n    return c.CreateTransformed(Transform.CreateTranslation(XYZ(0, 0, z - c.GetEndPoint(0).Z)))\n\n\ndef diem_tam(e):\n    \"\"\"Điểm đặt trên mặt bằng của đối tượng: Location.Point, không có thì tâm khung bao\"\"\"\n    try:\n        p = e.Location.Point\n        return (p.X, p.Y)\n    except Exception:\n        bb = e.get_BoundingBox(None)\n        if bb is None:\n            return None\n        return ((bb.Min.X + bb.Max.X) / 2, (bb.Min.Y + bb.Max.Y) / 2)\n\n\ndef diem_hai_ben(d):\n    \"\"\"2 điểm dò hai bên cửa đi / cửa sổ (qua bề dày tường + 200 mm)\"\"\"\n    try:\n        p = d.Location.Point\n        f = d.FacingOrientation\n        k = (d.Host.Width if d.Host is not None else mm(200)) / 2 + mm(200)\n        return [(p.X + f.X * k, p.Y + f.Y * k), (p.X - f.X * k, p.Y - f.Y * k)]\n    except Exception:\n        return []\n\n\ndef theo_level(cat, lv):\n    kq = []\n    for e in FilteredElementCollector(doc).OfCategory(cat).WhereElementIsNotElementType():\n        lid = e.LevelId\n        if lid == ElementId.InvalidElementId:\n            try:\n                lid = e.get_Parameter(BuiltInParameter.INSTANCE_SCHEDULE_ONLY_LEVEL_PARAM).AsElementId()\n            except Exception:\n                pass\n        if lid == lv.Id:\n            kq.append(e)\n    return kq\n\n\ndef vong_san(f):\n    \"\"\"Các vòng biên của sàn (theo sketch), điểm 2D\"\"\"\n    try:\n        sk = doc.GetElement(f.SketchId)\n        return [[(p.X, p.Y) for c in arr for p in list(c.Tessellate())[:-1]] for arr in sk.Profile]\n    except Exception:\n        return []\n\n\ndef la_san_ket_cau(f):\n    if co_tu(ten_kieu(f), TU_SAN_KC):\n        return True\n    try:\n        return f.get_Parameter(BuiltInParameter.FLOOR_PARAMETER_IS_STRUCTURAL).AsInteger() == 1\n    except Exception:\n        return False\n\n\ndef ong_dung(lv):\n    \"\"\"Điểm 2D của ống / ống gió / ống luồn dây / máng cáp đi đứng qua cao độ level\"\"\"\n    z = lv.Elevation\n    kq = []\n    for cat in (BuiltInCategory.OST_PipeCurves, BuiltInCategory.OST_DuctCurves, BuiltInCategory.OST_Conduit,\n                BuiltInCategory.OST_CableTray):\n        for e in FilteredElementCollector(doc).OfCategory(cat).WhereElementIsNotElementType():\n            try:\n                c = e.Location.Curve\n                a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n            except Exception:\n                continue\n            dz = abs(b.Z - a.Z)\n            if dz > 2 * math.hypot(b.X - a.X, b.Y - a.Y) and min(a.Z, b.Z) - mm(500) <= z + mm(1000) <= max(a.Z, b.Z) + mm(500):\n                kq.append(((a.X + b.X) / 2, (a.Y + b.Y) / 2))\n    return kq\n\n\n# ---------- kiểu thể hiện ----------\ndef lay_line_style():\n    cat = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines)\n    for sc in cat.SubCategories:\n        if sc.Name == TEN_NET:\n            return sc.GetGraphicsStyle(GraphicsStyleType.Projection), \"dùng line style có sẵn '%s'\" % TEN_NET\n    if DRY_RUN:\n        return None, \"sẽ tạo line style '%s' (màu %d,%d,%d)\" % ((TEN_NET,) + MAU_VIEN)\n    sc = doc.Settings.Categories.NewSubcategory(cat, TEN_NET)\n    sc.LineColor = Color(*MAU_VIEN)\n    sc.SetLineWeight(1, GraphicsStyleType.Projection)\n    return sc.GetGraphicsStyle(GraphicsStyleType.Projection), \"đã tạo line style '%s' (màu %d,%d,%d)\" % ((TEN_NET,) + MAU_VIEN)\n\n\ndef lay_mau_luoi():\n    for p in FilteredElementCollector(doc).OfClass(FillPatternElement):\n        if ten(p) == TEN_MAU_LUOI:\n            return p.Id, \"dùng mẫu có sẵn '%s'\" % TEN_MAU_LUOI\n    if DRY_RUN:\n        return None, \"sẽ tạo mẫu model '%s' (lưới %g mm, %g°)\" % (TEN_MAU_LUOI, LUOI_MM, LUOI_GOC)\n    fp = FillPattern(TEN_MAU_LUOI, FillPatternTarget.Model, FillPatternHostOrientation.ToView,\n                     math.radians(LUOI_GOC), mm(LUOI_MM), mm(LUOI_MM))\n    pe = FillPatternElement.Create(doc, fp)\n    return pe.Id, \"đã tạo mẫu model '%s' (lưới %g mm, %g°)\" % (TEN_MAU_LUOI, LUOI_MM, LUOI_GOC)\n\n\ndef lay_kieu_hatch():\n    for t in FilteredElementCollector(doc).OfClass(FilledRegionType):\n        if ten(t) == TEN_HATCH:\n            return t, \"dùng kiểu có sẵn '%s'\" % TEN_HATCH\n    pid, ghi_chu = lay_mau_luoi()\n    if DRY_RUN:\n        return None, \"sẽ tạo kiểu '%s' (màu %d,%d,%d); %s\" % ((TEN_HATCH,) + MAU_HATCH + (ghi_chu,))\n    goc = FilteredElementCollector(doc).OfClass(FilledRegionType).FirstElement()\n    t = goc.Duplicate(TEN_HATCH)\n    t.ForegroundPatternId = pid\n    t.ForegroundPatternColor = Color(*MAU_HATCH)\n    t.BackgroundPatternId = ElementId.InvalidElementId\n    t.IsMasking = False\n    return t, \"đã tạo kiểu '%s' (màu %d,%d,%d); %s\" % ((TEN_HATCH,) + MAU_HATCH + (ghi_chu,))\n\n\ndef gom_nhom(ids, ten_goc):\n    \"\"\"Gom phần tử vào Detail Group, đặt tên kiểu group (trùng thì thêm _2, _3…)\"\"\"\n    g = doc.Create.NewGroup(ds_id(ids))\n    ten_nhom = ten_goc\n    da_dung = set(ten(t) for t in FilteredElementCollector(doc).OfClass(GroupType))\n    i = 1\n    while ten_nhom in da_dung:\n        i += 1\n        ten_nhom = \"%s_%d\" % (ten_goc, i)\n    doc.GetElement(g.GetTypeId()).Name = ten_nhom\n    return ten_nhom\n\n\n# ---------- quét lưới dấu chân tường ----------\ndef goc_chinh(tuong):\n    \"\"\"Phương chính của tường (độ, 0–90) theo tổng chiều dài\"\"\"\n    dem = {}\n    for w in tuong:\n        try:\n            c = w.Location.Curve\n            a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n        except Exception:\n            continue\n        L = math.hypot(b.X - a.X, b.Y - a.Y)\n        if L > 1e-6:\n            g = round(math.degrees(math.atan2(b.Y - a.Y, b.X - a.X)) % 90.0)\n            dem[g % 90] = dem.get(g % 90, 0.0) + L\n    return max(dem.items(), key=lambda kv: kv[1])[0] if dem else 0.0\n\n\ndef mat_day(e, opt):\n    \"\"\"Các mặt đáy (pháp tuyến hướng xuống) của khối đối tượng → list[list[vòng điểm 2D]]\"\"\"\n    kq = []\n    ds = list(e.get_Geometry(opt) or [])\n    while ds:\n        g = ds.pop()\n        ten_lop = g.GetType().Name\n        if ten_lop == \"GeometryInstance\":\n            ds.extend(list(g.GetInstanceGeometry()))\n            continue\n        if ten_lop != \"Solid\" or g.Volume <= 0:\n            continue\n        for f in g.Faces:\n            if f.GetType().Name == \"PlanarFace\" and f.FaceNormal.Z < -0.99:\n                vong = [diem_loop(list(cl)) for cl in f.GetEdgesAsCurveLoops()]\n                vong = [v for v in vong if len(v) >= 3]\n                if vong:\n                    kq.append(vong)\n    return kq\n\n\ndef loi_tuong(w):\n    \"\"\"Đường tim DẢI LÕI của tường thẳng: (A, B, bề dày lõi, bề dày tường); None nếu tường cong / không có cấu tạo lớp\"\"\"\n    cv = w.Location.Curve\n    if cv.GetType().Name != \"Line\":\n        return None\n    cau_tao = w.WallType.GetCompoundStructure()\n    if cau_tao is None:\n        return None\n    lop = list(cau_tao.GetLayers())\n    i0, i1 = cau_tao.GetFirstCoreLayerIndex(), cau_tao.GetLastCoreLayerIndex()\n    if not lop or i0 < 0 or i1 < i0:\n        return None\n    W = w.Width\n    ngoai = sum(l.Width for l in lop[:i0])                  # lớp phía ngoài lõi (theo Orientation)\n    cw = sum(l.Width for l in lop[i0:i1 + 1])\n    tam_loi = W / 2 - ngoai - cw / 2                        # tim lõi lệch khỏi tim tường về phía Orientation\n    k = w.get_Parameter(BuiltInParameter.WALL_KEY_REF_PARAM).AsInteger()\n    dinh_vi = {0: 0.0, 1: tam_loi, 2: W / 2, 3: -W / 2, 4: W / 2 - ngoai, 5: W / 2 - ngoai - cw}.get(k, 0.0)\n    o = w.Orientation\n    d = tam_loi - dinh_vi\n    A, B = cv.GetEndPoint(0), cv.GetEndPoint(1)\n    return ((A.X + o.X * d, A.Y + o.Y * d), (B.X + o.X * d, B.Y + o.Y * d), cw, W)\n\n\ndef keo_noi(w, dau_i):\n    \"\"\"Nửa bề dày lớn nhất của tường nối ở đầu dau_i (0 / 1) → kéo dải lõi cho kín góc nối\"\"\"\n    kq = 0.0\n    try:\n        for e in w.Location.get_ElementsAtJoin(dau_i):\n            if e.Id.Value != w.Id.Value:\n                try:\n                    kq = max(kq, e.Width / 2)\n                except Exception:\n                    pass\n    except Exception:\n        pass\n    return kq\n\n\ndef quet_khe(view, lv):\n    \"\"\"Khoảng trống khép kín giữa tường / cột: list[{pts, loops(curve), m2, diem, kt}]\"\"\"\n    zc = lv.Elevation + mm(1000)\n    opt = Options()\n    opt.DetailLevel = ViewDetailLevel.Fine\n    tuong, chi_tuong = [], []\n    for cat in (BuiltInCategory.OST_Walls, BuiltInCategory.OST_Columns, BuiltInCategory.OST_StructuralColumns):\n        for e in FilteredElementCollector(doc, view.Id).OfCategory(cat).WhereElementIsNotElementType():\n            bb = e.get_BoundingBox(None)\n            if bb is not None and bb.Min.Z - mm(10) <= zc <= bb.Max.Z + mm(10):\n                tuong.append(e)\n                if cat == BuiltInCategory.OST_Walls:\n                    chi_tuong.append(e)\n    th = math.radians(goc_chinh(chi_tuong))\n    cs, sn = math.cos(th), math.sin(th)\n    xoay = lambda p: (p[0] * cs + p[1] * sn, -p[0] * sn + p[1] * cs)\n    mat, loi, bo_mong = [], {}, 0\n    id_tuong = set(w.Id.Value for w in chi_tuong)\n    for e in tuong:\n        try:\n            tt = loi_tuong(e) if e.Id.Value in id_tuong else None\n        except Exception:\n            tt = None\n        if tt is not None:\n            (ax, ay), (bx, by), cw, W = tt\n            if cw < mm(LOI_MONG_MM):\n                bo_mong += 1           # tường ốp / lớp hoàn thiện riêng: không phải vách\n                continue\n            L = math.hypot(bx - ax, by - ay)\n            if L < 1e-6:\n                continue\n            ux, uy = (bx - ax) / L, (by - ay) / L\n            loi[e.Id.Value] = (ax, ay, bx, by, cw)\n            ka, kb = keo_noi(e, 0), keo_noi(e, 1)\n            pa, pb = (ax - ux * ka, ay - uy * ka), (bx + ux * kb, by + uy * kb)\n            nx_, ny_ = -uy * cw / 2, ux * cw / 2\n            mat.append([[xoay(p) for p in ((pa[0] + nx_, pa[1] + ny_), (pb[0] + nx_, pb[1] + ny_),\n                                           (pb[0] - nx_, pb[1] - ny_), (pa[0] - nx_, pa[1] - ny_))]])\n            continue\n        try:\n            for vong in mat_day(e, opt):\n                mat.append([[xoay(p) for p in v] for v in vong])\n        except Exception:\n            pass\n    bao_cao.append(\"Quét theo dải lõi %d tường (bỏ %d tường ốp / hoàn thiện mỏng)\" % (len(loi), bo_mong))\n    c = mm(O_LUOI_MM)\n    # đường phân chia phòng (Room Separation) trên level: coi như vách mỏng 1,5 ô lưới (G19: khép 2 ô ở hành lang)\n    for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_RoomSeparationLines) \\\n            .WhereElementIsNotElementType():\n        try:\n            cv = e.GeometryCurve\n            if abs(cv.GetEndPoint(0).Z - lv.Elevation) > mm(500) and e.LevelId != lv.Id:\n                continue\n            ds = [cv.GetEndPoint(0), cv.GetEndPoint(1)] if cv.GetType().Name == \"Line\" else list(cv.Tessellate())\n        except Exception:\n            continue\n        for a, b in zip(ds, ds[1:]):\n            L = math.hypot(b.X - a.X, b.Y - a.Y)\n            if L < 1e-6:\n                continue\n            nx_, ny_ = -(b.Y - a.Y) / L * 0.75 * c, (b.X - a.X) / L * 0.75 * c\n            mat.append([[xoay(p) for p in ((a.X + nx_, a.Y + ny_), (b.X + nx_, b.Y + ny_),\n                                           (b.X - nx_, b.Y - ny_), (a.X - nx_, a.Y - ny_))]])\n    if not mat:\n        return [], 0\n    xs = [p[0] for f in mat for v in f for p in v]\n    ys = [p[1] for f in mat for v in f for p in v]\n    x0, y0 = min(xs) - 3 * c, min(ys) - 3 * c\n    nx, ny = int((max(xs) - x0) / c) + 4, int((max(ys) - y0) / c) + 4\n    luoi = [bytearray(nx) for _ in range(ny)]\n    mep_doc, mep_ngang = [], []   # mép vách song song trục lưới: (x, y_min, y_max) / (y, x_min, x_max)\n\n    def to(f):                 # tô 1 mặt (các vòng điểm đã xoay) theo quy tắc chẵn lẻ\n        canh = [(v[i], v[(i + 1) % len(v)]) for v in f for i in range(len(v))]\n        for a, b in canh:\n            if abs(a[0] - b[0]) < 1e-6:\n                mep_doc.append((a[0], min(a[1], b[1]), max(a[1], b[1])))\n            elif abs(a[1] - b[1]) < 1e-6:\n                mep_ngang.append((a[1], min(a[0], b[0]), max(a[0], b[0])))\n        fy = [p[1] for v in f for p in v]\n        for j in range(max(0, int((min(fy) - y0) / c) - 1), min(ny, int((max(fy) - y0) / c) + 2)):\n            yc = y0 + (j + 0.5) * c\n            cat_x = sorted(a[0] + (yc - a[1]) * (b[0] - a[0]) / (b[1] - a[1]) for a, b in canh if (a[1] > yc) != (b[1] > yc))\n            for k in range(0, len(cat_x) - 1, 2):\n                i0 = max(0, int(math.ceil((cat_x[k] - x0) / c - 0.5)))\n                i1 = min(nx - 1, int(math.floor((cat_x[k + 1] - x0) / c - 0.5)))\n                if i1 >= i0:\n                    luoi[j][i0:i1 + 1] = b\"\\x01\" * (i1 - i0 + 1)\n\n    def dac(p):\n        i, j = int((p[0] - x0) / c), int((p[1] - y0) / c)\n        return 0 <= i < nx and 0 <= j < ny and luoi[j][i] == 1\n\n    def bat_mep(v):\n        \"\"\"Đỉnh vùng (toạ độ ô lưới) → toạ độ đã xoay; mỗi cạnh bắt vào mép vách gần nhất trong 1 ô lưới\n        (biên sát đúng mép tường thô, không lệch theo lưới)\"\"\"\n        P = [(x0 + q[0] * c, y0 + q[1] * c) for q in v]\n        n = len(P)\n        canh = []\n        for k in range(n):\n            a, b = P[k], P[(k + 1) % n]\n            if abs(a[0] - b[0]) < 1e-9:\n                lo, hi = min(a[1], b[1]), max(a[1], b[1])\n                ds = [m[0] for m in mep_doc if abs(m[0] - a[0]) <= c * 1.01 and min(hi, m[2]) - max(lo, m[1]) > c / 2]\n                canh.append((\"d\", min(ds, key=lambda t: abs(t - a[0])) if ds else a[0]))\n            else:\n                lo, hi = min(a[0], b[0]), max(a[0], b[0])\n                ds = [m[0] for m in mep_ngang if abs(m[0] - a[1]) <= c * 1.01 and min(hi, m[2]) - max(lo, m[1]) > c / 2]\n                canh.append((\"n\", min(ds, key=lambda t: abs(t - a[1])) if ds else a[1]))\n        kq_ = []\n        for k in range(n):\n            e1, e2 = canh[k - 1], canh[k]\n            if e1[0] == e2[0]:\n                continue\n            q = (e1[1], e2[1]) if e1[0] == \"d\" else (e2[1], e1[1])\n            if not kq_ or abs(q[0] - kq_[-1][0]) + abs(q[1] - kq_[-1][1]) > mm(1):\n                kq_.append(q)\n        while len(kq_) > 1 and abs(kq_[0][0] - kq_[-1][0]) + abs(kq_[0][1] - kq_[-1][1]) <= mm(1):\n            kq_.pop()\n        # bỏ đỉnh thẳng hàng (bậc lưới bị bắt về cùng một mép)\n        doi = True\n        while doi and len(kq_) >= 4:\n            doi = False\n            for k in range(len(kq_)):\n                a, b, d_ = kq_[k - 1], kq_[k], kq_[(k + 1) % len(kq_)]\n                if abs((b[0] - a[0]) * (d_[1] - b[1]) - (b[1] - a[1]) * (d_[0] - b[0])) < 1e-9:\n                    del kq_[k]\n                    doi = True\n                    break\n        return kq_\n\n    for f in mat:\n        to(f)\n    # nối đầu tường hở: đầu tường cách tường khác ≤ NOI_HO_MM theo phương tường thì kéo dài cho chạm\n    # (Revit vẫn khép room qua khe này; G19: 2 ô hành lang hở 185 / 285 mm)\n    so_noi = 0\n    dau = []                   # (tâm đầu tường x, y, hướng ra ux, uy, bề dày, id tường)\n    for wid, (ax, ay, bx, by, ww) in loi.items():       # theo tim dải lõi, bề dày lõi\n        for (px, py), (qx, qy) in (((ax, ay), (bx, by)), ((bx, by), (ax, ay))):\n            L = math.hypot(px - qx, py - qy)\n            if L < 1e-6:\n                continue\n            ux, uy = (px - qx) / L, (py - qy) / L\n            cx, cy = px, py\n            dau.append((cx, cy, ux, uy, ww, wid))\n            t, buoc, gap_trong, cham = 0.0, c / 2, False, None\n            while t <= mm(NOI_HO_MM):\n                d = dac(xoay((cx + ux * t, cy + uy * t)))\n                if not d:\n                    gap_trong = True\n                elif gap_trong:\n                    cham = t\n                    break\n                t += buoc\n            if cham is None or not gap_trong:\n                continue\n            nx_, ny_ = -uy * ww / 2, ux * ww / 2\n            ex, ey = cx + ux * (cham + c), cy + uy * (cham + c)\n            to([[xoay(v) for v in ((cx + nx_, cy + ny_), (ex + nx_, ey + ny_), (ex - nx_, ey - ny_), (cx - nx_, cy - ny_))]])\n            so_noi += 1\n    # nối góc: 2 đầu tường không song song, giao điểm tim cách cả 2 đầu ≤ NOI_HO_MM → kéo dài cả 2 tới giao điểm\n    G = mm(NOI_HO_MM)\n    for m in range(len(dau)):\n        x1, y1, u1, v1, w1, id1 = dau[m]\n        for n in range(m + 1, len(dau)):\n            x2, y2, u2, v2, w2, id2 = dau[n]\n            if id1 == id2 or abs(x1 - x2) > 2 * G or abs(y1 - y2) > 2 * G:\n                continue\n            det = u1 * (-v2) - v1 * (-u2)\n            if abs(det) < 0.2:          # gần song song\n                # hốc chữ U: 2 đầu tường song song cùng hướng, thẳng hàng, miệng ≤ NOI_HO_MM → đóng miệng hốc\n                # (G19: hốc 470 x 120 sau tường lô gia, người dùng chỉ là trục 2026-10-28)\n                lech_truc = (x2 - x1) * u1 + (y2 - y1) * v1\n                mieng = abs(-(x2 - x1) * v1 + (y2 - y1) * u1)\n                if u1 * u2 + v1 * v2 > 0.98 and abs(lech_truc) <= max(w1, w2) / 2 + c and \\\n                        (w1 + w2) / 2 < mieng <= G + (w1 + w2) / 2:\n                    k_ = 1.5 * c\n                    to([[xoay(p) for p in ((x1, y1), (x2, y2), (x2 - u2 * k_, y2 - v2 * k_), (x1 - u1 * k_, y1 - v1 * k_))]])\n                    so_noi += 1\n                continue\n            t1 = ((x2 - x1) * (-v2) - (y2 - y1) * (-u2)) / det\n            t2 = (u1 * (y2 - y1) - v1 * (x2 - x1)) / det\n            if not (-w2 / 2 <= t1 <= G and -w1 / 2 <= t2 <= G) or (t1 <= c and t2 <= c):\n                continue\n            for x, y, u, v, ww, t, wk in ((x1, y1, u1, v1, w1, t1, w2), (x2, y2, u2, v2, w2, t2, w1)):\n                if t <= 0:\n                    continue\n                e_ = t + wk / 2\n                nx_, ny_ = -v * ww / 2, u * ww / 2\n                ex, ey = x + u * e_, y + v * e_\n                to([[xoay(p) for p in ((x + nx_, y + ny_), (ex + nx_, ey + ny_), (ex - nx_, ey - ny_), (x - nx_, y - ny_))]])\n            so_noi += 1\n    # dải ô trống theo hàng + hợp nhất (4 hướng)\n    chay, cha = [], []\n\n    def goc(a):\n        while cha[a] != a:\n            cha[a] = cha[cha[a]]\n            a = cha[a]\n        return a\n    truoc = []\n    for j in range(ny):\n        hang, i, nay = luoi[j], 0, []\n        while True:\n            a = hang.find(0, i)\n            if a < 0:\n                break\n            b = hang.find(1, a)\n            b = nx if b < 0 else b\n            k = len(chay)\n            chay.append((j, a, b - 1))\n            cha.append(k)\n            nay.append(k)\n            i = b\n        p = 0\n        for k in nay:\n            _, a, b = chay[k]\n            while p < len(truoc) and chay[truoc[p]][2] < a:\n                p += 1\n            q = p\n            while q < len(truoc) and chay[truoc[q]][1] <= b:\n                ra, rb = goc(k), goc(truoc[q])\n                if ra != rb:\n                    cha[ra] = rb\n                q += 1\n        truoc = nay\n    nhom = {}\n    for k, (j, a, b) in enumerate(chay):\n        nhom.setdefault(goc(k), []).append(k)\n    c2 = ra_m2(c * c)\n    kq = []\n    for ks in nhom.values():\n        o = sum(chay[k][2] - chay[k][1] + 1 for k in ks)\n        if not (DT_NHO_NHAT_M2 <= o * c2 <= DT_CO_BANG_CHUNG_M2):\n            continue\n        if any(chay[k][0] in (0, ny - 1) or chay[k][1] == 0 or chay[k][2] == nx - 1 for k in ks):\n            continue\n        S = set((i, chay[k][0]) for k in ks for i in range(chay[k][1], chay[k][2] + 1))\n        # biên: cạnh ô giáp ngoài, hướng ngược chiều kim đồng hồ quanh vùng\n        di = {}\n        for (i, j) in S:\n            if (i, j - 1) not in S:\n                di.setdefault((i, j), []).append((i + 1, j))\n            if (i + 1, j) not in S:\n                di.setdefault((i + 1, j), []).append((i + 1, j + 1))\n            if (i, j + 1) not in S:\n                di.setdefault((i + 1, j + 1), []).append((i, j + 1))\n            if (i - 1, j) not in S:\n                di.setdefault((i, j + 1), []).append((i, j))\n        vong = []\n        while di:\n            dau = next(iter(di))\n            v, p = [dau], dau\n            while True:\n                ds = di.get(p)\n                if not ds:\n                    break\n                n = ds.pop()\n                if not ds:\n                    del di[p]\n                if n == dau:\n                    break\n                v.append(n)\n                p = n\n            gon = [v[t] for t in range(len(v)) if not (\n                (v[t - 1][0] == v[t][0] == v[(t + 1) % len(v)][0]) or (v[t - 1][1] == v[t][1] == v[(t + 1) % len(v)][1]))]\n            if len(gon) >= 4:\n                vong.append(gon)\n        if not vong:\n            continue\n        ve_the_gioi = lambda q: ((x0 + q[0] * c) * cs - (y0 + q[1] * c) * sn, (x0 + q[0] * c) * sn + (y0 + q[1] * c) * cs)\n        sat = [v for v in (bat_mep(v) for v in vong) if len(v) >= 4]\n        if not sat:\n            continue\n        pts = [[(p[0] * cs - p[1] * sn, p[0] * sn + p[1] * cs) for p in v] for v in sat]\n        z = lv.Elevation\n        loops = [[Line.CreateBound(XYZ(a[0], a[1], z), XYZ(b[0], b[1], z)) for a, b in zip(v, v[1:] + v[:1])] for v in pts]\n        gi = sum(i for i, j in S) / float(len(S))\n        gj = sum(j for i, j in S) / float(len(S))\n        ti, tj = min(S, key=lambda q: (q[0] - gi) ** 2 + (q[1] - gj) ** 2)\n        diem = ve_the_gioi((ti + 0.5, tj + 0.5))\n        dt = sorted((abs(sum(v[t][0] * v[(t + 1) % len(v)][1] - v[(t + 1) % len(v)][0] * v[t][1]\n                             for t in range(len(v)))) / 2 for v in sat), reverse=True)\n        rong, dai = kich_thuoc(max(sat, key=len))\n        kq.append({\"pts\": pts, \"loops\": loops, \"m2\": ra_m2(dt[0] - sum(dt[1:])), \"diem\": diem,\n                   \"kt\": (ra_mm(rong), ra_mm(dai)), \"ten\": \"\"})\n    bao_cao.append(\"Nối %d đầu tường hở ≤ %g mm khi quét\" % (so_noi, NOI_HO_MM))\n    return kq, len(mat)\n\n\ndef toa_do(p):\n    return \"(%d, %d)\" % (round(ra_mm(p[0])), round(ra_mm(p[1])))\n\n\ndef tim_truc(view, lv, da_lam, viec, ghi_them):\n    \"\"\"Nhận trục / hộp kỹ thuật trên level của view → (se_lam, da_co, bi_loai, xem_lai).\n    da_lam(v): ô đã làm rồi (đã hatch / đã có lỗ mở) → bỏ qua; viec: chữ trong báo cáo (\"hatch\", \"tạo lỗ mở\")\"\"\"\n    z = lv.Elevation\n    # ---- dữ liệu trên level ----\n    cua = [p for d in theo_level(BuiltInCategory.OST_Doors, lv) for p in diem_hai_ben(d)]\n    cua_so = [p for d in theo_level(BuiltInCategory.OST_Windows, lv) for p in diem_hai_ben(d)]\n    tb = []\n    da_xet = set()\n    for e in list(theo_level(BuiltInCategory.OST_PlumbingFixtures, lv)) + list(\n            FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_PlumbingFixtures)\n            .WhereElementIsNotElementType()):\n        if e.Id.Value in da_xet:\n            continue\n        da_xet.add(e.Id.Value)\n        p = diem_tam(e)\n        if p is None:\n            continue\n        try:     # bồn cầu host trên sàn: điểm đặt sát tường → dò thêm 200 mm theo hướng mặt\n            f = e.FacingOrientation\n            p = (p[0] + f.X * mm(200), p[1] + f.Y * mm(200))\n        except Exception:\n            pass\n        tb.append(p)\n    san = [vong_san(f) for f in FilteredElementCollector(doc).OfClass(Floor)\n           if f.LevelId == lv.Id and not la_san_ket_cau(f)]\n    san = [s for s in san if s]\n    ong = ong_dung(lv)\n    shaft = [diem_tam(e) for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ShaftOpening)\n             .WhereElementIsNotElementType()]\n    shaft = [p for p in shaft if p]\n    loai = []\n    for cat in (BuiltInCategory.OST_SpecialityEquipment, BuiltInCategory.OST_GenericModel,\n                BuiltInCategory.OST_MechanicalEquipment, BuiltInCategory.OST_Stairs):\n        for e in FilteredElementCollector(doc).OfCategory(cat).WhereElementIsNotElementType():\n            if cat == BuiltInCategory.OST_Stairs or co_tu(ten_family(e) + \" \" + ten_kieu(e), TU_KHOA_LOAI):\n                p = diem_tam(e)\n                bb = e.get_BoundingBox(None)\n                if p and bb and bb.Min.Z - mm(500) <= z + mm(1000) <= bb.Max.Z + mm(500):\n                    loai.append(p)\n    bao_cao.append(\"Trên level: cửa đi %d, cửa sổ %d, thiết bị vệ sinh %d, sàn hoàn thiện %d, ống đứng %d, \"\n                   \"shaft opening %d, thang máy / thang bộ %d; %s\" % (\n                       len(cua) // 2, len(cua_so) // 2, len(tb), len(san), len(ong), len(shaft), len(loai),\n                       ghi_them))\n    if not ong and not shaft:\n        bao_cao.append(\"Model không có ống đứng / shaft opening → trục, hộp nhận theo tên room hoặc hình học \"\n                       \"(ô kín không cửa, cửa sổ, thiết bị, sàn) – xem ảnh để duyệt (Cần xác nhận lại).\")\n\n    # ---- room đã đặt tên trục / hộp kỹ thuật hoặc thang (chỉ đọc) ----\n    opt = SpatialElementBoundaryOptions()\n    opt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.CoreBoundary\n    room_hkt, room_loai = [], []\n    for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType():\n        if r.LevelId != lv.Id or r.Area <= 0 or r.Location is None:\n            continue\n        ten_r = r.get_Parameter(BuiltInParameter.ROOM_NAME).AsString() or \"\"\n        if co_tu(ten_r, TU_KHOA_LOAI):\n            room_loai.append(r)\n        elif co_tu(ten_r, TU_KHOA_HKT):\n            loops = [[phang(sg.GetCurve(), z) for sg in segs] for segs in (r.GetBoundarySegments(opt) or [])]\n            loops = [l for l in loops if len(l) >= 2]\n            if loops:\n                p0 = r.Location.Point\n                room_hkt.append({\"loops\": loops, \"pts\": [diem_loop(l) for l in loops], \"m2\": ra_m2(r.Area),\n                                 \"ten\": ten_r, \"diem\": (p0.X, p0.Y)})\n    for v in room_hkt:\n        v[\"kt\"] = tuple(ra_mm(t) for t in kich_thuoc(max(v[\"pts\"], key=len)))\n\n    # ---- khoảng trống kín giữa tường (quét lưới) ----\n    TransactionManager.Instance.EnsureInTransaction(doc)\n    khe, so_mat = quet_khe(view, lv)\n    bao_cao.append(\"Quét dấu chân %d mặt đáy tường / cột: %d khoảng trống kín ≤ %g m2\" % (\n        so_mat, len(khe), DT_CO_BANG_CHUNG_M2))\n\n    # ---- phân loại ----\n    se_ve, da_co, bi_loai, xem_lai = [], 0, [], []\n    for v in room_hkt + khe:\n        pts = v[\"pts\"]\n        x, y = v[\"diem\"]\n        trong = lambda ds: [p for p in ds if trong_vung(p[0], p[1], pts)]\n        if trong(loai) or any(r.IsPointInRoom(XYZ(x, y, z + mm(1000))) for r in room_loai):\n            bi_loai.append((v, \"thang máy / thang bộ\"))\n            continue\n        if v[\"ten\"]:\n            nguon = \"tên room '%s'\" % v[\"ten\"]\n        elif any(trong_vung(x, y, r[\"pts\"]) for r in room_hkt):\n            continue          # đã nhận theo room đặt tên\n        elif trong(cua) or trong(tb):\n            continue\n        elif trong(shaft):\n            nguon = \"shaft opening\"\n        elif trong(ong):\n            nguon = \"ống đứng\"\n        elif (not trong(cua_so) and not any(trong_vung(x, y, s_) for s_ in san)\n              and v[\"m2\"] <= DT_MAX_M2 and v[\"kt\"][0] >= RONG_MIN_MM):\n            nguon = \"hình học\"\n        else:\n            continue\n        if da_lam(v):\n            da_co += 1\n            continue\n        v[\"nguon\"] = nguon\n        se_ve.append(v)\n        if v[\"kt\"][0] > O_LON_MM:\n            xem_lai.append(v)\n    try:     # danh sách khoảng trống (mm) để vẽ ảnh đối chiếu khi cần\n        import json\n        with open(os.path.join(THU_MUC, \"ngan_chay_vung.json\"), \"w\", encoding=\"utf-8\") as f:\n            json.dump([{\"m2\": round(v[\"m2\"], 3), \"kt\": [round(t) for t in v[\"kt\"]], \"nguon\": v.get(\"nguon\", \"\"),\n                        \"pts\": [[(round(ra_mm(p[0])), round(ra_mm(p[1]))) for p in l] for l in v[\"pts\"]]}\n                       for v in room_hkt + khe], f, ensure_ascii=False)\n    except Exception:\n        pass\n    dem_nguon = {}\n    for v in se_ve:\n        dem_nguon[v[\"nguon\"].split(\" '\")[0]] = dem_nguon.get(v[\"nguon\"].split(\" '\")[0], 0) + 1\n    bao_cao.append(\"Trục / hộp kỹ thuật cần %s: %d (%s); đã có %s: %d; loại vì thang: %d\" % (\n        viec, len(se_ve), \", \".join(\"%s %d\" % kv for kv in sorted(dem_nguon.items())) or \"-\", viec, da_co, len(bi_loai)))\n    for v in sorted(se_ve, key=lambda v: -v[\"m2\"]):\n        bao_cao.append(\"   %5.2f m2  %4d x %4d mm  %-14s tại %s\" % (\n            v[\"m2\"], round(v[\"kt\"][0]), round(v[\"kt\"][1]), v[\"nguon\"], toa_do(v[\"diem\"])))\n    if xem_lai:\n        bao_cao.append(\"CẦN XEM LẠI (ô lớn hơn %d x %d mm, vẫn nhận): %s\" % (\n            O_LON_MM, O_LON_MM, \"; \".join(\"%.2f m2 tại %s\" % (v[\"m2\"], toa_do(v[\"diem\"])) for v in xem_lai)))\n    for v, ly_do in bi_loai:\n        bao_cao.append(\"Loại (%s): %.2f m2 tại %s\" % (ly_do, v[\"m2\"], toa_do(v[\"diem\"])))\n\n    return se_ve, da_co, bi_loai, xem_lai\n\n\n# ==== HẾT PHẦN CHUNG ====\n\n\n# ---------- riêng công cụ lỗ mở ----------\ndef chon_view():\n    \"\"\"Mặt bằng tầng: theo tên (IN[0]) hoặc view đang mở\"\"\"\n    loai_mb = (ViewType.FloorPlan, ViewType.EngineeringPlan)\n    if TEN_VIEW:\n        ds = [v for v in FilteredElementCollector(doc).OfClass(ViewPlan)\n              if not v.IsTemplate and v.Name == TEN_VIEW and v.ViewType in loai_mb]\n        if not ds:\n            raise Exception(\"Không tìm thấy mặt bằng tầng tên '%s'\" % TEN_VIEW)\n        return ds[0]\n    av = doc.ActiveView\n    if av is None or av.ViewType not in loai_mb or av.GenLevel is None:\n        raise Exception(\"View đang mở không phải mặt bằng tầng – mở mặt bằng tầng cần tạo lỗ mở rồi chạy lại\")\n    return av\n\n\ndef dat(e, bip, ten_ui, gt):\n    \"\"\"Gán tham số theo BuiltInParameter, không được thì theo tên trên giao diện; trả về True nếu gán được\"\"\"\n    p = e.get_Parameter(bip)\n    if p is None or p.IsReadOnly:\n        p = e.LookupParameter(ten_ui)\n    if p is None or p.IsReadOnly:\n        return False\n    return bool(p.Set(gt))\n\n\ndef doc_tham_so(e):\n    def lay(bip, ten_ui):\n        p = e.get_Parameter(bip) or e.LookupParameter(ten_ui)\n        if p is None:\n            return \"?\"\n        if p.StorageType == StorageType.ElementId:\n            return ten(doc.GetElement(p.AsElementId()))\n        if p.StorageType == StorageType.Double:\n            return \"%g mm\" % round(ra_mm(p.AsDouble()), 1)\n        return p.AsValueString() or \"\"\n    return \"Base %s / %s, Top %s / %s\" % (\n        lay(BuiltInParameter.WALL_BASE_CONSTRAINT, \"Base Constraint\"), lay(BuiltInParameter.WALL_BASE_OFFSET, \"Base Offset\"),\n        lay(BuiltInParameter.WALL_HEIGHT_TYPE, \"Top Constraint\"), lay(BuiltInParameter.WALL_TOP_OFFSET, \"Top Offset\"))\n\n\n# ---------- 1 shaft opening cho cả tầng + dấu X (Symbolic Line chép từ shaft mẫu) ----------\nimport time\n\n\nclass _BoQuaCanhBao(IFailuresPreprocessor):\n    \"\"\"Bỏ cảnh báo khi kết thúc sửa sketch (lỗi thật vẫn để Revit báo)\"\"\"\n    __namespace__ = \"ARV.LoMo.X%d\" % int(time.time() * 1000)   # tên kiểu .NET mới mỗi lần nạp (chạy lại trong cùng phiên)\n\n    def PreprocessFailures(self, fa):\n        for m in fa.GetFailureMessages():\n            if m.GetSeverity() == FailureSeverity.Warning:\n                fa.DeleteWarning(m)\n        return FailureProcessingResult.Continue\n\n\ndef tach_sketch(op):\n    \"\"\"Sketch của shaft → (nét biên, nét symbolic): nét symbolic = ModelLine mang line style khác \"<Sketch>\" \"\"\"\n    sk = doc.GetElement(op.SketchId)\n    bien, ky = [], []\n    for i in sk.GetAllElements():\n        e = doc.GetElement(i)\n        if e.GetType().Name == \"ModelLine\":\n            (bien if e.LineStyle is None or e.LineStyle.Name == \"<Sketch>\" else ky).append(e)\n    return bien, ky\n\n\ndef vong_shaft(op):\n    \"\"\"Các vòng biên trong sketch của shaft → list[list[(x, y)]]\"\"\"\n    sk = doc.GetElement(op.SketchId)\n    return [[(p.X, p.Y) for c in arr for p in list(c.Tessellate())[:-1]] for arr in sk.Profile]\n\n\ndef la_shaft_tang(op, lv):\n    \"\"\"Shaft lỗ mở cục bộ của tầng: Base Constraint và Top Constraint đều là level này\"\"\"\n    b = op.get_Parameter(BuiltInParameter.WALL_BASE_CONSTRAINT)\n    t = op.get_Parameter(BuiltInParameter.WALL_HEIGHT_TYPE)\n    return b is not None and t is not None and b.AsElementId() == lv.Id and t.AsElementId() == lv.Id\n\n\ndef tim_mau_x():\n    \"\"\"2 nét symbolic của một shaft mẫu có dấu X vẽ tay → (id 2 nét, mô tả); không có thì (None, \"\")\"\"\"\n    for o in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ShaftOpening).WhereElementIsNotElementType():\n        try:\n            ky = tach_sketch(o)[1]\n        except Exception:\n            continue\n        if len(ky) >= 2:\n            return [e.Id for e in ky[:2]], \"shaft %d (nét %s)\" % (o.Id.Value, ky[0].LineStyle.Name)\n    return None, \"\"\n\n\ndef duong_cheo(curves, z):\n    \"\"\"2 đường chéo của hình chữ nhật bao 1 vòng biên, theo phương cạnh dài nhất (đúng cả lỗ xoay xiên)\"\"\"\n    dai = max(curves, key=lambda c: c.Length)\n    a, b = dai.GetEndPoint(0), dai.GetEndPoint(1)\n    L = math.hypot(b.X - a.X, b.Y - a.Y)\n    ux, uy = (b.X - a.X) / L, (b.Y - a.Y) / L\n    pts = [p for c in curves for p in (c.GetEndPoint(0), c.GetEndPoint(1))]\n    su = [p.X * ux + p.Y * uy for p in pts]\n    sv = [-p.X * uy + p.Y * ux for p in pts]\n    diem = lambda s, t: XYZ(s * ux - t * uy, s * uy + t * ux, z)\n    u0, u1, v0, v1 = min(su), max(su), min(sv), max(sv)\n    return [Line.CreateBound(diem(u0, v0), diem(u1, v1)), Line.CreateBound(diem(u0, v1), diem(u1, v0))]\n\n\ndef x_ngat(curves, z):\n    \"\"\"Dấu X không cắt nhau (Revit báo \"Lines cannot intersect each other\" khi 2 đường chéo giao tại tâm): mỗi đường chéo\n    chia thành 2 đoạn, cách tâm 25 mm mỗi phía → 4 đoạn symbolic / vòng\"\"\"\n    kq = []\n    for l in duong_cheo(curves, z):\n        a, b = l.GetEndPoint(0), l.GetEndPoint(1)\n        d = b - a\n        t = mm(25) / d.GetLength()\n        p1 = a + d * (0.5 - t)\n        p2 = a + d * (0.5 + t)\n        kq.append(Line.CreateBound(a, p1))\n        kq.append(Line.CreateBound(p2, b))\n    return kq\n\n\ndef dat_rang_buoc(op, lv):\n    ok = (dat(op, BuiltInParameter.WALL_BASE_CONSTRAINT, \"Base Constraint\", lv.Id) and\n          dat(op, BuiltInParameter.WALL_BASE_OFFSET, \"Base Offset\", mm(BASE_OFFSET_MM)) and\n          dat(op, BuiltInParameter.WALL_HEIGHT_TYPE, \"Top Constraint\", lv.Id) and\n          dat(op, BuiltInParameter.WALL_TOP_OFFSET, \"Top Offset\", mm(TOP_OFFSET_MM)))\n    if not ok:\n        bao_cao.append(\"Shaft %d: không gán đủ ràng buộc (%s)\" % (op.Id.Value, doc_tham_so(op)))\n\n\ndef tao_shaft(lv, vung):\n    \"\"\"Tạo 1 shaft opening với vòng biên của 1 ô (transaction riêng) → Opening\"\"\"\n    ca = CurveArray()\n    for l in vung[\"loops\"]:\n        for c in l:\n            ca.Append(c)\n    tren = sorted([l for l in FilteredElementCollector(doc).OfClass(Level) if l.Elevation > lv.Elevation + mm(1)],\n                  key=lambda l: l.Elevation)\n    t = Transaction(doc, \"ARV - Lỗ mở shaft\")\n    t.Start()\n    try:\n        try:\n            op = doc.Create.NewOpening(lv, lv, ca)\n        except Exception:\n            if not tren:\n                raise\n            op = doc.Create.NewOpening(lv, tren[0], ca)     # tạo tới tầng trên rồi đặt lại ràng buộc\n        dat_rang_buoc(op, lv)\n        t.Commit()\n        return op\n    except Exception:\n        if t.HasStarted() and not t.HasEnded():\n            t.RollBack()\n        raise\n\n\ndef vong_chua_x(op):\n    \"\"\"Các vòng biên đã có trong sketch nhưng chưa có dấu X (ít hơn 2 nét symbolic có trung điểm trong vòng)\"\"\"\n    sk = doc.GetElement(op.SketchId)\n    _, ky = tach_sketch(op)\n    giua_ky = []\n    for e in ky:\n        c = e.GeometryCurve\n        a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n        giua_ky.append(((a.X + b.X) / 2, (a.Y + b.Y) / 2))\n    can_x = []\n    for arr in sk.Profile:\n        cs = [c for c in arr]\n        pts = [(c.GetEndPoint(0).X, c.GetEndPoint(0).Y) for c in cs]\n        if sum(1 for q in giua_ky if trong_da_giac(q[0], q[1], pts)) < 2:\n            can_x.append(cs)\n    return can_x\n\n\ndef gan_x_api(op):\n    \"\"\"Không có shaft mẫu: vẽ 2 đường chéo cho mỗi vòng chưa có X rồi đổi line style sang nét thường (<Thin Lines>)\n    → thành nét symbolic, cùng cách đổi line style của DetailCurve (CurveElement.LineStyle). Một lần sửa sketch riêng,\n    lỗi thì hủy riêng bước này (vòng biên đã thêm vẫn còn). → số vòng đã gắn X\"\"\"\n    sk = doc.GetElement(op.SketchId)\n    zs = sk.SketchPlane.GetPlane().Origin.Z\n    can_x = vong_chua_x(op)\n    if not can_x:\n        return 0\n    gs = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines).GetGraphicsStyle(GraphicsStyleType.Projection)\n    ses = SketchEditScope(doc, \"ARV - Lỗ mở shaft X\")\n    t = Transaction(doc, \"ARV - Lỗ mở shaft X\")\n    try:\n        ses.Start(op.SketchId)\n        t.Start()\n        for cs in can_x:\n            for l in x_ngat(cs, zs):\n                mc = doc.Create.NewModelCurve(l, sk.SketchPlane)\n                mc.LineStyle = gs\n        t.Commit()\n        ses.Commit(_BoQuaCanhBao())\n        return len(can_x)\n    except Exception:\n        try:\n            if t.HasStarted() and not t.HasEnded():\n                t.RollBack()\n            if ses.IsActive:\n                ses.Cancel()\n        except Exception:\n            pass\n        raise\n\n\ndef them_vong_va_x(op, vung_moi, mau_x):\n    \"\"\"Trong 1 lần sửa sketch của shaft: thêm vòng biên các ô mới + dấu X cho mọi vòng chưa có X → (số vòng thêm, số X)\"\"\"\n    sk = doc.GetElement(op.SketchId)\n    zs = sk.SketchPlane.GetPlane().Origin.Z\n    can_x = vong_chua_x(op) if mau_x is not None else []\n    ses = SketchEditScope(doc, \"ARV - Lỗ mở shaft\")\n    t = Transaction(doc, \"ARV - Lỗ mở shaft\")\n    so_vong = 0\n    try:\n        ses.Start(op.SketchId)     # chỉ mở được khi không còn transaction nào đang mở\n        t.Start()\n        for v in vung_moi:\n            cs = []\n            for l in v[\"loops\"]:\n                for c in l:\n                    cs.append(doc.Create.NewModelCurve(phang(c, zs), sk.SketchPlane).GeometryCurve)\n            can_x.append(cs)\n            so_vong += 1\n        so_x = 0\n        if mau_x is not None:\n            for cs in can_x:\n                moi = list(ElementTransformUtils.CopyElements(doc, ds_id(mau_x), XYZ(0, 0, 0)))\n                for i, l in zip(moi, duong_cheo(cs, zs)):\n                    doc.GetElement(i).SetGeometryCurve(l, True)\n                so_x += 1\n        t.Commit()\n        ses.Commit(_BoQuaCanhBao())\n        return so_vong, so_x\n    except Exception:\n        try:\n            if t.HasStarted() and not t.HasEnded():\n                t.RollBack()\n            if ses.IsActive:\n                ses.Cancel()\n        except Exception:\n            pass\n        raise\n\n\ndef chinh():\n    view = chon_view()\n    lv = view.GenLevel\n    z = lv.Elevation\n    bao_cao.append(\"View: %s (level %s) → 1 shaft opening cho cả tầng, Base / Top Constraint = %s, Base Offset %g mm, \"\n                   \"Top Offset %g mm\" % (view.Name, lv.Name, lv.Name, BASE_OFFSET_MM, TOP_OFFSET_MM))\n    zb, zt = z + mm(BASE_OFFSET_MM), z + mm(TOP_OFFSET_MM)\n    tam_vong, cua_tang = [], []      # tâm từng vòng của mọi shaft cắt qua tầng; shaft lỗ mở cục bộ của tầng\n    for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ShaftOpening).WhereElementIsNotElementType():\n        bb = e.get_BoundingBox(None)\n        if bb is None or bb.Max.Z <= zb or bb.Min.Z >= zt:\n            continue\n        try:\n            vs = vong_shaft(e)\n        except Exception:\n            vs = []\n        for p in vs:\n            tam_vong.append((sum(q[0] for q in p) / len(p), sum(q[1] for q in p) / len(p)))\n        if la_shaft_tang(e, lv):\n            cua_tang.append((len(vs), e))\n    se_lam, da_co, bi_loai, xem_lai = tim_truc(\n        view, lv, lambda v: any(trong_vung(p[0], p[1], v[\"pts\"]) for p in tam_vong), \"lỗ mở\",\n        \"vòng lỗ mở đã có cắt qua tầng: %d\" % len(tam_vong))\n    dich = max(cua_tang, key=lambda t: t[0])[1] if cua_tang else None\n    mau_x, ghi_mau = (None, \"\")\n    if dich is not None:\n        bao_cao.append(\"Thêm vào shaft có sẵn của tầng: %d (%d vòng)\" % (dich.Id.Value, max(cua_tang, key=lambda t: t[0])[0]))\n    elif se_lam:\n        bao_cao.append(\"Tầng chưa có shaft lỗ mở → tạo 1 shaft mới chứa cả %d vòng\" % len(se_lam))\n    if GAN_X:\n        if mau_x is None:\n            bao_cao.append(\"Model chưa có shaft mẫu có dấu X → sẽ vẽ X bằng API (nét <Thin Lines>), kiểm tra lại sau khi chạy.\")\n        else:\n            bao_cao.append(\"Dấu X chép từ %s\" % ghi_mau)\n    if DRY_RUN:\n        TransactionManager.Instance.TransactionTaskDone()\n        bao_cao.append(\"DRY-RUN: chưa tạo gì. Đặt IN[4] = False để tạo lỗ mở.\")\n        return view, []\n    TransactionManager.Instance.TransactionTaskDone()\n    TransactionManager.Instance.ForceCloseTransaction()     # Dynamo giữ transaction tới cuối lượt chạy → đóng hẳn\n    con = list(se_lam)\n    if dich is None and con:\n        try:\n            dich = tao_shaft(lv, con[0])\n            con = con[1:]\n            bao_cao.append(\"ĐÃ TẠO shaft opening %d\" % dich.Id.Value)\n        except Exception as ex:\n            bao_cao.append(\"Không tạo được shaft opening: %s\" % str(ex).splitlines()[0])\n            return view, []\n    if dich is None:\n        bao_cao.append(\"Không có ô trục nào cần lỗ mở.\")\n        return view, []\n    try:\n        so_vong, so_x = them_vong_va_x(dich, con, mau_x if GAN_X else None)\n        bao_cao.append(\"ĐÃ THÊM %d vòng lỗ mở + %d dấu X vào shaft %d\" % (so_vong, so_x, dich.Id.Value))\n    except Exception as ex:\n        bao_cao.append(\"LỖI khi sửa sketch shaft %d: %s – không thêm vòng / dấu X nào\" % (dich.Id.Value, str(ex).splitlines()[0]))\n    if GAN_X and mau_x is None:\n        try:\n            n_x = gan_x_api(dich)\n            bao_cao.append(\"ĐÃ VẼ dấu X bằng API cho %d vòng (shaft %d)\" % (n_x, dich.Id.Value))\n        except Exception as ex:\n            bao_cao.append(\"KHÔNG vẽ được dấu X bằng API (%s) – shaft vẫn có vòng lỗ mở; vẽ tay 2 Symbolic Line chéo \"\n                           \"rồi bấm lại để chép X.\" % str(ex).splitlines()[0])\n    dich = doc.GetElement(dich.Id)\n    bao_cao.append(\"Shaft %d sau cùng: %d vòng, %d nét dấu X; %s\" % (\n        dich.Id.Value, doc.GetElement(dich.SketchId).Profile.Size, len(tach_sketch(dich)[1]), doc_tham_so(dich)))\n    return view, [dich.Id]\n\n\ndef xuat_anh(view):\n    try:\n        TransactionManager.Instance.ForceCloseTransaction()\n        opt = ImageExportOptions()\n        opt.ExportRange = ExportRange.SetOfViews\n        opt.SetViewsAndSheets(ds_id([view.Id]))\n        opt.FilePath = os.path.join(THU_MUC, \"lo_mo\")\n        opt.ZoomType = ZoomFitType.FitToPage\n        opt.PixelSize = 6000\n        opt.ImageResolution = ImageResolution.DPI_300\n        opt.HLRandWFViewsFileType = ImageFileType.PNG\n        opt.ShadowViewsFileType = ImageFileType.PNG\n        doc.ExportImage(opt)\n        bao_cao.append(\"Ảnh: %s*.png\" % opt.FilePath)\n    except Exception as ex:\n        bao_cao.append(\"Không xuất được ảnh: %s\" % ex)\n\n\ntry:\n    v, moi = chinh()\n    xuat_anh(v)\nexcept Exception:\n    bao_cao.append(\"LỖI: \" + traceback.format_exc())\n\nlog = os.path.join(THU_MUC, \"lo_mo_%s.txt\" % datetime.now().strftime(\"%Y%m%d_%H%M%S\"))\nwith open(log, \"w\", encoding=\"utf-8\") as f:\n    f.write(\"\\n\".join(bao_cao))\nbao_cao.append(\"Log: \" + log)\nOUT = bao_cao\n\nwith open(r\"D:\\AI\\_tmp\\revit_lomo_test\\log\\ket_qua_test.txt\", \"w\", encoding=\"utf-8\") as f:\n    f.write(\"\\n\".join(bao_cao))\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "3386fc2098594afe9cccfea37d49c71d",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "15841a11bee248b19212e79de0b6773e",
+          "Name": "IN[0]",
+          "Description": "Tên mặt bằng tầng (trống = view đang mở)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a1adad1369da46da9eac1ea9366705f7",
+          "Name": "IN[1]",
+          "Description": "Từ khoá tên room trục / HKT (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f4fc9258919d49baa674d16b0bd2c8ad",
+          "Name": "IN[2]",
+          "Description": "Diện tích lớn nhất ô / khe theo hình học (m2)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "189e3d101e0c434391d8174434420b7c",
+          "Name": "IN[3]",
+          "Description": "Bề rộng lòng nhỏ nhất (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c55e863c8dc6426c9ef501b944f9d8c7",
+          "Name": "IN[4]",
+          "Description": "Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d371a3be60ff470485b27277d2ddf619",
+          "Name": "IN[5]",
+          "Description": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4748ea0e539e4bcdafc9f3095b5dd3a2",
+          "Name": "IN[6]",
+          "Description": "Từ khoá loại trừ thang máy / thang bộ (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1ab663387d4e473c84df032f9967878e",
+          "Name": "IN[7]",
+          "Description": "Base Offset (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "dfc688b8de954ecb8ba333f472c28721",
+          "Name": "IN[8]",
+          "Description": "Top Offset (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "533df30c0f944f84835ff659d9065ece",
+          "Name": "IN[9]",
+          "Description": "Gắn dấu X (Symbolic Line chép từ shaft mẫu)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2e676f7b2ef144d984bd7f8547ccf0f5",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "0b224b9564424718b3e57a2bde5ab783",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "735cc94b7b7547aa979c87213825cc73",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9941bc288efb43d1a7f76bed8d84dedd",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "61676d16c69243e29eb84045733c21c3",
+      "End": "15841a11bee248b19212e79de0b6773e",
+      "Id": "ba43a2953ea646b1880e9d74ecd4fbb2",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e6b9ef6fa7c944d08bc8a88e8b3ae730",
+      "End": "a1adad1369da46da9eac1ea9366705f7",
+      "Id": "a7012cda030c469488b8036933e4df51",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "24d357f6ecf146d4858c97620cfa3147",
+      "End": "f4fc9258919d49baa674d16b0bd2c8ad",
+      "Id": "363602b511964180bc82821a180768d4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1c2606a78dc64f34a61ed808c3bdda1f",
+      "End": "189e3d101e0c434391d8174434420b7c",
+      "Id": "2e253559ada84c2e8381d2341ff421ae",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "323a447b0b6f42dd8267b7d3bb683f50",
+      "End": "c55e863c8dc6426c9ef501b944f9d8c7",
+      "Id": "77b09a8052654c25b1f3fa137b99e144",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "55963ca689bf4c29bed0a691b7bbd3c3",
+      "End": "d371a3be60ff470485b27277d2ddf619",
+      "Id": "853e855d242348aab6a3e60fba350125",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "4c4bfe27ba42463297b957c449c15624",
+      "End": "4748ea0e539e4bcdafc9f3095b5dd3a2",
+      "Id": "5c8b8f070dac4e11ad9a8abd4b12abc5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "c2b8e4d794c249daa9d00ec870f64105",
+      "End": "1ab663387d4e473c84df032f9967878e",
+      "Id": "0ccaf1a8e5114c0c901c8ad3861e411c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5fcabeaaf9eb40ed943c69df1535e12d",
+      "End": "dfc688b8de954ecb8ba333f472c28721",
+      "Id": "f4028c7e1aab42e5ac95f100ed1797c4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0af6c93354454cb2aa03960976ce9f5f",
+      "End": "533df30c0f944f84835ff659d9065ece",
+      "Id": "c92ce0d4e9dc43ca89ef483976ebb5ef",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "2e676f7b2ef144d984bd7f8547ccf0f5",
+      "End": "735cc94b7b7547aa979c87213825cc73",
+      "Id": "793b188e0bef46f98ae5ac7c82502a45",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "bf1121e1053946cc966a5a4d4fad11e2",
+        "Name": "Tên mặt bằng tầng (trống = view đang mở)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "4e4814d89db646cdb42065e1514f515f",
+        "Name": "Từ khoá tên room trục / HKT (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 130.0
+      },
+      {
+        "Id": "f4269fe449984c4da1f23864a422d3ea",
+        "Name": "Diện tích lớn nhất ô / khe theo hình học (m2)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Id": "ad97077ff18647ab940a9bd188b8a6b0",
+        "Name": "Bề rộng lòng nhỏ nhất (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 390.0
+      },
+      {
+        "Id": "1b897be079274bec80aa574e6f2c0db3",
+        "Name": "Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Id": "ac4bb7e5ae9949ff9f2b0bfdafd0dc33",
+        "Name": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 650.0
+      },
+      {
+        "Id": "fbe0f61ede7e4c11881dc427866395b3",
+        "Name": "Từ khoá loại trừ thang máy / thang bộ (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 780.0
+      },
+      {
+        "Id": "03e7b19b012640439fabfc15d5c718f7",
+        "Name": "Base Offset (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 910.0
+      },
+      {
+        "Id": "5b3134c3dd8148a7ac4b1859b6da626c",
+        "Name": "Top Offset (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1040.0
+      },
+      {
+        "Id": "d83cbd477abb42aeb56621bdb631e44d",
+        "Name": "Gắn dấu X (Symbolic Line chép từ shaft mẫu)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1170.0
+      },
+      {
+        "Id": "3386fc2098594afe9cccfea37d49c71d",
+        "Name": "test_lomo_x",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "0b224b9564424718b3e57a2bde5ab783",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "0107cc331a1049a8bd87ce62bcf0d799",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "bf1121e1053946cc966a5a4d4fad11e2",
+          "4e4814d89db646cdb42065e1514f515f",
+          "f4269fe449984c4da1f23864a422d3ea",
+          "ad97077ff18647ab940a9bd188b8a6b0",
+          "1b897be079274bec80aa574e6f2c0db3",
+          "ac4bb7e5ae9949ff9f2b0bfdafd0dc33",
+          "fbe0f61ede7e4c11881dc427866395b3",
+          "03e7b19b012640439fabfc15d5c718f7",
+          "5b3134c3dd8148a7ac4b1859b6da626c",
+          "d83cbd477abb42aeb56621bdb631e44d"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 1340.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 1340.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "181b7f37e26b4224886670941b3eca2e",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "3386fc2098594afe9cccfea37d49c71d"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "abfa80b411ee4f60a355ff7b369ed843",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "0b224b9564424718b3e57a2bde5ab783"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}
