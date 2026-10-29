@@ -627,6 +627,8 @@ MDVK: " (if (vl-catch-all-error-p r)
       "  label = \"MDVK - M\\U+1EB7t \\U+0111\\U+1EE9ng v\\U+00E1ch k\\U+00EDnh\";"
       "  : text { key = \"mo\"; width = 66; }"
       "  : text { key = \"vach\"; width = 66; }"
+      "  : row {"
+      "  : column {"
       "  : edit_box { key = \"cao\"; label = \"Chi\\U+1EC1u cao v\\U+00E1ch k\\U+00EDnh (mm):\"; edit_width = 10; }"
       "  : boxed_column { key = \"khung_di\"; label = \"V\\U+00E1ch c\\U+1EEDa \\U+0111i\";"
       "    : edit_box { key = \"hd\"; label = \"Chi\\U+1EC1u cao c\\U+1EEDa \\U+0111i (thanh ngang \\U+0111\\U+1EB7t ngay tr\\U+00EAn c\\U+1EEDa, mm):\"; edit_width = 10; }"
@@ -637,12 +639,61 @@ MDVK: " (if (vl-catch-all-error-p r)
       "    : edit_box { key = \"san\"; label = \"S\\U+00E0n ho\\U+00E0n thi\\U+1EC7n d\\U+00E0y (mm):\"; edit_width = 10; }"
       "    : edit_box { key = \"bau\"; label = \"Cao b\\U+1EADu c\\U+1EEDa s\\U+1ED5, t\\U+1EEB s\\U+00E0n ho\\U+00E0n thi\\U+1EC7n t\\U+1EDBi m\\U+00E9p d\\U+01B0\\U+1EDBi c\\U+00E1nh (mm):\"; edit_width = 10; }"
       "  }"
+      "  }"
+      "  : boxed_column { label = \"Xem tr\\U+01B0\\U+1EDBc m\\U+1EB7t \\U+0111\\U+1EE9ng: xanh = c\\U+00E1nh c\\U+1EEDa s\\U+1ED5, \\U+0111\\U+1ECF = c\\U+1EEDa \\U+0111i\";"
+      "    : image { key = \"xem\"; width = 44; height = 15; color = 250; fixed_width = true; fixed_height = true; }"
+      "  }"
+      "  }"
       "  : text { key = \"thongtin\"; width = 66; }"
       "  : text { key = \"loi\"; width = 66; }"
       "  ok_cancel;"
       "}")
     (write-line s h))
   (close h)
+)
+
+;;; Ô xem trước mặt đứng (người dùng yêu cầu 29/10/2026, như ô xem trước của lệnh VK): sơ đồ đúng tỉ lệ theo kết
+;;; quả vkmd:tinh - khung / đố / thanh ngang trắng, cánh cửa sổ dải xanh, cửa đi khung đỏ + hình thoi; vẽ lại mỗi
+;;; lần bảng đổi. Thanh ngang lấy y như vkmd:dung (khung trên, khung dưới trừ ô cửa đi, thanh ngang, đố dưới cửa sổ).
+(defun vkmd:ve-xem (vach kq H / rx ry le L sc x0 yb o tam d nua i xa xb bars so hd px py)
+  (setq rx (dimx_tile "xem") ry (dimy_tile "xem") le 6)
+  (start_image "xem")
+  (fill_image 0 0 rx ry 250)
+  (if (and (listp kq) H (> H 0) vach)
+    (progn
+      (setq L (car vach) o (cadr vach) tam (caddr vach) d vkmd:do nua (/ vkmd:do 2.0)
+            so (caddr kq) hd (nth 3 kq)
+            sc (min (/ (- rx (* 2 le)) L) (/ (- ry (* 2 le)) H))
+            x0 (/ (- rx (* L sc)) 2.0) yb (- ry (/ (- ry (* H sc)) 2.0)))
+      (defun px (x) (fix (+ x0 (* x sc))))
+      (defun py (y) (fix (- yb (* y sc))))
+      (setq i 0)
+      (foreach x o
+        (setq xa (+ (nth i tam) nua) xb (- (nth (1+ i) tam) nua)
+              bars (append (list (list (- H d) H))
+                           (if (/= (car x) "D") (list (list 0.0 d)))
+                           (if (cadr kq) (list (cadr kq)))
+                           (if (= (car x) "S") (list (list (car so) (cadr so))))))
+        ;; cánh cửa sổ / cửa đi
+        (cond
+          ((= (car x) "S")
+           (fill_image (px xa) (py (caddr so)) (max 1 (- (px xb) (px xa))) (max 1 (- (py (cadr so)) (py (caddr so)))) 5))
+          ((= (car x) "D")
+           (vector_image (px xa) (py 0.0) (px xb) (py 0.0) 1)
+           (vector_image (px xa) (py hd) (px xb) (py hd) 1)
+           (vector_image (px xa) (py 0.0) (px xa) (py hd) 1)
+           (vector_image (px xb) (py 0.0) (px xb) (py hd) 1)
+           (vector_image (px (/ (+ xa xb) 2.0)) (py hd) (px xa) (py (/ hd 2.0)) 1)
+           (vector_image (px xa) (py (/ hd 2.0)) (px (/ (+ xa xb) 2.0)) (py 0.0) 1)
+           (vector_image (px (/ (+ xa xb) 2.0)) (py 0.0) (px xb) (py (/ hd 2.0)) 1)
+           (vector_image (px xb) (py (/ hd 2.0)) (px (/ (+ xa xb) 2.0)) (py hd) 1)))
+        (foreach b bars
+          (fill_image (px xa) (py (cadr b)) (max 1 (- (px xb) (px xa))) (max 1 (- (py (car b)) (py (cadr b)))) 7))
+        (setq i (1+ i)))
+      ;; đố đứng chạy suốt
+      (foreach c tam
+        (fill_image (px (- c nua)) (py H) (max 1 (- (px (+ c nua)) (px (- c nua)))) (max 1 (- (py 0.0) (py H))) 7))))
+  (end_image)
 )
 
 (defun vkmd:cap-nhat (/ kq co)
@@ -666,6 +717,7 @@ MDVK: " (if (vl-catch-all-error-p r)
                                      (T ""))))
       (set_tile "loi" ""))
     (progn (set_tile "thongtin" "") (set_tile "loi" (strcat "L\\U+1ED7i: " kq))))
+  (vkmd:ve-xem vkmd-vach kq (vkmd:doc-so (get_tile "cao")))
   (setq vkmd-kq kq)
 )
 
