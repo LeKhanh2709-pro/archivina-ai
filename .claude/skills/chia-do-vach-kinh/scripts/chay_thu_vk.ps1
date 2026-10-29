@@ -55,7 +55,8 @@ $($ham -join "`r`n")
 $Lisp
 (vk:ghi (strcat "BLOCK_VK " (if (vk:du-block) "CO" "THIEU")))
 "@
-$lines = $lisp -split "`r?`n" | Where-Object { $_.Trim() -ne '' }
+# dong "<ENTER>" trong bieu thuc thu = nhan Enter (vd. ket thuc pick lien tiep); dong trong bi bo
+$lines = $lisp -split "`r?`n" | Where-Object { $_.Trim() -ne '' } | ForEach-Object { if ($_.Trim() -eq '<ENTER>') { '' } else { $_ } }
 $scr = ($lines -join "`r`n") + "`r`nFILEDIA`r`n0`r`n_.SAVEAS`r`n2018`r`n`"$outF`"`r`n_.QUIT`r`n_Y`r`n"
 Set-Content -Path (Join-Path $work 'run.scr') -Value $scr -Encoding UTF8
 

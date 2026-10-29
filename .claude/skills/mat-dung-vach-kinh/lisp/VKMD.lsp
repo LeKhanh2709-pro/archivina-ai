@@ -156,16 +156,22 @@
 )
 
 ;;; e: bản chèn block "VACH KINH ..." trên mặt bằng.
-;;; Trả về (L o tam pt ux uy): o = ((loai rong) ...) theo thứ tự đi từ đầu vách; tam = tâm đố; pt = điểm chèn;
+;;; Trả về (L o tam pt ux uy): o = ((loai rong) ...) theo thứ tự đi từ đầu vách; tam = tâm đố; pt = mép ngoài đầu
+;;; vách trong WCS (= điểm chèn, trừ khi đã kéo grip đầu vách);
 ;;; (ux uy) = hướng trục vách trong WCS. Lỗi -> chuỗi.
-(defun vkmd:doc-vach (e / ed ten b n x tam mo w i c loai o kq sx g)
+(defun vkmd:doc-vach (e / ed ten b n x tam mo w i c loai o kq sx g pt dx)
   (setq ed (entget e))
   (cond
     ((/= "INSERT" (cdr (assoc 0 ed))) "\\U+0110\\U+1ED1i t\\U+01B0\\U+1EE3ng ch\\U+1ECDn kh\\U+00F4ng ph\\U+1EA3i block")
-    ((not (wcmatch (strcase (setq ten (cdr (assoc 2 ed)))) "VACH KINH*"))
-     (strcat "Block \"" ten "\" kh\\U+00F4ng ph\\U+1EA3i block v\\U+00E1ch k\\U+00EDnh do l\\U+1EC7nh VK t\\U+1EA1o (VACH KINH ...)"))
+    ;; vách do VK tạo: có XData "ARCHIVINA_VK" (tên block người dùng tự đặt được từ 29/10/2026), hoặc vách
+    ;; bản cũ tên gốc "VACH KINH ..."; vách đã kéo grip (*Uxx) xét tên gốc (EffectiveName), đọc nội dung *Uxx
+    ((not (or (assoc -3 (entget e '("ARCHIVINA_VK")))
+              (wcmatch (strcase (vla-get-EffectiveName (vlax-ename->vla-object e))) "VACH KINH*")))
+     (strcat "Block \"" (vla-get-EffectiveName (vlax-ename->vla-object e))
+             "\" kh\\U+00F4ng ph\\U+1EA3i block v\\U+00E1ch k\\U+00EDnh do l\\U+1EC7nh VK t\\U+1EA1o"))
     (T
-     (setq b (cdr (assoc -2 (tblsearch "BLOCK" ten))))
+     (setq ten (cdr (assoc 2 ed))
+           b (cdr (assoc -2 (tblsearch "BLOCK" ten))))
      (while b
        (setq x (entget b))
        (if (= "INSERT" (cdr (assoc 0 x)))
@@ -181,7 +187,19 @@
      ;; tâm đố tăng dần, bỏ trùng (cửa liền nhau dùng chung đố)
      (setq tam (vl-sort tam '<) kq nil)
      (foreach c tam (if (not (and kq (equal c (car kq) 0.01))) (setq kq (cons c kq))))
-     (setq tam (reverse kq))
+     (setq tam (reverse kq)
+           sx (cdr (assoc 41 ed)) g (cdr (assoc 50 ed))
+           pt (cdr (assoc 10 ed)))
+     ;; vách đã kéo grip ĐẦU (bản *Uxx): điểm chèn giữ nguyên, đầu vách dời dx -> đưa đố / cửa về gốc 0 và
+     ;; dời điểm đầu vách theo trục vách (người dùng cho kéo 2 đầu 29/10/2026)
+     (if (and tam (= "*" (substr ten 1 1)))
+       (progn
+         (setq dx (- (car tam) (/ vkmd:do 2.0))
+               tam (mapcar '(lambda (c) (- c dx)) tam)
+               mo (mapcar '(lambda (m) (list (car m) (- (cadr m) dx) (caddr m))) mo)
+               pt (list (+ (car pt) (* dx (if (< sx 0) -1.0 1.0) (cos g)))
+                        (+ (cadr pt) (* dx (if (< sx 0) -1.0 1.0) (sin g)))
+                        (caddr pt)))))
      (cond
        ((< (length tam) 2) "Block v\\U+00E1ch kh\\U+00F4ng c\\U+00F3 \\U+0111\\U+1EE7 \\U+0111\\U+1ED1 (VK_DoDung / VK_CuaSoMo / VK_CuaDi)")
        ((not (equal (car tam) (/ vkmd:do 2.0) 0.5)) "\\U+0110\\U+1ED1 \\U+0111\\U+1EA7u v\\U+00E1ch kh\\U+00F4ng \\U+1EDF 32,5 t\\U+1EEB m\\U+00E9p - block kh\\U+00F4ng ph\\U+1EA3i do VK t\\U+1EA1o")
@@ -193,8 +211,7 @@
                 loai (car (vl-some '(lambda (m) (if (equal (cadr m) c 0.01) (list (car m)))) mo))
                 o (cons (list (if loai loai "K") (- (nth (1+ i) tam) c)) o)
                 i (1+ i)))
-        (setq sx (cdr (assoc 41 ed)) g (cdr (assoc 50 ed)))
-        (list (+ (last tam) (/ vkmd:do 2.0)) (reverse o) tam (cdr (assoc 10 ed))
+        (list (+ (last tam) (/ vkmd:do 2.0)) (reverse o) tam pt
               (* (if (< sx 0) -1.0 1.0) (cos g)) (* (if (< sx 0) -1.0 1.0) (sin g)))))))
 )
 
@@ -433,6 +450,58 @@
   s
 )
 
+;;; Sau khi dựng mặt đứng (người dùng yêu cầu 29/10/2026, theo ảnh mẫu): dim kiểm tra trong block MẶT BẰNG (VK
+;;; đặt sát vách trên Defpoints) -> layer A-Dimension, chuyển xuống DƯỚI mặt bằng, cách đối tượng như dim mặt đứng
+;;; (gióng 80, chuỗi 200, tổng 335 từ mép ngoài cùng của vách phía đó, tính cả cung mở cánh cửa đi).
+;;;   - "Dưới" theo hướng thật trên bản vẽ: phía trục y block có thành phần Y thế giới âm (vách đứng: phía -X).
+;;;   - Sửa tại chỗ (entmod), không xoá vẽ lại: dim nằm trong Stretch action của block động, xoá đi thì kéo grip
+;;;     không còn kéo dim. Sửa định nghĩa block mà bản chèn đang dùng (block gốc hoặc bản *U đã kéo grip).
+;;;   - Ghi phía đặt dim vào phần tử thứ 9 XData "ARCHIVINA_VK" -> VK.lsp vẽ lại dim đúng kiểu này khi kéo grip.
+(defun vkmd:dim-mat-bang (e / ed g s42 ben blk dims lo hi mn mx m tong x d yg xd moi ma gt)
+  (setq ed (entget e) g (cdr (assoc 50 ed))
+        s42 (if (and (assoc 42 ed) (< (cdr (assoc 42 ed)) 0)) -1.0 1.0)
+        ben (cond ((> (* (cos g) s42) 1e-6) -1)
+                  ((< (* (cos g) s42) -1e-6) 1)
+                  ((> (* (sin g) s42) 0) 1)
+                  (T -1))
+        blk (vla-Item (vla-get-Blocks (vla-get-ActiveDocument (vlax-get-acad-object))) (cdr (assoc 2 ed)))
+        lo 0.0 hi 0.0)
+  (vlax-for x blk
+    (cond
+      ((wcmatch (vla-get-ObjectName x) "*Dimension") (setq dims (cons x dims)))
+      ((not (vl-catch-all-error-p (vl-catch-all-apply 'vla-GetBoundingBox (list x 'mn 'mx))))
+       (setq lo (min lo (cadr (vlax-safearray->list mn))) hi (max hi (cadr (vlax-safearray->list mx)))))))
+  (if dims
+    (progn
+      (setq m (if (> ben 0) hi lo)
+            yg (+ m (* ben vkmd:dim-ho-ngang))
+            ;; dim tổng = dim đo dài nhất (chạy lại MDVK lần 2 vẫn nhận đúng)
+            tong (car (vl-sort dims '(lambda (a b) (> (vla-get-Measurement a) (vla-get-Measurement b))))))
+      (foreach x dims
+        (setq d (entget (vlax-vla-object->ename x)))
+        (foreach k '(13 14)
+          (setq d (subst (list k (cadr (assoc k d)) yg (caddr (assoc k d))) (assoc k d) d)))
+        (setq d (subst (list 10 (cadr (assoc 10 d))
+                             (+ m (* ben (if (eq x tong) vkmd:dim-ngang-tong vkmd:dim-ngang-chuoi)))
+                             (caddr (assoc 10 d)))
+                       (assoc 10 d) d)
+              d (subst (cons 8 vkmd:layer-dim) (assoc 8 d) d))
+        (entmod d))
+      ;; phía đặt dim -> phần tử thứ 9 của XData (vách bản cũ không có XData thì thôi)
+      (if (setq xd (cdr (assoc "ARCHIVINA_VK" (cdr (assoc -3 (entget e '("ARCHIVINA_VK")))))))
+        (progn
+          (setq moi (append (list (cons 1001 "ARCHIVINA_VK"))
+                            (if (> (length xd) 8) (reverse (cdr (reverse xd))) xd)
+                            (list (cons 1070 ben)))
+                ma (vlax-make-safearray vlax-vbInteger (cons 0 (1- (length moi))))
+                gt (vlax-make-safearray vlax-vbVariant (cons 0 (1- (length moi)))))
+          (vlax-safearray-fill ma (mapcar 'car moi))
+          (vlax-safearray-fill gt (mapcar '(lambda (p) (vlax-make-variant (cdr p))) moi))
+          (vla-SetXData (vlax-ename->vla-object e) ma gt)))
+      (vla-Update (vlax-ename->vla-object e))
+      (length dims)))
+)
+
 ;;; Chạy đủ (dùng chung cho lệnh MDVK và chạy thử không hộp thoại).
 ;;; e: bản chèn block mặt bằng; pt: điểm đặt (nil -> hỏi). Vách nằm ngang trên mặt bằng: mặt đứng thẳng hàng
 ;;; theo X với mặt bằng, chỉ lấy cao độ Y của điểm chọn; vách xiên: góc dưới trái mặt đứng = điểm chọn.
@@ -496,6 +565,8 @@
             (setq ten (vkmd:gom dau (vkmd:ten-block (vl-string-translate "," "_" (strcat "MAT DUNG VK " (vkmd:so (car vach))
                                                                                           "x" (vkmd:so H))))
                                 (list x0 y0 0.0)))
+            ;; dim kiểm tra của mặt bằng -> A-Dimension, xuống dưới mặt bằng
+            (if ten (vl-catch-all-apply 'vkmd:dim-mat-bang (list e)))
             (princ (if ten
                      (strcat "\nMDVK: m\\U+1EB7t \\U+0111\\U+1EE9ng " (vkmd:so (car vach)) " x " (vkmd:so H)
                              " -> block " ten "\n    Cao \\U+0111\\U+1ED9 (t\\U+1EEB d\\U+01B0\\U+1EDBi l\\U+00EAn): " (vkmd:chuoi kq))
@@ -556,7 +627,7 @@
 
 (defun c:MDVK (/ e f id kq-dlg vkmd-vach vkmd-kq loai s khoa)
   (setq khoa '("cao" "hd" "hs" "co" "san" "bau"))
-  (while (and (setq e (entsel "\nCh\\U+1ECDn block v\\U+00E1ch k\\U+00EDnh tr\\U+00EAn m\\U+1EB7t b\\U+1EB1ng (VACH KINH ...): "))
+  (while (and (setq e (entsel "\nCh\\U+1ECDn block v\\U+00E1ch k\\U+00EDnh tr\\U+00EAn m\\U+1EB7t b\\U+1EB1ng (do l\\U+1EC7nh VK t\\U+1EA1o): "))
               (= 'STR (type (setq vkmd-vach (vkmd:doc-vach (car e))))))
     (princ (strcat "\n" vkmd-vach)))
   (if e
