@@ -1,0 +1,30 @@
+K-TOOL — TAB RIBBON CÁC LỆNH LISP ARCHIVINA
+===========================================
+
+Nút trên tab K-TOOL:
+  Vách kính      VK         chia đố, dựng vách kính mặt bằng
+  Mặt đứng VK    MDVK       dựng mặt đứng vách kính từ block VACH KINH
+  Lỗ mở MEP      LOMO       chèn block A-MEP cho trục / hộp kỹ thuật
+  Ngăn cháy lan  NCL        bo + hatch ngăn cháy lan (lệnh gõ tay KT-NGANCHAY: hỏi trước khi vẽ)
+  Chống thấm     CHONGTHAM  mặt bằng chống thấm WC, lô gia, phòng rác...
+Nạp K-TOOL là nạp sẵn mọi lệnh: bấm nút hoặc gõ tên lệnh đều chạy ngay.
+
+YÊU CẦU
+  - AutoCAD hoặc AutoCAD Architecture 2027 (K-TOOL.dll chạy trên .NET 10 của bản 2027).
+    AutoCAD 2025 / 2026: K-TOOL.dll không nạp được; dùng APPLOAD nạp từng file .lsp trong AI\scripts\lisp.
+  - Không phải cài thêm gì: Python cho lệnh CHONGTHAM có sẵn trong gói (AI\_tools\CHONGTHAM_python).
+
+CÀI ĐẶT (làm 1 lần trên mỗi máy)
+  1. Chép thư mục AI trong gói vào gốc một ổ cứng bất kỳ, ví dụ D:\  ->  D:\AI\scripts\lisp\K-TOOL.dll
+     Máy đã có D:\AI thì chép ghép vào (chỉ thêm / thay các file của gói).
+  2. AutoCAD: gõ OPTIONS > tab Files > Trusted Locations > Add > chọn D:\AI\scripts\lisp > OK.
+     (Không làm bước này thì lần đầu AutoCAD hỏi "Security - Unsigned Executable File": chọn Always Load.)
+  3. Gõ APPLOAD > mục Startup Suite bấm Contents > Add > chọn D:\AI\scripts\lisp\K-TOOL.lsp > Close.
+     Trong hộp APPLOAD chọn luôn K-TOOL.lsp > Load để dùng ngay, không cần mở lại AutoCAD.
+  4. Tab K-TOOL hiện trên ribbon (cạnh các tab khác). Không thấy tab thì gõ KTOOL.
+
+LƯU Ý
+  - Chữ tiếng Việt của LOMO / NCL / CHONGTHAM bị lỗi font khi LISPSYS = 0: gõ LISPSYS, đặt 1, mở lại AutoCAD.
+    VK và MDVK hiện đúng ở cả hai chế độ. Lệnh vẫn chạy đúng, chỉ sai chữ thông báo.
+  - Luôn sao lưu bản vẽ trước khi chạy lệnh (các lệnh thêm đối tượng vào bản vẽ đang mở).
+  - Có lỗi: gửi file AI\scripts\lisp\K-TOOL.log và nguyên văn dòng lệnh AutoCAD báo.

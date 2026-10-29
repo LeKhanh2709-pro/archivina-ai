@@ -36,3 +36,9 @@ _tools/chongtham_*/
 
 # Bản nén hồ sơ mẫu (185 MB, vượt giới hạn 100 MB của GitHub)
 file mau.rar
+
+# Bản LISP giải nén từ K-TOOL.dll (tạo khi bấm nút)
+scripts/lisp/K-TOOL_lisp/
+
+# Gói K-TOOL mang sang máy khác (có Python mang theo ~150 MB, không đẩy lên GitHub)
+_dist/
