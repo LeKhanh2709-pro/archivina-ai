@@ -69,6 +69,7 @@ Nhiều hạt cùng một ô: ưu tiên phòng rác > buồng đệm > phòng KT
 - Sửa 23/10/2026 (người dùng báo nét vén chạy qua cửa trên CT2):
   - **Thứ tự nổ AEC**: cửa đi / cửa sổ / ô mở trước, tường sau cùng. Nổ tường trước thì cửa gắn trong tường bị xoá theo (CT2 CH.02: mất cả 10 cửa).
   - Cửa vẽ bằng **nét rời** trên layer cửa (không phải block) cũng nhận: gom các nét cách nhau ≤ 30 mm thành một cửa.
+- Sửa 29/10/2026 (người dùng báo lô gia CH25 tầng 4 Tháp B "chống thấm sai": nét vén chạy kín qua 2 cửa trượt): **cửa AEC nằm sai layer** (`AEC_DOOR` / `AEC_WINDOW` trên layer `0` hoặc layer khác không phải layer cửa) được `dwg_to_dxf_aec.ps1` chuyển sang `A-Door` / `A-Window` **trên bản sao** trước khi nổ (layer khoá thì bỏ qua), ghi số lượng `CUA_AEC_DOI_LAYER_CUA` vào `_aec.txt`. Tầng 4 Tháp B: 12 cửa; 5 vùng tìm thêm cửa (lô gia 46 + WC 44, 48 căn CH25; lô gia 50 + WC 52 căn CH09), mọi đường bo giữ nguyên.
   - Cửa có cung quay: lấy **đường mở** (bản lề → mép cánh khi đóng, nằm trong tường); chỉ cắt nét vén ở cạnh phòng song song đường mở (lệch ≤ 20°), rộng đúng đường mở. Cánh cửa phòng bên vẽ ở tư thế mở nằm sát tường WC không cắt nhầm.
   - Vùng cắt chỉ rộng 120 mm tính từ cạnh phòng (trước là 400): bản lề sát góc không cắt lan sang nét vén cạnh vuông góc.
 

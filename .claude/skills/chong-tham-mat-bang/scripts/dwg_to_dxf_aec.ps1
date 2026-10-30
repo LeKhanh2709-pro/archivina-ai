@@ -26,6 +26,9 @@ param(
     [Parameter(Mandatory = $true)][string]$OutDir,
     # THU TU NO: cua / cua so / o mo truoc, tuong sau cung. No tuong truoc thi cua gan trong tuong bi xoa theo
     # (CT2 CH.02: 10 cua mat het -> net ven chay qua cua, nguoi dung bao loi 23/10/2026)
+    # CUA AEC NAM SAI LAYER: cua / cua so AEC tren layer khong phai layer cua (vd. "0") -> chuyen sang A-Door / A-Window
+    # TREN BAN SAO truoc khi no, vi tim_phong_uot.py nhan cua theo layer cua cua INSERT sau khi no. Tang 4 Thap B can CH25:
+    # 2 cua truot ra lo gia tren layer "0" -> net ven chay kin qua cua (nguoi dung bao loi 29/10/2026). Layer khoa: bo qua.
     [string]$Loai = 'AEC_DOOR,AEC_WINDOW,AEC_OPENING,AEC_*ASSEMBLY,AEC_CURTAIN*,AEC_WALL',
     [int]$TimeoutSec = 3600,
     [string]$ThuMucGoc = '',
@@ -54,9 +57,16 @@ $lisp = @"
   lst)
 (defun write-types (fn tag lst / f) (setq f (open fn "a")) (foreach c lst (write-line (strcat tag " " (car c) " " (itoa (cdr c))) f)) (close f))
 (defun xpl (e) (command "_.EXPLODE" e) (while (= 1 (logand 1 (getvar "CMDACTIVE"))) (command "")))
+(setq ntag 0)
+(defun tag-cua (e k / d l lay b)
+  (setq d (entget e) l (strcase (cdr (assoc 8 d))) b (tblsearch "LAYER" (cdr (assoc 8 d))))
+  (setq lay (cond ((= k "AEC_DOOR") "A-Door") ((= k "AEC_WINDOW") "A-Window")))
+  (if (and lay b (/= 4 (logand 4 (cdr (assoc 70 b)))) (not (wcmatch l "A-DOOR,A-WINDOW,A-GLAZ,A-CUA,A-OPENING,A-WINDOW-G")))
+    (progn (if (not (tblsearch "LAYER" lay)) (command "_.-LAYER" "_N" lay ""))
+      (command "_.CHPROP" e "" "_LA" lay "") (setq ntag (1+ ntag)))))
 (defun expl-all ( / ss i n e) (setq n 0)
   (foreach k '($dsLoai) (setq ss (ssget "X" (list (cons 0 k))) i 0)
-    (if ss (repeat (sslength ss) (setq e (ssname ss i)) (if (entget e) (progn (xpl e) (setq n (1+ n)))) (setq i (1+ i)))))
+    (if ss (repeat (sslength ss) (setq e (ssname ss i)) (if (entget e) (progn (tag-cua e k) (xpl e) (setq n (1+ n)))) (setq i (1+ i)))))
   n)
 (defun blk-aec (nm dep / e d r b) (setq b (tblsearch "BLOCK" nm)) (if (and b (/= 4 (logand 4 (cdr (assoc 70 b))))) (setq e (tblobjname "BLOCK" nm)))
   (if e (setq e (entnext e)))
@@ -77,6 +87,7 @@ $lisp = @"
 (write-types "$fw/aec.txt" "TRUOC" (aec-types))
 (setq nn (vl-catch-all-apply 'expl-all))
 (write-types "$fw/aec.txt" "SAU" (aec-types))
+(log-n "$fw/aec.txt" "CUA_AEC_DOI_LAYER_CUA" ntag)
 "@
 $lines = $lisp -split "`r?`n" | Where-Object { $_.Trim() -ne '' }
 $scr = ($lines -join "`r`n") + "`r`nFILEDIA`r`n0`r`n_.DXFOUT`r`n$fw/out.dxf`r`nV`r`n2018`r`n16`r`n_.QUIT`r`n_Y`r`n"
