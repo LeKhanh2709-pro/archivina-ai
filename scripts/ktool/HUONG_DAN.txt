@@ -3,7 +3,7 @@ K-TOOL — TAB RIBBON CÁC LỆNH LISP ARCHIVINA
 
 Nút trên tab K-TOOL:
   Vách kính      VK         chia đố, dựng vách kính mặt bằng
-  Mặt đứng VK    MDVK       dựng mặt đứng vách kính từ block VACH KINH
+  Mặt đứng VK    MDVK       quét vùng (Enter = cả bản vẽ), tự nhận vách kính (block VK + vách vẽ tay), dựng mặt đứng ngay trên mỗi vách
   Lỗ mở MEP      LOMO       chèn block A-MEP cho trục / hộp kỹ thuật
   Ngăn cháy lan  NCL        bo + hatch ngăn cháy lan (lệnh gõ tay KT-NGANCHAY: hỏi trước khi vẽ)
   Chống thấm     CHONGTHAM  mặt bằng chống thấm WC, lô gia, phòng rác...

@@ -787,8 +787,11 @@
 )
 
 ;;; Tích / bỏ tích ô i ở cột loai ("S" / "D"): vị trí cửa = các ô đang là cửa trong bảng (+ / - ô i), số lượng
-;;; cửa = số ô tích; một ô chỉ là một loại cửa
+;;; cửa = số ô tích; một ô chỉ là một loại cửa.
+;;; Bỏ tích một cửa -> "Ô tích sẽ là" chuyển sang đúng loại cửa đó: bấm ô khác ngay sau là DỜI cửa sang ô mới.
+;;; (Người dùng báo 30/10/2026: bỏ tích cửa đi để dời chỗ thì ô mới thành cửa sổ, vì ô chọn luôn để "Cửa sổ mở".)
 (defun vk:tich (loai i v / so di)
+  (if (= v "0") (set_tile "loaitich" (if (= loai "D") "rd" "rs")))
   (if (listp vk-kq)
     (progn
       (setq so (vk:vi-tri (car vk-kq) "S") di (vk:vi-tri (car vk-kq) "D"))
@@ -812,8 +815,10 @@
       (vk:tich (if (= (get_tile "loaitich") "rd") "D" "S") i "1")))
 )
 
-;;; Sửa ô Số lượng: giữ các cửa đang có (bớt thì bỏ từ cuối), cửa thêm thì tự đặt
-(defun vk:sua-sl (/ ns nd)
+;;; Sửa ô Số lượng: giữ các cửa đang có (bớt thì bỏ từ cuối), cửa thêm thì tự đặt.
+;;; loai: ô vừa sửa ("S" / "D") -> "Ô tích sẽ là" theo loại đó (sửa số cửa đi thì bấm dòng là tích cửa đi)
+(defun vk:sua-sl (loai / ns nd)
+  (set_tile "loaitich" (if (= loai "D") "rd" "rs"))
   (setq ns (vk:doc-so (get_tile "ns")) ns (if ns (max 0 (fix ns)) 0)
         nd (vk:doc-so (get_tile "nd")) nd (if nd (max 0 (fix nd)) 0))
   (if (listp vk-kq)
@@ -831,7 +836,7 @@
 
 (defun vk:luu-nho ()
   ;; vị trí cửa không còn ô nhập: lấy từ các ô đang tích (vk-vs / vk-vd)
-  (setq *vk-nho* (append (mapcar '(lambda (k) (cons k (get_tile k))) '("dai" "ns" "ws" "nd" "wd" "lat" "ten"))
+  (setq *vk-nho* (append (mapcar '(lambda (k) (cons k (get_tile k))) '("dai" "ns" "ws" "nd" "wd" "lat" "ten" "loaitich"))
                          (list (cons "vs" (vk:vt->chuoi vk-vs)) (cons "vd" (vk:vt->chuoi vk-vd))))))
 
 ;;; Ghi chiều dài 2 điểm vừa pick vào ô "dai" của bộ nhớ hộp thoại
@@ -869,10 +874,13 @@
               (if (not (member (car x) '("vs" "vd"))) (set_tile (car x) (cdr x))))
             (foreach k '("dai" "ws" "wd" "ten" "tinh")
               (action_tile k "(vk:cap-nhat)"))
-            (action_tile "ns" "(vk:sua-sl)")
-            (action_tile "nd" "(vk:sua-sl)")
-            ;; bấm dòng = tích / bỏ tích; ô tích mới mặc định là cửa sổ
-            (if (not (member (get_tile "loaitich") '("rs" "rd"))) (set_tile "loaitich" "rs"))
+            (action_tile "ns" "(vk:sua-sl \"S\")")
+            (action_tile "nd" "(vk:sua-sl \"D\")")
+            ;; bấm dòng = tích / bỏ tích; "Ô tích sẽ là" nhớ lần trước, chưa có thì: vách chỉ có cửa đi -> cửa đi,
+            ;; còn lại -> cửa sổ
+            (if (not (member (get_tile "loaitich") '("rs" "rd")))
+              (set_tile "loaitich"
+                (if (and (> (atoi (get_tile "nd")) 0) (= (atoi (get_tile "ns")) 0)) "rd" "rs")))
             (action_tile "ds" "(vk:bam-dong $value $reason)")
             (action_tile "pick" "(vk:luu-nho) (done_dialog 2)")
             (action_tile "accept"

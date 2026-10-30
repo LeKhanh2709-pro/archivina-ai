@@ -2,8 +2,9 @@
 ;;; Chữ có dấu trong chuỗi đã đổi thành mã \U+XXXX để hiện đúng với cả LISPSYS = 0 và 1.
 ;;; VKMD.lsp — Dựng mặt đứng vách kính từ block mặt bằng "VACH KINH <dài>" do lệnh VK tạo (Archivina)
 ;;; Lệnh: MDVK (người dùng chốt tên 29/10/2026)
-;;;   Chọn block vách trên mặt bằng -> lệnh tự nhận loại vách (cửa đi / cửa sổ / kính) -> bảng hỏi theo loại
-;;;   -> chọn cao độ đặt mặt đứng (thẳng hàng phía trên mặt bằng).
+;;;   Quét chọn vùng mặt bằng (Enter = cả bản vẽ) -> lệnh TỰ NHẬN mọi vách kính: block do VK tạo và cả vách vẽ tay
+;;;   (block tên tuỳ ý, đố có thể nằm rời; người dùng yêu cầu 30/10/2026, mẫu file mau\ACAD-CT VACH KINH.dxf)
+;;;   -> nhận loại vách (cửa đi / cửa sổ / kính) -> bảng hỏi chung -> mặt đứng đặt NGAY TRÊN mỗi vách.
 ;;; Quy tắc (người dùng chốt 29/10/2026):
 ;;;   - Vị trí đố đứng, cửa sổ, cửa đi đọc từ block mặt bằng; thứ tự trái / phải giữ đúng như mặt bằng.
 ;;;   - Đố đứng, khung trên, khung dưới, đố ngang rộng 65; đố đứng chạy suốt, thanh ngang vẽ giữa 2 mặt đố.
@@ -550,9 +551,11 @@
   )
   (setq bien '("CMDECHO" "OSMODE" "CLAYER") cu (mapcar 'getvar bien))
   (setvar "CMDECHO" 0)
-  (if (setq undo (vkmd:undo-ok)) (command "_.UNDO" "_BE"))
+  ;; nhiều vách một lần: vkmd:chay-het đã mở một nhóm undo chung
+  (if (and (not *vkmd-mot-nhom*) (setq undo (vkmd:undo-ok))) (command "_.UNDO" "_BE"))
   (if (= 0 (getvar "WORLDUCS")) (progn (command "_.UCS" "_W") (setq ucs T)))
-  (setq vach (vkmd:doc-vach e))
+  ;; e: bản chèn vách do VK tạo, hoặc danh sách vách đã nhận từ hình vẽ tay (vkmd:tao-vach)
+  (setq vach (if (= 'ENAME (type e)) (vkmd:doc-vach e) e))
   (cond
     ((= 'STR (type vach)) (princ (strcat "\nMDVK: " vach)))
     ((= 'STR (type (setq kq (vkmd:tinh vach H hd hs co san bau)))) (princ (strcat "\nMDVK: " kq)))
@@ -599,8 +602,9 @@
             (setq ten (vkmd:gom dau (vkmd:ten-block (vl-string-translate "," "_" (strcat "MAT DUNG VK " (vkmd:so (car vach))
                                                                                           "x" (vkmd:so H))))
                                 (list x0 y0 0.0)))
-            ;; dim kiểm tra của mặt bằng -> A-Dimension, xuống dưới mặt bằng
-            (if ten
+            ;; dim kiểm tra của mặt bằng -> A-Dimension, xuống dưới mặt bằng (chỉ vách do VK tạo; vách vẽ tay
+            ;; không sửa)
+            (if (and ten (= 'ENAME (type e)))
               (progn
                 (setq r (vl-catch-all-apply 'vkmd:dim-mat-bang (list e)))
                 (princ (strcat "
@@ -617,6 +621,313 @@ MDVK: " (if (vl-catch-all-error-p r)
   (princ)
 )
 
+;;; ---------------------------------------------------------------- tự nhận vách kính vẽ tay
+;;; Người dùng yêu cầu 30/10/2026 (mẫu file mau\ACAD-CT VACH KINH.dxf): MDVK nhận cả vách mặt bằng KHÔNG do VK tạo
+;;; (block tên tuỳ ý, đố có thể nằm rời ngoài block, lồng nhiều cấp) rồi dựng mặt đứng ngay trên mỗi vách.
+;;;   - Đố = bản chèn block có khung bao 55..80 x 120..300 mm (mẫu: 65,7 x 187,2, block "5345" / "6456"), ở mọi cấp
+;;;     lồng; phương vách = cạnh ngắn của đố.
+;;;   - Đố cùng phương, lệch trục <= 30, cách nhau <= 3000 tâm-tâm = một vách; đố trùng (cách < 10) bỏ bớt.
+;;;   - Ô giữa 2 đố: có cung bán kính > 200 (cánh mở, mẫu r = 378; cung rời hoặc trong block có đố) hoặc block chứa cung đó nằm
+;;;     trong ô -> cửa đi; có block khác (không phải đố) nằm trong ô, dài từ 1/2 ô tới ô + 2 đố (profile cánh / block
+;;;     cửa sổ) -> cửa sổ; còn lại -> kính.
+;;;   - Dài vách = mép ngoài đố đầu -> mép ngoài đố cuối (đo bề rộng đố thật).
+;;; Toạ độ phẳng hoá bằng ma trận afin 2D m = (a b c d e f): x' = a x + b y + e, y' = c x + d y + f.
+(setq vkmd:do-min 55.0 vkmd:do-max 80.0 vkmd:sau-min 120.0 vkmd:sau-max 300.0
+      vkmd:khoang-max 3000.0 vkmd:lech-max 30.0 vkmd:cung-cua 200.0
+      ;; mặt đứng (chân) cao hơn mép trên mặt bằng vách (trục + nửa cửa đi lớn nhất, tối thiểu 300) một khoảng này;
+      ;; dim chuỗi + ký hiệu cắt 1-1 nằm dưới chân mặt đứng ~700
+      vkmd:cach-mb 1000.0
+      vkmd:m0 '(1.0 0.0 0.0 1.0 0.0 0.0))
+
+(defun vkmd:m* (m n)
+  (list (+ (* (nth 0 m) (nth 0 n)) (* (nth 1 m) (nth 2 n)))
+        (+ (* (nth 0 m) (nth 1 n)) (* (nth 1 m) (nth 3 n)))
+        (+ (* (nth 2 m) (nth 0 n)) (* (nth 3 m) (nth 2 n)))
+        (+ (* (nth 2 m) (nth 1 n)) (* (nth 3 m) (nth 3 n)))
+        (+ (* (nth 0 m) (nth 4 n)) (* (nth 1 m) (nth 5 n)) (nth 4 m))
+        (+ (* (nth 2 m) (nth 4 n)) (* (nth 3 m) (nth 5 n)) (nth 5 m)))
+)
+
+(defun vkmd:mp (m p)
+  (list (+ (* (nth 0 m) (car p)) (* (nth 1 m) (cadr p)) (nth 4 m))
+        (+ (* (nth 2 m) (car p)) (* (nth 3 m) (cadr p)) (nth 5 m)))
+)
+
+;;; Đối tượng vẽ ngược mặt (pháp tuyến -Z): toạ độ OCS x đảo dấu
+(defun vkmd:ocs (ed)
+  (if (and (assoc 210 ed) (< (caddr (cdr (assoc 210 ed))) 0)) '(-1.0 0.0 0.0 1.0 0.0 0.0) vkmd:m0)
+)
+
+;;; Ma trận bản chèn: OCS . dời điểm chèn . xoay . tỉ lệ . trừ điểm gốc block
+(defun vkmd:m-ins (ed / p r sx sy b)
+  (setq p (cdr (assoc 10 ed)) r (cdr (assoc 50 ed)) sx (cdr (assoc 41 ed)) sy (cdr (assoc 42 ed))
+        b (cdr (assoc 10 (tblsearch "BLOCK" (cdr (assoc 2 ed))))))
+  (if (not r) (setq r 0.0))
+  (if (not sx) (setq sx 1.0))
+  (if (not sy) (setq sy 1.0))
+  (if (not b) (setq b '(0.0 0.0 0.0)))
+  (vkmd:m* (vkmd:ocs ed)
+           (vkmd:m* (list (* (cos r) sx) (- (* (sin r) sy)) (* (sin r) sx) (* (cos r) sy) (car p) (cadr p))
+                    (list 1.0 0.0 0.0 1.0 (- (car b)) (- (cadr b)))))
+)
+
+(defun vkmd:goc4 (k)
+  (list (list (nth 0 k) (nth 1 k)) (list (nth 2 k) (nth 1 k)) (list (nth 2 k) (nth 3 k)) (list (nth 0 k) (nth 3 k))))
+
+;;; Khung bao (xmin ymin xmax ymax) của danh sách điểm, rỗng -> nil
+(defun vkmd:bao (pts)
+  (if pts
+    (list (apply 'min (mapcar 'car pts)) (apply 'min (mapcar 'cadr pts))
+          (apply 'max (mapcar 'car pts)) (apply 'max (mapcar 'cadr pts))))
+)
+
+;;; Các góc cần lấy điểm để bao một cung / đường tròn ed
+(defun vkmd:goc-cung (ed / a1 a2 kq g)
+  (if (= "CIRCLE" (cdr (assoc 0 ed)))
+    (list 0.0 (/ pi 2.0) pi (* 1.5 pi))
+    (progn
+      (setq a1 (cdr (assoc 50 ed)) a2 (cdr (assoc 51 ed)))
+      (if (< a2 a1) (setq a2 (+ a2 (* 2 pi))))
+      (setq kq (list a1 a2) g 0.0)
+      (while (< g (* 4 pi))
+        (if (< a1 g a2) (setq kq (cons g kq)))
+        (setq g (+ g (/ pi 2.0))))
+      kq))
+)
+
+(defun vkmd:xref-p (ten / b)
+  (and (setq b (tblsearch "BLOCK" ten)) (= 4 (logand 4 (cdr (assoc 70 b))))))
+
+;;; Thông tin block (nhớ theo tên trong một lần chạy, *vkmd-kt*): (khung-bao có-đố có-cung)
+;;;   có-đố: block là đố hoặc chứa đố (ở cấp lồng bất kỳ); có-cung: chứa cung cánh cửa (bán kính > 200)
+(defun vkmd:tt-block (ten / c e ed loai pts k co-do co-cung con r m)
+  (cond
+    ((setq c (assoc ten *vkmd-kt*)) (cdr c))
+    ((or (vkmd:xref-p ten) (not (tblsearch "BLOCK" ten))) nil)
+    (T
+     ;; chặn đệ quy vòng
+     (setq *vkmd-kt* (cons (list ten nil nil nil) *vkmd-kt*)
+           e (cdr (assoc -2 (tblsearch "BLOCK" ten))))
+     (while e
+       (setq ed (entget e) loai (cdr (assoc 0 ed)) m (vkmd:ocs ed))
+       (cond
+         ((= loai "LINE") (setq pts (cons (cdr (assoc 10 ed)) (cons (cdr (assoc 11 ed)) pts))))
+         ((= loai "LWPOLYLINE")
+          (foreach p ed (if (= 10 (car p)) (setq pts (cons (vkmd:mp m (cdr p)) pts)))))
+         ((member loai '("ARC" "CIRCLE"))
+          ;; cung: đúng phần cung (2 đầu + điểm 0/90/180/270 độ nằm trong cung); tính cả đường tròn thì khung bao
+          ;; đố mẫu thành 86 thay vì 65,7 (đố có cung nhỏ ở góc)
+          (setq c (cdr (assoc 10 ed)) r (cdr (assoc 40 ed)))
+          (foreach g (vkmd:goc-cung ed)
+            (setq pts (cons (vkmd:mp m (list (+ (car c) (* r (cos g))) (+ (cadr c) (* r (sin g))))) pts)))
+          (if (and (= loai "ARC") (> r vkmd:cung-cua)) (setq co-cung T)))
+         ((and (= loai "INSERT") (setq con (vkmd:tt-block (cdr (assoc 2 ed)))) (car con))
+          (setq m (vkmd:m-ins ed))
+          (foreach p (vkmd:goc4 (car con)) (setq pts (cons (vkmd:mp m p) pts)))
+          (if (or (vkmd:la-do (car con)) (cadr con)) (setq co-do T))
+          (if (caddr con) (setq co-cung T))))
+       (setq e (entnext e)))
+     (setq k (list (vkmd:bao pts) co-do co-cung)
+           *vkmd-kt* (cons (cons ten k) (vl-remove (assoc ten *vkmd-kt*) *vkmd-kt*)))
+     k))
+)
+
+;;; Khung bao cỡ đố: cạnh ngắn 55..80, cạnh dài 120..300
+(defun vkmd:la-do (k / a b)
+  (if k
+    (progn
+      (setq a (- (nth 2 k) (nth 0 k)) b (- (nth 3 k) (nth 1 k)))
+      (and (<= vkmd:do-min (min a b) vkmd:do-max) (<= vkmd:sau-min (max a b) vkmd:sau-max))))
+)
+
+;;; Duyệt đối tượng ed (ma trận m tới toạ độ thế giới, cấp lồng sau), ghi:
+;;;   *vkmd-do*: 4 góc thế giới mỗi đố; *vkmd-khoi*: (4 góc . có-cung) mỗi block khác; *vkmd-cung*: điểm giữa cung cánh
+;;; Chỉ đi vào block có chứa đố (block khác không liên quan vách kính).
+(defun vkmd:quet (ed m sau / loai tt mi e c r a1 a2 am)
+  (setq loai (cdr (assoc 0 ed)))
+  (cond
+    ((and (= loai "INSERT") (setq tt (vkmd:tt-block (cdr (assoc 2 ed)))) (car tt))
+     (setq mi (vkmd:m* m (vkmd:m-ins ed)))
+     (cond
+       ((vkmd:la-do (car tt))
+        (setq *vkmd-do* (cons (mapcar '(lambda (p) (vkmd:mp mi p)) (vkmd:goc4 (car tt))) *vkmd-do*)))
+       (T
+        (setq *vkmd-khoi* (cons (cons (mapcar '(lambda (p) (vkmd:mp mi p)) (vkmd:goc4 (car tt))) (caddr tt))
+                                *vkmd-khoi*))
+        (if (and (cadr tt) (< sau 8))
+          (progn
+            (setq e (cdr (assoc -2 (tblsearch "BLOCK" (cdr (assoc 2 ed))))))
+            (while e (vkmd:quet (entget e) mi (1+ sau)) (setq e (entnext e))))))))
+    ((and (= loai "ARC") (> (cdr (assoc 40 ed)) vkmd:cung-cua))
+     (setq c (cdr (assoc 10 ed)) r (cdr (assoc 40 ed)) a1 (cdr (assoc 50 ed)) a2 (cdr (assoc 51 ed)))
+     (if (< a2 a1) (setq a2 (+ a2 (* 2 pi))))
+     (setq am (/ (+ a1 a2) 2.0)
+           *vkmd-cung* (cons (vkmd:mp m (vkmd:mp (vkmd:ocs ed) (list (+ (car c) (* r (cos am))) (+ (cadr c) (* r (sin am))))))
+                             *vkmd-cung*))))
+)
+
+;;; Góc phương vách đưa về [0, pi); gần 0 / 90 độ thì làm tròn hẳn
+(defun vkmd:goc-pi (a)
+  (while (>= a pi) (setq a (- a pi)))
+  (while (< a 0.0) (setq a (+ a pi)))
+  (cond ((or (< a 1e-4) (> a (- pi 1e-4))) 0.0) ((equal a (/ pi 2.0) 1e-4) (/ pi 2.0)) (T a))
+)
+
+;;; Toạ độ dọc trục t / lệch trục q của điểm p theo phương a
+(defun vkmd:tq (a p)
+  (list (+ (* (cos a) (car p)) (* (sin a) (cadr p))) (- (* (cos a) (cadr p)) (* (sin a) (car p)))))
+
+;;; Đố (4 góc thế giới) -> (t q a w): t / q của tâm đố, a phương vách, w bề rộng đố
+(defun vkmd:do-tt (g / d1 d3 a c)
+  (setq d1 (distance (nth 0 g) (nth 1 g)) d3 (distance (nth 0 g) (nth 3 g))
+        a (vkmd:goc-pi (if (< d1 d3) (angle (nth 0 g) (nth 1 g)) (angle (nth 0 g) (nth 3 g))))
+        c (list (/ (+ (car (nth 0 g)) (car (nth 2 g))) 2.0) (/ (+ (cadr (nth 0 g)) (cadr (nth 2 g))) 2.0)))
+  (append (vkmd:tq a c) (list a (min d1 d3)))
+)
+
+;;; Gom đố thành vách: danh sách các vách, mỗi vách = danh sách (t q a w) tăng dần theo t
+(defun vkmd:gom-vach (/ ds x nhom con vach kq)
+  (setq ds (mapcar 'vkmd:do-tt *vkmd-do*))
+  (while ds
+    (setq x (car ds) nhom nil con nil)
+    (foreach y ds
+      (if (and (equal (caddr y) (caddr x) 0.01) (< (abs (- (cadr y) (cadr x))) vkmd:lech-max))
+        (setq nhom (cons y nhom))
+        (setq con (cons y con))))
+    (setq ds (reverse con) vach nil
+          nhom (vl-sort nhom '(lambda (p q) (< (car p) (car q)))))
+    (foreach y nhom
+      (cond
+        ((and vach (< (- (car y) (car (car vach))) 10.0)) nil)
+        ((and vach (> (- (car y) (car (car vach))) vkmd:khoang-max))
+         (if (cdr vach) (setq kq (cons (reverse vach) kq)))
+         (setq vach (list y)))
+        (T (setq vach (cons y vach)))))
+    (if (cdr vach) (setq kq (cons (reverse vach) kq))))
+  kq
+)
+
+;;; Loại ô giữa 2 đố (dọc trục ta..tb, trục ở lệch q, phương a, bề rộng đố w): "D" / "S" / "K"
+(defun vkmd:loai-o (a q ta tb w / g)
+  (setq g (- tb ta))
+  (cond
+    ((or (vl-some '(lambda (p / v) (setq v (vkmd:tq a p))
+                     (and (< ta (car v) tb) (< (abs (- (cadr v) q)) g)))
+                  *vkmd-cung*)
+         (vkmd:co-khoi a q ta tb w T))
+     "D")
+    ((vkmd:co-khoi a q ta tb w nil) "S")
+    (T "K"))
+)
+
+;;; Có block (không phải đố) nằm trong ô: tâm trong ô, dài từ 1/2 ô tới ô + 2 đố, gần trục; cung = T: block có cung cánh
+(defun vkmd:co-khoi (a q ta tb w cung / g)
+  (setq g (- tb ta))
+  (vl-some '(lambda (k / v t1 t2 q1 q2)
+              (if (or (and cung (cdr k)) (and (not cung) (not (cdr k))))
+                (progn
+                  (setq v (mapcar '(lambda (p) (vkmd:tq a p)) (car k))
+                        t1 (apply 'min (mapcar 'car v)) t2 (apply 'max (mapcar 'car v))
+                        q1 (apply 'min (mapcar 'cadr v)) q2 (apply 'max (mapcar 'cadr v)))
+                  (and (< ta (/ (+ t1 t2) 2.0) tb) (>= (- t2 t1) (* 0.5 g)) (<= (- t2 t1) (+ g w w 20.0))
+                       (< (abs (- (/ (+ q1 q2) 2.0) q)) (if cung g 300.0))))))
+           *vkmd-khoi*)
+)
+
+;;; Danh sách đố một vách -> vách dạng vkmd:doc-vach: (L o tam pt ux uy)
+(defun vkmd:tao-vach (ds / a q w nua t0 tn tam o i ux uy)
+  (setq a (caddr (car ds))
+        q (/ (apply '+ (mapcar 'cadr ds)) (length ds))
+        w (/ (apply '+ (mapcar 'cadddr ds)) (length ds)) nua (/ w 2.0)
+        t0 (car (car ds)) tn (car (last ds))
+        tam (mapcar '(lambda (y) (+ (- (car y) t0) nua)) ds)
+        i 0)
+  (repeat (1- (length ds))
+    (setq o (cons (list (vkmd:loai-o a q (car (nth i ds)) (car (nth (1+ i) ds)) w)
+                        (- (car (nth (1+ i) ds)) (car (nth i ds))))
+                  o)
+          i (1+ i)))
+  (setq ux (cos a) uy (sin a))
+  (cond ((= a 0.0) (setq ux 1.0 uy 0.0)) ((= a (/ pi 2.0)) (setq ux 0.0 uy 1.0)))
+  ;; dài vách sát số nguyên (đố đo được 65,7353: 4210,02) -> làm tròn mm, lệch dồn vào nửa đố cuối (< 0,1)
+  (list (if (equal (+ (- tn t0) w) (fix (+ (- tn t0) w 0.5)) 0.1) (float (fix (+ (- tn t0) w 0.5))) (+ (- tn t0) w))
+        (reverse o) tam
+        (list (- (* ux (- t0 nua)) (* uy q)) (+ (* uy (- t0 nua)) (* ux q)) 0.0)
+        ux uy)
+)
+
+;;; Vách do VK tạo (XData "ARCHIVINA_VK" hoặc tên gốc VACH KINH*)
+(defun vkmd:la-vk (e)
+  (and (= "INSERT" (cdr (assoc 0 (entget e))))
+       (or (assoc -3 (entget e '("ARCHIVINA_VK")))
+           (wcmatch (strcase (vla-get-EffectiveName (vlax-ename->vla-object e))) "VACH KINH*")))
+)
+
+;;; Tập chọn -> danh sách (e . vach), e = bản chèn vách VK hoặc nil (vách nhận từ hình vẽ tay); từ trên xuống, trái
+;;; sang phải. Vách bỏ qua thì báo ra dòng lệnh.
+(defun vkmd:tim-vach (ss / i e ed v kq)
+  (setq *vkmd-kt* nil *vkmd-do* nil *vkmd-cung* nil *vkmd-khoi* nil i 0)
+  (repeat (sslength ss)
+    (setq e (ssname ss i) ed (entget e) i (1+ i))
+    (cond
+      ((vkmd:la-vk e)
+       (if (= 'STR (type (setq v (vkmd:doc-vach e))))
+         (princ (strcat "\nMDVK: b\\U+1ECF qua 1 v\\U+00E1ch VK: " v))
+         (setq kq (cons (cons e v) kq))))
+      (T (vkmd:quet ed vkmd:m0 0))))
+  (foreach ds (vkmd:gom-vach)
+    (setq v (vkmd:tao-vach ds))
+    (if (and (assoc "S" (cadr v)) (assoc "D" (cadr v)))
+      (princ (strcat "\nMDVK: b\\U+1ECF qua v\\U+00E1ch " (vkmd:so (car v)) " mm (c\\U+00F3 c\\U+1EA3 c\\U+1EEDa s\\U+1ED5 v\\U+00E0 c\\U+1EEDa \\U+0111i: ch\\U+01B0a h\\U+1ED7 tr\\U+1EE3)."))
+      (setq kq (cons (cons nil v) kq))))
+  (setq *vkmd-kt* nil *vkmd-do* nil *vkmd-cung* nil *vkmd-khoi* nil)
+  (vl-sort kq '(lambda (p q / a b)
+                 (setq a (nth 3 (cdr p)) b (nth 3 (cdr q)))
+                 (if (equal (cadr a) (cadr b) 100.0) (< (car a) (car b)) (> (cadr a) (cadr b)))))
+)
+
+;;; Điểm đặt mặt đứng ngay trên vách (truyền cho vkmd:thuc-hien): vách ngang chỉ dùng Y = trục vách + nửa cửa đi lớn
+;;; nhất (cánh mở; tối thiểu 300) + vkmd:cach-mb; vách xiên / đứng: góc dưới trái = (x nhỏ nhất, y lớn nhất + như trên)
+(defun vkmd:diem-dat (vach / L p x2 y2 cao)
+  (setq L (car vach) p (nth 3 vach)
+        x2 (+ (car p) (* L (nth 4 vach))) y2 (+ (cadr p) (* L (nth 5 vach)))
+        cao (apply 'max (cons 300.0 (mapcar '(lambda (x) (if (= (car x) "D") (/ (cadr x) 2.0) 0.0)) (cadr vach)))))
+  (list (min (car p) x2) (+ (max (cadr p) y2) cao vkmd:cach-mb) 0.0)
+)
+
+;;; Dựng mặt đứng cho mọi vách ds ((e . vach) ...), mỗi cái ngay trên vách của nó; một nhóm undo (Ctrl+Z một lần).
+(defun vkmd:chay-het (ds H hd hs co san bau / *error* undo cm)
+  (defun *error* (msg)
+    (setq *vkmd-mot-nhom* nil)
+    (if undo (command-s "_.UNDO" "_E"))
+    (if cm (setvar "CMDECHO" cm))
+    (if (not (wcmatch (strcase msg) "*CANCEL*,*QUIT*,*BREAK*")) (princ (strcat "\nL\\U+1ED7i MDVK: " msg)))
+    (princ)
+  )
+  (setq cm (getvar "CMDECHO"))
+  (setvar "CMDECHO" 0)
+  (if (setq undo (vkmd:undo-ok)) (command "_.UNDO" "_BE"))
+  (setq *vkmd-mot-nhom* T)
+  (foreach x ds
+    (vkmd:thuc-hien (if (car x) (car x) (cdr x)) H hd hs co san bau (vkmd:diem-dat (cdr x))))
+  (setq *vkmd-mot-nhom* nil)
+  (if undo (command "_.UNDO" "_E"))
+  (setvar "CMDECHO" cm)
+  (princ (strcat "\nMDVK: xong " (itoa (length ds)) " v\\U+00E1ch."))
+  (princ)
+)
+
+;;; Tóm tắt vách: "Dài 4210 mm, 4 đố: 1240 | DI 1665 | 1240"
+(defun vkmd:mo-ta (vach / s)
+  (foreach x (cadr vach)
+    (setq s (strcat (if s (strcat s " | ") "") (cond ((= (car x) "S") "SO ") ((= (car x) "D") "DI ") (T ""))
+                    (vkmd:so (cadr x)))))
+  (strcat "D\\U+00E0i " (vkmd:so (car vach)) " mm, " (itoa (length (caddr vach))) " \\U+0111\\U+1ED1: " s)
+)
+
+(defun vkmd:ten-loai (v)
+  (cond ((= v "D") "c\\U+1EEDa \\U+0111i") ((= v "S") "c\\U+1EEDa s\\U+1ED5") (T "k\\U+00EDnh kh\\U+00F4ng c\\U+1EEDa")))
+
 ;;; ---------------------------------------------------------------- hộp thoại
 ;;; Loại vách tự nhận từ mặt bằng; chỉ bật ô cần cho loại đó (người dùng chốt 29/10/2026):
 ;;;   cửa đi: cao vách + cao cửa đi; cửa sổ / kính: cao vách + cao cửa sổ + có thanh ngang? (+ sàn hoàn thiện, bậu)
@@ -626,6 +937,7 @@ MDVK: " (if (vl-catch-all-error-p r)
     '("vkmd_hop_thoai : dialog {"
       "  label = \"MDVK - M\\U+1EB7t \\U+0111\\U+1EE9ng v\\U+00E1ch k\\U+00EDnh\";"
       "  : text { key = \"mo\"; width = 66; }"
+      "  : popup_list { key = \"chon\"; label = \"Xem tr\\U+01B0\\U+1EDBc v\\U+00E1ch:\"; width = 66; }"
       "  : text { key = \"vach\"; width = 66; }"
       "  : row {"
       "  : column {"
@@ -696,14 +1008,24 @@ MDVK: " (if (vl-catch-all-error-p r)
   (end_image)
 )
 
-(defun vkmd:cap-nhat (/ kq co)
+;;; vkmd-vach: vách đang xem trước; vkmd-ds: mọi vách sẽ dựng ((e . vach) ...) - thông số bảng áp cho tất cả,
+;;; vách nào tính lỗi thì báo và không cho OK
+(defun vkmd:cap-nhat (/ kq kq-xem co ts loi)
   (setq co (= "1" (get_tile "co")))
   ;; cao cửa sổ chỉ nhập khi có thanh ngang (không thì tự tính); sàn + bậu luôn cần cho vách cửa sổ
   (mode_tile "hs" (if co 0 1))
-  (mode_tile "san" (if (or co (= "S" (vkmd:loai vkmd-vach))) 0 1))
-  (mode_tile "bau" (if (or co (= "S" (vkmd:loai vkmd-vach))) 0 1))
-  (setq kq (vkmd:tinh vkmd-vach (vkmd:doc-so (get_tile "cao")) (vkmd:doc-so (get_tile "hd")) (vkmd:doc-so (get_tile "hs"))
-                      co (vkmd:doc-so (get_tile "san")) (vkmd:doc-so (get_tile "bau"))))
+  (mode_tile "san" (if (or co (vl-some '(lambda (x) (= "S" (vkmd:loai (cdr x)))) vkmd-ds)) 0 1))
+  (mode_tile "bau" (if (or co (vl-some '(lambda (x) (= "S" (vkmd:loai (cdr x)))) vkmd-ds)) 0 1))
+  (setq ts (list (vkmd:doc-so (get_tile "cao")) (vkmd:doc-so (get_tile "hd")) (vkmd:doc-so (get_tile "hs"))
+                 co (vkmd:doc-so (get_tile "san")) (vkmd:doc-so (get_tile "bau")))
+        kq (apply 'vkmd:tinh (cons vkmd-vach ts))
+        loi (vl-some '(lambda (x / r)
+                        (if (= 'STR (type (setq r (apply 'vkmd:tinh (cons (cdr x) ts)))))
+                          (strcat "v\\U+00E1ch " (vkmd:so (car (cdr x))) " mm (" (vkmd:ten-loai (vkmd:loai (cdr x))) "): " r)))
+                     vkmd-ds))
+  ;; hình xem trước theo vách đang chọn; lỗi của vách bất kỳ chặn OK
+  (setq kq-xem kq)
+  (if (and loi (listp kq)) (setq kq loi))
   (if (listp kq)
     (progn
       (set_tile "thongtin" (strcat "Cao \\U+0111\\U+1ED9 t\\U+00E2m thanh ngang (t\\U+1EEB d\\U+01B0\\U+1EDBi l\\U+00EAn): " (vkmd:chuoi kq)
@@ -717,53 +1039,69 @@ MDVK: " (if (vl-catch-all-error-p r)
                                      (T ""))))
       (set_tile "loi" ""))
     (progn (set_tile "thongtin" "") (set_tile "loi" (strcat "L\\U+1ED7i: " kq))))
-  (vkmd:ve-xem vkmd-vach kq (vkmd:doc-so (get_tile "cao")))
+  (vkmd:ve-xem vkmd-vach kq-xem (vkmd:doc-so (get_tile "cao")))
   (setq vkmd-kq kq)
 )
 
-(defun c:MDVK (/ e f id kq-dlg vkmd-vach vkmd-kq loai s khoa)
+;;; Chọn vách để xem trước (popup "chon", vị trí i trong vkmd-ds)
+(defun vkmd:chon (i / x)
+  (setq x (nth i vkmd-ds) vkmd-vach (cdr x))
+  (set_tile "vach" (strcat (if (car x) "V\\U+00E1ch VK - " "V\\U+00E1ch v\\U+1EBD tay - ") (vkmd:ten-loai (vkmd:loai vkmd-vach)) " - "
+                           (vkmd:mo-ta vkmd-vach)))
+  (vkmd:cap-nhat)
+)
+
+;;; Gõ MDVK -> quét chọn vùng mặt bằng (Enter = cả bản vẽ) -> tự nhận mọi vách kính (block VK + vách vẽ tay)
+;;; -> một bảng hỏi chung (thông số áp cho mọi vách) -> mặt đứng đặt ngay trên mỗi vách (người dùng chốt 30/10/2026).
+(defun c:MDVK (/ ss f id kq-dlg vkmd-vach vkmd-kq vkmd-ds khoa n i)
   (setq khoa '("cao" "hd" "hs" "co" "san" "bau"))
-  (while (and (setq e (entsel "\nCh\\U+1ECDn block v\\U+00E1ch k\\U+00EDnh tr\\U+00EAn m\\U+1EB7t b\\U+1EB1ng (do l\\U+1EC7nh VK t\\U+1EA1o): "))
-              (= 'STR (type (setq vkmd-vach (vkmd:doc-vach (car e))))))
-    (princ (strcat "\n" vkmd-vach)))
-  (if e
+  (princ "\nQu\\U+00E9t ch\\U+1ECDn v\\U+00F9ng m\\U+1EB7t b\\U+1EB1ng c\\U+00F3 v\\U+00E1ch k\\U+00EDnh (block VK ho\\U+1EB7c v\\U+00E1ch v\\U+1EBD tay) <Enter = c\\U+1EA3 b\\U+1EA3n v\\U+1EBD>: ")
+  (setq ss (ssget '((0 . "INSERT,ARC"))))
+  (if (not ss) (setq ss (ssget "_X" (list '(0 . "INSERT,ARC") (cons 410 (getvar "CTAB"))))))
+  (if ss (setq vkmd-ds (vkmd:tim-vach ss)))
+  (if (not vkmd-ds)
+    (princ "\nMDVK: kh\\U+00F4ng t\\U+00ECm th\\U+1EA5y v\\U+00E1ch k\\U+00EDnh (block VK, ho\\U+1EB7c \\U+0111\\U+1ED1 55..80 x 120..300 mm th\\U+1EB3ng h\\U+00E0ng).")
     (progn
-      (setq e (car e) loai (vkmd:loai vkmd-vach)
+      (setq vkmd-vach (cdar vkmd-ds)
             f (strcat (getvar "TEMPPREFIX") "MDVK_hop_thoai.dcl"))
       (vkmd:viet-dcl f)
       (if (or (< (setq id (load_dialog f)) 0) (not (new_dialog "vkmd_hop_thoai" id)))
         (princ "\nKh\\U+00F4ng m\\U+1EDF \\U+0111\\U+01B0\\U+1EE3c h\\U+1ED9p tho\\U+1EA1i MDVK.")
         (progn
-          (setq s nil)
-          (foreach x (cadr vkmd-vach)
-            (setq s (strcat (if s (strcat s " | ") "") (cond ((= (car x) "S") "SO ") ((= (car x) "D") "DI ") (T ""))
-                            (vkmd:so (cadr x)))))
-          (set_tile "mo" (strcat "Lo\\U+1EA1i v\\U+00E1ch (nh\\U+1EADn t\\U+1EEB m\\U+1EB7t b\\U+1EB1ng): "
-                                 (cond ((= loai "D") "V\\U+00C1CH K\\U+00CDNH C\\U+1EECA \\U+0110I") ((= loai "S") "V\\U+00C1CH K\\U+00CDNH C\\U+1EECA S\\U+1ED4")
-                                       (T "V\\U+00C1CH K\\U+00CDNH KH\\U+00D4NG C\\U+1EECA (thanh ngang \\U+0111\\U+1EB7t nh\\U+01B0 v\\U+00E1ch c\\U+1EEDa s\\U+1ED5)"))))
-          (set_tile "vach" (strcat "D\\U+00E0i " (vkmd:so (car vkmd-vach)) " mm, " (itoa (length (caddr vkmd-vach)))
-                                   " \\U+0111\\U+1ED1: " s))
+          (set_tile "mo" (strcat "T\\U+00ECm th\\U+1EA5y " (itoa (length vkmd-ds)) " v\\U+00E1ch: "
+                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds))) " c\\U+1EEDa \\U+0111i, "
+                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "S" (vkmd:loai (cdr x)))) vkmd-ds))) " c\\U+1EEDa s\\U+1ED5, "
+                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "K" (vkmd:loai (cdr x)))) vkmd-ds)))
+                                 " k\\U+00EDnh - m\\U+1EB7t \\U+0111\\U+1EE9ng \\U+0111\\U+1EB7t ngay tr\\U+00EAn m\\U+1ED7i v\\U+00E1ch"))
+          (start_list "chon")
+          (setq i 0)
+          (foreach x vkmd-ds
+            (add_list (strcat (itoa (setq i (1+ i))) ". " (vkmd:ten-loai (vkmd:loai (cdr x))) " - d\\U+00E0i "
+                              (vkmd:so (car (cdr x))) (if (car x) " (VK)" ""))))
+          (end_list)
+          (set_tile "chon" "0")
           (foreach x (if *vkmd-nho* *vkmd-nho*
                        '(("cao" . "") ("hd" . "2700") ("hs" . "1400") ("co" . "1") ("san" . "50") ("bau" . "1400")))
             (set_tile (car x) (cdr x)))
-          (mode_tile "khung_di" (if (= loai "D") 0 1))
-          (mode_tile "khung_so" (if (= loai "D") 1 0))
+          ;; bật ô của loại vách có trong danh sách
+          (mode_tile "khung_di" (if (vl-some '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
+          (mode_tile "khung_so" (if (vl-some '(lambda (x) (/= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
           (foreach k khoa (action_tile k "(vkmd:cap-nhat)"))
+          (action_tile "chon" "(vkmd:chon (atoi $value))")
           (action_tile "accept"
             "(vkmd:cap-nhat) (if (listp vkmd-kq) (progn (setq *vkmd-nho* (mapcar '(lambda (k) (cons k (get_tile k))) khoa)) (done_dialog 1)))")
           (action_tile "cancel" "(done_dialog 0)")
-          (vkmd:cap-nhat)
+          (vkmd:chon 0)
           (setq kq-dlg (start_dialog))
           (unload_dialog id)
           (if (= kq-dlg 1)
-            (vkmd:thuc-hien e (vkmd:doc-so (cdr (assoc "cao" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "hd" *vkmd-nho*)))
-                            (vkmd:doc-so (cdr (assoc "hs" *vkmd-nho*))) (= "1" (cdr (assoc "co" *vkmd-nho*)))
-                            (vkmd:doc-so (cdr (assoc "san" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "bau" *vkmd-nho*)))
-                            nil))))))
+            (vkmd:chay-het vkmd-ds (vkmd:doc-so (cdr (assoc "cao" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "hd" *vkmd-nho*)))
+                           (vkmd:doc-so (cdr (assoc "hs" *vkmd-nho*))) (= "1" (cdr (assoc "co" *vkmd-nho*)))
+                           (vkmd:doc-so (cdr (assoc "san" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "bau" *vkmd-nho*)))))))))
   (princ)
 )
 
-(princ "\n\\U+0110\\U+00E3 n\\U+1EA1p VKMD.lsp \\U+2014 g\\U+00F5 MDVK, ch\\U+1ECDn block v\\U+00E1ch k\\U+00EDnh tr\\U+00EAn m\\U+1EB7t b\\U+1EB1ng \\U+0111\\U+1EC3 d\\U+1EF1ng m\\U+1EB7t \\U+0111\\U+1EE9ng.")
+(princ "\n\\U+0110\\U+00E3 n\\U+1EA1p VKMD.lsp \\U+2014 g\\U+00F5 MDVK, qu\\U+00E9t ch\\U+1ECDn v\\U+00F9ng m\\U+1EB7t b\\U+1EB1ng (Enter = c\\U+1EA3 b\\U+1EA3n v\\U+1EBD) \\U+0111\\U+1EC3 d\\U+1EF1ng m\\U+1EB7t \\U+0111\\U+1EE9ng m\\U+1ECDi v\\U+00E1ch k\\U+00EDnh.")
 (princ)
 
 ;;; ---------------------------------------------------------------- dữ liệu block nhúng (sinh tự động)

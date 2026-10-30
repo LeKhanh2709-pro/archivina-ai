@@ -27,8 +27,8 @@ using AcApp = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace KTool
 {
-    // Nút: tên lệnh c: trong file LISP, file LISP nhúng, nhãn, chú thích, chữ trên biểu tượng, màu biểu tượng
-    record Nut(string Lenh, string FileLisp, string Nhan, string ChuThich, string Ky, Color Mau);
+    // Nút: tên lệnh c: trong file LISP, file LISP nhúng, nhãn, chú thích, ký hiệu biểu tượng (BieuTuong.cs)
+    record Nut(string Lenh, string FileLisp, string Nhan, string ChuThich, string Ky);
 
     public class KToolApp : IExtensionApplication
     {
@@ -39,17 +39,17 @@ namespace KTool
         {
             ("Vách kính", new[]
             {
-                new Nut("VK", "VK.lsp", "Vách kính", "VK: chia đố và dựng vách kính mặt bằng", "VK", Color.FromRgb(0x1F, 0x6F, 0xB2)),
-                new Nut("MDVK", "VKMD.lsp", "Mặt đứng VK", "MDVK: dựng mặt đứng vách kính từ block VACH KINH", "MĐ", Color.FromRgb(0x2E, 0x8B, 0xC0)),
+                new Nut("VK", "VK.lsp", "Vách kính", "VK: chia đố và dựng vách kính mặt bằng", "VK"),
+                new Nut("MDVK", "VKMD.lsp", "Mặt đứng VK", "MDVK: dựng mặt đứng vách kính từ block VACH KINH", "MĐ"),
             }),
             ("Trục kỹ thuật", new[]
             {
-                new Nut("LOMO", "Lomo.lsp", "Lỗ mở MEP", "LOMO: chèn block A-MEP cho trục / hộp kỹ thuật", "LM", Color.FromRgb(0x6A, 0x4C, 0x93)),
-                new Nut("NCL", "fire_stop_shaft.lsp", "Ngăn cháy lan", "NCL: vẽ bo + hatch ngăn cháy lan, không hỏi trước", "NC", Color.FromRgb(0xC6, 0x28, 0x28)),
+                new Nut("LOMO", "Lomo.lsp", "Lỗ mở MEP", "LOMO: chèn block A-MEP cho trục / hộp kỹ thuật", "LM"),
+                new Nut("NCL", "fire_stop_shaft.lsp", "Ngăn cháy lan", "NCL: vẽ bo + hatch ngăn cháy lan, không hỏi trước", "NC"),
             }),
             ("Chống thấm", new[]
             {
-                new Nut("CHONGTHAM", "CHONGTHAM.lsp", "Chống thấm", "CHONGTHAM: vẽ mặt bằng chống thấm (WC, lô gia, phòng rác...)", "CT", Color.FromRgb(0x2E, 0x7D, 0x32)),
+                new Nut("CHONGTHAM", "CHONGTHAM.lsp", "Chống thấm", "CHONGTHAM: vẽ mặt bằng chống thấm (WC, lô gia, phòng rác...)", "CT"),
             }),
         };
 
@@ -167,8 +167,8 @@ namespace KTool
                         ShowImage = true,
                         Size = RibbonItemSize.Large,
                         Orientation = Orientation.Vertical,
-                        LargeImage = BieuTuong(n.Ky, n.Mau, 32),
-                        Image = BieuTuong(n.Ky, n.Mau, 16),
+                        LargeImage = BieuTuong.Ve(n.Ky, 32),
+                        Image = BieuTuong.Ve(n.Ky, 16),
                         ToolTip = n.ChuThich,
                         CommandParameter = n,
                         CommandHandler = new ChayLisp(),
@@ -178,24 +178,6 @@ namespace KTool
             }
             rb.Tabs.Add(tab);
             Ghi("đã thêm tab K-TOOL trên ribbon");
-        }
-
-        // Biểu tượng vẽ bằng code: ô vuông bo góc màu + chữ trắng (không cần file ảnh mang theo)
-        static BitmapSource BieuTuong(string ky, Color mau, int px)
-        {
-            var dv = new DrawingVisual();
-            using (DrawingContext dc = dv.RenderOpen())
-            {
-                dc.DrawRoundedRectangle(new SolidColorBrush(mau), null, new Rect(0, 0, px, px), px * 0.18, px * 0.18);
-                var ft = new FormattedText(ky, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                    new Typeface(new FontFamily("Arial"), FontStyles.Normal, FontWeights.Bold, FontStretches.Normal),
-                    px * (ky.Length > 2 ? 0.34 : 0.42), Brushes.White, 1.0);
-                dc.DrawText(ft, new Point((px - ft.Width) / 2, (px - ft.Height) / 2));
-            }
-            var bmp = new RenderTargetBitmap(px, px, 96, 96, PixelFormats.Pbgra32);
-            bmp.Render(dv);
-            bmp.Freeze();
-            return bmp;
         }
     }
 
