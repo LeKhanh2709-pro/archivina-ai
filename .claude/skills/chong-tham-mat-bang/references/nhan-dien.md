@@ -55,6 +55,10 @@ Nhiều hạt cùng một ô: ưu tiên phòng rác > buồng đệm > phòng KT
   - Khe giữa đảo và biên **nhỏ hơn khoảng lùi nét vén (50)** cũng tính là chạm biên (CT2: hộp trục cách bo 25 mm, nét vén từng cắt ngang hộp).
   - Bỏ nét **ống / cùm ống** (layer có chữ `ong`, `cum ong`, `pipe`, vd. `AV-ME-Ống trục đứng`) khi dựng hộp: vòng tròn ống cắt hộp thành mảnh vụn → mất cả hộp.
   - Dự phòng: polyline kín 0,02–6 m² trên layer trục / `A-MEP` mà polygonize bỏ sót thì lấy nguyên làm đảo.
+- Sửa 31/10/2026 (người dùng báo: nhiều vị trí nét bo chưa tránh lỗ mở, lô gia CH05A tầng 4 Tháp B):
+  - **Khung lỗ mở** = polyline kín trên layer `A-Wall-Open` (Tháp B), `A_MEP`, `AV-P-Lo mo`, `A-Truc nuoc` (CT1): lấy nguyên khung ngoài cùng, chỉ cần đè lên phòng ≥ 0,005 m² là khoét, kể cả khi một phần nằm trong tường (trước chỉ tính đảo nằm trong phòng ≥ 80%). Các ô vụn trong khung (dấu X, dải vách 80) bỏ.
+  - **Block lật gương**: đọc đỉnh LWPOLYLINE bằng `vertices_in_wcs` (`diem_wcs`), không dùng `get_points()`: `get_points()` là toạ độ OCS, block chèn lật gương có extrusion -Z nên x đổi dấu, đối tượng rơi sang chỗ khác và một nửa số hộp đối xứng bị sót (CT1 lô gia #88 trái, phòng KT nước #50).
+  - Soát: mọi polyline kín trên layer lỗ mở / trục không còn đè lên vùng hatch (≥ 0,005 m²): 0 chỗ cả Tháp B và CT1. CT1 phòng KT nước có lỗ mở 1600 × 547 (`AV-P-Lo mo`) trong phòng nên hatch giảm còn ~2,7 m².
 - Ô hẹp < 500 mm hoặc < 0,5 m² (khe tường, dải mép sàn) không phải phòng, kể cả khi có thiết bị → "chỗ cần xem" (CT2: cục nóng rơi vào dải 1400 × 150).
 
 ## 5. Nét vén chân tường và cửa

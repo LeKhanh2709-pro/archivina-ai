@@ -1050,10 +1050,83 @@ MDVK: " (if (vl-catch-all-error-p r)
   (vkmd:cap-nhat)
 )
 
+;;; Giá trị mặc định của bảng
+(setq vkmd:nho-goc '(("cao" . "") ("hd" . "2700") ("hs" . "1400") ("co" . "1") ("san" . "50") ("bau" . "1400")))
+
+;;; Hộp thoại DCL (dự phòng khi không có K-TOOL.dll). Trả về 1 = dựng, 0 = huỷ, nil = không mở được.
+;;; Biến vkmd-* là biến cục bộ của c:MDVK.
+(defun vkmd:bang-dcl (/ f id kq-dlg khoa i)
+  (setq khoa '("cao" "hd" "hs" "co" "san" "bau")
+        f (strcat (getvar "TEMPPREFIX") "MDVK_hop_thoai.dcl"))
+  (vkmd:viet-dcl f)
+  (if (or (< (setq id (load_dialog f)) 0) (not (new_dialog "vkmd_hop_thoai" id)))
+    (princ "\nKhông mở được hộp thoại MDVK.")
+    (progn
+      (set_tile "mo" (strcat "Tìm thấy " (itoa (length vkmd-ds)) " vách: "
+                             (itoa (length (vl-remove-if-not '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds))) " cửa đi, "
+                             (itoa (length (vl-remove-if-not '(lambda (x) (= "S" (vkmd:loai (cdr x)))) vkmd-ds))) " cửa sổ, "
+                             (itoa (length (vl-remove-if-not '(lambda (x) (= "K" (vkmd:loai (cdr x)))) vkmd-ds)))
+                             " kính - mặt đứng đặt ngay trên mỗi vách"))
+      (start_list "chon")
+      (setq i 0)
+      (foreach x vkmd-ds
+        (add_list (strcat (itoa (setq i (1+ i))) ". " (vkmd:ten-loai (vkmd:loai (cdr x))) " - dài "
+                          (vkmd:so (car (cdr x))) (if (car x) " (VK)" ""))))
+      (end_list)
+      (set_tile "chon" "0")
+      (foreach x (if *vkmd-nho* *vkmd-nho* vkmd:nho-goc)
+        (set_tile (car x) (cdr x)))
+      ;; bật ô của loại vách có trong danh sách
+      (mode_tile "khung_di" (if (vl-some '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
+      (mode_tile "khung_so" (if (vl-some '(lambda (x) (/= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
+      (foreach k khoa (action_tile k "(vkmd:cap-nhat)"))
+      (action_tile "chon" "(vkmd:chon (atoi $value))")
+      (action_tile "accept"
+        "(vkmd:cap-nhat) (if (listp vkmd-kq) (progn (setq *vkmd-nho* (mapcar '(lambda (k) (cons k (get_tile k))) khoa)) (done_dialog 1)))")
+      (action_tile "cancel" "(done_dialog 0)")
+      (vkmd:chon 0)
+      (setq kq-dlg (start_dialog))
+      (unload_dialog id)))
+  kq-dlg
+)
+
+;;; ---------------------------------------------------------------- hộp thoại WPF (K-TOOL.dll)
+;;; Mẫu người dùng duyệt 31/10/2026: nạp K-TOOL.dll thì MDVK dùng hộp thoại WPF (scripts\ktool\BangMdvk.cs, sáng / tối),
+;;; không có DLL thì dùng DCL ở trên, VKMD.lsp vẫn chạy một mình.
+(defun vkmd:co-wpf () (if (type ktool_bang_mdvk) T))
+
+;;; Một vách gửi sang WPF: "D|1|4210.000000|K:1240.000000,D:1665.000000|32.500000,..." (loại | block VK? | dài | ô | tâm đố)
+(defun vkmd:vach->chuoi (x / v o tam)
+  (setq v (cdr x))
+  (foreach a (cadr v)
+    (setq o (strcat (if o (strcat o ",") "") (car a) ":" (rtos (cadr a) 2 6))))
+  (foreach c (caddr v)
+    (setq tam (strcat (if tam (strcat tam ",") "") (rtos c 2 6))))
+  (strcat (vkmd:loai v) "|" (if (car x) "1" "0") "|" (rtos (car v) 2 6) "|" o "|" tam)
+)
+
+;;; Trả về 1 = dựng, 0 = huỷ, nil = không mở được (DLL báo lỗi vào K-TOOL.log) -> c:MDVK dùng DCL.
+(defun vkmd:bang-wpf (/ vao tra nho cd ma)
+  (setq cd (getenv "ARCHIVINA_KTOOL_THEME"))
+  (foreach x (reverse (append (if *vkmd-nho* *vkmd-nho* vkmd:nho-goc) (if cd (list (cons "theme" cd)))))
+    (setq vao (cons (car x) (cons (cdr x) vao))))
+  (foreach x (reverse vkmd-ds)
+    (setq vao (cons "vach" (cons (vkmd:vach->chuoi x) vao))))
+  (if (setq tra (ktool_bang_mdvk vao))
+    (progn
+      (while tra (setq nho (cons (cons (car tra) (cadr tra)) nho) tra (cddr tra)))
+      (setq ma (cdr (assoc "ma" nho)))
+      (setenv "ARCHIVINA_KTOOL_THEME" (cdr (assoc "theme" nho)))
+      (if (= ma "ok")
+        (progn
+          (setq *vkmd-nho* (mapcar '(lambda (k) (assoc k nho)) '("cao" "hd" "hs" "co" "san" "bau")))
+          1)
+        0)))
+)
+
 ;;; Gõ MDVK -> quét chọn vùng mặt bằng (Enter = cả bản vẽ) -> tự nhận mọi vách kính (block VK + vách vẽ tay)
 ;;; -> một bảng hỏi chung (thông số áp cho mọi vách) -> mặt đứng đặt ngay trên mỗi vách (người dùng chốt 30/10/2026).
-(defun c:MDVK (/ ss f id kq-dlg vkmd-vach vkmd-kq vkmd-ds khoa n i)
-  (setq khoa '("cao" "hd" "hs" "co" "san" "bau"))
+(defun c:MDVK (/ ss kq-dlg vkmd-vach vkmd-kq vkmd-ds)
   (princ "\nQuét chọn vùng mặt bằng có vách kính (block VK hoặc vách vẽ tay) <Enter = cả bản vẽ>: ")
   (setq ss (ssget '((0 . "INSERT,ARC"))))
   (if (not ss) (setq ss (ssget "_X" (list '(0 . "INSERT,ARC") (cons 410 (getvar "CTAB"))))))
@@ -1062,41 +1135,12 @@ MDVK: " (if (vl-catch-all-error-p r)
     (princ "\nMDVK: không tìm thấy vách kính (block VK, hoặc đố 55..80 x 120..300 mm thẳng hàng).")
     (progn
       (setq vkmd-vach (cdar vkmd-ds)
-            f (strcat (getvar "TEMPPREFIX") "MDVK_hop_thoai.dcl"))
-      (vkmd:viet-dcl f)
-      (if (or (< (setq id (load_dialog f)) 0) (not (new_dialog "vkmd_hop_thoai" id)))
-        (princ "\nKhông mở được hộp thoại MDVK.")
-        (progn
-          (set_tile "mo" (strcat "Tìm thấy " (itoa (length vkmd-ds)) " vách: "
-                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds))) " cửa đi, "
-                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "S" (vkmd:loai (cdr x)))) vkmd-ds))) " cửa sổ, "
-                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "K" (vkmd:loai (cdr x)))) vkmd-ds)))
-                                 " kính - mặt đứng đặt ngay trên mỗi vách"))
-          (start_list "chon")
-          (setq i 0)
-          (foreach x vkmd-ds
-            (add_list (strcat (itoa (setq i (1+ i))) ". " (vkmd:ten-loai (vkmd:loai (cdr x))) " - dài "
-                              (vkmd:so (car (cdr x))) (if (car x) " (VK)" ""))))
-          (end_list)
-          (set_tile "chon" "0")
-          (foreach x (if *vkmd-nho* *vkmd-nho*
-                       '(("cao" . "") ("hd" . "2700") ("hs" . "1400") ("co" . "1") ("san" . "50") ("bau" . "1400")))
-            (set_tile (car x) (cdr x)))
-          ;; bật ô của loại vách có trong danh sách
-          (mode_tile "khung_di" (if (vl-some '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
-          (mode_tile "khung_so" (if (vl-some '(lambda (x) (/= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
-          (foreach k khoa (action_tile k "(vkmd:cap-nhat)"))
-          (action_tile "chon" "(vkmd:chon (atoi $value))")
-          (action_tile "accept"
-            "(vkmd:cap-nhat) (if (listp vkmd-kq) (progn (setq *vkmd-nho* (mapcar '(lambda (k) (cons k (get_tile k))) khoa)) (done_dialog 1)))")
-          (action_tile "cancel" "(done_dialog 0)")
-          (vkmd:chon 0)
-          (setq kq-dlg (start_dialog))
-          (unload_dialog id)
-          (if (= kq-dlg 1)
-            (vkmd:chay-het vkmd-ds (vkmd:doc-so (cdr (assoc "cao" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "hd" *vkmd-nho*)))
-                           (vkmd:doc-so (cdr (assoc "hs" *vkmd-nho*))) (= "1" (cdr (assoc "co" *vkmd-nho*)))
-                           (vkmd:doc-so (cdr (assoc "san" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "bau" *vkmd-nho*)))))))))
+            kq-dlg (if (vkmd:co-wpf) (vkmd:bang-wpf)))
+      (if (not kq-dlg) (setq kq-dlg (vkmd:bang-dcl)))
+      (if (= kq-dlg 1)
+        (vkmd:chay-het vkmd-ds (vkmd:doc-so (cdr (assoc "cao" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "hd" *vkmd-nho*)))
+                       (vkmd:doc-so (cdr (assoc "hs" *vkmd-nho*))) (= "1" (cdr (assoc "co" *vkmd-nho*)))
+                       (vkmd:doc-so (cdr (assoc "san" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "bau" *vkmd-nho*)))))))
   (princ)
 )
 

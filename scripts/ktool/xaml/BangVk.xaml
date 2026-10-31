@@ -1,0 +1,162 @@
+<!-- Hộp thoại VK (bố cục người dùng chốt 2026-10-31): sơ đồ trên cùng, nhập liệu bên trái, bảng các ô bên phải. -->
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="VK - Chia đố vách kính" Width="780" Height="712" MinWidth="640" MinHeight="520"
+        WindowStyle="None" ResizeMode="CanResize" ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
+        FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource Chu}" Background="{DynamicResource Nen}">
+  <shell:WindowChrome.WindowChrome>
+    <shell:WindowChrome CaptionHeight="40" ResizeBorderThickness="6" GlassFrameThickness="0" CornerRadius="0" UseAeroCaptionButtons="False"/>
+  </shell:WindowChrome.WindowChrome>
+  <Border BorderBrush="{DynamicResource Ln}" BorderThickness="1">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="40"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <Border Background="{DynamicResource Tieude}" BorderBrush="{DynamicResource Ln}" BorderThickness="0,0,0,1">
+        <DockPanel Margin="14,0,8,0" LastChildFill="False">
+          <Path DockPanel.Dock="Left" Style="{DynamicResource BieuTuong}" Data="M4 4h16v16H4z M12 4v16" Margin="0,0,8,0"/>
+          <TextBlock DockPanel.Dock="Left" Text="VK" FontWeight="Medium" VerticalAlignment="Center" Margin="0,0,8,0"/>
+          <TextBlock DockPanel.Dock="Left" Text="Chia đố vách kính" Foreground="{DynamicResource Chu2}" FontSize="12" VerticalAlignment="Center"/>
+          <Button x:Name="btnDong" DockPanel.Dock="Right" Style="{DynamicResource NutPhang}" ToolTip="Đóng" AutomationProperties.Name="Đóng">
+            <Path Style="{DynamicResource BieuTuong}" Data="M6 6l12 12 M18 6L6 18" Width="12" Height="12"/>
+          </Button>
+          <Border DockPanel.Dock="Right" BorderBrush="{DynamicResource Ln}" BorderThickness="1" CornerRadius="4" VerticalAlignment="Center" Margin="0,0,6,0">
+            <StackPanel Orientation="Horizontal">
+              <ToggleButton x:Name="tgSang" Style="{DynamicResource NutCheDo}" ToolTip="Giao diện sáng" AutomationProperties.Name="Giao diện sáng">
+                <Path x:Name="icSang" Style="{DynamicResource BieuTuong}" Data="M12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8z M12 2v3 M12 19v3 M2 12h3 M19 12h3 M4.9 4.9l2.1 2.1 M17 17l2.1 2.1 M4.9 19.1l2.1-2.1 M17 7l2.1-2.1"/>
+              </ToggleButton>
+              <ToggleButton x:Name="tgToi" Style="{DynamicResource NutCheDo}" ToolTip="Giao diện tối" AutomationProperties.Name="Giao diện tối">
+                <Path x:Name="icToi" Style="{DynamicResource BieuTuong}" Data="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>
+              </ToggleButton>
+            </StackPanel>
+          </Border>
+        </DockPanel>
+      </Border>
+
+      <Grid Grid.Row="1" Margin="12,12,12,10">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="150"/>
+          <RowDefinition Height="10"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Style="{DynamicResource Khung}" Padding="10,8">
+          <DockPanel>
+            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,2">
+              <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="{DynamicResource So}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBlock Text="Cửa sổ" FontSize="11" Foreground="{DynamicResource Chu2}" Margin="0,0,10,0"/>
+                <Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="{DynamicResource Di}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                <TextBlock Text="Cửa đi" FontSize="11" Foreground="{DynamicResource Chu2}"/>
+              </StackPanel>
+              <TextBlock Text="Mặt bằng vách, trái sang phải. Bấm vào ô để tích / bỏ tích cửa" FontSize="11" Foreground="{DynamicResource Chu2}"/>
+            </DockPanel>
+            <Canvas x:Name="cvPlan" ClipToBounds="True" Background="Transparent"/>
+          </DockPanel>
+        </Border>
+
+        <Grid Grid.Row="2">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="46*"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="54*"/>
+          </Grid.ColumnDefinitions>
+
+          <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+              <Border Style="{DynamicResource Khung}" Margin="0,0,0,10">
+                <StackPanel>
+                  <TextBlock Style="{DynamicResource Nhan}" Text="Chiều dài vách (mm, mép ngoài - mép ngoài)"/>
+                  <DockPanel Margin="0,0,0,8">
+                    <Button x:Name="btnPick" DockPanel.Dock="Right" Margin="6,0,0,0" Padding="10,0" AutomationProperties.Name="Pick 2 điểm" ToolTip="Chọn điểm đầu / cuối vách trên bản vẽ">
+                      <StackPanel Orientation="Horizontal">
+                        <Path Style="{DynamicResource BieuTuong}" Data="M12 5a7 7 0 1 0 0 14a7 7 0 0 0 0-14z M12 2v6 M12 16v6 M2 12h6 M16 12h6" Margin="0,0,6,0" Width="14" Height="14"/>
+                        <TextBlock Text="Pick 2 điểm"/>
+                      </StackPanel>
+                    </Button>
+                    <TextBox x:Name="txtDai" AutomationProperties.Name="Chiều dài vách"/>
+                  </DockPanel>
+                  <TextBlock Style="{DynamicResource Nhan}" Text="Tên vách (tên block)"/>
+                  <Grid>
+                    <TextBox x:Name="txtTen" AutomationProperties.Name="Tên vách"/>
+                    <TextBlock x:Name="lblTenTuDat" IsHitTestVisible="False" Margin="8,0" VerticalAlignment="Center" Foreground="{DynamicResource Chu3}"/>
+                  </Grid>
+                </StackPanel>
+              </Border>
+
+              <Border Style="{DynamicResource Khung}" Margin="0,0,0,10">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="10"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                  <TextBlock Grid.ColumnSpan="3" Text="Cửa sổ mở" FontSize="12" Foreground="{DynamicResource So}" Margin="0,0,0,6"/>
+                  <StackPanel Grid.Row="1"><TextBlock Style="{DynamicResource Nhan}" Text="Số lượng"/><TextBox x:Name="txtNs" AutomationProperties.Name="Số lượng cửa sổ"/></StackPanel>
+                  <StackPanel Grid.Row="1" Grid.Column="2"><TextBlock Style="{DynamicResource Nhan}" Text="Rộng tâm - tâm (mm)"/><TextBox x:Name="txtWs" AutomationProperties.Name="Rộng cửa sổ"/></StackPanel>
+                  <TextBlock Grid.Row="2" Grid.ColumnSpan="3" Text="Cửa đi" FontSize="12" Foreground="{DynamicResource Di}" Margin="0,10,0,6"/>
+                  <StackPanel Grid.Row="3"><TextBlock Style="{DynamicResource Nhan}" Text="Số lượng"/><TextBox x:Name="txtNd" AutomationProperties.Name="Số lượng cửa đi"/></StackPanel>
+                  <StackPanel Grid.Row="3" Grid.Column="2"><TextBlock Style="{DynamicResource Nhan}" Text="Rộng tâm - tâm (mm)"/><TextBox x:Name="txtWd" AutomationProperties.Name="Rộng cửa đi"/></StackPanel>
+                </Grid>
+              </Border>
+
+              <Border Style="{DynamicResource Khung}" Margin="0,0,0,10">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/><ColumnDefinition Width="1.4*"/></Grid.ColumnDefinitions>
+                  <StackPanel><TextBlock x:Name="lblDo" FontSize="17" FontWeight="Medium"/><TextBlock Text="Đố" FontSize="11" Foreground="{DynamicResource Chu2}"/></StackPanel>
+                  <StackPanel Grid.Column="1"><TextBlock x:Name="lblKinh" FontSize="17" FontWeight="Medium"/><TextBlock Text="Ô kính" FontSize="11" Foreground="{DynamicResource Chu2}"/></StackPanel>
+                  <StackPanel Grid.Column="2"><TextBlock x:Name="lblRong" FontSize="17" FontWeight="Medium"/><TextBlock Text="Rộng ô kính" FontSize="11" Foreground="{DynamicResource Chu2}"/></StackPanel>
+                </Grid>
+              </Border>
+
+              <CheckBox x:Name="chkLat" Content="Lật vách (mặt kẹp kính sang bên kia)" AutomationProperties.Name="Lật vách" Margin="2,0,0,2"/>
+            </StackPanel>
+          </ScrollViewer>
+
+          <Border Grid.Column="2" Style="{DynamicResource Khung}" Padding="0">
+            <DockPanel>
+              <StackPanel DockPanel.Dock="Top" Margin="10,8,10,8">
+                <TextBlock Text="Bấm ô để đặt" FontSize="11" Foreground="{DynamicResource Chu2}" Margin="0,0,0,4"/>
+                <Border BorderBrush="{DynamicResource Ln}" BorderThickness="1" CornerRadius="4" ClipToBounds="True">
+                  <UniformGrid Rows="1">
+                    <ToggleButton x:Name="tgSo" Style="{DynamicResource NutDoan}" AutomationProperties.Name="Đặt cửa sổ">
+                      <StackPanel Orientation="Horizontal"><Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="{DynamicResource So}" VerticalAlignment="Center" Margin="0,0,6,0"/><TextBlock Text="Cửa sổ" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"/></StackPanel>
+                    </ToggleButton>
+                    <ToggleButton x:Name="tgDi" Style="{DynamicResource NutDoan}" AutomationProperties.Name="Đặt cửa đi">
+                      <StackPanel Orientation="Horizontal"><Rectangle Width="9" Height="9" RadiusX="2" RadiusY="2" Fill="{DynamicResource Di}" VerticalAlignment="Center" Margin="0,0,6,0"/><TextBlock Text="Cửa đi" Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ToggleButton}}"/></StackPanel>
+                    </ToggleButton>
+                  </UniformGrid>
+                </Border>
+              </StackPanel>
+              <Border DockPanel.Dock="Top" BorderBrush="{DynamicResource Ln}" BorderThickness="0,1,0,1" Padding="10,5">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="36"/><ColumnDefinition/><ColumnDefinition Width="86"/><ColumnDefinition Width="40"/></Grid.ColumnDefinitions>
+                  <TextBlock Text="Ô" FontSize="12" Foreground="{DynamicResource Chu2}"/>
+                  <TextBlock Grid.Column="1" Text="Loại" FontSize="12" Foreground="{DynamicResource Chu2}"/>
+                  <TextBlock Grid.Column="2" Text="Tâm - tâm" FontSize="12" Foreground="{DynamicResource Chu2}" HorizontalAlignment="Right"/>
+                </Grid>
+              </Border>
+              <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel x:Name="spBang"/>
+              </ScrollViewer>
+            </DockPanel>
+          </Border>
+        </Grid>
+      </Grid>
+
+      <Border Grid.Row="2" Background="{DynamicResource Chan}" BorderBrush="{DynamicResource Ln}" BorderThickness="0,1,0,0" Padding="14,10">
+        <DockPanel>
+          <Button x:Name="btnOk" DockPanel.Dock="Right" Style="{DynamicResource NutChinh}" IsDefault="True" Margin="8,0,0,0" AutomationProperties.Name="Dựng vách">
+            <StackPanel Orientation="Horizontal">
+              <Path Style="{DynamicResource BieuTuong}" Data="M5 12.5l4.5 4.5L19 7.5" Stroke="White" Margin="0,0,6,0" Width="13" Height="13"/>
+              <TextBlock Text="Dựng vách" Foreground="White"/>
+            </StackPanel>
+          </Button>
+          <Button x:Name="btnHuy" DockPanel.Dock="Right" Content="Huỷ" IsCancel="True" AutomationProperties.Name="Huỷ"/>
+          <TextBlock x:Name="lblTrangThai" FontSize="12" Foreground="{DynamicResource Chu2}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0" AutomationProperties.AutomationId="trang_thai"/>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </Border>
+</Window>

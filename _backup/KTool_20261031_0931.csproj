@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Plugin tab ribbon K-TOOL cho AutoCAD 2027 (chạy trên .NET 10; bản 2025 / 2026 là .NET 8, cần build riêng).
+       Build: scripts\ktool\build.ps1 -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>K-TOOL</AssemblyName>
+    <RootNamespace>KTool</RootNamespace>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <!-- Thư mục AutoCAD chỉ dùng lúc build để lấy DLL tham chiếu; máy khác truyền -p:AcadDir=... -->
+    <AcadDir Condition="'$(AcadDir)' == ''">$(ProgramW6432)\Autodesk\AutoCAD 2027</AcadDir>
+  </PropertyGroup>
+
+  <!-- Các lệnh LISP nhúng sẵn trong DLL: nút tự nạp, máy khác chỉ cần K-TOOL.dll -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\lisp\VK.lsp" LogicalName="VK.lsp" />
+    <EmbeddedResource Include="..\lisp\VKMD.lsp" LogicalName="VKMD.lsp" />
+    <EmbeddedResource Include="..\lisp\Lomo.lsp" LogicalName="Lomo.lsp" />
+    <EmbeddedResource Include="..\lisp\fire_stop_shaft.lsp" LogicalName="fire_stop_shaft.lsp" />
+    <EmbeddedResource Include="..\lisp\CHONGTHAM.lsp" LogicalName="CHONGTHAM.lsp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AcMgd"><HintPath>$(AcadDir)\AcMgd.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="AcCoreMgd"><HintPath>$(AcadDir)\AcCoreMgd.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="AcDbMgd"><HintPath>$(AcadDir)\AcDbMgd.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="AdWindows"><HintPath>$(AcadDir)\AdWindows.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>

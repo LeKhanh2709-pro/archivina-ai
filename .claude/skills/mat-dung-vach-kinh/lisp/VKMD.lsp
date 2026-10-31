@@ -1051,10 +1051,83 @@ MDVK: " (if (vl-catch-all-error-p r)
   (vkmd:cap-nhat)
 )
 
+;;; Giá trị mặc định của bảng
+(setq vkmd:nho-goc '(("cao" . "") ("hd" . "2700") ("hs" . "1400") ("co" . "1") ("san" . "50") ("bau" . "1400")))
+
+;;; Hộp thoại DCL (dự phòng khi không có K-TOOL.dll). Trả về 1 = dựng, 0 = huỷ, nil = không mở được.
+;;; Biến vkmd-* là biến cục bộ của c:MDVK.
+(defun vkmd:bang-dcl (/ f id kq-dlg khoa i)
+  (setq khoa '("cao" "hd" "hs" "co" "san" "bau")
+        f (strcat (getvar "TEMPPREFIX") "MDVK_hop_thoai.dcl"))
+  (vkmd:viet-dcl f)
+  (if (or (< (setq id (load_dialog f)) 0) (not (new_dialog "vkmd_hop_thoai" id)))
+    (princ "\nKh\\U+00F4ng m\\U+1EDF \\U+0111\\U+01B0\\U+1EE3c h\\U+1ED9p tho\\U+1EA1i MDVK.")
+    (progn
+      (set_tile "mo" (strcat "T\\U+00ECm th\\U+1EA5y " (itoa (length vkmd-ds)) " v\\U+00E1ch: "
+                             (itoa (length (vl-remove-if-not '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds))) " c\\U+1EEDa \\U+0111i, "
+                             (itoa (length (vl-remove-if-not '(lambda (x) (= "S" (vkmd:loai (cdr x)))) vkmd-ds))) " c\\U+1EEDa s\\U+1ED5, "
+                             (itoa (length (vl-remove-if-not '(lambda (x) (= "K" (vkmd:loai (cdr x)))) vkmd-ds)))
+                             " k\\U+00EDnh - m\\U+1EB7t \\U+0111\\U+1EE9ng \\U+0111\\U+1EB7t ngay tr\\U+00EAn m\\U+1ED7i v\\U+00E1ch"))
+      (start_list "chon")
+      (setq i 0)
+      (foreach x vkmd-ds
+        (add_list (strcat (itoa (setq i (1+ i))) ". " (vkmd:ten-loai (vkmd:loai (cdr x))) " - d\\U+00E0i "
+                          (vkmd:so (car (cdr x))) (if (car x) " (VK)" ""))))
+      (end_list)
+      (set_tile "chon" "0")
+      (foreach x (if *vkmd-nho* *vkmd-nho* vkmd:nho-goc)
+        (set_tile (car x) (cdr x)))
+      ;; bật ô của loại vách có trong danh sách
+      (mode_tile "khung_di" (if (vl-some '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
+      (mode_tile "khung_so" (if (vl-some '(lambda (x) (/= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
+      (foreach k khoa (action_tile k "(vkmd:cap-nhat)"))
+      (action_tile "chon" "(vkmd:chon (atoi $value))")
+      (action_tile "accept"
+        "(vkmd:cap-nhat) (if (listp vkmd-kq) (progn (setq *vkmd-nho* (mapcar '(lambda (k) (cons k (get_tile k))) khoa)) (done_dialog 1)))")
+      (action_tile "cancel" "(done_dialog 0)")
+      (vkmd:chon 0)
+      (setq kq-dlg (start_dialog))
+      (unload_dialog id)))
+  kq-dlg
+)
+
+;;; ---------------------------------------------------------------- hộp thoại WPF (K-TOOL.dll)
+;;; Mẫu người dùng duyệt 31/10/2026: nạp K-TOOL.dll thì MDVK dùng hộp thoại WPF (scripts\ktool\BangMdvk.cs, sáng / tối),
+;;; không có DLL thì dùng DCL ở trên, VKMD.lsp vẫn chạy một mình.
+(defun vkmd:co-wpf () (if (type ktool_bang_mdvk) T))
+
+;;; Một vách gửi sang WPF: "D|1|4210.000000|K:1240.000000,D:1665.000000|32.500000,..." (loại | block VK? | dài | ô | tâm đố)
+(defun vkmd:vach->chuoi (x / v o tam)
+  (setq v (cdr x))
+  (foreach a (cadr v)
+    (setq o (strcat (if o (strcat o ",") "") (car a) ":" (rtos (cadr a) 2 6))))
+  (foreach c (caddr v)
+    (setq tam (strcat (if tam (strcat tam ",") "") (rtos c 2 6))))
+  (strcat (vkmd:loai v) "|" (if (car x) "1" "0") "|" (rtos (car v) 2 6) "|" o "|" tam)
+)
+
+;;; Trả về 1 = dựng, 0 = huỷ, nil = không mở được (DLL báo lỗi vào K-TOOL.log) -> c:MDVK dùng DCL.
+(defun vkmd:bang-wpf (/ vao tra nho cd ma)
+  (setq cd (getenv "ARCHIVINA_KTOOL_THEME"))
+  (foreach x (reverse (append (if *vkmd-nho* *vkmd-nho* vkmd:nho-goc) (if cd (list (cons "theme" cd)))))
+    (setq vao (cons (car x) (cons (cdr x) vao))))
+  (foreach x (reverse vkmd-ds)
+    (setq vao (cons "vach" (cons (vkmd:vach->chuoi x) vao))))
+  (if (setq tra (ktool_bang_mdvk vao))
+    (progn
+      (while tra (setq nho (cons (cons (car tra) (cadr tra)) nho) tra (cddr tra)))
+      (setq ma (cdr (assoc "ma" nho)))
+      (setenv "ARCHIVINA_KTOOL_THEME" (cdr (assoc "theme" nho)))
+      (if (= ma "ok")
+        (progn
+          (setq *vkmd-nho* (mapcar '(lambda (k) (assoc k nho)) '("cao" "hd" "hs" "co" "san" "bau")))
+          1)
+        0)))
+)
+
 ;;; Gõ MDVK -> quét chọn vùng mặt bằng (Enter = cả bản vẽ) -> tự nhận mọi vách kính (block VK + vách vẽ tay)
 ;;; -> một bảng hỏi chung (thông số áp cho mọi vách) -> mặt đứng đặt ngay trên mỗi vách (người dùng chốt 30/10/2026).
-(defun c:MDVK (/ ss f id kq-dlg vkmd-vach vkmd-kq vkmd-ds khoa n i)
-  (setq khoa '("cao" "hd" "hs" "co" "san" "bau"))
+(defun c:MDVK (/ ss kq-dlg vkmd-vach vkmd-kq vkmd-ds)
   (princ "\nQu\\U+00E9t ch\\U+1ECDn v\\U+00F9ng m\\U+1EB7t b\\U+1EB1ng c\\U+00F3 v\\U+00E1ch k\\U+00EDnh (block VK ho\\U+1EB7c v\\U+00E1ch v\\U+1EBD tay) <Enter = c\\U+1EA3 b\\U+1EA3n v\\U+1EBD>: ")
   (setq ss (ssget '((0 . "INSERT,ARC"))))
   (if (not ss) (setq ss (ssget "_X" (list '(0 . "INSERT,ARC") (cons 410 (getvar "CTAB"))))))
@@ -1063,41 +1136,12 @@ MDVK: " (if (vl-catch-all-error-p r)
     (princ "\nMDVK: kh\\U+00F4ng t\\U+00ECm th\\U+1EA5y v\\U+00E1ch k\\U+00EDnh (block VK, ho\\U+1EB7c \\U+0111\\U+1ED1 55..80 x 120..300 mm th\\U+1EB3ng h\\U+00E0ng).")
     (progn
       (setq vkmd-vach (cdar vkmd-ds)
-            f (strcat (getvar "TEMPPREFIX") "MDVK_hop_thoai.dcl"))
-      (vkmd:viet-dcl f)
-      (if (or (< (setq id (load_dialog f)) 0) (not (new_dialog "vkmd_hop_thoai" id)))
-        (princ "\nKh\\U+00F4ng m\\U+1EDF \\U+0111\\U+01B0\\U+1EE3c h\\U+1ED9p tho\\U+1EA1i MDVK.")
-        (progn
-          (set_tile "mo" (strcat "T\\U+00ECm th\\U+1EA5y " (itoa (length vkmd-ds)) " v\\U+00E1ch: "
-                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds))) " c\\U+1EEDa \\U+0111i, "
-                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "S" (vkmd:loai (cdr x)))) vkmd-ds))) " c\\U+1EEDa s\\U+1ED5, "
-                                 (itoa (length (vl-remove-if-not '(lambda (x) (= "K" (vkmd:loai (cdr x)))) vkmd-ds)))
-                                 " k\\U+00EDnh - m\\U+1EB7t \\U+0111\\U+1EE9ng \\U+0111\\U+1EB7t ngay tr\\U+00EAn m\\U+1ED7i v\\U+00E1ch"))
-          (start_list "chon")
-          (setq i 0)
-          (foreach x vkmd-ds
-            (add_list (strcat (itoa (setq i (1+ i))) ". " (vkmd:ten-loai (vkmd:loai (cdr x))) " - d\\U+00E0i "
-                              (vkmd:so (car (cdr x))) (if (car x) " (VK)" ""))))
-          (end_list)
-          (set_tile "chon" "0")
-          (foreach x (if *vkmd-nho* *vkmd-nho*
-                       '(("cao" . "") ("hd" . "2700") ("hs" . "1400") ("co" . "1") ("san" . "50") ("bau" . "1400")))
-            (set_tile (car x) (cdr x)))
-          ;; bật ô của loại vách có trong danh sách
-          (mode_tile "khung_di" (if (vl-some '(lambda (x) (= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
-          (mode_tile "khung_so" (if (vl-some '(lambda (x) (/= "D" (vkmd:loai (cdr x)))) vkmd-ds) 0 1))
-          (foreach k khoa (action_tile k "(vkmd:cap-nhat)"))
-          (action_tile "chon" "(vkmd:chon (atoi $value))")
-          (action_tile "accept"
-            "(vkmd:cap-nhat) (if (listp vkmd-kq) (progn (setq *vkmd-nho* (mapcar '(lambda (k) (cons k (get_tile k))) khoa)) (done_dialog 1)))")
-          (action_tile "cancel" "(done_dialog 0)")
-          (vkmd:chon 0)
-          (setq kq-dlg (start_dialog))
-          (unload_dialog id)
-          (if (= kq-dlg 1)
-            (vkmd:chay-het vkmd-ds (vkmd:doc-so (cdr (assoc "cao" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "hd" *vkmd-nho*)))
-                           (vkmd:doc-so (cdr (assoc "hs" *vkmd-nho*))) (= "1" (cdr (assoc "co" *vkmd-nho*)))
-                           (vkmd:doc-so (cdr (assoc "san" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "bau" *vkmd-nho*)))))))))
+            kq-dlg (if (vkmd:co-wpf) (vkmd:bang-wpf)))
+      (if (not kq-dlg) (setq kq-dlg (vkmd:bang-dcl)))
+      (if (= kq-dlg 1)
+        (vkmd:chay-het vkmd-ds (vkmd:doc-so (cdr (assoc "cao" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "hd" *vkmd-nho*)))
+                       (vkmd:doc-so (cdr (assoc "hs" *vkmd-nho*))) (= "1" (cdr (assoc "co" *vkmd-nho*)))
+                       (vkmd:doc-so (cdr (assoc "san" *vkmd-nho*))) (vkmd:doc-so (cdr (assoc "bau" *vkmd-nho*)))))))
   (princ)
 )
 

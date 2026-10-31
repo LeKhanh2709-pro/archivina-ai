@@ -11,6 +11,8 @@
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <!-- XAML hộp thoại nhúng dạng tài nguyên, nạp lúc chạy bằng XamlReader (xem ChuDe.cs) -->
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
     <!-- Thư mục AutoCAD chỉ dùng lúc build để lấy DLL tham chiếu; máy khác truyền -p:AcadDir=... -->
     <AcadDir Condition="'$(AcadDir)' == ''">$(ProgramW6432)\Autodesk\AutoCAD 2027</AcadDir>
   </PropertyGroup>
@@ -22,6 +24,9 @@
     <EmbeddedResource Include="..\lisp\Lomo.lsp" LogicalName="Lomo.lsp" />
     <EmbeddedResource Include="..\lisp\fire_stop_shaft.lsp" LogicalName="fire_stop_shaft.lsp" />
     <EmbeddedResource Include="..\lisp\CHONGTHAM.lsp" LogicalName="CHONGTHAM.lsp" />
+    <EmbeddedResource Include="xaml\ChuDe.xaml" LogicalName="ChuDe.xaml" />
+    <EmbeddedResource Include="xaml\BangVk.xaml" LogicalName="BangVk.xaml" />
+    <EmbeddedResource Include="xaml\BangMdvk.xaml" LogicalName="BangMdvk.xaml" />
   </ItemGroup>
 
   <ItemGroup>

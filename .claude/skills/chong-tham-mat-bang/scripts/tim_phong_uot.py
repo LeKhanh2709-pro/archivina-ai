@@ -82,7 +82,12 @@ DT_BUONG_DEM = 10.0  # m2: buong dem phong rac lon nhat
 # Layer net mat ngoai (lan can, mep san) dung de khep lo gia khi thiet bi khong nam trong o kin nao
 LAYER_MAT_NGOAI = r"^(0|a-line\d*)$"
 # Layer net dao trong phong: truc / hop ky thuat, cot, vach
-RE_LAYER_DAO = r"truc|hkt|hop ky thuat|a-mep|a-column|s-wall|shaft"
+RE_LAYER_DAO = r"truc|hkt|hop ky thuat|a-mep|a_mep|a-column|s-wall|shaft|wall-open|lo mo"
+# Layer khung lo mo: polyline kin la TOAN BO lo mo, chi can de len phong la phai khoet (Thap B 'A-Wall-Open', CT1 'A_MEP',
+# 'AV-P-Lo mo', 'A-Truc nuoc'). Hatch tung chay de len hop vi cac layer nay khong duoc doc hoac chi tinh hop nam trong phong
+# >= 80% (nguoi dung bao 31/10/2026, lo gia CH05A)
+RE_LAYER_LO_MO = r"a[-_]mep|wall-open|lo mo|truc nuoc"
+LO_MO_DE_MIN = 0.005e6   # mm2: lo mo de len phong tu muc nay moi khoet, nho hon la sai so net ve
 # Nhung bo net ong / cum ong (vd. CT2 'AV-ME-Ống trục đứng', 'AV-ME-Cùm ống'): vong tron ong cat hop thanh manh vun
 # -> mat ca hop (nguoi dung bao loi 23/10/2026)
 RE_LAYER_DAO_BO = r"\bong\b|cum ong|pipe"
@@ -95,6 +100,12 @@ CAN_CUA = {"phong_rac", "phong_kt_nuoc"}   # nhan theo ky hieu / ten: o phai co 
 
 def r1(v):
     return round(float(v), 1)
+
+
+def diem_wcs(e):
+    """Dinh LWPOLYLINE theo toa do Model. get_points() la toa do OCS: block chen lat guong co extrusion -Z, x bi doi dau
+    -> doi tuong roi sang vi tri khac (hop ky thuat trong block lat guong khong duoc khoet, CT1 31/10/2026)."""
+    return [(v.x, v.y) for v in e.vertices_in_wcs()]
 
 
 # ---------------------------------------------------------------- doc ban ve
@@ -247,9 +258,9 @@ def doc_hat_giong(ents, a):
 
 
 def doc_dao(ents):
-    """Net tren layer truc / hop ky thuat / cot / vach (ke ca trong block) -> polygon dao."""
-    rx, rx_bo = re.compile(RE_LAYER_DAO), re.compile(RE_LAYER_DAO_BO)
-    segs, kin = [], []
+    """Net tren layer truc / hop ky thuat / cot / vach (ke ca trong block) -> (polygon dao, cac dao la khung lo mo)."""
+    rx, rx_bo, rx_mo = re.compile(RE_LAYER_DAO), re.compile(RE_LAYER_DAO_BO), re.compile(RE_LAYER_LO_MO)
+    segs, kin, kin_mo = [], [], []
     for e in tpp.walk(ents, max_depth=4):
         if e.dxftype() not in ("LINE", "LWPOLYLINE"):
             continue
@@ -259,17 +270,17 @@ def doc_dao(ents):
         if e.dxftype() == "LINE":
             segs.append(LineString([(e.dxf.start.x, e.dxf.start.y), (e.dxf.end.x, e.dxf.end.y)]))
         else:
-            pts = [(v[0], v[1]) for v in e.get_points()]
+            pts = diem_wcs(e)
             if e.closed and len(pts) > 2:
                 if len(pts) >= 3:
                     q = Polygon(pts)
                     if q.is_valid and DAO_KIN_DT[0] <= q.area <= DAO_KIN_DT[1]:
-                        kin.append(q)
+                        (kin_mo if rx_mo.search(lay) else kin).append(q)
                 pts.append(pts[0])
             if len(pts) >= 2:
                 segs.append(LineString(pts))
     if not segs:
-        return []
+        return [], []
     polys = list(polygonize(shapely.union_all(segs, grid_size=0.01)))
     long, tamgiac = [], []
     for p in polys:
@@ -295,7 +306,16 @@ def doc_dao(ents):
     for k in sorted(kin, key=lambda g: g.area):
         if not any(o.intersection(k).area >= 0.3 * k.area for o in out):
             out.append(k.simplify(5))
-    return out
+    # Khung lo mo lay ngoai cung: dau X, dai vach 80 trong khung chia khung thanh o vun, khoet theo o vun se sot 1 phan hop
+    mo = []
+    for k in sorted(kin_mo, key=lambda g: -g.area):
+        if not any(o.buffer(2).contains(k) for o in mo):
+            mo.append(k.simplify(5))
+    out = [o for o in out if not any(k.buffer(2).contains(o) for k in mo)]
+    # buffer / simplify co the tach thanh MultiPolygon o cho that hep: tach ra tung o
+    out = [p for o in out for p in getattr(o, "geoms", [o])]
+    mo = [p for o in mo for p in getattr(o, "geoms", [o])]
+    return out + mo, mo
 
 
 def tim_can(ents):
@@ -434,7 +454,7 @@ def doc_tuong_no(ents, max_depth=4):
                         if s.dxftype() == "LINE":
                             chains.append((False, [(s.dxf.start.x, s.dxf.start.y), (s.dxf.end.x, s.dxf.end.y)]))
                         elif s.dxftype() == "LWPOLYLINE":
-                            pts = [(v[0], v[1]) for v in s.get_points()]
+                            pts = diem_wcs(s)
                             if len(pts) >= 2:
                                 chains.append((bool(s.closed), pts))
                     continue
@@ -459,7 +479,7 @@ def doc_mat_ngoai(ents, dmin=300.0):
             pts = [(e.dxf.start.x, e.dxf.start.y), (e.dxf.end.x, e.dxf.end.y)]
             closed = False
         else:
-            pts = [(v[0], v[1]) for v in e.get_points()]
+            pts = diem_wcs(e)
             closed = bool(e.closed)
         if len(pts) >= 2 and LineString(pts).length >= dmin:
             out.append((closed, pts))
@@ -503,7 +523,7 @@ def doc_cua_thang(ents):
     for e in ents:
         if e.dxftype() != "LWPOLYLINE" or not e.closed or layer_goc(e.dxf.layer) != "a-wall":
             continue
-        pts = [(v[0], v[1]) for v in e.get_points()]
+        pts = diem_wcs(e)
         if len(pts) < 3:
             continue
         g = Polygon(pts)
@@ -525,7 +545,7 @@ def doc_gieng_thang(ents):
         if t == "LINE":
             cheo.append(((e.dxf.start.x, e.dxf.start.y), (e.dxf.end.x, e.dxf.end.y)))
         elif t == "LWPOLYLINE":
-            pts = [(v[0], v[1]) for v in e.get_points()]
+            pts = diem_wcs(e)
             if len(pts) == 2:
                 cheo.append((pts[0], pts[1]))
             elif e.closed and len(pts) in (4, 5):
@@ -901,7 +921,8 @@ def main():
     cuas = doc_cua(ents, chains)
     cua_thang = doc_cua_thang(ents)
     gieng = doc_gieng_thang(ents)
-    dao_all = doc_dao(ents)
+    dao_all, lo_mo = doc_dao(ents)
+    la_lo_mo = {id(q) for q in lo_mo}
     cay_dao = shapely.STRtree(dao_all) if dao_all else None
     da_co = hatch_da_co(msp)
     print(f"  {len(chains)} chuoi net (them {len(them)} net tuong da no o layer 0), {len(faces)} o kin, {len(cuas)} cua, "
@@ -1032,12 +1053,14 @@ def main():
             # o hep (khe tuong / dai mep san) khong phai phong -> cho can xem (CT2: dai 1400 x 150, 23/10/2026)
             khong_vao.append((loai, (f.centroid.x, f.centroid.y), "ô hẹp < 500 mm, không phải phòng"))
             continue
-        # dao: truc / hop ky thuat nam trong phong (>= 80% dien tich dao)
+        # dao: truc / hop ky thuat nam trong phong (>= 80% dien tich dao); khung lo mo thi chi can de len phong
+        # (lo mo nam mot phan trong tuong van phai khoet phan de len phong)
         dao = []
         if cay_dao is not None:
             for k in cay_dao.query(g):
                 q = dao_all[int(k)]
-                if q.intersection(g).area >= 0.8 * q.area and q.area < 0.6 * g.area:
+                de = q.intersection(g).area
+                if (de >= 0.8 * q.area or (id(q) in la_lo_mo and de >= LO_MO_DE_MIN)) and q.area < 0.6 * g.area:
                     dao.append(q)
         lo = [Polygon(r) for r in g.interiors if Polygon(r).area >= 0.02e6]
         bo = Polygon(g.exterior)

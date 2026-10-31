@@ -839,24 +839,19 @@
   (setq *vk-nho* (append (mapcar '(lambda (k) (cons k (get_tile k))) '("dai" "ns" "ws" "nd" "wd" "lat" "ten" "loaitich"))
                          (list (cons "vs" (vk:vt->chuoi vk-vs)) (cons "vd" (vk:vt->chuoi vk-vd))))))
 
+;;; Giá trị mặc định của bảng
+(setq vk:nho-goc '(("dai" . "") ("ns" . "0") ("ws" . "1000") ("vs" . "")
+                   ("nd" . "0") ("wd" . "1665") ("vd" . "") ("lat" . "0")))
+
 ;;; Ghi chiều dài 2 điểm vừa pick vào ô "dai" của bộ nhớ hộp thoại
 (defun vk:nho-dai (d)
-  (if (not *vk-nho*)
-    (setq *vk-nho* '(("dai" . "") ("ns" . "0") ("ws" . "1000") ("vs" . "")
-                     ("nd" . "0") ("wd" . "1665") ("vd" . "") ("lat" . "0"))))
+  (if (not *vk-nho*) (setq *vk-nho* vk:nho-goc))
   (setq *vk-nho* (subst (cons "dai" (vk:so (caddr d))) (assoc "dai" *vk-nho*) *vk-nho*))
 )
 
-;;; Gõ VK -> bảng hiện ra trước: có chiều dài thì nhập, chưa có thì bấm "Pick 2 điểm <" (bảng ẩn, chọn điểm đầu
-;;; + điểm cuối vách, bảng mở lại với chiều dài đã điền) -> chọn cửa sổ / cửa đi -> OK dựng vách đúng 2 điểm đã
-;;; pick (người dùng chốt 29/10/2026). Hộp thoại đóng với mã 2 khi bấm nút pick.
-(defun c:VK (/ f id kq-dlg vk-kq vk-dai vk-diem lat d vk-ten vk-ten-loi vk-vs vk-vd)
-  ;; tên vách không nhớ sang vách sau (mỗi vách một tên); chỉ giữ trong lúc bảng đóng / mở lại khi pick
-  (if (assoc "ten" *vk-nho*) (setq *vk-nho* (subst '("ten" . "") (assoc "ten" *vk-nho*) *vk-nho*)))
-  ;; vị trí cửa lần trước (chuỗi "2,4" trong bộ nhớ bảng)
-  (setq vk-vs (vk:doc-vt (cdr (assoc "vs" *vk-nho*))) vk-vd (vk:doc-vt (cdr (assoc "vd" *vk-nho*))))
-  (if (not (listp vk-vs)) (setq vk-vs nil))
-  (if (not (listp vk-vd)) (setq vk-vd nil))
+;;; Hộp thoại DCL (dự phòng khi không có K-TOOL.dll). Trả về 1 = dựng, 0 = huỷ, nil = không mở được.
+;;; Hộp thoại đóng với mã 2 khi bấm nút pick. Biến vk-* là biến cục bộ của c:VK.
+(defun vk:vong-dcl (/ f id kq-dlg d)
   (setq f (strcat (getvar "TEMPPREFIX") "VK_hop_thoai.dcl"))
   (vk:viet-dcl f)
   (if (< (setq id (load_dialog f)) 0)
@@ -868,9 +863,7 @@
         (if (not (new_dialog "vk_hop_thoai" id))
           (princ "\nKh\\U+00F4ng m\\U+1EDF \\U+0111\\U+01B0\\U+1EE3c h\\U+1ED9p tho\\U+1EA1i VK.")
           (progn
-            (foreach x (if *vk-nho* *vk-nho*
-                         '(("dai" . "") ("ns" . "0") ("ws" . "1000") ("vs" . "")
-                           ("nd" . "0") ("wd" . "1665") ("vd" . "") ("lat" . "0")))
+            (foreach x (if *vk-nho* *vk-nho* vk:nho-goc)
               (if (not (member (car x) '("vs" "vd"))) (set_tile (car x) (cdr x))))
             (foreach k '("dai" "ws" "wd" "ten" "tinh")
               (action_tile k "(vk:cap-nhat)"))
@@ -892,11 +885,68 @@
             ;; bấm Pick 2 điểm: pick lại rồi mở lại bảng với chiều dài mới
             (if (and (= kq-dlg 2) (setq d (vk:pick-dai)))
               (progn (setq vk-diem d) (vk:nho-dai d))))))
-      (unload_dialog id)
-      (if (= kq-dlg 1)
-        (if (vk:dung-diem vk-dai)
-          (vk:thuc-hien vk-kq vk-dai lat (car vk-diem) (angle (car vk-diem) (cadr vk-diem)))
-          (vk:thuc-hien vk-kq vk-dai lat nil nil)))))
+      (unload_dialog id)))
+  kq-dlg
+)
+
+;;; ---------------------------------------------------------------- hộp thoại WPF (K-TOOL.dll)
+;;; Mẫu người dùng duyệt 31/10/2026: nạp K-TOOL.dll thì VK dùng hộp thoại WPF (scripts\ktool\BangVk.cs, sáng / tối),
+;;; không có DLL thì dùng DCL ở trên, VK.lsp vẫn chạy một mình. WPF tính xem trước bằng bản chép của vk:chia và trả
+;;; về vị trí cửa thật (kqs, kqd); LISP tính lại bằng vk:chia nên kết quả dựng luôn theo LISP.
+(defun vk:co-wpf () (if (type ktool_bang_vk) T))
+
+;;; (("a" . "1") ...) <-> ("a" "1" ...)
+(defun vk:nho->cap (ds / kq) (foreach x ds (setq kq (cons (cdr x) (cons (car x) kq)))) (reverse kq))
+(defun vk:cap->nho (ds / kq) (while ds (setq kq (cons (cons (car ds) (cadr ds)) kq) ds (cddr ds))) (reverse kq))
+
+;;; Trả về 1 = dựng, 0 = huỷ, nil = không mở được (DLL báo lỗi vào K-TOOL.log) -> c:VK dùng DCL.
+;;; Bấm Pick 2 điểm: hộp thoại đóng (ma = "pick"), chọn điểm rồi mở lại với chiều dài mới, như DCL.
+(defun vk:vong-wpf (/ ma tra nho d L ns nd cd)
+  (setq ma "pick")
+  (while (= ma "pick")
+    (setq cd (getenv "ARCHIVINA_KTOOL_THEME")
+          tra (ktool_bang_vk (vk:nho->cap (append (if *vk-nho* *vk-nho* vk:nho-goc)
+                                                  (if vk-diem (list (cons "diemdai" (rtos (caddr vk-diem) 2 6))))
+                                                  (if cd (list (cons "theme" cd)))))))
+    (if tra
+      (progn
+        (setq nho (vk:cap->nho tra) ma (cdr (assoc "ma" nho)))
+        (setenv "ARCHIVINA_KTOOL_THEME" (cdr (assoc "theme" nho)))
+        (setq *vk-nho* (vl-remove-if '(lambda (x) (member (car x) '("ma" "theme" "kqs" "kqd"))) nho))
+        (if (and (= ma "pick") (setq d (vk:pick-dai)))
+          (progn (setq vk-diem d) (vk:nho-dai d))))
+      (setq ma nil)))
+  (cond
+    ((not ma) nil)
+    ((= ma "ok")
+     (setq L (vk:doc-so (cdr (assoc "dai" nho)))
+           ns (vk:doc-so (cdr (assoc "ns" nho))) ns (if ns (max 0 (fix ns)) 0)
+           nd (vk:doc-so (cdr (assoc "nd" nho))) nd (if nd (max 0 (fix nd)) 0)
+           vk-kq (vk:chia L ns (vk:doc-so (cdr (assoc "ws" nho))) nd (vk:doc-so (cdr (assoc "wd" nho)))
+                          (vk:doc-vt (cdr (assoc "kqs" nho))) (vk:doc-vt (cdr (assoc "kqd" nho))))
+           vk-dai L
+           lat (= "1" (cdr (assoc "lat" nho)))
+           vk-ten (cdr (assoc "ten" nho)))
+     (if (listp vk-kq) 1 (progn (princ (strcat "\nL\\U+1ED7i VK: " vk-kq)) 0)))
+    (T 0))
+)
+
+;;; Gõ VK -> bảng hiện ra trước: có chiều dài thì nhập, chưa có thì bấm "Pick 2 điểm" (bảng ẩn, chọn điểm đầu
+;;; + điểm cuối vách, bảng mở lại với chiều dài đã điền) -> chọn cửa sổ / cửa đi -> OK dựng vách đúng 2 điểm đã
+;;; pick (người dùng chốt 29/10/2026).
+(defun c:VK (/ kq-dlg vk-kq vk-dai vk-diem lat vk-ten vk-ten-loi vk-vs vk-vd)
+  ;; tên vách không nhớ sang vách sau (mỗi vách một tên); chỉ giữ trong lúc bảng đóng / mở lại khi pick
+  (if (assoc "ten" *vk-nho*) (setq *vk-nho* (subst '("ten" . "") (assoc "ten" *vk-nho*) *vk-nho*)))
+  ;; vị trí cửa lần trước (chuỗi "2,4" trong bộ nhớ bảng)
+  (setq vk-vs (vk:doc-vt (cdr (assoc "vs" *vk-nho*))) vk-vd (vk:doc-vt (cdr (assoc "vd" *vk-nho*))))
+  (if (not (listp vk-vs)) (setq vk-vs nil))
+  (if (not (listp vk-vd)) (setq vk-vd nil))
+  (setq kq-dlg (if (vk:co-wpf) (vk:vong-wpf)))
+  (if (not kq-dlg) (setq kq-dlg (vk:vong-dcl)))
+  (if (= kq-dlg 1)
+    (if (vk:dung-diem vk-dai)
+      (vk:thuc-hien vk-kq vk-dai lat (car vk-diem) (angle (car vk-diem) (cadr vk-diem)))
+      (vk:thuc-hien vk-kq vk-dai lat nil nil)))
   (princ)
 )
 
