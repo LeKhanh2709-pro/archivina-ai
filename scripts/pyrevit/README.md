@@ -53,6 +53,9 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
 | Hồ sơ | Chống thấm | `scripts\dynamo\ChongTham_VeVenChanTuong` (nét vén + hatch Filled Region trên view chống thấm; người dùng duyệt trên G19 2026-10-27) |
 | Hồ sơ | Ngăn cháy lan | `scripts\dynamo\NganChay_TrucHKT` (hatch Filled Region lưới NET 125 / 45° đỏ trong lòng trục / hộp kỹ thuật trên view chống cháy lan; 2026-10-28, người dùng đã duyệt bản bo lõi tường) |
 | Hồ sơ | Lỗ mở shaft | `scripts\dynamo\LoMo_ShaftOpening` (Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở; file gộp, xem dưới; 2026-10-28) |
+| Vách kính | Vách kính | **Viết tay** (không từ Dynamo): `VachKinh.panel\VachKinh.pushbutton\script.py` + `lib\arv_vach_kinh*.py` + `startup.py` (updater). Xem dưới. |
+
+**Nút Vách kính** (2026-11-01, IronPython, chưa duyệt): bảng nhập → pick điểm → dựng curtain wall chia đố 65 theo quy tắc lệnh VK / MDVK; vách góc vuông pick 3 điểm (đố góc 150 x 150 + kính góc). Đổi chiều dài / chiều cao vách thì updater trong `startup.py` chia lại. Quy tắc, file, cách thử: skill `.claude\skills\vach-kinh-revit\SKILL.md`. Panel `VachKinh` nằm trong `PANEL_VIET_TAY` của `build_from_dynamo.py`: builder chỉ thêm vào layout tab, không ghi vào thư mục panel.
 
 **Nút Chống thấm là nút "một chạm"** (người dùng chốt 2026-10-27; khai báo trong `MOT_CHAM` của builder):
 - **Bấm**: vẽ luôn vào mô hình, không hộp thoại, không Dry-run (Ctrl+Z một lần là hoàn tác), trên view chống thấm. Người dùng tự tạo view (gán template `1.7 Mặt Bằng Chống thấm`) và tự đặt lên sheet.

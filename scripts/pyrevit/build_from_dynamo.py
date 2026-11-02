@@ -57,6 +57,8 @@ MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"
 PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện", "MEP": u"MEP",
                 "HoSo": u"Hồ sơ"}
 TAB = "ARV Tools.tab"
+# Panel viết tay (không sinh từ Dynamo, builder không đụng vào thư mục): chỉ thêm vào layout của tab
+PANEL_VIET_TAY = ["VachKinh"]
 
 IN_RE = re.compile(r"^#\s*IN\[(\d+)\]\s*(?:\(([^)]*)\))?\s*(.*)$")
 DYN_TYPES = {"StringInputNode": "str", "NumberInputNode": "float", "BooleanInputNode": "bool"}
@@ -408,7 +410,8 @@ def main():
         order = [n for p, n, _, _ in BUTTONS if p == panel]
         write(os.path.join(pdir, "bundle.yaml"), u"title: {}\nlayout:\n{}".format(
             PANEL_TITLES[panel], u"".join(u"  - {}\n".format(n) for n in order)))
-    write(os.path.join(tab, "bundle.yaml"), u"layout:\n{}".format(u"".join(u"  - {}\n".format(p) for p in panels)))
+    write(os.path.join(tab, "bundle.yaml"), u"layout:\n{}".format(
+        u"".join(u"  - {}\n".format(p) for p in panels + PANEL_VIET_TAY)))
 
 
 if __name__ == "__main__":
