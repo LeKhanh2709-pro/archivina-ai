@@ -1,0 +1,18 @@
+{
+  "ten": "TagCua_TuDong",
+  "mo_ta": "Tự động tag cửa đi (AV_Door Tag) + cửa sổ (AV_Window Tag) + lam (AV_Louver Tag) trên mặt bằng đang mở: tag nằm ngang, không leader, không đè cửa / cánh mở / tường / chữ (cửa đi ưu tiên phía không mở cánh, cửa sổ phía ngoài); tạo + gán view template '<gốc> (ẩn nội thất)' ẩn nội thất; cửa có EI mà tag không hiện EI thì báo; bấm lại không tạo trùng, không xoá. Mặc định Dry-run.",
+  "py": "TagCua_TuDong.py",
+  "dau_vao": [
+    {"ten": "Tên view mặt bằng (trống = view đang mở)", "kieu": "string", "gia_tri": ""},
+    {"ten": "Family tag cửa đi", "kieu": "string", "gia_tri": "AV_Door Tag"},
+    {"ten": "Family tag cửa sổ", "kieu": "string", "gia_tri": "AV_Window Tag"},
+    {"ten": "Family tag lam / louver", "kieu": "string", "gia_tri": "AV_Louver Tag"},
+    {"ten": "Từ khoá nhận lam / louver (;)", "kieu": "string", "gia_tri": "Lam;Louver"},
+    {"ten": "Dry-run (True = chỉ báo cáo)", "kieu": "bool", "gia_tri": true},
+    {"ten": "Tạo + gán view template ẩn nội thất", "kieu": "bool", "gia_tri": true},
+    {"ten": "Hạng mục nội thất cần ẩn (BuiltInCategory, ;)", "kieu": "string", "gia_tri": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures"},
+    {"ten": "Tên tham số chống cháy EI (;)", "kieu": "string", "gia_tri": "Fire Rating;EI;Giới hạn chịu lửa"},
+    {"ten": "Khoảng hở tag - vật cản (mm giấy)", "kieu": "number", "gia_tri": 1.0},
+    {"ten": "Thư mục log (trống = Documents, ARV_Logs)", "kieu": "string", "gia_tri": ""}
+  ]
+}

@@ -1,0 +1,259 @@
+{
+  "Uuid": "5bec0d48-1551-4c05-80c1-a3870d9b530d",
+  "IsCustomNode": false,
+  "Description": "CHỈ ĐỌC: khảo sát bổ sung cho công cụ tag cửa (cửa sổ, EI, nội bộ family tag, kích thước tag, view template). Không sửa model.",
+  "Name": "TagCua_KhaoSat2",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "97a114552a994f7ba9cbb35055d3cf16",
+      "Name": "Thư mục ghi kết quả",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "D:\\AI\\_tmp\\revit_tagcua\\ket_qua2",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "D:\\AI\\_tmp\\revit_tagcua\\ket_qua2",
+      "Id": "97a114552a994f7ba9cbb35055d3cf16",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "75c5545b4d4745a69db03d24f71bea12",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Khảo sát bổ sung cho công cụ tag cửa (CHỈ ĐỌC, không sửa model): cửa sổ + tag cửa sổ, cửa chống cháy (EI),\n# nội bộ family tag (nhãn, hiển thị theo tham số, kích thước), kích thước tag trong view, phía cánh mở của cửa,\n# view template + hiển thị nội thất của view đang mở.\n# INPUT\n#   IN[0] (str)  Thư mục ghi kết quả\n# OUTPUT\n#   OUT (list[str])\nimport os\nimport math\nimport traceback\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nfrom RevitServices.Persistence import DocumentManager\nfrom collections import Counter, defaultdict\nfrom System.Collections.Generic import List as NetList\n\n_thu_muc = IN[0]\nos.makedirs(_thu_muc, exist_ok=True)\nOUT = None\n\n\ndef _chinh():\n    global OUT\n    doc = DocumentManager.Instance.CurrentDBDocument\n    lines = []\n\n    def p(s=\"\"):\n        lines.append(str(s))\n\n    def ghi():\n        with open(os.path.join(_thu_muc, \"khaosat2.txt\"), \"w\", encoding=\"utf-8\") as f:\n            f.write(\"\\n\".join(lines))\n\n    def mm(v):\n        return round(UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters), 1)\n\n    def ten(e):\n        try:\n            return Element.Name.GetValue(e)\n        except Exception:\n            try:\n                return e.Name\n            except Exception:\n                return \"?\"\n\n    def ten_kieu(e):\n        try:\n            t = doc.GetElement(e.GetTypeId())\n            return \"%s : %s\" % (t.FamilyName, ten(t))\n        except Exception:\n            return \"?\"\n\n    def gt(e, ten_ts):\n        try:\n            pr = e.LookupParameter(ten_ts)\n            if pr is None:\n                return None\n            return pr.AsString() if pr.StorageType == StorageType.String else pr.AsValueString()\n        except Exception:\n            return None\n\n    def cuc_bo(e, pt):\n        \"\"\"toạ độ (dọc tường, theo mặt) của điểm pt so với e\"\"\"\n        lc = e.Location.Point\n        hv, fv = e.HandOrientation, e.FacingOrientation\n        d = pt - lc\n        return mm(d.X * hv.X + d.Y * hv.Y), mm(d.X * fv.X + d.Y * fv.Y)\n\n    def bb_cuc_bo(e, v):\n        bb = e.get_BoundingBox(v)\n        if bb is None:\n            return \"-\"\n        xs, ys = [], []\n        for x in (bb.Min.X, bb.Max.X):\n            for y in (bb.Min.Y, bb.Max.Y):\n                a, b = cuc_bo(e, XYZ(x, y, bb.Min.Z))\n                xs.append(a)\n                ys.append(b)\n        return \"dọc %s..%s, mặt %s..%s\" % (min(xs), max(xs), min(ys), max(ys))\n\n    # ---------- A. Cửa sổ ----------\n    wins = list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Windows).WhereElementIsNotElementType())\n    p(\"== A. CỬA SỔ (%d)\" % len(wins))\n    ck = Counter()\n    tm = defaultdict(set)\n    host = Counter()\n    for w in wins:\n        k = ten_kieu(w)\n        ck[k] += 1\n        t = doc.GetElement(w.GetTypeId())\n        tm[k].add(gt(t, \"Type Mark\") or \"\")\n        try:\n            h = w.Host\n            host[(h.GetType().Name + \" \" + ten(doc.GetElement(h.GetTypeId()))) if h is not None else \"không host\"] += 1\n        except Exception:\n            host[\"?\"] += 1\n    for k, v in ck.most_common():\n        p(\"   %4d  %s | Type Mark=%s\" % (v, k, \"/\".join(sorted(tm[k]))))\n    p(\"Host: \" + \"; \".join(\"%s=%d\" % kv for kv in host.most_common(10)))\n    p(\"Mark ví dụ: \" + \", \".join(sorted(set(gt(w, \"Mark\") or \"\" for w in wins))[:30]))\n    ghi()\n\n    # ---------- B. EI / chống cháy ----------\n    p(\"\")\n    p(\"== B. CHỐNG CHÁY / EI TRÊN CỬA\")\n    doors = list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Doors).WhereElementIsNotElementType())\n    fr = Counter()\n    ei_ts = Counter()\n    for d in doors:\n        t = doc.GetElement(d.GetTypeId())\n        fr[\"%s | Fire Rating='%s'\" % (ten_kieu(d), gt(t, \"Fire Rating\") or \"\")] += 1\n        for e, loai in ((d, \"inst\"), (t, \"type\")):\n            for pr in e.Parameters:\n                n = pr.Definition.Name\n                try:\n                    v = pr.AsString() if pr.StorageType == StorageType.String else pr.AsValueString()\n                except Exception:\n                    v = None\n                if \"EI\" in n.upper() or \"CHAY\" in n.upper() or \"CHÁY\" in n.upper() or (v and \"EI\" in v.upper()):\n                    ei_ts[\"%s %s='%s'\" % (loai, n, v)] += 1\n    for k, v in fr.most_common():\n        p(\"   %4d  %s\" % (v, k))\n    p(\"Tham số có EI / cháy: \" + (\"; \".join(\"%s ×%d\" % kv for kv in ei_ts.most_common(30)) or \"không có\"))\n    ghi()\n\n    # ---------- C. Tag có sẵn: kích thước + vị trí ----------\n    p(\"\")\n    p(\"== C. TAG CỬA / CỬA SỔ CÓ SẴN\")\n    for tg in FilteredElementCollector(doc).OfClass(IndependentTag):\n        ids = list(tg.GetTaggedLocalElementIds())\n        if not ids:\n            continue\n        e = doc.GetElement(ids[0])\n        if e is None or e.Category is None or e.Category.Id.Value not in (int(BuiltInCategory.OST_Doors),\n                                                                          int(BuiltInCategory.OST_Windows)):\n            continue\n        v = doc.GetElement(tg.OwnerViewId)\n        bb = tg.get_BoundingBox(v)\n        kt = \"-\"\n        if bb is not None:\n            kt = \"%s x %s mm (giấy %.1f x %.1f)\" % (mm(bb.Max.X - bb.Min.X), mm(bb.Max.Y - bb.Min.Y),\n                                                     mm(bb.Max.X - bb.Min.X) / v.Scale, mm(bb.Max.Y - bb.Min.Y) / v.Scale)\n            tam = (bb.Min + bb.Max) * 0.5\n            tam_cb = cuc_bo(e, tam)\n        else:\n            tam_cb = \"-\"\n        dau = cuc_bo(e, tg.TagHeadPosition)\n        try:\n            wt = mm(e.Host.Width)\n        except Exception:\n            wt = \"?\"\n        p(\"   %s | %s | %s | 1:%d | %s | %r | đầu tag %s | tâm khung %s | khung %s | cửa: %s | tường dày %s | flipH %s flipF %s\"\n          % (e.Category.Name, ten(v), ten_kieu(tg), v.Scale, ten_kieu(e), tg.TagText, dau, tam_cb, kt,\n             bb_cuc_bo(e, v), wt, e.HandFlipped, e.FacingFlipped))\n    ghi()\n\n    # ---------- D. Family tag: nội bộ ----------\n    p(\"\")\n    p(\"== D. NỘI BỘ FAMILY TAG\")\n    cats = (int(BuiltInCategory.OST_DoorTags), int(BuiltInCategory.OST_WindowTags), int(BuiltInCategory.OST_MultiCategoryTags))\n    fams = [f for f in FilteredElementCollector(doc).OfClass(Family)\n            if f.FamilyCategory and f.FamilyCategory.Id.Value in cats]\n    stt = 0\n    for f in fams:\n        p(\"-- %s [%s] kiểu: %s\" % (f.Name, f.FamilyCategory.Name,\n                                   \", \".join(ten(doc.GetElement(i)) for i in f.GetFamilySymbolIds())))\n        try:\n            fd = doc.EditFamily(f)\n        except Exception as ex:\n            p(\"   không mở được: %s\" % ex)\n            continue\n        try:\n            fm = fd.FamilyManager\n            for fp in fm.Parameters:\n                vals = []\n                for ft in fm.Types:\n                    try:\n                        if fp.StorageType == StorageType.Integer:\n                            vals.append(\"%s=%s\" % (ft.Name, ft.AsInteger(fp)))\n                        elif fp.StorageType == StorageType.Double:\n                            vals.append(\"%s=%s\" % (ft.Name, mm(ft.AsDouble(fp))))\n                        else:\n                            vals.append(\"%s=%s\" % (ft.Name, ft.AsString(fp)))\n                    except Exception:\n                        pass\n                p(\"   tham số: %s (%s, %s) %s\" % (fp.Definition.Name, \"inst\" if fp.IsInstance else \"type\",\n                                                 fp.StorageType, \"; \".join(vals)))\n            for e in FilteredElementCollector(fd).WhereElementIsNotElementType():\n                cn = e.GetType().Name\n                if e.Category is None and cn not in (\"AnnotationLabel\",):\n                    continue\n                if cn in (\"Material\", \"ViewSheet\", \"PropertySetElement\", \"SunAndShadowSettings\", \"LoadCase\"):\n                    continue\n                vis = \"\"\n                try:\n                    vp = e.get_Parameter(BuiltInParameter.IS_VISIBLE_PARAM)\n                    if vp is not None:\n                        a = fm.GetAssociatedFamilyParameter(vp)\n                        vis = \" | hiện theo '%s'\" % a.Definition.Name if a else \"\"\n                except Exception:\n                    pass\n                bb = None\n                try:\n                    vw = [x for x in FilteredElementCollector(fd).OfClass(View) if not x.IsTemplate]\n                    bb = e.get_BoundingBox(vw[0] if vw else None)\n                except Exception:\n                    pass\n                kt = (\"[%s,%s]-[%s,%s]\" % (mm(bb.Min.X), mm(bb.Min.Y), mm(bb.Max.X), mm(bb.Max.Y))) if bb else \"\"\n                txt = \"\"\n                if cn == \"AnnotationLabel\":\n                    try:\n                        txt = repr(e.Text)\n                    except Exception:\n                        pass\n                    mem = [m for m in dir(e) if not m.startswith(\"_\")]\n                    p(\"   AnnotationLabel thành viên: \" + \", \".join(mem))\n                    for m in mem:\n                        if m.startswith(\"Get\") or m in (\"Coord\", \"Position\", \"Width\", \"HorizontalAlignment\"):\n                            try:\n                                at = getattr(e, m)\n                                val = at() if callable(at) and m.startswith(\"Get\") else at\n                                p(\"      %s = %s\" % (m, val))\n                            except Exception as ex:\n                                p(\"      %s: %s\" % (m, ex))\n                p(\"   %s %s %s%s %s\" % (cn, e.Category.Name if e.Category else \"\", kt, vis, txt))\n            # Ảnh view của family\n            try:\n                vw = [x for x in FilteredElementCollector(fd).OfClass(View) if not x.IsTemplate and x.CanBePrinted]\n                if vw:\n                    stt += 1\n                    ds = NetList[ElementId]()\n                    ds.Add(vw[0].Id)\n                    opt = ImageExportOptions()\n                    opt.ExportRange = ExportRange.SetOfViews\n                    opt.SetViewsAndSheets(ds)\n                    opt.FilePath = os.path.join(_thu_muc, \"fam_%02d\" % stt)\n                    opt.ZoomType = ZoomFitType.FitToPage\n                    opt.PixelSize = 1600\n                    opt.HLRandWFViewsFileType = ImageFileType.PNG\n                    fd.ExportImage(opt)\n                    p(\"   ảnh: fam_%02d*.png\" % stt)\n            except Exception as ex:\n                p(\"   ảnh lỗi: %s\" % ex)\n        finally:\n            fd.Close(False)\n        ghi()\n\n    # ---------- E. View đang mở + template ----------\n    p(\"\")\n    v = doc.ActiveView\n    tpl = doc.GetElement(v.ViewTemplateId) if v.ViewTemplateId != ElementId.InvalidElementId else None\n    p(\"== E. VIEW ĐANG MỞ: %s | 1:%d | template %s\" % (ten(v), v.Scale, ten(tpl) if tpl else \"-\"))\n    cat_kt = [BuiltInCategory.OST_Furniture, BuiltInCategory.OST_FurnitureSystems, BuiltInCategory.OST_Casework,\n              BuiltInCategory.OST_SpecialityEquipment, BuiltInCategory.OST_PlumbingFixtures,\n              BuiltInCategory.OST_GenericModel, BuiltInCategory.OST_ElectricalEquipment,\n              BuiltInCategory.OST_LightingFixtures, BuiltInCategory.OST_DoorTags, BuiltInCategory.OST_WindowTags]\n    for bic in cat_kt:\n        cid = ElementId(bic)\n        try:\n            n = FilteredElementCollector(doc, v.Id).OfCategory(bic).WhereElementIsNotElementType().GetElementCount()\n            p(\"   %s: ẩn trong view=%s, ẩn trong template=%s, số đối tượng thấy=%d\"\n              % (bic, v.GetCategoryHidden(cid), tpl.GetCategoryHidden(cid) if tpl else \"-\", n))\n        except Exception as ex:\n            p(\"   %s: %s\" % (bic, ex))\n    if tpl:\n        try:\n            p(\"   template điều khiển: \" + \", \".join(str(i.Value) for i in tpl.GetTemplateParameterIds())[:300])\n        except Exception:\n            pass\n    p(\"View template có trong dự án: \" + \"; \".join(sorted(ten(x) for x in FilteredElementCollector(doc).OfClass(View)\n                                                          if x.IsTemplate)))\n    # Đồ trong view theo hạng mục (để biết \"nội thất\" gồm gì)\n    c = Counter()\n    for e in FilteredElementCollector(doc, v.Id).WhereElementIsNotElementType():\n        if e.Category is not None and e.Category.CategoryType == CategoryType.Model:\n            c[e.Category.Name] += 1\n    p(\"Hạng mục model thấy trong view: \" + \", \".join(\"%s=%d\" % kv for kv in c.most_common(30)))\n    ghi()\n    OUT = lines[:80]\n\n\ntry:\n    _chinh()\nexcept Exception:\n    with open(os.path.join(_thu_muc, \"loi2.txt\"), \"w\", encoding=\"utf-8\") as _f:\n        _f.write(traceback.format_exc())\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "30c854d5a5cc4999a3ed153a97cc1d35",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "32a0749b45f64cdd84bd6db74a88b6e6",
+          "Name": "IN[0]",
+          "Description": "Thư mục ghi kết quả",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "412dd80ace714a0db62b21434945062a",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "5e0ec6757f694cf49adc1b0d09e3926b",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "20a318d6062146409ad92f68436689e4",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c21c6575dbc745ae9d6d6bfdebb57776",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "75c5545b4d4745a69db03d24f71bea12",
+      "End": "32a0749b45f64cdd84bd6db74a88b6e6",
+      "Id": "aa242307c10541b0985f2214a83f83d1",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "412dd80ace714a0db62b21434945062a",
+      "End": "20a318d6062146409ad92f68436689e4",
+      "Id": "d29f63f8474a4fefa18969fcd914e8cc",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "97a114552a994f7ba9cbb35055d3cf16",
+        "Name": "Thư mục ghi kết quả",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "30c854d5a5cc4999a3ed153a97cc1d35",
+        "Name": "TagCua_KhaoSat2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "5e0ec6757f694cf49adc1b0d09e3926b",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "1aa8f63ed36d4a68b45b802fac6465f5",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "97a114552a994f7ba9cbb35055d3cf16"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 170.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 170.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "2325331e2111469f861c7bd7e3bf9592",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "30c854d5a5cc4999a3ed153a97cc1d35"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "01155bc015794484ad0363852a05c102",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "5e0ec6757f694cf49adc1b0d09e3926b"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

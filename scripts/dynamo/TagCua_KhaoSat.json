@@ -1,0 +1,8 @@
+{
+  "ten": "TagCua_KhaoSat",
+  "mo_ta": "CHỈ ĐỌC: khảo sát family tag cửa, cửa (Mark / Type Mark / kích thước), tag cửa đang có (view, kiểu, leader, vị trí so với cửa), view mặt bằng + xuất ảnh, để viết công cụ tự động tag cửa. Không sửa model.",
+  "py": "TagCua_KhaoSat.py",
+  "dau_vao": [
+    {"ten": "Thư mục ghi kết quả", "kieu": "string", "gia_tri": "D:\\AI\\_tmp\\revit_tagcua\\ket_qua"}
+  ]
+}

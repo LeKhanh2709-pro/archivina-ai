@@ -45,6 +45,8 @@ BUTTONS = [
     ("HoSo", "ChongTham", u"Chống\nthấm", "../dynamo/ChongTham_VeVenChanTuong"),
     ("HoSo", "NganChay", u"Ngăn\ncháy lan", "../dynamo/NganChay_TrucHKT"),
     ("HoSo", "LoMoShaft", u"Lỗ mở\nshaft", "../dynamo/LoMo_ShaftOpening"),
+    ("HoSo", "MBDinhViCua", u"MB định\nvị cửa", "../dynamo/MatBang_DinhViCua"),
+    ("HoSo", "TagCua", u"Tag\ncửa", "../dynamo/TagCua_TuDong"),
 ]
 # Nút "một chạm" (người dùng chốt 2026-10-27 cho Chống thấm): bấm là ghi luôn vào mô hình, không hộp thoại, trên view
 # đang mở nếu là view có chữ <tu_khoa> (tên view hoặc tên view template), không thì chọn trong các view đó.
@@ -53,7 +55,9 @@ BUTTONS = [
 #   tu_khoa rỗng: làm trên mặt bằng tầng đang mở (không phải mặt bằng tầng thì báo); view_in None: không truyền tên view
 MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm"},
             "NganChay": {"view_in": 0, "tu_khoa": u"chay lan", "ten_view": u"chống cháy lan"},
-            "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"}}
+            "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},
+            "MBDinhViCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},
+            "TagCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng"}}
 PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện", "MEP": u"MEP",
                 "HoSo": u"Hồ sơ"}
 TAB = "ARV Tools.tab"

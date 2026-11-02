@@ -1,0 +1,137 @@
+{
+ "key": "TagCua",
+ "title": "Tag cửa",
+ "summary": "Tự động tag cửa đi + cửa sổ trên mặt bằng đang mở của Revit (người dùng chốt 2026-11-02, sửa theo góp ý cùng ngày): - Cửa đi: family tag \"AV_Door Tag\"; cửa sổ: \"AV_Window Tag\"; cửa sổ có tên family / type chứa từ khoá lam: \"AV_Louver Tag\". Đối tượng có Type Comments \"Louver\" thì KHÔNG tag. - Tag hiện đúng Type Mark: nhãn family có tiền tố (vd. \"S3.\") thì thay bằng nhãn Type Mark trơn chép từ family tag cùng hạng mục trong dự án (Revit 2027.3 không sửa được tiền tố nhãn qua API), rồi nạp lại family. - Tag nằm ngang, ưu tiên NGAY GIỮA cửa (cửa đi phía không mở cánh, cửa sổ phía ngoài theo FacingOrientation); KHÔNG đè cửa (kể cả cánh mở), cửa sổ, tường, cột, tag / chữ khác. Lưới vị trí quanh cửa xếp theo điểm = lùi xa + 4 × dịch khỏi giữa cửa + phạt phía kia; không chỗ nào trống thì đặt chỗ ít đè nhất và liệt kê để xem lại. - Leader: tag lệch khỏi giữa cửa (hoặc xa hơn 1 bề cao tag) thì bật leader gắn vào cửa. - Nội thất không né mà ẩn: tạo view template riêng \"<template gốc> (ẩn nội thất)\" (tạo từ view vì API không nhân bản được view template), ẩn các hạng mục nội thất, gán cho view. KHÔNG sửa template gốc. - Cửa có EI (tham số chống cháy có giá trị) thì EI phải hiện trên tag: tag đã đặt mà chữ tag không chứa giá trị EI → báo family tag chưa có nhãn EI. - Cửa / cửa sổ đã có tag trong view thì bỏ qua: bấm lại không tạo trùng. Chỉ khi bật IN[14] mới dời tag đã có (cùng family tag); chỉ khi bật IN[15] mới xoá tag đang gắn trên đối tượng Type Comments \"Louver\". Dry-run chỉ báo cáo (đặt thử trong SubTransaction rồi huỷ), không sửa mô hình.",
+ "transaction": "ARV - Tag cửa",
+ "source": "TagCua_TuDong.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên view mặt bằng (để trống = view đang mở)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Family tag cửa đi",
+   "default": "AV_Door Tag",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Family tag cửa sổ",
+   "default": "AV_Window Tag",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Family tag lam / louver",
+   "default": "AV_Louver Tag",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Từ khoá nhận lam / louver trong tên family / type cửa sổ, cách nhau bằng ;",
+   "default": "Lam;Louver",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run (True = chỉ báo cáo)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 6,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Tạo + gán view template ẩn nội thất",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Hạng mục nội thất cần ẩn (tên BuiltInCategory), cách nhau bằng ;",
+   "default": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên tham số chống cháy (EI) của cửa, cách nhau bằng ;",
+   "default": "Fire Rating;EI;Giới hạn chịu lửa",
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "float",
+   "decl": "float",
+   "label": "Khoảng hở giữa tag và vật cản (mm trên giấy in)",
+   "default": 1.0,
+   "kind": "normal"
+  },
+  {
+   "index": 10,
+   "type": "str",
+   "decl": "str",
+   "label": "Thư mục ghi log + ảnh (để trống = Documents\\ARV_Logs\\tag_cua)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 11,
+   "type": "str",
+   "decl": "str",
+   "label": "Type Comments của đối tượng KHÔNG tag (vd. Louver), cách nhau bằng ;",
+   "default": "Louver",
+   "kind": "normal"
+  },
+  {
+   "index": 12,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Bỏ tiền tố nhãn Type Mark trong family tag (vd. \"S3.\") để tag hiện đúng Type Mark",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 13,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Luôn bật leader (False = chỉ bật khi tag không nằm ngay giữa cửa)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 14,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Đặt lại vị trí các tag cửa / cửa sổ đã có (cùng family tag) theo quy tắc mới",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 15,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Xoá tag đang gắn trên đối tượng bị loại trừ theo Type Comments",
+   "default": false,
+   "kind": "destructive"
+  }
+ ]
+}

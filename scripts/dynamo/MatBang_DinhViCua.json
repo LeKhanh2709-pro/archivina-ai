@@ -1,0 +1,52 @@
+{
+  "ten": "MatBang_DinhViCua",
+  "mo_ta": "Tạo mặt bằng định vị cửa từ mặt bằng đang mở: nhân bản view (không kèm chú thích), gán view template 'MẶT BẰNG ĐỊNH VỊ CỬA' (chưa có thì tạo từ template của view gốc: tường + sàn Halftone, sàn tắt mẫu tô, cửa đi / cửa sổ nét đậm, ẩn nội thất / thiết bị vệ sinh, hiện tag cửa). Template đã có thì dùng nguyên. Không xoá, không sửa view gốc. Mặc định Dry-run.",
+  "py": "MatBang_DinhViCua.py",
+  "dau_vao": [
+    {
+      "ten": "Tên view mặt bằng gốc (trống = view đang mở)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tên view template",
+      "kieu": "string",
+      "gia_tri": "MẶT BẰNG ĐỊNH VỊ CỬA"
+    },
+    {
+      "ten": "Từ khoá template nền (trống = template của view gốc)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Hạng mục Halftone (BuiltInCategory, ;)",
+      "kieu": "string",
+      "gia_tri": "OST_Walls;OST_Floors"
+    },
+    {
+      "ten": "Hạng mục cần ẩn (BuiltInCategory, ;)",
+      "kieu": "string",
+      "gia_tri": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures"
+    },
+    {
+      "ten": "Mẫu tên view mới ({tang}, {view})",
+      "kieu": "string",
+      "gia_tri": "MẶT BẰNG ĐỊNH VỊ CỬA - {tang}"
+    },
+    {
+      "ten": "Dry-run (True = chỉ báo cáo)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Mở view mới sau khi tạo",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Hạng mục bỏ Halftone (BuiltInCategory, ;)",
+      "kieu": "string",
+      "gia_tri": "OST_Doors;OST_Windows"
+    }
+  ]
+}

@@ -1,0 +1,691 @@
+{
+  "Uuid": "11c0adbc-56c6-405f-9589-4f9269a2ea0f",
+  "IsCustomNode": false,
+  "Description": "Tạo mặt bằng định vị cửa từ mặt bằng đang mở: nhân bản view (không kèm chú thích), gán view template 'MẶT BẰNG ĐỊNH VỊ CỬA' (chưa có thì tạo từ template của view gốc: tường + sàn Halftone, sàn tắt mẫu tô, cửa đi / cửa sổ nét đậm, ẩn nội thất / thiết bị vệ sinh, hiện tag cửa). Template đã có thì dùng nguyên. Không xoá, không sửa view gốc. Mặc định Dry-run.",
+  "Name": "MatBang_DinhViCua",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "4d26aeed895e4ae2a8520257c3f6831f",
+      "Name": "Tên view mặt bằng gốc (trống = view đang mở)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "786f8f27404d4f95a28ac3d725f1c3c3",
+      "Name": "Tên view template",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "MẶT BẰNG ĐỊNH VỊ CỬA",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "f5c8a23a530544599ffc55f23d517001",
+      "Name": "Từ khoá template nền (trống = template của view gốc)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "7f35d9eff9b04ddd94a33a43c9412847",
+      "Name": "Hạng mục Halftone (BuiltInCategory, ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "OST_Walls;OST_Floors",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "e48ba1449a6d4077a953ed47d791f44d",
+      "Name": "Hạng mục cần ẩn (BuiltInCategory, ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "cee27676af4c4b19a25fd647c6f0b04a",
+      "Name": "Mẫu tên view mới ({tang}, {view})",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "MẶT BẰNG ĐỊNH VỊ CỬA - {tang}",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "25f8400f2085447692f3f5d5a92d5da5",
+      "Name": "Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "bca2a0d3d12c48f9a658073b162d038d",
+      "Name": "Mở view mới sau khi tạo",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "4bbc5f7e13d4417fb37e6d3aaa679091",
+      "Name": "Hạng mục bỏ Halftone (BuiltInCategory, ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "OST_Doors;OST_Windows",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "4d26aeed895e4ae2a8520257c3f6831f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "415af9b23a674a0482dd3ecb6321e803",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "MẶT BẰNG ĐỊNH VỊ CỬA",
+      "Id": "786f8f27404d4f95a28ac3d725f1c3c3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8e6b94ac3a8a41d8b0eec605fdff2129",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "f5c8a23a530544599ffc55f23d517001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5f698030144d4d6a814cbfc6c8ac0528",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "OST_Walls;OST_Floors",
+      "Id": "7f35d9eff9b04ddd94a33a43c9412847",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "81bfa82f93264cb6a5beb036928f8858",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures",
+      "Id": "e48ba1449a6d4077a953ed47d791f44d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "885f88a78a9c4c5e8e9d94e7b9d65a66",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "MẶT BẰNG ĐỊNH VỊ CỬA - {tang}",
+      "Id": "cee27676af4c4b19a25fd647c6f0b04a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9fdd18b5e1034e469babf7196d7e9131",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "25f8400f2085447692f3f5d5a92d5da5",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6d190a582f4647feb18423de3bcde5a1",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "bca2a0d3d12c48f9a658073b162d038d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "36e54c28eb904bf78a58b2b7533c1f1b",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "OST_Doors;OST_Windows",
+      "Id": "4bbc5f7e13d4417fb37e6d3aaa679091",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4f1db9d053b543a6b15d1d4fbf8a5c88",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Tạo mặt bằng định vị cửa từ mặt bằng đang mở (người dùng yêu cầu 2026-11-02, mẫu theo ảnh mặt bằng chống cháy lan):\n#   - Nhân bản view mặt bằng gốc (Duplicate, KHÔNG kèm chú thích / filled region), đặt tên theo mẫu IN[5]\n#     (vd. \"MẶT BẰNG ĐỊNH VỊ CỬA - Tầng 1\"). View tên đó đã có thì không tạo thêm, chỉ mở view đó.\n#   - Gán view template IN[1] (\"MẶT BẰNG ĐỊNH VỊ CỬA\"). Template đã có trong dự án thì dùng nguyên, KHÔNG sửa\n#     (giữ phần người dùng đã chỉnh tay). Chưa có thì tạo: lấy template nền (mặc định template của view gốc, tức\n#     đồ hoạ người dùng đang thấy; IN[2] có từ khoá thì lấy template mặt bằng có chữ đó, ưu tiên cùng tỉ lệ), rồi\n#       + tường, sàn: Halftone (xám như ảnh mẫu); sàn: tắt mẫu tô bề mặt (nền trắng);\n#       + cửa đi, cửa sổ: bỏ Halftone (nét đậm để định vị cửa, IN[8]);\n#       + ẩn nội thất / thiết bị vệ sinh (IN[4]) để công cụ Tag cửa không phải tạo template \"(ẩn nội thất)\";\n#       + bật hiện cửa đi, cửa sổ, tag cửa đi, tag cửa sổ.\n#     API không nhân bản được view template → gán template nền cho view mới, Regenerate (template chỉ áp vào view khi\n#     regenerate) rồi CreateViewTemplate. KHÔNG dùng ApplyViewTemplateParameters: thử trên G19 làm Revit 2027.3\n#     lỗi nặng (generateViewSpecificGRep của tường) khi vẽ lại view.\n#   - Không xoá, không sửa view gốc, không sửa template nền.\n# INPUT\n#   IN[0] (str)  Tên view mặt bằng gốc (để trống = view đang mở)\n#   IN[1] (str)  Tên view template mặt bằng định vị cửa\n#   IN[2] (str)  Từ khoá tìm template nền khi phải tạo template mới (trống = template của view gốc)\n#   IN[3] (str)  Hạng mục để Halftone (tên BuiltInCategory), cách nhau bằng ;\n#   IN[4] (str)  Hạng mục cần ẩn (tên BuiltInCategory), cách nhau bằng ;\n#   IN[5] (str)  Mẫu tên view mới ({tang} = tên tầng, {view} = tên view gốc)\n#   IN[6] (bool) Dry-run (True = chỉ báo cáo)\n#   IN[7] (bool) Mở view mới sau khi tạo\n#   IN[8] (str)  Hạng mục bỏ Halftone (tên BuiltInCategory), cách nhau bằng ;\n# OUTPUT\n#   OUT (list[str])  Báo cáo\nimport traceback\nimport unicodedata\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nimport Autodesk.Revit.DB as _RevitDB\n# pythonnet 3.0: tên đã được import đích danh trước đó trong phiên bị loại khỏi \"import *\" → bổ sung đủ tên\nglobals().update({_n: getattr(_RevitDB, _n) for _n in dir(_RevitDB) if not _n.startswith(\"_\") and _n not in globals()})\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nMAC_DINH = [\"\", u\"MẶT BẰNG ĐỊNH VỊ CỬA\", u\"\", \"OST_Walls;OST_Floors\",\n            \"OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures\",\n            u\"MẶT BẰNG ĐỊNH VỊ CỬA - {tang}\", True, True, \"OST_Doors;OST_Windows\"]\n\n\ndef doc_in(i):\n    try:\n        v = IN[i]\n    except Exception:\n        v = None\n    return MAC_DINH[i] if v is None or (isinstance(v, str) and v == \"\" and MAC_DINH[i] != \"\") else v\n\n\ndef khong_dau(s):\n    s = unicodedata.normalize(\"NFD\", u\"%s\" % (s or u\"\")).replace(u\"đ\", u\"d\").replace(u\"Đ\", u\"D\")\n    return u\"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower().strip()\n\n\ndef tach(s):\n    return [x.strip() for x in (s or \"\").split(\";\") if x.strip()]\n\n\ndef ten(e):\n    try:\n        return Element.Name.GetValue(e)\n    except Exception:\n        try:\n            return e.Name\n        except Exception:\n            return \"?\"\n\n\ndef cat_ids(doc, ten_bic, bao):\n    ds = []\n    for n in ten_bic:\n        try:\n            ds.append(ElementId(getattr(BuiltInCategory, n)))\n        except Exception:\n            bao(u\"Không có hạng mục '%s' → bỏ qua.\" % n)\n    return ds\n\n\ndef ten_cat(doc, cid):\n    try:\n        return Category.GetCategory(doc, cid).Name\n    except Exception:\n        return str(cid.Value)\n\n\ndef _chinh():\n    doc = DocumentManager.Instance.CurrentDBDocument\n    bao_cao = []\n\n    def p(s):\n        bao_cao.append(u\"%s\" % s)\n\n    # ---------- View gốc ----------\n    ten_view = doc_in(0)\n    av = doc.ActiveView\n    if ten_view:\n        ung = [v for v in FilteredElementCollector(doc).OfClass(ViewPlan)\n               if not v.IsTemplate and v.ViewType == ViewType.FloorPlan and v.Name == ten_view]\n        if av is not None and any(v.Id.Value == av.Id.Value for v in ung):\n            ung = [av]\n        goc = ung[0] if ung else None\n        if goc is None:\n            return [u\"Không có mặt bằng (Floor Plan) tên '%s'.\" % ten_view]\n    else:\n        goc = av\n    if goc is None or goc.IsTemplate or goc.ViewType != ViewType.FloorPlan or goc.GenLevel is None:\n        return [u\"View '%s' không phải mặt bằng tầng. Mở mặt bằng cần làm rồi chạy lại.\" % (ten(goc) if goc else \"-\")]\n    dry = bool(doc_in(6))\n    ten_tpl = (doc_in(1) or u\"\").strip()\n    tang = goc.GenLevel.Name\n    ten_moi = (doc_in(5) or MAC_DINH[5]).replace(u\"{tang}\", tang).replace(u\"{view}\", goc.Name).strip()\n    p(u\"View gốc: '%s' (tầng %s, 1:%s)%s\" % (goc.Name, tang, goc.Scale, u\" – DRY-RUN, không sửa mô hình\" if dry else u\"\"))\n\n    views = list(FilteredElementCollector(doc).OfClass(View))\n    da_co = [v for v in views if not v.IsTemplate and v.ViewType == ViewType.FloorPlan and v.Name == ten_moi]\n    tpl = None\n    for v in views:\n        if v.IsTemplate and v.Name == ten_tpl:\n            tpl = v\n\n    # ---------- Template nền (chỉ dùng khi phải tạo template mới) ----------\n    nen = None\n    if tpl is None:\n        tk = khong_dau(doc_in(2))\n        if tk:\n            ung = [v for v in views if v.IsTemplate and v.ViewType == ViewType.FloorPlan and tk in khong_dau(v.Name)\n                   and khong_dau(v.Name) != khong_dau(ten_tpl) and not v.Name.endswith(u\"(ẩn nội thất)\")]\n            ung.sort(key=lambda v: (0 if v.Scale == goc.Scale else 1, len(v.Name), v.Name))\n            nen = ung[0] if ung else None\n        if nen is None and goc.ViewTemplateId != ElementId.InvalidElementId:\n            nen = doc.GetElement(goc.ViewTemplateId)\n\n    # ---------- Dry-run: chỉ báo ----------\n    if da_co:\n        p(u\"Đã có mặt bằng '%s' (id %d) → không tạo thêm, mở view đó.\" % (ten_moi, da_co[0].Id.Value))\n    else:\n        p(u\"%s mặt bằng mới '%s' (nhân bản '%s', không kèm chú thích).\" % (u\"Sẽ tạo\" if dry else u\"Tạo\", ten_moi, goc.Name))\n    if tpl is not None:\n        p(u\"View template '%s' đã có trong dự án → dùng nguyên, không sửa.\" % ten_tpl)\n    else:\n        p(u\"%s view template '%s' từ template nền '%s'.\" % (u\"Sẽ tạo\" if dry else u\"Tạo\", ten_tpl,\n                                                             nen.Name if nen is not None else u\"(không có, theo view)\"))\n    if dry:\n        return bao_cao\n\n    # ---------- Ghi ----------\n    TransactionManager.Instance.EnsureInTransaction(doc)\n    if da_co:\n        moi = da_co[0]\n    else:\n        moi = doc.GetElement(goc.Duplicate(ViewDuplicateOption.Duplicate))\n        moi.Name = ten_moi\n    if tpl is None:\n        nen_id = nen.Id if nen is not None else ElementId.InvalidElementId\n        if moi.ViewTemplateId.Value != nen_id.Value:\n            moi.ViewTemplateId = nen_id\n        doc.Regenerate()        # template chỉ áp vào view khi regenerate\n        tpl = moi.CreateViewTemplate()\n        tpl.Name = ten_tpl\n        # Template phải điều khiển V/G hạng mục model thì Halftone / ẩn mới có tác dụng\n        try:\n            pid = ElementId(BuiltInParameter.VIS_GRAPHICS_MODEL)\n            nc = list(tpl.GetNonControlledTemplateParameterIds())\n            if any(i.Value == pid.Value for i in nc):\n                from System.Collections.Generic import List\n                ds = List[ElementId]()\n                for i in nc:\n                    if i.Value != pid.Value:\n                        ds.Add(i)\n                tpl.SetNonControlledTemplateParameterIds(ds)\n        except Exception as ex:\n            p(u\"Không bật được điều khiển V/G model của template: %s\" % ex)\n        xam = []\n        for c in cat_ids(doc, tach(doc_in(3)), p):\n            try:\n                o = tpl.GetCategoryOverrides(c)\n                o.SetHalftone(True)\n                if c.Value == int(BuiltInCategory.OST_Floors):\n                    o.SetSurfaceForegroundPatternVisible(False)\n                    o.SetSurfaceBackgroundPatternVisible(False)\n                tpl.SetCategoryOverrides(c, o)\n                if tpl.GetCategoryHidden(c):\n                    tpl.SetCategoryHidden(c, False)\n                xam.append(ten_cat(doc, c))\n            except Exception as ex:\n                p(u\"Không đặt được Halftone cho %s: %s\" % (ten_cat(doc, c), ex))\n        dam = []\n        for c in cat_ids(doc, tach(doc_in(8)), p):\n            try:\n                o = tpl.GetCategoryOverrides(c)\n                if o.Halftone:\n                    o.SetHalftone(False)\n                    tpl.SetCategoryOverrides(c, o)\n                dam.append(ten_cat(doc, c))\n            except Exception as ex:\n                p(u\"Không bỏ được Halftone cho %s: %s\" % (ten_cat(doc, c), ex))\n        an = []\n        for c in cat_ids(doc, tach(doc_in(4)), p):\n            try:\n                if tpl.CanCategoryBeHidden(c):\n                    if not tpl.GetCategoryHidden(c):\n                        tpl.SetCategoryHidden(c, True)\n                    an.append(ten_cat(doc, c))\n            except Exception:\n                pass\n        for bic in (BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows,\n                    BuiltInCategory.OST_DoorTags, BuiltInCategory.OST_WindowTags):\n            try:\n                if tpl.GetCategoryHidden(ElementId(bic)):\n                    tpl.SetCategoryHidden(ElementId(bic), False)\n            except Exception:\n                pass\n        p(u\"   Halftone: %s; tắt mẫu tô bề mặt sàn; nét đậm (bỏ Halftone): %s; ẩn: %s\"\n          % (u\", \".join(xam) or u\"-\", u\", \".join(dam) or u\"-\", u\", \".join(an) or u\"-\"))\n    if moi.ViewTemplateId.Value != tpl.Id.Value:\n        moi.ViewTemplateId = tpl.Id\n    TransactionManager.Instance.TransactionTaskDone()\n    p(u\"Xong: mặt bằng '%s' (id %d) mang view template '%s'.\" % (moi.Name, moi.Id.Value, tpl.Name))\n    if bool(doc_in(7)):\n        try:\n            DocumentManager.Instance.CurrentUIDocument.RequestViewChange(moi)\n            p(u\"Đã mở view '%s'. Tiếp theo có thể bấm nút Tag cửa trên view này.\" % moi.Name)\n        except Exception as ex:\n            p(u\"Không mở được view mới (%s) – mở tay trong Project Browser.\" % ex)\n    return bao_cao\n\n\ntry:\n    OUT = _chinh()\nexcept Exception:\n    OUT = [u\"LỖI:\", traceback.format_exc()]\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "0aedf785eca84d2b9349102b5e46ab13",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "fa5287b3716d437c94cd90b03fb4a894",
+          "Name": "IN[0]",
+          "Description": "Tên view mặt bằng gốc (trống = view đang mở)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4d01384b3ef24c87a1a2c91183be5a7d",
+          "Name": "IN[1]",
+          "Description": "Tên view template",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f58dcbdecd24445eb4720880eb3f17b5",
+          "Name": "IN[2]",
+          "Description": "Từ khoá template nền (trống = template của view gốc)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b4582c8f76bd49eba185071d5cf2303f",
+          "Name": "IN[3]",
+          "Description": "Hạng mục Halftone (BuiltInCategory, ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "68f0f6aa56a541b48c8115e59f42e7e3",
+          "Name": "IN[4]",
+          "Description": "Hạng mục cần ẩn (BuiltInCategory, ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "902d21b8bafd4c95a4c5818c4a3c6b95",
+          "Name": "IN[5]",
+          "Description": "Mẫu tên view mới ({tang}, {view})",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6d57f65e8f6e42d8af7a99350d109e93",
+          "Name": "IN[6]",
+          "Description": "Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "398c23acb860476084b03d0bdb9c1150",
+          "Name": "IN[7]",
+          "Description": "Mở view mới sau khi tạo",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ed5c24bdcee8476e87f0144eab42cc3d",
+          "Name": "IN[8]",
+          "Description": "Hạng mục bỏ Halftone (BuiltInCategory, ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "aa6cafa1b93b4d1ca7c359e6f15fa8db",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "fa6d7e931ed949a286550f2a2b940c9a",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "479d8de9b5654d32aeec78094c6d5afb",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "31a6fa4460a94e979747c0847d384703",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "415af9b23a674a0482dd3ecb6321e803",
+      "End": "fa5287b3716d437c94cd90b03fb4a894",
+      "Id": "0a2a28f8954945fb89c5aba78cad11f4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8e6b94ac3a8a41d8b0eec605fdff2129",
+      "End": "4d01384b3ef24c87a1a2c91183be5a7d",
+      "Id": "bd3250f019d94429be6cd5bb447e5e62",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5f698030144d4d6a814cbfc6c8ac0528",
+      "End": "f58dcbdecd24445eb4720880eb3f17b5",
+      "Id": "1d10986f164f43c3829580df47d1c24d",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "81bfa82f93264cb6a5beb036928f8858",
+      "End": "b4582c8f76bd49eba185071d5cf2303f",
+      "Id": "9c23d2f2a03e43689b4dff0cf223f5e4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "885f88a78a9c4c5e8e9d94e7b9d65a66",
+      "End": "68f0f6aa56a541b48c8115e59f42e7e3",
+      "Id": "802e47734a774eb0849c152db3e39b59",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9fdd18b5e1034e469babf7196d7e9131",
+      "End": "902d21b8bafd4c95a4c5818c4a3c6b95",
+      "Id": "5194b3e78e8746e3bbdb7cc41fb80a40",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6d190a582f4647feb18423de3bcde5a1",
+      "End": "6d57f65e8f6e42d8af7a99350d109e93",
+      "Id": "f506f9fb04644d18ac0cfec5eb77b4f5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "36e54c28eb904bf78a58b2b7533c1f1b",
+      "End": "398c23acb860476084b03d0bdb9c1150",
+      "Id": "446b6ac5a4c84fe38370de647156966b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "4f1db9d053b543a6b15d1d4fbf8a5c88",
+      "End": "ed5c24bdcee8476e87f0144eab42cc3d",
+      "Id": "ae466170754040e2a61f3f614f8285d7",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "aa6cafa1b93b4d1ca7c359e6f15fa8db",
+      "End": "479d8de9b5654d32aeec78094c6d5afb",
+      "Id": "833f653cb84d4d00ae38b39b9afa58b9",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "4d26aeed895e4ae2a8520257c3f6831f",
+        "Name": "Tên view mặt bằng gốc (trống = view đang mở)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "786f8f27404d4f95a28ac3d725f1c3c3",
+        "Name": "Tên view template",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 130.0
+      },
+      {
+        "Id": "f5c8a23a530544599ffc55f23d517001",
+        "Name": "Từ khoá template nền (trống = template của view gốc)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Id": "7f35d9eff9b04ddd94a33a43c9412847",
+        "Name": "Hạng mục Halftone (BuiltInCategory, ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 390.0
+      },
+      {
+        "Id": "e48ba1449a6d4077a953ed47d791f44d",
+        "Name": "Hạng mục cần ẩn (BuiltInCategory, ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Id": "cee27676af4c4b19a25fd647c6f0b04a",
+        "Name": "Mẫu tên view mới ({tang}, {view})",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 650.0
+      },
+      {
+        "Id": "25f8400f2085447692f3f5d5a92d5da5",
+        "Name": "Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 780.0
+      },
+      {
+        "Id": "bca2a0d3d12c48f9a658073b162d038d",
+        "Name": "Mở view mới sau khi tạo",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 910.0
+      },
+      {
+        "Id": "4bbc5f7e13d4417fb37e6d3aaa679091",
+        "Name": "Hạng mục bỏ Halftone (BuiltInCategory, ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1040.0
+      },
+      {
+        "Id": "0aedf785eca84d2b9349102b5e46ab13",
+        "Name": "MatBang_DinhViCua",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "fa6d7e931ed949a286550f2a2b940c9a",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "28fce2ec80284175bb2f0d4b8117daba",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "4d26aeed895e4ae2a8520257c3f6831f",
+          "786f8f27404d4f95a28ac3d725f1c3c3",
+          "f5c8a23a530544599ffc55f23d517001",
+          "7f35d9eff9b04ddd94a33a43c9412847",
+          "e48ba1449a6d4077a953ed47d791f44d",
+          "cee27676af4c4b19a25fd647c6f0b04a",
+          "25f8400f2085447692f3f5d5a92d5da5",
+          "bca2a0d3d12c48f9a658073b162d038d",
+          "4bbc5f7e13d4417fb37e6d3aaa679091"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 1210.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 1210.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "6647328880314e8680bc0c8502d76eef",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "0aedf785eca84d2b9349102b5e46ab13"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "b7b5dc43ef344aa1b2748c6cf7f488bb",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "fa6d7e931ed949a286550f2a2b940c9a"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

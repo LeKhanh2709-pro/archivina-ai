@@ -1,0 +1,8 @@
+{
+  "ten": "TagCua_KhaoSat2",
+  "mo_ta": "CHỈ ĐỌC: khảo sát bổ sung cho công cụ tag cửa (cửa sổ, EI, nội bộ family tag, kích thước tag, view template). Không sửa model.",
+  "py": "TagCua_KhaoSat2.py",
+  "dau_vao": [
+    {"ten": "Thư mục ghi kết quả", "kieu": "string", "gia_tri": "D:\\AI\\_tmp\\revit_tagcua\\ket_qua2"}
+  ]
+}

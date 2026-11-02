@@ -1,0 +1,259 @@
+{
+  "Uuid": "23304f26-5cdf-4254-9e33-8794153967ee",
+  "IsCustomNode": false,
+  "Description": "CHỈ ĐỌC: khảo sát view template mặt bằng, đồ hoạ tường / sàn / cửa trong từng template, xuất ảnh các mặt bằng tầng. Không sửa model.",
+  "Name": "MBCua_KhaoSat",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "a37b5a6c94d44cbd808bb3f31f1d830e",
+      "Name": "Thư mục ghi kết quả",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "D:\\AI\\_tmp\\revit_mbcua\\khaosat",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "D:\\AI\\_tmp\\revit_mbcua\\khaosat",
+      "Id": "a37b5a6c94d44cbd808bb3f31f1d830e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3e516e89bd2b40b89007fa26e182797e",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Khảo sát cho công cụ \"Mặt bằng định vị cửa\" (CHỈ ĐỌC, không sửa model): view template mặt bằng có sẵn,\n# đồ hoạ tường / sàn / cửa / cột trong từng template (V/G, filter, detail level), vật liệu tường / sàn\n# (cut / surface pattern), xuất ảnh các view mặt bằng tầng để so với ảnh mẫu.\n# INPUT\n#   IN[0] (str)  Thư mục ghi kết quả\n# OUTPUT\n#   OUT (list[str])\nimport os\nimport traceback\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nfrom RevitServices.Persistence import DocumentManager\nfrom System.Collections.Generic import List as NetList\n\n_thu_muc = IN[0]\nos.makedirs(_thu_muc, exist_ok=True)\nOUT = None\n\nHANG_MUC = [\n    (\"Tường\", BuiltInCategory.OST_Walls),\n    (\"Sàn\", BuiltInCategory.OST_Floors),\n    (\"Cửa đi\", BuiltInCategory.OST_Doors),\n    (\"Cửa sổ\", BuiltInCategory.OST_Windows),\n    (\"Cột KT\", BuiltInCategory.OST_Columns),\n    (\"Cột KC\", BuiltInCategory.OST_StructuralColumns),\n    (\"Khung KC\", BuiltInCategory.OST_StructuralFraming),\n    (\"Shaft\", BuiltInCategory.OST_ShaftOpening),\n    (\"Generic\", BuiltInCategory.OST_GenericModel),\n    (\"Phòng\", BuiltInCategory.OST_Rooms),\n    (\"Lan can\", BuiltInCategory.OST_StairsRailing),\n    (\"Thang\", BuiltInCategory.OST_Stairs),\n    (\"Thiết bị VS\", BuiltInCategory.OST_PlumbingFixtures),\n    (\"Filled region\", BuiltInCategory.OST_DetailComponents),\n]\n\n\ndef _chinh():\n    global OUT\n    doc = DocumentManager.Instance.CurrentDBDocument\n    lines = []\n\n    def p(s=\"\"):\n        lines.append(str(s))\n\n    def ghi():\n        with open(os.path.join(_thu_muc, \"khaosat_mbcua.txt\"), \"w\", encoding=\"utf-8\") as f:\n            f.write(\"\\n\".join(lines))\n\n    def ten(e):\n        try:\n            return Element.Name.GetValue(e)\n        except Exception:\n            try:\n                return e.Name\n            except Exception:\n                return \"?\"\n\n    def mau(c):\n        try:\n            if c is None or not c.IsValid:\n                return \"-\"\n            return \"%d,%d,%d\" % (c.Red, c.Green, c.Blue)\n        except Exception:\n            return \"-\"\n\n    def mau_nen(pid):\n        try:\n            if pid is None or pid == ElementId.InvalidElementId:\n                return \"-\"\n            e = doc.GetElement(pid)\n            return ten(e) if e is not None else str(pid.Value)\n        except Exception:\n            return \"?\"\n\n    def ogs_txt(o):\n        if o is None:\n            return \"-\"\n        parts = []\n        try:\n            if o.Halftone:\n                parts.append(\"HALFTONE\")\n        except Exception:\n            pass\n        for nhan, fn in [\n            (\"projLine\", lambda: mau(o.ProjectionLineColor) + \"/w\" + str(o.ProjectionLineWeight) + \"/pat\" + mau_nen(o.ProjectionLinePatternId)),\n            (\"cutLine\", lambda: mau(o.CutLineColor) + \"/w\" + str(o.CutLineWeight) + \"/pat\" + mau_nen(o.CutLinePatternId)),\n            (\"surfFg\", lambda: (\"vis\" if o.IsSurfaceForegroundPatternVisible else \"AN\") + \":\" + mau_nen(o.SurfaceForegroundPatternId) + \":\" + mau(o.SurfaceForegroundPatternColor)),\n            (\"surfBg\", lambda: (\"vis\" if o.IsSurfaceBackgroundPatternVisible else \"AN\") + \":\" + mau_nen(o.SurfaceBackgroundPatternId) + \":\" + mau(o.SurfaceBackgroundPatternColor)),\n            (\"cutFg\", lambda: (\"vis\" if o.IsCutForegroundPatternVisible else \"AN\") + \":\" + mau_nen(o.CutForegroundPatternId) + \":\" + mau(o.CutForegroundPatternColor)),\n            (\"cutBg\", lambda: (\"vis\" if o.IsCutBackgroundPatternVisible else \"AN\") + \":\" + mau_nen(o.CutBackgroundPatternId) + \":\" + mau(o.CutBackgroundPatternColor)),\n            (\"transp\", lambda: str(o.Transparency)),\n            (\"detail\", lambda: str(o.DetailLevel)),\n        ]:\n            try:\n                parts.append(\"%s=%s\" % (nhan, fn()))\n            except Exception as ex:\n                parts.append(\"%s=?(%s)\" % (nhan, ex))\n        return \" | \".join(parts)\n\n    p(\"== A. VIEW TEMPLATE MẶT BẰNG\")\n    views = list(FilteredElementCollector(doc).OfClass(View))\n    tpl = [v for v in views if v.IsTemplate and v.ViewType in (ViewType.FloorPlan, ViewType.AreaPlan)]\n    tpl_all = [v for v in views if v.IsTemplate]\n    p(\"Tất cả template: %s\" % \"; \".join(sorted(\"%s [%s]\" % (ten(v), v.ViewType) for v in tpl_all)))\n    for t in sorted(tpl, key=ten):\n        p(\"\")\n        p(\"-- TEMPLATE '%s' id=%d | scale 1:%s | detail %s | display %s\" % (ten(t), t.Id.Value, t.Scale, t.DetailLevel, t.DisplayStyle))\n        try:\n            ctl = [doc.GetElement(i) for i in []]\n            ks = t.GetTemplateParameterIds()\n            khong = t.GetNonControlledTemplateParameterIds()\n            p(\"   số tham số template: %d, không điều khiển: %d\" % (ks.Count, khong.Count))\n        except Exception as ex:\n            p(\"   tham số template: ? %s\" % ex)\n        for nhan, bic in HANG_MUC:\n            cid = ElementId(bic)\n            try:\n                an = t.GetCategoryHidden(cid)\n            except Exception:\n                an = \"?\"\n            try:\n                o = t.GetCategoryOverrides(cid)\n            except Exception:\n                o = None\n            p(\"   %s: ẩn=%s | %s\" % (nhan, an, ogs_txt(o)))\n        try:\n            for fid in t.GetFilters():\n                f = doc.GetElement(fid)\n                p(\"   FILTER '%s' vis=%s | %s\" % (ten(f), t.GetFilterVisibility(fid), ogs_txt(t.GetFilterOverrides(fid))))\n        except Exception as ex:\n            p(\"   filter: ? %s\" % ex)\n        try:\n            dung = [ten(v) for v in views if not v.IsTemplate and v.ViewTemplateId == t.Id]\n            p(\"   view dùng: %s\" % \"; \".join(dung))\n        except Exception:\n            pass\n\n    p(\"\")\n    p(\"== B. LOẠI TƯỜNG / SÀN (coarse pattern + vật liệu lớp)\")\n    for cls, nhan in ((WallType, \"Tường\"), (FloorType, \"Sàn\")):\n        dem = 0\n        for wt in FilteredElementCollector(doc).OfClass(cls):\n            if dem > 40:\n                break\n            dem += 1\n            try:\n                cs = wt.GetCompoundStructure()\n                lop = []\n                if cs is not None:\n                    for ly in cs.GetLayers():\n                        m = doc.GetElement(ly.MaterialId)\n                        if m is None:\n                            lop.append(\"%s:-\" % ly.Function)\n                            continue\n                        lop.append(\"%s:%s(cutFg %s %s, surfFg %s %s)\" % (\n                            ly.Function, ten(m), mau_nen(m.CutForegroundPatternId), mau(m.CutForegroundPatternColor),\n                            mau_nen(m.SurfaceForegroundPatternId), mau(m.SurfaceForegroundPatternColor)))\n                p(\"   %s '%s' coarse=%s %s | %s\" % (nhan, ten(wt), mau_nen(wt.CoarseScaleFillPatternId), mau(wt.CoarseScaleFillPatternColor), \" ; \".join(lop)))\n            except Exception as ex:\n                p(\"   %s '%s' ? %s\" % (nhan, ten(wt), ex))\n\n    p(\"\")\n    p(\"== C. VIEW MẶT BẰNG TẦNG\")\n    xuat = []\n    for v in views:\n        if v.IsTemplate or v.ViewType != ViewType.FloorPlan:\n            continue\n        t = doc.GetElement(v.ViewTemplateId) if v.ViewTemplateId != ElementId.InvalidElementId else None\n        p(\"   %s | id %d | 1:%s | detail %s | template %s\" % (ten(v), v.Id.Value, v.Scale, v.DetailLevel, ten(t) if t else \"-\"))\n        if t is not None and (u\"Định Vị Cửa\" in ten(t) or u\"1.1\" in ten(t) or u\"Cháy Lan\" in ten(t)):\n            xuat.append(v)\n        elif ten(v) == u\"Tầng 1\":\n            xuat.append(v)\n    try:\n        ds = NetList[ElementId]()\n        for v in xuat[:6]:\n            ds.Add(v.Id)\n        opt = ImageExportOptions()\n        opt.ExportRange = ExportRange.SetOfViews\n        opt.SetViewsAndSheets(ds)\n        opt.FilePath = os.path.join(_thu_muc, \"view\")\n        opt.ZoomType = ZoomFitType.FitToPage\n        opt.PixelSize = 4700\n        opt.ImageResolution = ImageResolution.DPI_300\n        opt.HLRandWFViewsFileType = ImageFileType.PNG\n        opt.ShadowViewsFileType = ImageFileType.PNG\n        doc.ExportImage(opt)\n        p(\"ẢNH: %s (%s)\" % (_thu_muc, \", \".join(\"%s [%d]\" % (ten(v), v.Id.Value) for v in xuat[:6])))\n    except Exception as ex:\n        p(\"Không xuất được ảnh: %s\" % ex)\n    ghi()\n    with open(os.path.join(_thu_muc, \"da_chay.txt\"), \"w\", encoding=\"utf-8\") as f:\n        f.write(\"ok\")\n    OUT = lines[:80]\n\n\ntry:\n    _chinh()\nexcept Exception:\n    with open(os.path.join(_thu_muc, \"loi.txt\"), \"w\", encoding=\"utf-8\") as _f:\n        _f.write(traceback.format_exc())\n    with open(os.path.join(_thu_muc, \"da_chay.txt\"), \"w\", encoding=\"utf-8\") as _f:\n        _f.write(\"loi\")\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "375739ace485413fb80cd53f4be188cc",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "537eb1373d3c459eb692d19214205395",
+          "Name": "IN[0]",
+          "Description": "Thư mục ghi kết quả",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "062d4c3d745d4b21ab0d4f935d0b3387",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "5b685194c97e48a58d03e293bef6a129",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "31f77be287774f8c983d4a2a6a38b70c",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "93e7dc95e5dd4260902a91d398b1d0a1",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "3e516e89bd2b40b89007fa26e182797e",
+      "End": "537eb1373d3c459eb692d19214205395",
+      "Id": "4cc4a643c0eb41cc94e69d247b889354",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "062d4c3d745d4b21ab0d4f935d0b3387",
+      "End": "31f77be287774f8c983d4a2a6a38b70c",
+      "Id": "df1f8b04657a4756bba2c0756c1c7f6a",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "a37b5a6c94d44cbd808bb3f31f1d830e",
+        "Name": "Thư mục ghi kết quả",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "375739ace485413fb80cd53f4be188cc",
+        "Name": "MBCua_KhaoSat",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "5b685194c97e48a58d03e293bef6a129",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "307b1525cc874804b392ff0717821d84",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "a37b5a6c94d44cbd808bb3f31f1d830e"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 170.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 170.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "088c786e6f1b416d8c1dce1f276b0b19",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "375739ace485413fb80cd53f4be188cc"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "ad28c4fbb21c4481b281f3542825df66",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "5b685194c97e48a58d03e293bef6a129"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "ten": "MBCua_KhaoSat",
+  "mo_ta": "CHỈ ĐỌC: khảo sát view template mặt bằng, đồ hoạ tường / sàn / cửa trong từng template, xuất ảnh các mặt bằng tầng. Không sửa model.",
+  "py": "MBCua_KhaoSat.py",
+  "dau_vao": [
+    {"ten": "Thư mục ghi kết quả", "kieu": "string", "gia_tri": "D:\\AI\\_tmp\\revit_mbcua\\khaosat"}
+  ]
+}

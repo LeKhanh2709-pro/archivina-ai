@@ -1,0 +1,800 @@
+{
+  "Uuid": "db0dac1d-f98e-4bf2-b2ad-d8525b02d3f9",
+  "IsCustomNode": false,
+  "Description": "Tự động tag cửa đi (AV_Door Tag) + cửa sổ (AV_Window Tag) + lam (AV_Louver Tag) trên mặt bằng đang mở: tag nằm ngang, không leader, không đè cửa / cánh mở / tường / chữ (cửa đi ưu tiên phía không mở cánh, cửa sổ phía ngoài); tạo + gán view template '<gốc> (ẩn nội thất)' ẩn nội thất; cửa có EI mà tag không hiện EI thì báo; bấm lại không tạo trùng, không xoá. Mặc định Dry-run.",
+  "Name": "TagCua_TuDong",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "ce461e82318644178f3acf49ae5f7ab7",
+      "Name": "Tên view mặt bằng (trống = view đang mở)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "1f5c7b453cca488e9e150deb6d863f3e",
+      "Name": "Family tag cửa đi",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV_Door Tag",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "f70f4d624db84a4ba34d3d87259eaf28",
+      "Name": "Family tag cửa sổ",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV_Window Tag",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "62b75ce641fd4ebd9d9ce4264daa5a84",
+      "Name": "Family tag lam / louver",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV_Louver Tag",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "67828ab3b5b141efa33d210e282bfb91",
+      "Name": "Từ khoá nhận lam / louver (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Lam;Louver",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "76ed946b82364ba2b177bafe86915817",
+      "Name": "Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "3b78636d0a724e078776160d757ff1c5",
+      "Name": "Tạo + gán view template ẩn nội thất",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "fd277f15caef432da2ecd9525759edcc",
+      "Name": "Hạng mục nội thất cần ẩn (BuiltInCategory, ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "c34ed00e197742fb967d5dad01141d21",
+      "Name": "Tên tham số chống cháy EI (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Fire Rating;EI;Giới hạn chịu lửa",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "adc3dd4954de48fb8716d7c5ea04351c",
+      "Name": "Khoảng hở tag - vật cản (mm giấy)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "1.0",
+      "Description": "Creates a number"
+    },
+    {
+      "Id": "8bcf8aed91a6409a972a903a149d8090",
+      "Name": "Thư mục log (trống = Documents, ARV_Logs)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "ce461e82318644178f3acf49ae5f7ab7",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "40662578c5e441aca17164c5c2a02f41",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "AV_Door Tag",
+      "Id": "1f5c7b453cca488e9e150deb6d863f3e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e5df5b0a14f84e178cb53cde34a7a3f2",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "AV_Window Tag",
+      "Id": "f70f4d624db84a4ba34d3d87259eaf28",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "758ec6e9c9fa4051a317efc37e32b11b",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "AV_Louver Tag",
+      "Id": "62b75ce641fd4ebd9d9ce4264daa5a84",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fa542e0a87994bb9b988d8abd893ffce",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "Lam;Louver",
+      "Id": "67828ab3b5b141efa33d210e282bfb91",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8c1e04b8f81a4881b9e474a323a113a1",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "76ed946b82364ba2b177bafe86915817",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "26b4b8823b544e76a71f4ba9fce7c680",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "3b78636d0a724e078776160d757ff1c5",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f6bc84a6256646f2b88dcb65d1268e47",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures",
+      "Id": "fd277f15caef432da2ecd9525759edcc",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "951900c0d28d48d49b14b854ba95aea6",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "Fire Rating;EI;Giới hạn chịu lửa",
+      "Id": "c34ed00e197742fb967d5dad01141d21",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "171a7bad2ed14dc396f97cf77cf93b00",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "Description": "Creates a number",
+      "InputValue": 1.0,
+      "Id": "adc3dd4954de48fb8716d7c5ea04351c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b47594024b904b9eadfe11e173b07267",
+          "Name": "",
+          "Description": "number",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "8bcf8aed91a6409a972a903a149d8090",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9572d6e1567746619faff6721fa3b105",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Tự động tag cửa đi + cửa sổ trên mặt bằng đang mở của Revit (người dùng chốt 2026-11-02):\n#   - Cửa đi: family tag \"AV_Door Tag\" (hiện S3.<Type Mark>); cửa sổ: \"AV_Window Tag\"; lam / louver: \"AV_Louver Tag\"\n#     (cửa sổ có tên family / type chứa từ khoá lam). Mã cửa lấy từ Type Mark (nhãn trong family).\n#   - Tag nằm ngang, không leader, KHÔNG đè lên cửa (kể cả cánh mở), cửa sổ, tường, cột, tag / chữ khác:\n#     cửa đi ưu tiên phía không mở cánh, cửa sổ ưu tiên phía ngoài (theo FacingOrientation); thử lưới vị trí quanh cửa\n#     xếp theo khoảng cách (phía kia bị cộng phạt); không chỗ nào trống thì đặt chỗ ít đè nhất và liệt kê để xem lại.\n#   - Nội thất không né mà ẩn: tạo view template riêng \"<template gốc> (ẩn nội thất)\" (tạo từ view vì API không nhân\n#     bản được view template), ẩn các hạng mục nội thất, gán cho view. KHÔNG sửa template gốc.\n#   - Cửa có EI (tham số chống cháy có giá trị) thì EI phải hiện trên tag: tag đã đặt mà chữ tag không chứa giá trị EI\n#     → báo family tag chưa có nhãn EI.\n#   - Cửa / cửa sổ đã có tag trong view thì bỏ qua: bấm lại không tạo trùng, không xoá gì.\n# Dry-run chỉ báo cáo (đặt thử trong SubTransaction rồi huỷ), không sửa mô hình.\n# INPUT\n#   IN[0] (str)   Tên view mặt bằng (để trống = view đang mở)\n#   IN[1] (str)   Family tag cửa đi\n#   IN[2] (str)   Family tag cửa sổ\n#   IN[3] (str)   Family tag lam / louver\n#   IN[4] (str)   Từ khoá nhận lam / louver trong tên family / type cửa sổ, cách nhau bằng ;\n#   IN[5] (bool)  Dry-run (True = chỉ báo cáo)\n#   IN[6] (bool)  Tạo + gán view template ẩn nội thất\n#   IN[7] (str)   Hạng mục nội thất cần ẩn (tên BuiltInCategory), cách nhau bằng ;\n#   IN[8] (str)   Tên tham số chống cháy (EI) của cửa, cách nhau bằng ;\n#   IN[9] (float) Khoảng hở giữa tag và vật cản (mm trên giấy in)\n#   IN[10] (str)  Thư mục ghi log + ảnh (để trống = Documents\\ARV_Logs\\tag_cua)\n# OUTPUT\n#   OUT (list[str])  Báo cáo\nimport math\nimport os\nimport traceback\nimport unicodedata\nfrom datetime import datetime\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nimport Autodesk.Revit.DB as _RevitDB\n# pythonnet 3.0: tên đã được import đích danh trước đó trong phiên bị loại khỏi \"import *\" → bổ sung đủ tên\nglobals().update({_n: getattr(_RevitDB, _n) for _n in dir(_RevitDB) if not _n.startswith(\"_\") and _n not in globals()})\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nMAC_DINH = [\"\", \"AV_Door Tag\", \"AV_Window Tag\", \"AV_Louver Tag\", \"Lam;Louver\", True, True,\n            \"OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures\",\n            \"Fire Rating;EI;Giới hạn chịu lửa\", 1.0, \"\"]\nHAU_TO_TEMPLATE = u\" (ẩn nội thất)\"\nPHAT_PHIA_MM_GIAY = 8.0     # phạt khi đặt tag ở phía không ưu tiên (mm trên giấy, cộng vào khoảng cách)\nTAM_XA_MM_GIAY = 15.0       # tag đặt xa nhất cách mép tường / cánh cửa (mm trên giấy)\n\n\ndef doc_in(i):\n    try:\n        v = IN[i]\n    except Exception:\n        v = None\n    return MAC_DINH[i] if v is None or (isinstance(v, str) and v == \"\" and MAC_DINH[i] != \"\") else v\n\n\ndef khong_dau(s):\n    s = unicodedata.normalize(\"NFD\", u\"%s\" % (s or u\"\")).replace(u\"đ\", u\"d\").replace(u\"Đ\", u\"D\")\n    return u\"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower()\n\n\ndef tach(s):\n    return [x.strip() for x in (s or \"\").split(\";\") if x.strip()]\n\n\ndef mm(v):\n    return UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ft(v):\n    return UnitUtils.ConvertToInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ten(e):\n    try:\n        return Element.Name.GetValue(e)\n    except Exception:\n        try:\n            return e.Name\n        except Exception:\n            return \"?\"\n\n\n# ---------------- Hình học 2D trong hệ toạ độ view (u = phải, v = lên) ----------------\ndef da_giac_giao(a, b):\n    \"\"\"Hai đa giác lồi (list (x, y)) có phần trong giao nhau không (định lý trục tách).\"\"\"\n    for poly in (a, b):\n        n = len(poly)\n        for i in range(n):\n            x1, y1 = poly[i]\n            x2, y2 = poly[(i + 1) % n]\n            nx, ny = y1 - y2, x2 - x1\n            pa = [nx * x + ny * y for x, y in a]\n            pb = [nx * x + ny * y for x, y in b]\n            if max(pa) <= min(pb) + 1e-9 or max(pb) <= min(pa) + 1e-9:\n                return False\n    return True\n\n\ndef dien_tich_giao_hop(a, b):\n    \"\"\"Diện tích giao xấp xỉ theo khung bao (để chọn chỗ ít đè nhất).\"\"\"\n    ax = [p[0] for p in a]\n    ay = [p[1] for p in a]\n    bx = [p[0] for p in b]\n    by = [p[1] for p in b]\n    w = min(max(ax), max(bx)) - max(min(ax), min(bx))\n    h = min(max(ay), max(by)) - max(min(ay), min(by))\n    return w * h if w > 0 and h > 0 else 0.0\n\n\ndef _chinh():\n    doc = DocumentManager.Instance.CurrentDBDocument\n    bao_cao = []\n    xem_lai = []\n    chi_tiet = []\n\n    def p(s):\n        bao_cao.append(u\"%s\" % s)\n\n    # ---------- View ----------\n    ten_view = doc_in(0)\n    view = None\n    if ten_view:\n        # Trùng tên (vd. \"Tầng 1\" có cả mặt bằng kiến trúc, trần, kết cấu) → ưu tiên Floor Plan\n        ung = [v for v in FilteredElementCollector(doc).OfClass(ViewPlan) if not v.IsTemplate and v.Name == ten_view]\n        ung.sort(key=lambda v: 0 if v.ViewType == ViewType.FloorPlan else 1)\n        av = doc.ActiveView        # nút một chạm truyền tên view đang mở → lấy đúng view đó\n        if av is not None and any(v.Id.Value == av.Id.Value for v in ung):\n            ung = [av]\n        view = ung[0] if ung else None\n        if view is None:\n            return [u\"Không có view mặt bằng tên '%s'.\" % ten_view]\n    else:\n        view = doc.ActiveView\n    if view is None or view.ViewType not in (ViewType.FloorPlan, ViewType.EngineeringPlan, ViewType.AreaPlan):\n        return [u\"View '%s' không phải mặt bằng. Mở mặt bằng cần tag rồi chạy lại.\" % (ten(view) if view else \"-\")]\n    dry = bool(doc_in(5))\n    tl = float(view.Scale)\n    U = view.RightDirection\n    V = view.UpDirection\n    khe = ft(float(doc_in(9)) * tl)\n\n    def uv(pt):\n        return (pt.X * U.X + pt.Y * U.Y + pt.Z * U.Z, pt.X * V.X + pt.Y * V.Y + pt.Z * V.Z)\n\n    def xyz(a, b, z):\n        return XYZ(a * U.X + b * V.X, a * U.Y + b * V.Y, z)\n\n    def khung_hop(bb):\n        \"\"\"BoundingBoxXYZ → hình chữ nhật trong hệ uv (khung bao các góc).\"\"\"\n        if bb is None:\n            return None\n        tf = bb.Transform\n        pts = [uv(tf.OfPoint(XYZ(x, y, bb.Min.Z))) for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)]\n        xs = [q[0] for q in pts]\n        ys = [q[1] for q in pts]\n        return [(min(xs), min(ys)), (max(xs), min(ys)), (max(xs), max(ys)), (min(xs), max(ys))]\n\n    def diem_hinh_hoc(e):\n        \"\"\"Các điểm hình học của đối tượng hiện trong view (gồm nét 2D của family: cánh mở, ký hiệu).\"\"\"\n        opt = Options()\n        opt.View = view\n        opt.IncludeNonVisibleObjects = False\n        pts = []\n\n        def duyet(geo):\n            for g in geo:\n                tn = g.GetType().Name\n                if tn == \"GeometryInstance\":\n                    duyet(g.GetInstanceGeometry())\n                elif tn == \"Solid\":\n                    if g.Volume <= 0 and g.Edges.Size == 0:\n                        continue\n                    for ed in g.Edges:\n                        pts.extend(ed.Tessellate())\n                elif tn in (\"Line\", \"Arc\", \"Ellipse\", \"NurbSpline\", \"HermiteSpline\", \"CylindricalHelix\"):\n                    pts.extend(g.Tessellate())\n                elif tn == \"PolyLine\":\n                    pts.extend(g.GetCoordinates())\n        try:\n            geo = e.get_Geometry(opt)\n            if geo is not None:\n                duyet(geo)\n        except Exception:\n            pass\n        return pts\n\n    def hcn_cuc_bo(pts, goc, h, f):\n        \"\"\"Hình chữ nhật bao các điểm theo hệ (h, f) đặt tại goc; trả về (đa giác uv, h0, h1, f0, f1).\"\"\"\n        if not pts:\n            return None\n        hs = [(q.X - goc.X) * h.X + (q.Y - goc.Y) * h.Y for q in pts]\n        fs = [(q.X - goc.X) * f.X + (q.Y - goc.Y) * f.Y for q in pts]\n        h0, h1, f0, f1 = min(hs), max(hs), min(fs), max(fs)\n        poly = [uv(goc + h * a + f * b) for a, b in ((h0, f0), (h1, f0), (h1, f1), (h0, f1))]\n        return poly, h0, h1, f0, f1\n\n    # ---------- Kiểu tag ----------\n    def tim_kieu_tag(ten_fam, bic):\n        for s in FilteredElementCollector(doc).OfClass(FamilySymbol).OfCategory(bic):\n            if s.FamilyName == ten_fam:\n                return s\n        return None\n\n    kieu_cua = tim_kieu_tag(doc_in(1), BuiltInCategory.OST_DoorTags)\n    kieu_cs = tim_kieu_tag(doc_in(2), BuiltInCategory.OST_WindowTags)\n    kieu_lam = tim_kieu_tag(doc_in(3), BuiltInCategory.OST_WindowTags) or kieu_cs\n    tk_lam = [khong_dau(x) for x in tach(doc_in(4))]\n    for ten_fam, k in ((doc_in(1), kieu_cua), (doc_in(2), kieu_cs)):\n        if k is None:\n            p(u\"CHƯA CÓ family tag '%s' trong dự án → bỏ qua hạng mục này (Load family rồi chạy lại).\" % ten_fam)\n\n    # ---------- Đối tượng cần tag ----------\n    def thay(bic):\n        return list(FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType())\n\n    cuas = thay(BuiltInCategory.OST_Doors)\n    css = thay(BuiltInCategory.OST_Windows)\n    da_tag = set()\n    vat_can = []          # (đa giác uv, mô tả)\n    for tg in FilteredElementCollector(doc, view.Id).OfClass(IndependentTag):\n        try:\n            for i in tg.GetTaggedLocalElementIds():\n                da_tag.add(i.Value)\n        except Exception:\n            pass\n    # Chữ / tag có sẵn trong view\n    for cls in (IndependentTag, TextNote, SpatialElementTag):\n        try:\n            for e in FilteredElementCollector(doc, view.Id).OfClass(cls):\n                k = khung_hop(e.get_BoundingBox(view))\n                if k:\n                    vat_can.append((k, u\"chữ / tag %d\" % e.Id.Value))\n        except Exception:\n            pass\n    # Tường: hình chữ nhật dấu chân thật (theo hình học, đúng cả khi location line lệch tâm)\n    so_tuong = 0\n    diem_tuong = {}\n    for w in FilteredElementCollector(doc, view.Id).OfClass(Wall):\n        lc = w.Location\n        cv = lc.Curve if lc is not None and hasattr(lc, \"Curve\") else None\n        poly = None\n        if cv is not None and cv.GetType().Name == \"Line\":\n            d = cv.Direction\n            h = XYZ(d.X, d.Y, 0).Normalize()\n            f = XYZ(-h.Y, h.X, 0)\n            pts_w = diem_hinh_hoc(w)\n            diem_tuong[w.Id.Value] = pts_w\n            r = hcn_cuc_bo(pts_w, cv.GetEndPoint(0), h, f)\n            poly = r[0] if r else None\n        if poly is None:\n            poly = khung_hop(w.get_BoundingBox(view))\n        if poly:\n            vat_can.append((poly, u\"tường %d\" % w.Id.Value))\n            so_tuong += 1\n    for bic in (BuiltInCategory.OST_Columns, BuiltInCategory.OST_StructuralColumns):\n        for e in thay(bic):\n            k = khung_hop(e.get_BoundingBox(view))\n            if k:\n                vat_can.append((k, u\"cột %d\" % e.Id.Value))\n    # Cửa đi / cửa sổ: dấu chân theo hệ của cửa (gồm cánh mở)\n    dau_chan = {}\n    for e in cuas + css:\n        try:\n            goc = e.Location.Point\n            h = e.HandOrientation\n            f = e.FacingOrientation\n        except Exception:\n            k = khung_hop(e.get_BoundingBox(view))\n            if k:\n                vat_can.append((k, u\"cửa %d\" % e.Id.Value))\n            continue\n        r = hcn_cuc_bo(diem_hinh_hoc(e), goc, h, f)\n        if r is None:\n            continue\n        dau_chan[e.Id.Value] = (goc, h, f) + r\n        vat_can.append((r[0], u\"cửa %d\" % e.Id.Value))\n\n    _bb_cache = []\n\n    def vat_can_bb():\n        while len(_bb_cache) < len(vat_can):\n            pl, mt = vat_can[len(_bb_cache)]\n            xs = [q[0] for q in pl]\n            ys = [q[1] for q in pl]\n            _bb_cache.append((pl, mt, (min(xs), min(ys), max(xs), max(ys))))\n        return _bb_cache\n\n    # Vùng crop của view\n    crop = None\n    if view.CropBoxActive:\n        crop = khung_hop(view.CropBox)\n\n    # ---------- Ghi ----------\n    TransactionManager.Instance.EnsureInTransaction(doc)\n    st = SubTransaction(doc)\n    st.Start()\n    tao = {\"cua\": 0, \"cs\": 0, \"lam\": 0}\n    bo_qua = 0\n    tag_moi = []\n    ei_thieu = []\n    tpl_msg = u\"\"\n    try:\n        # --- View template ẩn nội thất ---\n        if doc_in(6):\n            tpl_msg = gan_template(doc, view, [x for x in tach(doc_in(7))])\n        for s in (kieu_cua, kieu_cs, kieu_lam):\n            if s is not None and not s.IsActive:\n                s.Activate()\n\n        ds = [(e, \"cua\") for e in cuas] + [(e, \"cs\") for e in css]\n        for e, loai in ds:\n            if e.Id.Value in da_tag:\n                bo_qua += 1\n                continue\n            kieu = kieu_cua\n            if loai == \"cs\":\n                t = doc.GetElement(e.GetTypeId())\n                ten_ft = khong_dau((t.FamilyName if t else \"\") + \" \" + ten(t))\n                if any(k in ten_ft for k in tk_lam):\n                    loai, kieu = \"lam\", kieu_lam\n                else:\n                    kieu = kieu_cs\n            if kieu is None:\n                continue\n            dc = dau_chan.get(e.Id.Value)\n            if dc is None:\n                xem_lai.append(u\"%d (Mark %s): không đọc được hình học / vị trí → chưa tag\" % (e.Id.Value, mark(e)))\n                continue\n            goc, h, f, poly_e, h0, h1, f0, f1 = dc\n            tg = IndependentTag.Create(doc, kieu.Id, view.Id, Reference(e), False, TagOrientation.Horizontal, goc)\n            doc.Regenerate()\n            k = khung_hop(tg.get_BoundingBox(view))\n            hu, hv = uv(goc)\n            cu = (k[0][0] + k[2][0]) / 2.0 - hu       # lệch tâm khung so với đầu tag\n            cv_ = (k[0][1] + k[2][1]) / 2.0 - hv\n            a = (k[2][0] - k[0][0]) / 2.0              # nửa rộng, nửa cao khung tag (hệ uv)\n            b = (k[2][1] - k[0][1]) / 2.0\n            h2 = uv(h)\n            f2 = uv(f)\n            e_f = a * abs(f2[0]) + b * abs(f2[1])      # nửa bề dày tag chiếu lên phương vuông tường\n            e_h = a * abs(h2[0]) + b * abs(h2[1])      # nửa bề dài tag chiếu lên phương dọc tường\n            # Mặt tường host hai phía, đo theo hình học thật (điểm đặt cửa có thể không nằm giữa tường)\n            mat_tuong = {1: 0.0, -1: 0.0}\n            try:\n                pts_w = diem_tuong.get(e.Host.Id.Value)\n                if pts_w:\n                    fs = [(q.X - goc.X) * f.X + (q.Y - goc.Y) * f.Y for q in pts_w]\n                    mat_tuong = {1: max(max(fs), 0.0), -1: max(-min(fs), 0.0)}\n                else:\n                    mat_tuong = {1: e.Host.Width / 2.0, -1: e.Host.Width / 2.0}\n            except Exception:\n                pass\n            # Phía ưu tiên: cửa đi = phía không mở cánh (phía dấu chân ngắn hơn); cửa sổ = phía ngoài (+Facing).\n            # Ứng viên = lưới vị trí quanh cửa ở cả hai phía, xếp theo khoảng cách tới cửa (+ phạt phía không ưu tiên),\n            # thử lần lượt, lấy chỗ trống đầu tiên. Vùng cánh mở bị loại vì dấu chân cửa là vật cản.\n            if loai == \"cua\":\n                uu_tien = -1 if f1 >= -f0 else 1\n            else:\n                uu_tien = 1\n            phat = ft(PHAT_PHIA_MM_GIAY * tl)\n            buoc_h = max(e_h * 0.5, ft(50))\n            buoc_f = max(e_f * 0.5, ft(50))\n            tam_h = (h0 + h1) / 2.0\n            gioi_han_h = (h1 - h0) / 2.0 + e_h * 3.0\n            ung_vien = []\n            for s_ in (1, -1):\n                d0 = mat_tuong[s_] + khe + e_f\n                d_max = max(f1 if s_ > 0 else -f0, mat_tuong[s_]) + khe + e_f + ft(TAM_XA_MM_GIAY * tl)\n                i = 0\n                while d0 + i * buoc_f <= d_max:\n                    d = d0 + i * buoc_f\n                    j = -int(gioi_han_h / buoc_h)\n                    while j * buoc_h <= gioi_han_h:\n                        dh = j * buoc_h\n                        diem = (d - d0) + abs(dh) * 0.5 + (0.0 if s_ == uu_tien else phat)\n                        ung_vien.append((diem, goc + h * (tam_h + dh) + f * (s_ * d),\n                                         u\"phía %s cách tường %d dịch %d\" % (u\"ưu tiên\" if s_ == uu_tien else u\"kia\",\n                                                                            round(mm(d - d0)), round(mm(dh)))))\n                        j += 1\n                    i += 1\n            ung_vien.sort(key=lambda x: x[0])\n            # Vật cản ở gần (lọc trước theo khung bao cho nhanh)\n            r_gan = gioi_han_h + ft(TAM_XA_MM_GIAY * tl) + max(f1, -f0) + 2 * (e_f + e_h)\n            gu, gv = uv(goc)\n            gan = [(pl, mt, bb) for pl, mt, bb in vat_can_bb()\n                   if bb[0] <= gu + r_gan and bb[2] >= gu - r_gan and bb[1] <= gv + r_gan and bb[3] >= gv - r_gan]\n            tot = None\n            loai_bo = []          # lý do bỏ các ứng viên trước chỗ được chọn (ghi log để soát)\n            for _, c, nhan in ung_vien:\n                cu0, cv0 = uv(c)\n                hop = [(cu0 - a - khe, cv0 - b - khe), (cu0 + a + khe, cv0 - b - khe),\n                       (cu0 + a + khe, cv0 + b + khe), (cu0 - a - khe, cv0 + b + khe)]\n                if crop and not (hop[0][0] >= crop[0][0] and hop[0][1] >= crop[0][1] and\n                                 hop[2][0] <= crop[2][0] and hop[2][1] <= crop[2][1]):\n                    loai_bo.append(u\"%s: ngoài crop\" % nhan)\n                    continue\n                de = [(pl, mt) for pl, mt, bb in gan\n                      if bb[0] < hop[2][0] and bb[2] > hop[0][0] and bb[1] < hop[2][1] and bb[3] > hop[0][1]\n                      and da_giac_giao(hop, pl)]\n                if de:\n                    loai_bo.append(u\"%s: đè %s\" % (nhan, \", \".join(sorted(set(m for _, m in de))[:3])))\n                dt = sum(dien_tich_giao_hop(hop, pl) for pl, mt in de)\n                if tot is None or dt < tot[1] - 1e-9:\n                    tot = (c, dt, hop, de, nhan)\n                if not de:\n                    break\n            if tot is None:\n                c, de, hop, nhan = goc, [(\"\", u\"ngoài vùng crop\")], None, u\"-\"\n            else:\n                c, _, hop, de, nhan = tot\n            chi_tiet.append(u\"%d Mark %s %s: %s (%d ứng viên)\" % (e.Id.Value, mark(e), loai, nhan, len(ung_vien)))\n            chi_tiet.extend(u\"      bỏ \" + x for x in [x for x in loai_bo if not x.endswith(u\"ngoài crop\")][:12])\n            cu0, cv0 = uv(c)\n            tg.TagHeadPosition = xyz(cu0 - cu, cv0 - cv_, goc.Z)\n            if hop:\n                vat_can.append(([(hop[0][0] + khe, hop[0][1] + khe), (hop[1][0] - khe, hop[1][1] + khe),\n                                 (hop[2][0] - khe, hop[2][1] - khe), (hop[3][0] + khe, hop[3][1] - khe)],\n                                u\"tag mới %d\" % e.Id.Value))\n            tao[loai] += 1\n            tag_moi.append(tg)\n            if de:\n                xem_lai.append(u\"%d (Mark %s, %s): tag còn đè %s\" % (e.Id.Value, mark(e), loai,\n                                                                     \", \".join(sorted(set(m for _, m in de))[:4])))\n            # EI\n            if loai == \"cua\":\n                ei = gia_tri_ei(doc, e, tach(doc_in(8)))\n                if ei:\n                    doc.Regenerate()\n                    txt = u\"\"\n                    try:\n                        txt = tg.TagText or u\"\"\n                    except Exception:\n                        pass\n                    if khong_dau(ei).replace(\" \", \"\") not in khong_dau(txt).replace(\" \", \"\"):\n                        ei_thieu.append(u\"%d (Mark %s, %s): chữ tag '%s'\" % (e.Id.Value, mark(e), ei, txt.strip()))\n        if dry:\n            st.RollBack()\n        else:\n            st.Commit()\n    except Exception:\n        if st.HasStarted() and not st.HasEnded():\n            st.RollBack()\n        raise\n    finally:\n        TransactionManager.Instance.TransactionTaskDone()\n\n    p(u\"View: %s (1:%d)%s\" % (view.Name, view.Scale, u\" – DRY-RUN, chưa ghi gì\" if dry else u\"\"))\n    p(u\"Đã tag: %d cửa đi, %d cửa sổ, %d lam / louver; bỏ qua %d đối tượng đã có tag\" %\n      (tao[\"cua\"], tao[\"cs\"], tao[\"lam\"], bo_qua))\n    p(u\"Vật cản đã xét: %d (tường %d)\" % (len(vat_can), so_tuong))\n    if tpl_msg:\n        p(tpl_msg)\n    if xem_lai:\n        p(u\"CẦN XEM LẠI (%d):\" % len(xem_lai))\n        for s in xem_lai:\n            p(u\"   \" + s)\n    else:\n        p(u\"Không tag nào đè lên cửa / tường / chữ.\")\n    if ei_thieu:\n        p(u\"CỬA CÓ EI NHƯNG TAG KHÔNG HIỆN EI (%d) – family tag cửa chưa có nhãn tham số chống cháy:\" % len(ei_thieu))\n        for s in ei_thieu:\n            p(u\"   \" + s)\n    if dry:\n        p(u\"DRY-RUN: chưa tạo gì. Đặt IN[5] = False để tag.\")\n\n    # Log + ảnh\n    thu_muc = doc_in(10) or os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\", \"tag_cua\")\n    try:\n        os.makedirs(thu_muc, exist_ok=True)\n        f_log = os.path.join(thu_muc, \"tag_cua_%s_%d.txt\" % (datetime.now().strftime(\"%Y%m%d_%H%M%S_%f\"), view.Id.Value))\n        with open(f_log, \"w\", encoding=\"utf-8\") as fh:\n            fh.write(\"\\n\".join(bao_cao + [u\"\", u\"CHI TIẾT VỊ TRÍ:\"] + chi_tiet))\n        p(u\"Log: \" + f_log)\n    except Exception as ex:\n        p(u\"Không ghi được log: %s\" % ex)\n    return bao_cao\n\n\ndef mark(e):\n    try:\n        return e.get_Parameter(BuiltInParameter.ALL_MODEL_MARK).AsString() or \"-\"\n    except Exception:\n        return \"-\"\n\n\ndef gia_tri_ei(doc, e, ten_ts):\n    \"\"\"Giá trị chống cháy của cửa (instance trước, rồi type); rỗng nếu không có.\"\"\"\n    t = doc.GetElement(e.GetTypeId())\n    for el in (e, t):\n        if el is None:\n            continue\n        for n in ten_ts:\n            try:\n                pr = el.LookupParameter(n)\n                if pr is None:\n                    continue\n                v = pr.AsString() if pr.StorageType == StorageType.String else pr.AsValueString()\n                if v and v.strip() and v.strip() not in (\"0\", \"-\"):\n                    return v.strip()\n            except Exception:\n                pass\n    return u\"\"\n\n\ndef gan_template(doc, view, ten_bic):\n    \"\"\"Gán view template '<gốc> (ẩn nội thất)' cho view: nhân bản template đang gán (không sửa bản gốc) hoặc tạo từ\n    view nếu chưa có; ẩn các hạng mục nội thất. Template đã có thì dùng lại.\"\"\"\n    cats = []\n    for n in ten_bic:\n        try:\n            cats.append(ElementId(getattr(BuiltInCategory, n)))\n        except Exception:\n            pass\n    tpl_id = view.ViewTemplateId\n    goc = doc.GetElement(tpl_id) if tpl_id != ElementId.InvalidElementId else None\n    if goc is not None and goc.Name.endswith(HAU_TO_TEMPLATE):\n        moi = goc\n        thong_bao = u\"View template '%s' đã gán sẵn\" % goc.Name\n    else:\n        ten_moi = (goc.Name if goc is not None else view.Name) + HAU_TO_TEMPLATE\n        moi = None\n        for v in FilteredElementCollector(doc).OfClass(View):\n            if v.IsTemplate and v.Name == ten_moi:\n                moi = v\n        if moi is not None:\n            thong_bao = u\"Gán view template có sẵn '%s'\" % ten_moi\n        else:\n            # View template không Duplicate được qua API → tạo từ view (view đang hiển thị đúng theo template gốc)\n            moi = view.CreateViewTemplate()\n            moi.Name = ten_moi\n            thong_bao = u\"Tạo view template '%s' (từ %s)\" % (ten_moi, u\"template '%s'\" % goc.Name if goc else u\"view\")\n    # Template phải điều khiển V/G hạng mục model thì việc ẩn mới có tác dụng\n    try:\n        pid = ElementId(BuiltInParameter.VIS_GRAPHICS_MODEL)\n        nc = list(moi.GetNonControlledTemplateParameterIds())\n        if any(i.Value == pid.Value for i in nc):\n            from System.Collections.Generic import List\n            ds = List[ElementId]()\n            for i in nc:\n                if i.Value != pid.Value:\n                    ds.Add(i)\n            moi.SetNonControlledTemplateParameterIds(ds)\n    except Exception:\n        pass\n    an = []\n    for c in cats:\n        try:\n            if moi.CanCategoryBeHidden(c) and not moi.GetCategoryHidden(c):\n                moi.SetCategoryHidden(c, True)\n            an.append(Category.GetCategory(doc, c).Name)\n        except Exception:\n            pass\n    for bic in (BuiltInCategory.OST_DoorTags, BuiltInCategory.OST_WindowTags):\n        try:\n            if moi.GetCategoryHidden(ElementId(bic)):\n                moi.SetCategoryHidden(ElementId(bic), False)\n        except Exception:\n            pass\n    if view.ViewTemplateId.Value != moi.Id.Value:\n        view.ViewTemplateId = moi.Id\n    return thong_bao + u\", ẩn: \" + u\", \".join(an)\n\n\ntry:\n    OUT = _chinh()\nexcept Exception:\n    OUT = [u\"LỖI:\", traceback.format_exc()]\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "c77a20efa7b044f28b5a928516e92a0b",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "1e97822324574c2993a62891a2c6f0be",
+          "Name": "IN[0]",
+          "Description": "Tên view mặt bằng (trống = view đang mở)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "303d7881e78842a58e49f23eaf997aa4",
+          "Name": "IN[1]",
+          "Description": "Family tag cửa đi",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "570e9a3e4e7d4fc98f2025a21599f0da",
+          "Name": "IN[2]",
+          "Description": "Family tag cửa sổ",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6abfc138256f4152a51a5dbb2f7fcb7b",
+          "Name": "IN[3]",
+          "Description": "Family tag lam / louver",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "632c23465f6d4036a1d25dfe79e7f258",
+          "Name": "IN[4]",
+          "Description": "Từ khoá nhận lam / louver (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "09e102bf40b04f05ad50984f46018c69",
+          "Name": "IN[5]",
+          "Description": "Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "504600dd0e49435fb15999dbdc1571e5",
+          "Name": "IN[6]",
+          "Description": "Tạo + gán view template ẩn nội thất",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "168057d4ad634437b713ce7c345e97df",
+          "Name": "IN[7]",
+          "Description": "Hạng mục nội thất cần ẩn (BuiltInCategory, ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "160d987f62ae48858bd9700f9357be67",
+          "Name": "IN[8]",
+          "Description": "Tên tham số chống cháy EI (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4fe82952827940f7b9eec0be0c9a7052",
+          "Name": "IN[9]",
+          "Description": "Khoảng hở tag - vật cản (mm giấy)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "770728a06ea3442faffe70bd0984d978",
+          "Name": "IN[10]",
+          "Description": "Thư mục log (trống = Documents, ARV_Logs)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "da79a69185fa4731857b5c4ea1de12d6",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "733e16cc96694fcd9b5d1855c6920552",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "da0aa108e2d14f7ba3842abd9b453c67",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "662a45e99b8f4e8ea2a67a04ae061830",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "40662578c5e441aca17164c5c2a02f41",
+      "End": "1e97822324574c2993a62891a2c6f0be",
+      "Id": "080d0ddb075043dd86f3f97f9e3b2e82",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e5df5b0a14f84e178cb53cde34a7a3f2",
+      "End": "303d7881e78842a58e49f23eaf997aa4",
+      "Id": "6d6fec3d4e1c4a48bb7e6cbd67880690",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "758ec6e9c9fa4051a317efc37e32b11b",
+      "End": "570e9a3e4e7d4fc98f2025a21599f0da",
+      "Id": "efb985354c524047a637e0a80fa390a5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fa542e0a87994bb9b988d8abd893ffce",
+      "End": "6abfc138256f4152a51a5dbb2f7fcb7b",
+      "Id": "65531d8425774f679fbcdbb9eea67e3b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8c1e04b8f81a4881b9e474a323a113a1",
+      "End": "632c23465f6d4036a1d25dfe79e7f258",
+      "Id": "a05e584021614fe688cf33b2aabff98c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "26b4b8823b544e76a71f4ba9fce7c680",
+      "End": "09e102bf40b04f05ad50984f46018c69",
+      "Id": "7f55933f47314a34bd410ec058196997",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f6bc84a6256646f2b88dcb65d1268e47",
+      "End": "504600dd0e49435fb15999dbdc1571e5",
+      "Id": "7b4863b5687948ebbef47adaf5eba827",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "951900c0d28d48d49b14b854ba95aea6",
+      "End": "168057d4ad634437b713ce7c345e97df",
+      "Id": "da40942536804e548a1e1d502205b895",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "171a7bad2ed14dc396f97cf77cf93b00",
+      "End": "160d987f62ae48858bd9700f9357be67",
+      "Id": "2989de64c038489fb757a34c435d94a7",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b47594024b904b9eadfe11e173b07267",
+      "End": "4fe82952827940f7b9eec0be0c9a7052",
+      "Id": "f6e038b0db0b49c99dda853d5f0ad78c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9572d6e1567746619faff6721fa3b105",
+      "End": "770728a06ea3442faffe70bd0984d978",
+      "Id": "c5e8b684be654558bc88b8940baaeaf6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "da79a69185fa4731857b5c4ea1de12d6",
+      "End": "da0aa108e2d14f7ba3842abd9b453c67",
+      "Id": "05e79fc54bc94225b6724c5ec2e2aff1",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "ce461e82318644178f3acf49ae5f7ab7",
+        "Name": "Tên view mặt bằng (trống = view đang mở)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "1f5c7b453cca488e9e150deb6d863f3e",
+        "Name": "Family tag cửa đi",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 130.0
+      },
+      {
+        "Id": "f70f4d624db84a4ba34d3d87259eaf28",
+        "Name": "Family tag cửa sổ",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Id": "62b75ce641fd4ebd9d9ce4264daa5a84",
+        "Name": "Family tag lam / louver",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 390.0
+      },
+      {
+        "Id": "67828ab3b5b141efa33d210e282bfb91",
+        "Name": "Từ khoá nhận lam / louver (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Id": "76ed946b82364ba2b177bafe86915817",
+        "Name": "Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 650.0
+      },
+      {
+        "Id": "3b78636d0a724e078776160d757ff1c5",
+        "Name": "Tạo + gán view template ẩn nội thất",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 780.0
+      },
+      {
+        "Id": "fd277f15caef432da2ecd9525759edcc",
+        "Name": "Hạng mục nội thất cần ẩn (BuiltInCategory, ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 910.0
+      },
+      {
+        "Id": "c34ed00e197742fb967d5dad01141d21",
+        "Name": "Tên tham số chống cháy EI (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1040.0
+      },
+      {
+        "Id": "adc3dd4954de48fb8716d7c5ea04351c",
+        "Name": "Khoảng hở tag - vật cản (mm giấy)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1170.0
+      },
+      {
+        "Id": "8bcf8aed91a6409a972a903a149d8090",
+        "Name": "Thư mục log (trống = Documents, ARV_Logs)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1300.0
+      },
+      {
+        "Id": "c77a20efa7b044f28b5a928516e92a0b",
+        "Name": "TagCua_TuDong",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "733e16cc96694fcd9b5d1855c6920552",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "eae26bdf8fde4e54a2f22ccd45261374",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "ce461e82318644178f3acf49ae5f7ab7",
+          "1f5c7b453cca488e9e150deb6d863f3e",
+          "f70f4d624db84a4ba34d3d87259eaf28",
+          "62b75ce641fd4ebd9d9ce4264daa5a84",
+          "67828ab3b5b141efa33d210e282bfb91",
+          "76ed946b82364ba2b177bafe86915817",
+          "3b78636d0a724e078776160d757ff1c5",
+          "fd277f15caef432da2ecd9525759edcc",
+          "c34ed00e197742fb967d5dad01141d21",
+          "adc3dd4954de48fb8716d7c5ea04351c",
+          "8bcf8aed91a6409a972a903a149d8090"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 1470.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 1470.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "53e779e80d1849f5baf92d0ee24e07a5",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "c77a20efa7b044f28b5a928516e92a0b"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "7a6ed0651f944a77a33e017a029d3495",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "733e16cc96694fcd9b5d1855c6920552"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}
