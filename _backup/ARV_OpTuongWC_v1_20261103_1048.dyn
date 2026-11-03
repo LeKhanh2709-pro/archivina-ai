@@ -1,0 +1,826 @@
+{
+  "Uuid": "42ffcdbe-54f0-4b41-906b-c28e05999706",
+  "IsCustomNode": false,
+  "Description": "Tạo lớp ốp gạch tường WC (wall type GO-Gạch ốp-{kích thước gạch}) cao 2400 từ mặt sàn hoàn thiện WC theo biên sàn / Room WC, dò mặt tường Revit, cửa cắt qua Join. Dry-run mặc định.",
+  "Name": "ARV_OpTuongWC_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "d6ea53b4fcc84737ae3af779959d762a",
+      "Name": "IN[0] Kích thước gạch ốp (mm) – VD 300x600, 300x300, 600x600, 400x800",
+      "Description": "Creates a string.",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "300x600"
+    },
+    {
+      "Id": "5f986f5049fe4c8e89acd5dfc52beee8",
+      "Name": "IN[1] Hướng lát: NGANG (cạnh dài nằm ngang) / DOC",
+      "Description": "Creates a string.",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "NGANG"
+    },
+    {
+      "Id": "4c7405d5f9874ca195b22403d7cafc75",
+      "Name": "IN[2] Chiều cao ốp (mm)",
+      "Description": "Creates a number.",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "2400.0",
+      "NumberType": "Double"
+    },
+    {
+      "Id": "2197f14b93b74d7c849eaa37cccbbf29",
+      "Name": "IN[3] Chân ốp so với mặt sàn hoàn thiện WC (mm)",
+      "Description": "Creates a number.",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "0.0",
+      "NumberType": "Double"
+    },
+    {
+      "Id": "b0f1805c0eb5400e9b39ee1e9e2c92ae",
+      "Name": "IN[4] Nhận WC theo Comments / tên type sàn / tên phòng (cách ;)",
+      "Description": "Creates a string.",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "WC;vệ sinh"
+    },
+    {
+      "Id": "f00b989e72b94a1bac7df851748b0bd5",
+      "Name": "IN[5] Id sàn / phòng WC (trống = đang chọn; không chọn = cả level của view)",
+      "Description": "Creates a string.",
+      "Type": "string",
+      "Type2": "string",
+      "Value": ""
+    },
+    {
+      "Id": "81aa176c28794a9f87494ecbcbf2b9bb",
+      "Name": "IN[6] Wall type ốp mẫu để nhân bản",
+      "Description": "Creates a string.",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "GO-Gạch ốp-300x600"
+    },
+    {
+      "Id": "d270fd72d10c4dc09aebbb296569551d",
+      "Name": "IN[7] Nối khối với tường chủ (cửa cắt lớp ốp)",
+      "Description": "Enables selection between True and False",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true"
+    },
+    {
+      "Id": "a68d3d6c6331456d920c82922a453745",
+      "Name": "IN[8] Dry-run (True = chỉ báo cáo)",
+      "Description": "Enables selection between True and False",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true"
+    },
+    {
+      "Id": "aaa9e9178fda406484e87fdf3c368f94",
+      "Name": "IN[9] Căn mạch ốp trùng mạch lát sàn",
+      "Description": "Enables selection between True and False",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true"
+    },
+    {
+      "Id": "3f0d97bf86fb4e2e97e7aa45b2341eef",
+      "Name": "IN[10] Xoá ốp cũ của tool trong WC rồi dựng lại",
+      "Description": "Enables selection between True and False",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "d6ea53b4fcc84737ae3af779959d762a",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d22834b719a64608a1635577adde0480",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "300x600"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "5f986f5049fe4c8e89acd5dfc52beee8",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "11019060bb80446cbb93038f28b2671f",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "NGANG"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "4c7405d5f9874ca195b22403d7cafc75",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b3eddaca84a2419cb191ee55dabf2918",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 2400.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "2197f14b93b74d7c849eaa37cccbbf29",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e1a455acb1b14f51bf380ed6956ae631",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 0.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "b0f1805c0eb5400e9b39ee1e9e2c92ae",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e5aa9bfa62fc4c6aa93c8e4fc796297e",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "WC;vệ sinh"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "f00b989e72b94a1bac7df851748b0bd5",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a8d8369cc6f74c85b71497f34804011e",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "81aa176c28794a9f87494ecbcbf2b9bb",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c855161e66c0405dac1a84b615487b0a",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "GO-Gạch ốp-300x600"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "d270fd72d10c4dc09aebbb296569551d",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cf461dd0b2cd4e18bdf3cd4f540d9f7d",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "a68d3d6c6331456d920c82922a453745",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d6797b80f91b40a5a03d30d148a3a1ff",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "aaa9e9178fda406484e87fdf3c368f94",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0f22c53afc354912892ce60cf218d85b",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "3f0d97bf86fb4e2e97e7aa45b2341eef",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1151fa19a5b0434cab8b43336cc55a7e",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_OpTuongWC_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo lớp ốp gạch tường WC (Basic Wall mỏng, type \"GO-Gạch ốp-…\") cao IN[2] tính từ mặt sàn hoàn thiện WC:\n#   1. Nguồn biên WC: sàn hoàn thiện WC (Floor, VD do ARV_TaoSanCanHoTuCAD_v1 tạo – Comments \"ARV-SanCanHo CHxx WC\")\n#      hoặc Room tên WC / vệ sinh (biên \"At wall finish\"). Phạm vi: phần tử đang chọn / Id ở IN[5]; không chọn gì\n#      → mọi WC trên level của view đang mở (ưu tiên sàn; không có sàn WC mới lấy Room).\n#   2. Mỗi cạnh biên: bắn tia vuông góc ra phía ngoài (ở cao 300 trên chân ốp và sát đỉnh ốp) tìm mặt tường /\n#      cột Revit → khoảng hở d (sàn WC lùi 10 mm so với mặt tường; Room = 0). Lớp ốp: mặt ngoài áp mặt tường, dày\n#      bằng type. Đoạn không có tường ở cả hai cao độ (lối mở, hộp kỹ thuật hở) → không ốp. Ô cửa (có lanh tô) ốp\n#      liền rồi nối khối (Join) với tường chủ → cửa đi / cửa sổ tự cắt lớp ốp (đã kiểm: cửa 830 cắt 1,87 m²).\n#   3. Góc: hai lớp ốp kề nhau gặp nhau tại giao tim, kéo thêm nửa chiều dày (không hở góc lồi / cột).\n#   4. Wall type theo kích thước gạch IN[0] + hướng IN[1]: \"GO-Gạch ốp-{nhỏ}x{lớn}\" (+ \"-dọc\"). Chưa có → nhân bản\n#      type mẫu IN[6], vật liệu \"Gạch Ceramic {nhỏ}x{lớn}mm\" (+ \" dọc\") với mẫu Model pattern đúng ô gạch\n#      (lưới ngang cách = cao viên, lưới đứng cách = rộng viên; dùng lại pattern có sẵn nếu trùng lưới).\n#   5. Tường ốp: không Room Bounding, không tự nối đầu (DisallowWallJoinAtEnd), Comments \"ARV-OpTuongWC <Id nguồn>\".\n#      WC đã có ốp của tool (tường ốp nằm trong biên WC, không phụ thuộc Id sàn – sàn dựng lại đổi Id) → bỏ qua,\n#      hoặc xoá ốp cũ rồi dựng lại khi IN[10] = True (chỉ xoá tường có Comments \"ARV-OpTuongWC…\").\n#   6. Căn mạch theo lát sàn (IN[9], thêm 2026-10-21) – đã đo trên G19:\n#      - Mạch ĐỨNG của mẫu gạch trên tường bắt đầu từ ĐIỂM ĐẦU đường định vị tường (dời điểm đầu → mạch dời theo,\n#        Flip không đổi). Vị trí mạch sàn đo trực tiếp trên mặt sàn WC (Dimension tới đường mạch của Model pattern trên\n#        view mặt bằng tạm, rồi hoàn tác) → mỗi đoạn ốp tách đôi tại một mạch sàn, hai nửa cùng bắt đầu từ điểm đó →\n#        mạch đứng ốp nối tiếp mạch sàn (bước gạch tường / sàn là bội của nhau thì mọi mạch sàn đều có mạch tường).\n#      - Mạch NGANG bắt đầu từ cốt LEVEL chân tường (không theo Base Offset). Sàn WC −15 → dùng Model pattern có gốc\n#        lưới ngang dời −15 (Origin V) để hàng gạch đầu tiên bắt đầu từ mặt sàn: type \"GO-Gạch ốp-300x600 (mạch -15)\".\n#      Nguồn là Room (không có sàn) → không căn được mạch đứng, báo cáo.\n# INPUT\n#   IN[0] (str)   Kích thước gạch ốp (mm), VD \"300x600\", \"300x300\", \"600x600\", \"400x800\"\n#   IN[1] (str)   Hướng lát: \"NGANG\" (cạnh dài nằm ngang) / \"DOC\" (cạnh dài đứng); gạch vuông bỏ qua\n#   IN[2] (float) Chiều cao ốp (mm), mặc định 2400\n#   IN[3] (float) Chân ốp so với mặt sàn hoàn thiện WC (mm), mặc định 0\n#   IN[4] (str)   Nhận WC: chuỗi con trong Comments / tên type sàn / tên phòng, cách nhau ';' (mặc định \"WC;vệ sinh\")\n#   IN[5] (str)   Id sàn / phòng WC, cách nhau ';' (trống = đang chọn trong Revit; không chọn = cả level của view)\n#   IN[6] (str)   Wall type ốp mẫu để nhân bản (mặc định \"GO-Gạch ốp-300x600\")\n#   IN[7] (bool)  Nối khối lớp ốp với tường chủ để cửa đi / cửa sổ cắt lớp ốp (mặc định True)\n#   IN[8] (bool)  Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)\n#   IN[9] (bool)  Căn mạch ốp trùng mạch lát sàn (mạch đứng + hàng gạch đầu từ mặt sàn) (mặc định True)\n#   IN[10] (bool) Xoá ốp cũ của tool trong các WC được chọn rồi dựng lại (mặc định False = bỏ qua WC đã có ốp)\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, đường dẫn log, rồi từng đoạn ốp\n#   OUT[1] (list[Line]) Xem trước: tim các đoạn ốp sẽ tạo (mm, tại cao độ chân ốp)\n\nimport os\nimport io\nimport csv\nimport math\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, UV, Line, Transaction, UnitUtils, UnitTypeId,\n                                   ModelPathUtils, BuiltInParameter, BuiltInCategory, Floor, Wall, WallType,\n                                   WallUtils, JoinGeometryUtils, Options, ViewDetailLevel, Solid, GeometryInstance,\n                                   ElementId, SolidCurveIntersectionOptions, SolidCurveIntersectionMode, ViewType,\n                                   Material, FillPattern, FillPatternElement, FillPatternTarget, FillGrid,\n                                   FillPatternHostOrientation, Outline, BoundingBoxIntersectsFilter,\n                                   ElementMulticategoryFilter, SpatialElementBoundaryOptions,\n                                   SpatialElementBoundaryLocation, FamilyInstance, HostObjectUtils, ViewPlan,\n                                   ViewFamilyType, ViewFamily, ReferenceArray, Reference, SubTransaction,\n                                   LocationCurve)\n    from Autodesk.Revit.DB.Architecture import Room\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    from System.Collections.Generic import List\n    doc = DocumentManager.Instance.CurrentDBDocument\n    uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo ốp tường WC\"\nSCRIPT_TAG = u\"ARV_OpTuongWC_v1\"\nCOMMENT_TAG = u\"ARV-OpTuongWC\"\nTYPE_PREFIX = u\"GO-Gạch ốp-\"          # [cần xác nhận] quy ước tên type ốp mới (theo type có sẵn GO-Gạch ốp-300x600)\nMATERIAL_PREFIX = u\"Gạch Ceramic \"     # [cần xác nhận] tên vật liệu mới: \"Gạch Ceramic 300x600mm\"\nSTEP_MM = 100.0         # Bước dò dọc cạnh\nEND_MM = 2.0            # Điểm dò đầu / cuối cạnh lùi vào\nRAY_BACK_MM = 20.0      # Tia bắt đầu lùi vào trong WC\nRAY_MM = 60.0           # Tầm dò mặt tường ra ngoài biên (G19: khe sàn WC – mặt tường = 10; dò xa hơn sẽ bắt\n                        # nhầm tường phía sau lối mở / hộp kỹ thuật ở 85–260 mm)\nLOW_MM = 300.0          # Cao độ tia dò thấp (trên chân ốp)\nHIGH_GAP_MM = 50.0      # Tia dò cao: dưới đỉnh ốp\nD_TOL_MM = 5.0          # Chênh khe hở cùng một đoạn\nBISECT = 9              # Số lần chia đôi tìm điểm đầu / cuối đoạn (100 / 2^9 ≈ 0,2 mm)\nMIN_SEG_MM = 20.0\nSEARCH_MM = 500.0       # Nới hộp bao tìm tường quanh WC\nMIN_PIECE_MM = 50.0     # Điểm tách tại mạch sàn cách hai đầu đoạn ốp tối thiểu (tránh mẩu ốp vụn)\nHATCH_TRY = 24          # Số chỉ số đường mạch thử khi đo mạch sàn (dừng khi có 3 vị trí)\nOLD_PAD_MM = 60.0       # Tường ốp cũ có trung điểm trong hộp bao biên WC nới thêm giá trị này → thuộc WC đó\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef split_filters(text):\n    return [s.strip() for s in (text or u\"\").split(u\";\") if s.strip()]\n\n\ndef matches(text, filters):\n    t = norm(text).lower()\n    return any(norm(f).lower() in t for f in filters)\n\n\ndef parse_tile(text, direction):\n    \"\"\"'300x600' + 'NGANG'/'DOC' → (nhỏ, lớn, rộng viên, cao viên, hậu tố tên).\"\"\"\n    t = norm(text).lower().replace(u\"×\", u\"x\").replace(u\"*\", u\"x\").replace(u\" \", u\"\").replace(u\"mm\", u\"\")\n    parts = t.split(u\"x\")\n    if len(parts) != 2:\n        raise ValueError(u\"Kích thước gạch '{}' không đúng dạng AxB (VD 300x600)\".format(text))\n    a, b = float(parts[0]), float(parts[1])\n    if not (50 <= a <= 3000 and 50 <= b <= 3000):\n        raise ValueError(u\"Kích thước gạch '{}' ngoài khoảng 50–3000 mm\".format(text))\n    small, large = min(a, b), max(a, b)\n    d = norm(direction).upper().replace(u\"Ọ\", u\"O\")\n    vertical = d.startswith(u\"D\") and small != large\n    w, h = (small, large) if vertical else (large, small)\n    return small, large, w, h, (u\"-dọc\" if vertical else u\"\")\n\n\ndef fmt_mm(v):\n    return (u\"{:.0f}\" if abs(v - round(v)) < 1e-6 else u\"{:.1f}\").format(v)\n\n\ndef point_in(pt, pts):\n    x, y = pt\n    inside = False\n    j = len(pts) - 1\n    for i in range(len(pts)):\n        xi, yi = pts[i]\n        xj, yj = pts[j]\n        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi:\n            inside = not inside\n        j = i\n    return inside\n\n\ndef point_in_evenodd(pt, loops):\n    return sum(1 for l in loops if point_in(pt, l)) % 2 == 1\n\n\ndef line_intersect(p1, u1, p2, u2):\n    \"\"\"Giao hai đường p + t·u (2D). Song song → None.\"\"\"\n    den = u1[0] * u2[1] - u1[1] * u2[0]\n    if abs(den) < 1e-6:\n        return None\n    t = ((p2[0] - p1[0]) * u2[1] - (p2[1] - p1[1]) * u2[0]) / den\n    return (p1[0] + t * u1[0], p1[1] + t * u1[1])\n\n\ndef find_runs(length, probe):\n    \"\"\"Các đoạn liên tục trên cạnh dài `length` (mm) mà probe(s) → (d, host) có mặt tường, khe d lệch ≤ D_TOL_MM.\n    Trả về [dict(s0, s1, d, hosts, at_start, at_end)].\"\"\"\n    n = max(1, int(math.ceil(length / STEP_MM)))\n    ss = [min(max(i * length / n, END_MM), length - END_MM) for i in range(n + 1)]\n    hits = [probe(s) for s in ss]\n\n    def same(h, d):\n        return h is not None and abs(h[0] - d) <= D_TOL_MM\n\n    def edge_between(s_in, s_out, d):\n        \"\"\"Chia đôi giữa điểm thuộc đoạn (s_in) và điểm không thuộc (s_out).\"\"\"\n        for _ in range(BISECT):\n            m = (s_in + s_out) / 2.0\n            if same(probe(m), d):\n                s_in = m\n            else:\n                s_out = m\n        return (s_in + s_out) / 2.0\n\n    runs = []\n    i = 0\n    while i < len(ss):\n        if hits[i] is None:\n            i += 1\n            continue\n        j = i\n        ds = [hits[i][0]]\n        hosts = set([hits[i][1]])\n        while j + 1 < len(ss) and same(hits[j + 1], hits[j][0]):\n            j += 1\n            ds.append(hits[j][0])\n            hosts.add(hits[j][1])\n        ds.sort()\n        d = ds[len(ds) // 2]\n        s0 = 0.0 if i == 0 else edge_between(ss[i], ss[i - 1], d)\n        s1 = length if j == len(ss) - 1 else edge_between(ss[j], ss[j + 1], d)\n        runs.append(dict(s0=s0, s1=s1, d=d, hosts=hosts, at_start=(i == 0), at_end=(j == len(ss) - 1)))\n        i = j + 1\n    return runs\n\n\ndef plan_loop(edges, interior_loops, probe_for_edge, thickness):\n    \"\"\"edges: [(a, b)] mm của một vòng biên (theo thứ tự). Trả về các đoạn ốp:\n    [dict(edge, p0, p1, d, hosts, length)] – p0/p1 là tim lớp ốp (mm).\"\"\"\n    t2 = thickness / 2.0\n    infos = []\n    for k, (a, b) in enumerate(edges):\n        L = math.hypot(b[0] - a[0], b[1] - a[1])\n        if L < 1.0:\n            infos.append(None)\n            continue\n        u = ((b[0] - a[0]) / L, (b[1] - a[1]) / L)\n        n = (u[1], -u[0])     # bên phải\n        mid = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)\n        if point_in_evenodd((mid[0] + n[0] * 20.0, mid[1] + n[1] * 20.0), interior_loops):\n            n = (-n[0], -n[1])\n        runs = find_runs(L, probe_for_edge(a, u, n))\n        segs = []\n        for r in runs:\n            c = r[\"d\"] - t2           # tim lớp ốp cách cạnh biên (ra ngoài)\n            base = (a[0] + n[0] * c, a[1] + n[1] * c)\n            segs.append(dict(edge=k, u=u, n=n, base=base, s0=r[\"s0\"], s1=r[\"s1\"], d=r[\"d\"], hosts=r[\"hosts\"],\n                             at_start=r[\"at_start\"], at_end=r[\"at_end\"], raw=r[\"s1\"] - r[\"s0\"]))\n        infos.append(segs)\n\n    # Góc: đoạn cuối cạnh k + đoạn đầu cạnh k+1 đều chạm đỉnh → gặp tại giao tim, kéo thêm nửa chiều dày\n    m = len(edges)\n    for k in range(m):\n        cur, nxt = infos[k], infos[(k + 1) % m]\n        if not cur or not nxt or not cur[-1][\"at_end\"] or not nxt[0][\"at_start\"]:\n            continue\n        s1, s2 = cur[-1], nxt[0]\n        p = line_intersect(s1[\"base\"], s1[\"u\"], s2[\"base\"], s2[\"u\"])\n        if p is None:\n            continue\n        s1[\"s1\"] = (p[0] - s1[\"base\"][0]) * s1[\"u\"][0] + (p[1] - s1[\"base\"][1]) * s1[\"u\"][1] + t2\n        s2[\"s0\"] = (p[0] - s2[\"base\"][0]) * s2[\"u\"][0] + (p[1] - s2[\"base\"][1]) * s2[\"u\"][1] - t2\n\n    out = []\n    for segs in infos:\n        for s in segs or []:\n            if s[\"s1\"] - s[\"s0\"] < MIN_SEG_MM:\n                continue\n            bx, by = s[\"base\"]\n            ux, uy = s[\"u\"]\n            s[\"p0\"] = (bx + ux * s[\"s0\"], by + uy * s[\"s0\"])\n            s[\"p1\"] = (bx + ux * s[\"s1\"], by + uy * s[\"s1\"])\n            s[\"length\"] = s[\"s1\"] - s[\"s0\"]\n            out.append(s)\n    return out\n\n\ndef wrap(v, period):\n    \"\"\"Đưa v về khoảng (-period/2, period/2].\"\"\"\n    r = math.fmod(v, period)\n    if r <= -period / 2.0:\n        r += period\n    elif r > period / 2.0:\n        r -= period\n    return r\n\n\ndef axis_key(u):\n    \"\"\"Trục không hướng của vector 2D: (góc độ 0–180 làm tròn 0,1°, vector đơn vị chuẩn).\"\"\"\n    ang = math.degrees(math.atan2(u[1], u[0])) % 180.0\n    if ang > 179.95:\n        ang = 0.0\n    a = math.radians(ang)\n    return round(ang, 1), (math.cos(a), math.sin(a))\n\n\ndef joint_grid(positions):\n    \"\"\"Các vị trí mạch (mm, dọc trục) → (bước, pha) với mạch tại pha + k·bước; None nếu không đủ dữ liệu.\"\"\"\n    ps = sorted(set(round(p, 1) for p in positions))\n    diffs = [b - a for a, b in zip(ps, ps[1:]) if b - a > 1.0]\n    if not diffs:\n        return None\n    step = min(diffs)\n    if any(abs(d / step - round(d / step)) > 0.01 for d in diffs):\n        return None\n    step = round(step * 2.0) / 2.0\n    return step, math.fmod(ps[0], step) % step\n\n\ndef split_at_joint(seg, axis_u, grid):\n    \"\"\"Tách đoạn ốp tại mạch sàn gần đầu đoạn nhất (cách hai đầu ≥ MIN_PIECE_MM). Cả hai nửa BẮT ĐẦU tại điểm tách\n    (gốc mạch đứng của tường = điểm đầu) → [đoạn]. Không có mạch phù hợp → [seg] (seg[\"align\"] ghi lý do).\"\"\"\n    step, phase = grid\n    t0 = seg[\"p0\"][0] * axis_u[0] + seg[\"p0\"][1] * axis_u[1]\n    sign = 1.0 if seg[\"u\"][0] * axis_u[0] + seg[\"u\"][1] * axis_u[1] > 0 else -1.0\n    L = seg[\"length\"]\n    best = None\n    k0 = int(math.floor((min(t0, t0 + sign * L) - phase) / step)) - 1\n    k1 = int(math.ceil((max(t0, t0 + sign * L) - phase) / step)) + 1\n    for k in range(k0, k1 + 1):\n        s = (phase + k * step - t0) * sign      # khoảng cách dọc đoạn từ p0\n        if MIN_PIECE_MM <= s <= L - MIN_PIECE_MM and (best is None or s < best):\n            best = s\n    if best is None:\n        seg[\"align\"] = u\"không tách (đoạn ngắn, không có mạch sàn cách đầu ≥ {:.0f})\".format(MIN_PIECE_MM)\n        return [seg]\n    ux, uy = seg[\"u\"]\n    p = (seg[\"p0\"][0] + ux * best, seg[\"p0\"][1] + uy * best)\n    a = dict(seg)\n    b = dict(seg)\n    a.update(p0=p, p1=seg[\"p0\"], length=best, align=u\"tách tại mạch sàn ({:.0f}, {:.0f}) – nửa đầu\".format(*p))\n    b.update(p0=p, p1=seg[\"p1\"], length=L - best, align=u\"tách tại mạch sàn ({:.0f}, {:.0f}) – nửa sau\".format(*p))\n    return [a, b]\n\n\n# =====================================================================================\n# PHẦN REVIT\n# =====================================================================================\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef type_name(t):\n    p = t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)\n    return p.AsString() if p else get_name(t)\n\n\ndef id_value(eid):\n    v = getattr(eid, \"Value\", None)\n    return v if v is not None else eid.IntegerValue\n\n\ndef comments(el):\n    p = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    return (p.AsString() or u\"\") if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\n# --- Wall type / vật liệu / mẫu gạch -------------------------------------------------\ndef wall_types_by_name():\n    return dict((norm(type_name(t)), t) for t in FilteredElementCollector(doc).OfClass(WallType).ToElements())\n\n\ndef grid_match(fpe, w, h, v0=0.0):\n    \"\"\"Model pattern đúng ô gạch: lưới ngang (0°) cách h, gốc V ≡ v0 (mod h); lưới đứng (90°) cách w, gốc U ≡ 0\n    (mod w); không nét đứt. (Đã đo: Origin V của lưới 0° dời mạch ngang, Origin U của lưới 90° dời mạch đứng.)\"\"\"\n    fp = fpe.GetFillPattern()\n    if fp.Target != FillPatternTarget.Model or fp.GridCount != 2:\n        return False\n    got = set()\n    for g in fp.GetFillGrids():\n        if g.GetSegments().Count:\n            return False\n        ang = int(round(math.degrees(g.Angle))) % 180\n        step = to_mm(g.Offset)\n        if step <= 0:\n            return False\n        org = to_mm(g.Origin.V) if ang == 0 else to_mm(g.Origin.U)\n        got.add((ang, int(round(step)), int(round(wrap(org, step)))))\n    return got == set([(0, int(round(h)), int(round(wrap(v0, h)))), (90, int(round(w)), 0)])\n\n\ndef find_pattern(w, h, v0=0.0):\n    for fpe in FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements():\n        if grid_match(fpe, w, h, v0):\n            return fpe\n    return None\n\n\ndef mach_suffix(v0):\n    \"\"\"Hậu tố tên khi mạch ngang dời khỏi cốt level: ' (mạch -15)'.\"\"\"\n    return u\"\" if abs(v0) < 0.5 else u\" (mạch {:+.0f})\".format(v0).replace(u\"+\", u\"\")\n\n\ndef create_pattern(w, h, v0=0.0):\n    name = u\"{}x{}{}\".format(fmt_mm(h), fmt_mm(w), u\"\" if abs(v0) < 0.5 else u\" ({:.0f})\".format(v0))\n    existing = set(get_name(f) for f in FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements())\n    while name in existing:\n        name += u\" ARV\"\n    fp = FillPattern(name, FillPatternTarget.Model, FillPatternHostOrientation.ToHost)\n    g1, g2 = FillGrid(), FillGrid()\n    g1.Angle, g1.Offset, g1.Origin = 0.0, from_mm(h), UV(0, from_mm(v0))\n    g2.Angle, g2.Offset, g2.Origin = math.pi / 2.0, from_mm(w), UV(0, 0)\n    fp.SetFillGrids(List[FillGrid]([g1, g2]))\n    return FillPatternElement.Create(doc, fp)\n\n\ndef material_pattern(mat):\n    return doc.GetElement(mat.SurfaceForegroundPatternId) if mat is not None else None\n\n\ndef pick_material(small, large, suffix, w, h, v0=0.0):\n    \"\"\"Vật liệu có sẵn chứa '{nhỏ}x{lớn}mm' (+ ' dọc') và mẫu đúng ô gạch + gốc mạch; None nếu chưa có.\"\"\"\n    key = u\"{}x{}mm\".format(fmt_mm(small), fmt_mm(large))\n    for m in FilteredElementCollector(doc).OfClass(Material).ToElements():\n        name = norm(m.Name)\n        if key in name.replace(u\" \", u\"\") and ((u\"dọc\" in name.lower()) == bool(suffix)):\n            fpe = material_pattern(m)\n            if fpe is not None and grid_match(fpe, w, h, v0):\n                return m\n    return None\n\n\ndef type_material(wt):\n    cs = wt.GetCompoundStructure()\n    if cs is None or cs.LayerCount == 0:\n        return None\n    return doc.GetElement(cs.GetMaterialId(0))\n\n\ndef ensure_wall_type(name, template, small, large, suffix, w, h, notes, v0=0.0):\n    \"\"\"Gọi trong Transaction. Nhân bản template → name, gán vật liệu đúng mẫu gạch (gốc mạch ngang v0).\"\"\"\n    mat = pick_material(small, large, suffix, w, h, v0)\n    if mat is None:\n        fpe = find_pattern(w, h, v0)\n        if fpe is None:\n            fpe = create_pattern(w, h, v0)\n            notes.append(u\"ĐÃ TẠO Model pattern '{}' (ô {} rộng × {} cao, mạch ngang dời {:.0f})\".format(\n                get_name(fpe), fmt_mm(w), fmt_mm(h), v0))\n        base = type_material(template)\n        mname = u\"{}{}x{}mm{}{}\".format(MATERIAL_PREFIX, fmt_mm(small), fmt_mm(large), u\" dọc\" if suffix else u\"\",\n                                        mach_suffix(v0))\n        names = set(norm(m.Name) for m in FilteredElementCollector(doc).OfClass(Material).ToElements())\n        while norm(mname) in names:\n            mname += u\" ARV\"\n        mat = base.Duplicate(mname) if base is not None else doc.GetElement(Material.Create(doc, mname))\n        mat.SurfaceForegroundPatternId = fpe.Id\n        notes.append(u\"ĐÃ TẠO vật liệu '{}' (mẫu '{}')\".format(mat.Name, get_name(fpe)))\n    new = template.Duplicate(name)\n    cs = new.GetCompoundStructure()\n    for i in range(cs.LayerCount):\n        cs.SetMaterialId(i, mat.Id)\n    new.SetCompoundStructure(cs)\n    notes.append(u\"ĐÃ NHÂN BẢN wall type '{}' từ '{}' (vật liệu '{}')\".format(name, type_name(template), mat.Name))\n    return new\n\n\n# --- Nguồn biên WC -------------------------------------------------------------------\nclass Source(object):\n    def __init__(self, el, kind, level, base_ft, loops_mm, label):\n        self.el = el\n        self.kind = kind          # \"Sàn\" / \"Phòng\"\n        self.level = level\n        self.base = base_ft       # cao độ tuyệt đối mặt sàn hoàn thiện (feet)\n        self.loops = loops_mm     # [[(a, b)]] cạnh thẳng theo thứ tự, mm\n        self.label = label\n        self.warn = []\n        self.segs = []\n        self.status = u\"\"\n        self.old = []             # Id tường ốp cũ của tool trong WC\n        self.v0 = 0.0             # gốc mạch ngang so với cốt level (mm)\n        self.tname = u\"\"\n        self.grids = None         # mạch sàn đo được {trục: (bước, pha)}\n\n\ndef floor_source(fl):\n    level = doc.GetElement(fl.LevelId)\n    sk = doc.GetElement(fl.SketchId) if hasattr(fl, \"SketchId\") else None\n    if sk is None or level is None:\n        return None\n    off = fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM)\n    base = level.Elevation + (off.AsDouble() if off else 0.0)\n    loops, warn = [], []\n    for ca in sk.Profile:\n        edges = []\n        for c in ca:\n            if not isinstance(c, Line):\n                warn.append(u\"cạnh cong bỏ qua\")\n                continue\n            a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n            edges.append(((to_mm(a.X), to_mm(a.Y)), (to_mm(b.X), to_mm(b.Y))))\n        if edges:\n            loops.append(edges)\n    s = Source(fl, u\"Sàn\", level, base, loops, u\"{} | {}\".format(comments(fl) or u\"—\", type_name(doc.GetElement(fl.GetTypeId()))))\n    s.warn = warn\n    return s\n\n\ndef room_source(room):\n    level = room.Level\n    if level is None or room.Area <= 0:\n        return None\n    off = room.get_Parameter(BuiltInParameter.ROOM_LOWER_OFFSET)\n    base = level.Elevation + (off.AsDouble() if off else 0.0)\n    opt = SpatialElementBoundaryOptions()\n    opt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish\n    loops, warn = [], []\n    for segs in room.GetBoundarySegments(opt) or []:\n        edges = []\n        for sg in segs:\n            c = sg.GetCurve()\n            if not isinstance(c, Line):\n                warn.append(u\"cạnh cong bỏ qua\")\n                continue\n            a, b = c.GetEndPoint(0), c.GetEndPoint(1)\n            edges.append(((to_mm(a.X), to_mm(a.Y)), (to_mm(b.X), to_mm(b.Y))))\n        if edges:\n            loops.append(edges)\n    s = Source(room, u\"Phòng\", level, base, loops, norm(room.Name))\n    s.warn = warn\n    return s\n\n\ndef is_wc_floor(fl, filters):\n    return matches(comments(fl), filters) or matches(type_name(doc.GetElement(fl.GetTypeId())), filters)\n\n\ndef collect_sources(id_text, filters):\n    \"\"\"Trả về (danh sách Source, mô tả phạm vi).\"\"\"\n    if id_text:\n        elems = [doc.GetElement(ElementId(int(s))) for s in id_text.replace(u\",\", u\";\").split(u\";\") if s.strip()]\n        how = u\"Id nhập ở IN[5]\"\n    else:\n        elems = [doc.GetElement(i) for i in uidoc.Selection.GetElementIds()]\n        how = u\"phần tử đang chọn\"\n    elems = [e for e in elems if isinstance(e, (Floor, Room))]\n    if not elems:\n        view = doc.ActiveView\n        level = view.GenLevel if view.ViewType in (ViewType.FloorPlan, ViewType.CeilingPlan) else None\n        if level is None:\n            raise StopReport([u\"DỪNG: chưa chọn sàn / phòng WC. Chọn sàn hoàn thiện WC (hoặc Room WC) rồi Run, hoặc mở \"\n                              u\"view mặt bằng của tầng để làm mọi WC trên tầng đó.\"])\n        floors = [f for f in FilteredElementCollector(doc).OfClass(Floor).ToElements()\n                  if f.LevelId == level.Id and is_wc_floor(f, filters)]\n        if floors:\n            elems, how = floors, u\"mọi sàn WC trên {}\".format(level.Name)\n        else:\n            elems = [r for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).ToElements()\n                     if isinstance(r, Room) and r.LevelId == level.Id and r.Area > 0 and matches(r.Name, filters)]\n            how = u\"mọi Room WC trên {} (không có sàn WC)\".format(level.Name)\n    sources = []\n    for e in elems:\n        s = floor_source(e) if isinstance(e, Floor) else room_source(e)\n        if s is not None and s.loops:\n            sources.append(s)\n    return sources, how\n\n\n# --- Dò mặt tường --------------------------------------------------------------------\ndef element_solids(element):\n    opt = Options()\n    opt.DetailLevel = ViewDetailLevel.Fine\n    result = []\n\n    def walk(geo):\n        for g in geo:\n            if isinstance(g, Solid) and g.Volume > 0:\n                result.append(g)\n            elif isinstance(g, GeometryInstance):\n                walk(g.GetInstanceGeometry())\n\n    geo = element.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef obstacle_solids(src, top):\n    \"\"\"Khối tường + cột quanh WC (trừ lớp ốp của tool): [(solid, element)].\"\"\"\n    pts = [p for loop in src.loops for e in loop for p in e]\n    pad = SEARCH_MM\n    mn = XYZ(from_mm(min(p[0] for p in pts) - pad), from_mm(min(p[1] for p in pts) - pad), src.base)\n    mx = XYZ(from_mm(max(p[0] for p in pts) + pad), from_mm(max(p[1] for p in pts) + pad), top)\n    cats = List[BuiltInCategory]([BuiltInCategory.OST_Walls, BuiltInCategory.OST_StructuralColumns,\n                                  BuiltInCategory.OST_Columns])\n    out = []\n    for el in FilteredElementCollector(doc).WherePasses(ElementMulticategoryFilter(cats)) \\\n            .WherePasses(BoundingBoxIntersectsFilter(Outline(mn, mx))).WhereElementIsNotElementType().ToElements():\n        if comments(el).startswith(COMMENT_TAG):\n            continue\n        for s in element_solids(el):\n            out.append((s, el))\n    return out\n\n\nSCI_OPT = None\n\n\ndef first_hit(solids, a, b):\n    \"\"\"Khoảng cách (feet, từ a) tới khối đầu tiên trên đoạn a→b và phần tử; None nếu không gặp / a nằm trong khối.\"\"\"\n    global SCI_OPT\n    if SCI_OPT is None:\n        SCI_OPT = SolidCurveIntersectionOptions()\n        SCI_OPT.ResultType = SolidCurveIntersectionMode.CurveSegmentsInside\n    line = Line.CreateBound(a, b)\n    best, host = None, None\n    for s, el in solids:\n        try:\n            res = s.IntersectWithCurve(line, SCI_OPT)\n        except Exception:\n            continue\n        for i in range(res.SegmentCount):\n            c = res.GetCurveSegment(i)\n            t = min(c.GetEndPoint(0).DistanceTo(a), c.GetEndPoint(1).DistanceTo(a))\n            if best is None or t < best:\n                best, host = t, el\n    if best is None or best < from_mm(0.5):\n        return None\n    return best, host\n\n\ndef make_probe(solids, z_list):\n    def probe_for_edge(a, u, n):\n        def probe(s):\n            # Lấy mặt gần nhất trong các cao độ: ô cửa tia thấp lọt qua, tia cao gặp lanh tô\n            x, y = a[0] + u[0] * s, a[1] + u[1] * s\n            best = None\n            for z in z_list:\n                p0 = XYZ(from_mm(x - n[0] * RAY_BACK_MM), from_mm(y - n[1] * RAY_BACK_MM), z)\n                p1 = XYZ(from_mm(x + n[0] * RAY_MM), from_mm(y + n[1] * RAY_MM), z)\n                h = first_hit(solids, p0, p1)\n                if h is not None and (best is None or h[0] < best[0]):\n                    best = h\n            return None if best is None else (to_mm(best[0]) - RAY_BACK_MM, id_value(best[1].Id))\n        return probe\n    return probe_for_edge\n\n\n# --- Đo mạch lát sàn -----------------------------------------------------------------\n_PLAN_VIEWS = {}\n\n\ndef temp_plan(level):\n    \"\"\"View mặt bằng tạm của level (gọi trong Transaction sẽ RollBack).\"\"\"\n    key = id_value(level.Id)\n    if key not in _PLAN_VIEWS:\n        vft = [t for t in FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElements()\n               if t.ViewFamily == ViewFamily.FloorPlan][0]\n        v = ViewPlan.Create(doc, vft.Id, level.Id)\n        if v.ViewTemplateId is not None and id_value(v.ViewTemplateId) > 0:\n            v.ViewTemplateId = ElementId.InvalidElementId\n        doc.Regenerate()\n        _PLAN_VIEWS[key] = v\n    return _PLAN_VIEWS[key]\n\n\ndef measure_floor_joints(src, axes):\n    \"\"\"Vị trí mạch của Model pattern trên mặt sàn WC theo từng trục (đo bằng Dimension tới đường mạch – chuỗi tham chiếu\n    '<mặt sàn>/k' – trên view mặt bằng tạm). Gọi trong Transaction sẽ RollBack. Trả về {khóa trục: (bước, pha)}.\"\"\"\n    fl = src.el\n    tops = HostObjectUtils.GetTopFaces(fl)\n    if not tops or tops.Count == 0:\n        return {}\n    fs = tops[0].ConvertToStableRepresentation(doc)\n    view = temp_plan(src.level)\n    pts = [p for loop in src.loops for e in loop for p in e]\n    z = src.level.Elevation\n    result = {}\n    for key, u in axes.items():\n        n = (-u[1], u[0])\n        ts = [p[0] * u[0] + p[1] * u[1] for p in pts]\n        cs = [p[0] * n[0] + p[1] * n[1] for p in pts]\n        tmin, tmax = min(ts) - 500.0, max(ts) + 500.0\n        cn = (min(cs) + max(cs)) / 2.0\n\n        def pt(t, c):\n            return XYZ(from_mm(u[0] * t + n[0] * c), from_mm(u[1] * t + n[1] * c), z)\n\n        rp = doc.Create.NewReferencePlane(pt(tmin, cn - 1000.0), pt(tmin, cn + 1000.0), XYZ.BasisZ, view)\n        doc.Regenerate()\n        line = Line.CreateBound(pt(tmin - 100.0, cn), pt(tmax, cn))\n        pos = []\n        for k in range(HATCH_TRY):\n            if len(set(round(p, 1) for p in pos)) >= 3:\n                break\n            st = SubTransaction(doc)\n            st.Start()\n            try:\n                ra = ReferenceArray()\n                ra.Append(rp.GetReference())\n                ra.Append(Reference.ParseFromStableRepresentation(doc, u\"{}/{}\".format(fs, k)))\n                d = doc.Create.NewDimension(view, line, ra)\n                doc.Regenerate()\n                v = d.Value\n                if v is not None and v > 0:\n                    pos.append(tmin + to_mm(v))\n            except Exception:\n                pass\n            finally:\n                st.RollBack()\n        g = joint_grid(pos)\n        if g is not None:\n            result[key] = g\n    return result\n\n\n# --- Tạo tường ốp --------------------------------------------------------------------\ndef existing_cladding():\n    \"\"\"Tường ốp của tool: [(Id, (x, y) trung điểm mm)].\"\"\"\n    out = []\n    for w in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n        if comments(w).startswith(COMMENT_TAG) and isinstance(w.Location, LocationCurve):\n            p = w.Location.Curve.Evaluate(0.5, True)\n            out.append((id_value(w.Id), (to_mm(p.X), to_mm(p.Y)), w.LevelId))\n    return out\n\n\ndef old_cladding_in(src, old):\n    pts = [p for loop in src.loops for e in loop for p in e]\n    x0, x1 = min(p[0] for p in pts) - OLD_PAD_MM, max(p[0] for p in pts) + OLD_PAD_MM\n    y0, y1 = min(p[1] for p in pts) - OLD_PAD_MM, max(p[1] for p in pts) + OLD_PAD_MM\n    return [i for i, (x, y), lv in old if lv == src.level.Id and x0 <= x <= x1 and y0 <= y <= y1]\n\n\ndef create_cladding(src, seg, wtype, height_ft, offset_ft):\n    z = src.level.Elevation\n    p0 = XYZ(from_mm(seg[\"p0\"][0]), from_mm(seg[\"p0\"][1]), z)\n    p1 = XYZ(from_mm(seg[\"p1\"][0]), from_mm(seg[\"p1\"][1]), z)\n    w = Wall.Create(doc, Line.CreateBound(p0, p1), wtype.Id, src.level.Id, height_ft, offset_ft, False, False)\n    rb = w.get_Parameter(BuiltInParameter.WALL_ATTR_ROOM_BOUNDING)\n    if rb is not None and not rb.IsReadOnly:\n        rb.Set(0)\n    cm = w.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    if cm is not None and not cm.IsReadOnly:\n        cm.Set(u\"{} {}\".format(COMMENT_TAG, id_value(src.el.Id)))\n    WallUtils.DisallowWallJoinAtEnd(w, 0)\n    WallUtils.DisallowWallJoinAtEnd(w, 1)\n    return w\n\n\ndef face_room(w, seg):\n    \"\"\"Mặt ngoài (Exterior) của lớp ốp quay vào WC.\"\"\"\n    o = w.Orientation\n    if o.X * seg[\"n\"][0] + o.Y * seg[\"n\"][1] > 0:\n        w.Flip()\n\n\ndef join_hosts(w, seg):\n    ok, fail = 0, []\n    for hid in seg[\"hosts\"]:\n        host = doc.GetElement(ElementId(int(hid)))\n        if host is None:\n            continue\n        try:\n            if not JoinGeometryUtils.AreElementsJoined(doc, w, host):\n                JoinGeometryUtils.JoinGeometry(doc, w, host)\n            ok += 1\n        except Exception:\n            fail.append(hid)\n    return ok, fail\n\n\ndef preview_lines(sources, extra_z_ft):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n        out = []\n        for src in sources:\n            z = to_mm(src.base + extra_z_ft)\n            for s in src.segs:\n                out.append(DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(s[\"p0\"][0], s[\"p0\"][1], z),\n                                                       DSPoint.ByCoordinates(s[\"p1\"][0], s[\"p1\"][1], z)))\n        return out\n    except Exception:\n        return []\n\n\nHEADER = [u\"Nguồn\", u\"Id nguồn\", u\"Mô tả\", u\"Đoạn\", u\"Dài (mm)\", u\"Khe tới mặt tường (mm)\", u\"Tường / cột chủ\",\n          u\"Wall type\", u\"Căn mạch\", u\"Kết quả\", u\"ElementId\", u\"Nối khối\"]\n\n\ndef write_log(rows, dry_run, settings):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"OpTuongWC_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Thiết lập: {}\\n\".format(settings))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef main(tile_text, direction, height_mm, base_mm, filters, id_text, template_name, do_join, dry_run,\n         align=True, replace_old=False):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    try:\n        small, large, tw, th, suffix = parse_tile(tile_text, direction)\n    except ValueError as ex:\n        raise StopReport([u\"DỪNG: {}\".format(ex)])\n    if height_mm <= 0:\n        raise StopReport([u\"DỪNG: chiều cao ốp IN[2] phải > 0.\"])\n\n    types = wall_types_by_name()\n    tname = u\"{}{}x{}{}\".format(TYPE_PREFIX, fmt_mm(small), fmt_mm(large), suffix)\n    template = types.get(norm(template_name)) if template_name else None\n    base_type = types.get(norm(tname))\n    if base_type is None and template is None:\n        raise StopReport([u\"DỪNG: chưa có wall type '{}' và không có type mẫu '{}' (IN[6]) để nhân bản. Các type ốp: {}\"\n                          .format(tname, template_name, u\", \".join(sorted(k for k in types if k.startswith(norm(TYPE_PREFIX))))\n                                  or u\"không có\")])\n    ref_type = base_type or template\n    thickness = to_mm(ref_type.Width)\n    if thickness <= 0 or thickness > 60:\n        raise StopReport([u\"DỪNG: type '{}' dày {:.1f} mm – không phải lớp ốp.\".format(type_name(ref_type), thickness)])\n\n    sources, how = collect_sources(id_text, filters)\n    if not sources:\n        raise StopReport([u\"DỪNG: không tìm thấy sàn / phòng WC ({}; lọc '{}').\".format(how, u\";\".join(filters))])\n\n    old = existing_cladding()\n    height_ft, base_ft = from_mm(height_mm), from_mm(base_mm)\n    z_rel = [from_mm(LOW_MM), max(from_mm(LOW_MM), height_ft - from_mm(HIGH_GAP_MM))]\n    for src in sources:\n        src.old = old_cladding_in(src, old)\n        if src.old and not replace_old:\n            src.status = u\"Bỏ qua: đã có {} đoạn ốp của tool (Id {}…) – bật IN[10] để xoá và dựng lại\".format(\n                len(src.old), u\", \".join(str(i) for i in src.old[:3]))\n            continue\n        bottom = src.base + base_ft\n        solids = obstacle_solids(src, bottom + height_ft)\n        probe = make_probe(solids, [bottom + z for z in z_rel])\n        interior = []\n        for loop in src.loops:\n            interior.append([e[0] for e in loop])\n        for loop in src.loops:\n            src.segs += plan_loop(loop, interior, probe, thickness)\n        if not src.segs:\n            src.status = u\"Không tìm thấy mặt tường quanh biên\"\n        perim = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for loop in src.loops for a, b in loop)\n        bare = perim - sum(s[\"raw\"] for s in src.segs)\n        if bare > 100.0:\n            src.warn.append(u\"{:.2f} m biên không có tường / cột trong {:.0f} mm (lối mở, hộp kỹ thuật, thiếu \"\n                            u\"tường?) – không ốp\".format(bare / 1000.0, RAY_MM))\n        # Gốc mạch ngang so với cốt level chân tường (mạch ngang của mẫu tính từ level)\n        src.v0 = wrap(to_mm(src.base - src.level.Elevation) + base_mm, th) if align else 0.0\n        src.tname = tname + mach_suffix(src.v0)\n        for s in src.segs:\n            s[\"align\"] = u\"tắt\" if not align else u\"\"\n\n    jobs = [s for s in sources if s.segs and not s.status]\n\n    # Căn mạch đứng: đo mạch sàn (transaction tạm, luôn hoàn tác) rồi tách đoạn ốp tại một mạch sàn\n    if align and jobs:\n        floor_jobs = [s for s in jobs if isinstance(s.el, Floor)]\n        for s in jobs:\n            if not isinstance(s.el, Floor):\n                s.warn.append(u\"nguồn là Room – không có mặt sàn để căn mạch đứng\")\n        grids = {}\n        if floor_jobs:\n            TransactionManager.Instance.ForceCloseTransaction()\n            tx = Transaction(doc, u\"ARV - đo mạch sàn (tạm)\")\n            tx.Start()\n            try:\n                for s in floor_jobs:\n                    axes = dict(axis_key(seg[\"u\"]) for seg in s.segs)\n                    try:\n                        grids[id_value(s.el.Id)] = measure_floor_joints(s, axes)\n                    except Exception as ex:\n                        s.warn.append(u\"không đo được mạch sàn ({})\".format(ex))\n            finally:\n                tx.RollBack()\n                _PLAN_VIEWS.clear()\n        for s in floor_jobs:\n            g = grids.get(id_value(s.el.Id), {})\n            new = []\n            for seg in s.segs:\n                key, au = axis_key(seg[\"u\"])\n                if key in g:\n                    new += split_at_joint(seg, au, g[key])\n                else:\n                    seg[\"align\"] = u\"không đo được mạch sàn theo trục {:.1f}°\".format(key)\n                    new.append(seg)\n            s.segs = new\n            s.grids = g\n\n    # Wall type theo từng gốc mạch ngang\n    need = sorted(set(s.tname for s in jobs))\n    v0_of = dict((s.tname, s.v0) for s in jobs)\n    missing = [n for n in need if norm(n) not in types]\n    notes = []\n    join_fail = []\n    deleted = 0\n    if not dry_run and jobs:\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            wtypes = {}\n            for n in need:\n                wtypes[n] = types.get(norm(n)) or ensure_wall_type(n, base_type or template, small, large, suffix,\n                                                                   tw, th, notes, v0_of[n])\n            for src in jobs:\n                for i in src.old:\n                    el = doc.GetElement(ElementId(int(i)))\n                    if el is not None and comments(el).startswith(COMMENT_TAG):\n                        doc.Delete(el.Id)\n                        deleted += 1\n            created = []\n            for src in jobs:\n                offset = (src.base - src.level.Elevation) + base_ft\n                for seg in src.segs:\n                    w = create_cladding(src, seg, wtypes[src.tname], height_ft, offset)\n                    seg[\"id\"] = id_value(w.Id)\n                    created.append((w, seg))\n                src.status = u\"Đã tạo\"\n            doc.Regenerate()\n            for w, seg in created:\n                face_room(w, seg)\n                if do_join:\n                    ok, fail = join_hosts(w, seg)\n                    seg[\"join\"] = u\"{} / {}\".format(ok, ok + len(fail))\n                    join_fail += [(seg[\"id\"], f) for f in fail]\n            tx.Commit()\n        except Exception as ex:\n            tx.RollBack()\n            return [u\"LỖI khi tạo ốp tường, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n\n    # Báo cáo\n    rows = []\n    total_len = 0.0\n    nseg = nsplit = 0\n    for src in sources:\n        if not src.segs:\n            rows.append([src.kind, id_value(src.el.Id), src.label, u\"—\", u\"\", u\"\", u\"\", u\"\", u\"\", src.status, u\"\", u\"\"])\n            continue\n        for k, s in enumerate(src.segs, 1):\n            total_len += s[\"length\"]\n            nseg += 1\n            nsplit += 1 if s.get(\"align\", u\"\").startswith(u\"tách\") else 0\n            rows.append([src.kind, id_value(src.el.Id), src.label, k, u\"{:.0f}\".format(s[\"length\"]),\n                         u\"{:.1f}\".format(s[\"d\"]), u\", \".join(str(h) for h in sorted(s[\"hosts\"])), src.tname,\n                         s.get(\"align\", u\"\"), src.status or (u\"Sẽ tạo\" if dry_run else u\"\"), s.get(\"id\", u\"\"),\n                         s.get(\"join\", u\"\")])\n    area = total_len * height_mm / 1e6\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\")]\n    n_skip = sum(1 for s in sources if s.status.startswith(u\"Bỏ qua\"))\n    n_old = sum(len(s.old) for s in jobs)\n    report.append(u\"Phạm vi: {} – {} nguồn ({} đã có ốp, bỏ qua){}\".format(\n        how, len(sources), n_skip, u\" – ốp cũ {} {} đoạn\".format(u\"sẽ xoá\" if dry_run else u\"đã xoá\",\n                                                                  n_old if dry_run else deleted) if n_old else u\"\"))\n    report.append(u\"Gạch {}x{} {} – dày {:.0f} mm – ô mẫu {} rộng × {} cao\".format(\n        fmt_mm(small), fmt_mm(large), u\"đặt dọc\" if suffix else (u\"đặt ngang\" if small != large else u\"vuông\"),\n        thickness, fmt_mm(tw), fmt_mm(th)))\n    for n in need:\n        report.append(u\"Wall type '{}' {}\".format(n, u\"(có sẵn)\" if n not in missing else (\n            u\"(sẽ nhân bản từ '{}', mẫu mạch ngang dời {:.0f})\".format(type_name(base_type or template), v0_of[n])\n            if dry_run else u\"(đã nhân bản)\")))\n    report.append(u\"Cao ốp {} mm, chân ốp = mặt sàn WC {:+.0f} mm. Đoạn ốp {}: {} – tổng dài {:.2f} m – diện tích \"\n                  u\"thô ≈ {:.2f} m² (chưa trừ cửa)\".format(fmt_mm(height_mm), base_mm,\n                                                          u\"sẽ tạo\" if dry_run else u\"đã tạo\", nseg,\n                                                          total_len / 1000.0, area))\n    if align:\n        report.append(u\"Căn mạch theo lát sàn: BẬT – {} / {} đoạn bắt đầu tại mạch sàn; hàng gạch đầu từ mặt sàn WC.\".format(\n            nsplit, nseg))\n        for src in jobs:\n            g = getattr(src, \"grids\", None)\n            if g:\n                report.append(u\"  Mạch sàn {} ({}): {}\".format(id_value(src.el.Id), src.label, u\"; \".join(\n                    u\"trục {:.0f}° bước {:.0f} pha {:.1f}\".format(k, v[0], v[1]) for k, v in sorted(g.items()))))\n    for n in notes:\n        report.append(n)\n    if do_join:\n        report.append(u\"Nối khối lớp ốp với tường chủ: BẬT – cửa đi / cửa sổ cắt lớp ốp.\")\n    else:\n        report.append(u\"CẢNH BÁO: tắt nối khối (IN[7]) – lớp ốp chạy liền qua ô cửa có lanh tô, phải tự cắt.\")\n    if join_fail:\n        report.append(u\"CẢNH BÁO: {} cặp không nối được (ốp Id – tường Id): {}\".format(\n            len(join_fail), u\"; \".join(u\"{}–{}\".format(a, b) for a, b in join_fail[:10])))\n    for src in sources:\n        for w in sorted(set(src.warn)):\n            report.append(u\"CẢNH BÁO {} {} ({}): {}\".format(src.kind, id_value(src.el.Id), src.label, w))\n    settings = u\"gạch {}x{}{}, cao {}, chân {}, căn mạch {}, type {}\".format(\n        fmt_mm(small), fmt_mm(large), suffix, fmt_mm(height_mm), fmt_mm(base_mm), u\"bật\" if align else u\"tắt\",\n        u\", \".join(need))\n    try:\n        report.append(u\"Log: \" + write_log(rows, dry_run, settings))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra tim lớp ốp (OUT[1]) + log. Đúng thì đổi Dry-run = False và Run lại. \"\n                      u\"Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows]\n    return report, preview_lines(sources, base_ft)\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\nif DYNAMO:\n    import traceback\n\n    def _num(v, default):\n        try:\n            return float(v) if v is not None and u\"{}\".format(v).strip() != u\"\" else default\n        except Exception:\n            return default\n\n    try:\n        OUT = list(main(\n            (IN[0] or u\"300x600\").strip(),\n            (IN[1] or u\"NGANG\").strip(),\n            _num(IN[2], 2400.0),\n            _num(IN[3], 0.0),\n            split_filters(IN[4] or u\"WC;vệ sinh\"),\n            (IN[5] or u\"\").strip(),\n            (IN[6] or u\"GO-Gạch ốp-300x600\").strip(),\n            True if IN[7] is None else bool(IN[7]),\n            True if IN[8] is None else bool(IN[8]),\n            True if len(IN) <= 9 or IN[9] is None else bool(IN[9]),\n            False if len(IN) <= 10 or IN[10] is None else bool(IN[10]),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"OpTuongWC_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "891d12c27ec84354a47c33d7edb4c2a3",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "39ef5d6874fe4a29828423db8e39a9e3",
+          "Name": "IN[0]",
+          "Description": "IN[0] Kích thước gạch ốp (mm) – VD 300x600, 300x300, 600x600, 400x800",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9eab92827ffe401bbdc3dfea01999248",
+          "Name": "IN[1]",
+          "Description": "IN[1] Hướng lát: NGANG (cạnh dài nằm ngang) / DOC",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7c0fa13c7f684c4bb41c25bc1d492d7c",
+          "Name": "IN[2]",
+          "Description": "IN[2] Chiều cao ốp (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d71375d4339649ea8022adc78d25ca16",
+          "Name": "IN[3]",
+          "Description": "IN[3] Chân ốp so với mặt sàn hoàn thiện WC (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "af3a915ab99d4e6bb565585046d50a24",
+          "Name": "IN[4]",
+          "Description": "IN[4] Nhận WC theo Comments / tên type sàn / tên phòng (cách ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fe00ffda9d2b4daf9e8a66bc905e2c14",
+          "Name": "IN[5]",
+          "Description": "IN[5] Id sàn / phòng WC (trống = đang chọn; không chọn = cả level của view)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a9d2c23a488846a795eceda99944c6f4",
+          "Name": "IN[6]",
+          "Description": "IN[6] Wall type ốp mẫu để nhân bản",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f2bd17f840624e4e934189676b5ac191",
+          "Name": "IN[7]",
+          "Description": "IN[7] Nối khối với tường chủ (cửa cắt lớp ốp)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "189c65054d9b4571a6c160c8fa71fef3",
+          "Name": "IN[8]",
+          "Description": "IN[8] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "166ad964db8047afb678442b226c75bf",
+          "Name": "IN[9]",
+          "Description": "IN[9] Căn mạch ốp trùng mạch lát sàn",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6fe83ac3adc44ddd8762b33b05f08ef5",
+          "Name": "IN[10]",
+          "Description": "IN[10] Xoá ốp cũ của tool trong WC rồi dựng lại",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "121d31eb50a044ca9123a10f96513995",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "cbe7994dcf914eb79480a0fb0415f268",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "0153691eadb046e4afa70e3b2a12894c",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f5654a32e1b149bf8f3a5949e2388df5",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "d22834b719a64608a1635577adde0480",
+      "End": "39ef5d6874fe4a29828423db8e39a9e3",
+      "Id": "8c342de6ec00422a9bf673793f817dbd",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "11019060bb80446cbb93038f28b2671f",
+      "End": "9eab92827ffe401bbdc3dfea01999248",
+      "Id": "5f3b1ed3f4974a69be9360b4e9c1c77f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b3eddaca84a2419cb191ee55dabf2918",
+      "End": "7c0fa13c7f684c4bb41c25bc1d492d7c",
+      "Id": "0db17d828d0647a28bfce5e38bb58960",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e1a455acb1b14f51bf380ed6956ae631",
+      "End": "d71375d4339649ea8022adc78d25ca16",
+      "Id": "6c0c21c0f7a849709fe56f1e2665fd23",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e5aa9bfa62fc4c6aa93c8e4fc796297e",
+      "End": "af3a915ab99d4e6bb565585046d50a24",
+      "Id": "87ed6f00a27344aa938a6bcea3fc0cd9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a8d8369cc6f74c85b71497f34804011e",
+      "End": "fe00ffda9d2b4daf9e8a66bc905e2c14",
+      "Id": "a3dd2ce234174d16ac36117b6db62011",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "c855161e66c0405dac1a84b615487b0a",
+      "End": "a9d2c23a488846a795eceda99944c6f4",
+      "Id": "bbb1369410f4430990d2a4015217a787",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "cf461dd0b2cd4e18bdf3cd4f540d9f7d",
+      "End": "f2bd17f840624e4e934189676b5ac191",
+      "Id": "6bb6deeffb394005bba40e56929fa712",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d6797b80f91b40a5a03d30d148a3a1ff",
+      "End": "189c65054d9b4571a6c160c8fa71fef3",
+      "Id": "d81c55a31969496aacce3cf6ed656bec",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0f22c53afc354912892ce60cf218d85b",
+      "End": "166ad964db8047afb678442b226c75bf",
+      "Id": "73b8c9c420ea40f3a4b8ad54702eda1f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1151fa19a5b0434cab8b43336cc55a7e",
+      "End": "6fe83ac3adc44ddd8762b33b05f08ef5",
+      "Id": "3074732a7b144681b03f473abb9ff68d",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "121d31eb50a044ca9123a10f96513995",
+      "End": "0153691eadb046e4afa70e3b2a12894c",
+      "Id": "51256325ac2d47c49ff1b7cb3d27d150",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": false,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "d6ea53b4fcc84737ae3af779959d762a",
+        "Name": "IN[0] Kích thước gạch ốp (mm) – VD 300x600, 300x300, 600x600, 400x800",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "5f986f5049fe4c8e89acd5dfc52beee8",
+        "Name": "IN[1] Hướng lát: NGANG (cạnh dài nằm ngang) / DOC",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "4c7405d5f9874ca195b22403d7cafc75",
+        "Name": "IN[2] Chiều cao ốp (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "2197f14b93b74d7c849eaa37cccbbf29",
+        "Name": "IN[3] Chân ốp so với mặt sàn hoàn thiện WC (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "b0f1805c0eb5400e9b39ee1e9e2c92ae",
+        "Name": "IN[4] Nhận WC theo Comments / tên type sàn / tên phòng (cách ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "f00b989e72b94a1bac7df851748b0bd5",
+        "Name": "IN[5] Id sàn / phòng WC (trống = đang chọn; không chọn = cả level của view)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "81aa176c28794a9f87494ecbcbf2b9bb",
+        "Name": "IN[6] Wall type ốp mẫu để nhân bản",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "d270fd72d10c4dc09aebbb296569551d",
+        "Name": "IN[7] Nối khối với tường chủ (cửa cắt lớp ốp)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "a68d3d6c6331456d920c82922a453745",
+        "Name": "IN[8] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "aaa9e9178fda406484e87fdf3c368f94",
+        "Name": "IN[9] Căn mạch ốp trùng mạch lát sàn",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "3f0d97bf86fb4e2e97e7aa45b2341eef",
+        "Name": "IN[10] Xoá ốp cũ của tool trong WC rồi dựng lại",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "891d12c27ec84354a47c33d7edb4c2a3",
+        "Name": "Tạo ốp tường WC (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 750.0,
+        "Y": 400.0
+      },
+      {
+        "Id": "cbe7994dcf914eb79480a0fb0415f268",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1150.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "bbe5e52a667c43b2a43b914040240623",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Chọn sàn hoàn thiện WC (hoặc Room WC) trong Revit, hoặc không chọn gì và mở view mặt bằng của tầng để làm mọi WC trên tầng. Chọn kích thước gạch ở IN[0] + hướng ở IN[1]. IN[9]: mạch ốp trùng mạch lát sàn. IN[10]: WC đã có ốp → xoá ốp cũ của tool rồi dựng lại. Giữ Dry-run = True cho lần chạy đầu, đọc Báo cáo rồi mới đổi False.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "d6ea53b4fcc84737ae3af779959d762a",
+          "5f986f5049fe4c8e89acd5dfc52beee8",
+          "4c7405d5f9874ca195b22403d7cafc75",
+          "2197f14b93b74d7c849eaa37cccbbf29",
+          "b0f1805c0eb5400e9b39ee1e9e2c92ae",
+          "f00b989e72b94a1bac7df851748b0bd5",
+          "81aa176c28794a9f87494ecbcbf2b9bb",
+          "d270fd72d10c4dc09aebbb296569551d",
+          "a68d3d6c6331456d920c82922a453745",
+          "aaa9e9178fda406484e87fdf3c368f94",
+          "3f0d97bf86fb4e2e97e7aa45b2341eef"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -125.0,
+        "Width": 570.0,
+        "Height": 1440.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1210.0,
+        "TextblockHeight": 115.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "467083195e8b4c43b88daaa0902d7c41",
+        "Title": "2. Tạo ốp tường (Python)",
+        "DescriptionText": "Dò mặt tường Revit quanh biên WC, ốp mặt ngoài áp mặt tường, cao từ mặt sàn WC; lối mở không ốp, ô cửa ốp liền rồi Join với tường chủ để cửa cắt. Căn mạch: đo mạch sàn, tách đoạn ốp tại mạch sàn (gốc mạch đứng = điểm đầu tường), mẫu gạch dời mạch ngang về mặt sàn WC. Wall type GO-Gạch ốp-{gạch}, tự nhân bản + vật liệu + Model pattern khi chưa có. Chặn file central, log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: CHƯA DUYỆT.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "891d12c27ec84354a47c33d7edb4c2a3"
+        ],
+        "HasNestedGroups": false,
+        "Left": 740.0,
+        "Top": 189.0,
+        "Width": 274.0,
+        "Height": 893.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 400.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 201.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "b1ecf62d45e946698cbf424710e23935",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "Tóm tắt, cảnh báo, đường dẫn log, từng đoạn ốp. Tim lớp ốp xem trước hiện trên nền 3D Dynamo.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "cbe7994dcf914eb79480a0fb0415f268"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1140.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 230.95821381568717,
+    "Y": -612.6617603209827,
+    "Zoom": 0.773683320219751
+  }
+}

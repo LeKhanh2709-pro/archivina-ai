@@ -1,0 +1,9 @@
+﻿Rong,SoCanh,Family,Type,TypeMau,DaoMat,DaoBanLe
+# TẠM – bảng ánh xạ của dự án "S- TO HIEU". Chuyển vào projects/<mã>/ khi có mã dự án.
+# Lập từ dry-run 2026-10-16 (TƯỜNG TẦNG 4.dwg, level TẦNG 2): 700×1, 800×2, 850×5, 900×1 – đều 1 cánh.
+# Type 700/850/900 chưa có trong mô hình: công cụ duplicate từ DW01_800X2200 2 và đặt Width = Rong.
+# Family D1_WO_OP1 chưa theo quy ước ARV_<Category>_<Mô tả>_<Biến thể> (standards/naming-iso19650.md mục 6).
+700,1,D1_WO_OP1,DW01_700X2200,DW01_800X2200 2,0,0
+800,1,D1_WO_OP1,DW01_800X2200 2,,0,0
+850,1,D1_WO_OP1,DW01_850X2200,DW01_800X2200 2,0,0
+900,1,D1_WO_OP1,DW01_900X2200,DW01_800X2200 2,0,0

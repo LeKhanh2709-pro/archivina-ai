@@ -1,0 +1,81 @@
+{
+ "key": "MBDinhViCua",
+ "title": "MB định vị cửa",
+ "summary": "Tạo mặt bằng định vị cửa từ mặt bằng đang mở (người dùng yêu cầu 2026-11-02, mẫu theo ảnh mặt bằng chống cháy lan): - Nhân bản view mặt bằng gốc (Duplicate, KHÔNG kèm chú thích / filled region), đặt tên theo mẫu IN[5] (vd. \"MẶT BẰNG ĐỊNH VỊ CỬA - Tầng 1\"). View tên đó đã có thì không tạo thêm, chỉ mở view đó. - Gán view template IN[1] (\"MẶT BẰNG ĐỊNH VỊ CỬA\"). Template đã có trong dự án thì dùng nguyên, KHÔNG sửa (giữ phần người dùng đã chỉnh tay). Chưa có thì tạo: lấy template nền (mặc định template của view gốc, tức đồ hoạ người dùng đang thấy; IN[2] có từ khoá thì lấy template mặt bằng có chữ đó, ưu tiên cùng tỉ lệ), rồi + tường, sàn: Halftone (xám như ảnh mẫu); sàn: tắt mẫu tô bề mặt (nền trắng); + cửa đi, cửa sổ: bỏ Halftone (nét đậm để định vị cửa, IN[8]); + ẩn nội thất / thiết bị vệ sinh (IN[4]) để công cụ Tag cửa không phải tạo template \"(ẩn nội thất)\"; + bật hiện cửa đi, cửa sổ, tag cửa đi, tag cửa sổ. API không nhân bản được view template → áp một lần template nền vào view mới (ApplyViewTemplateParameters) rồi CreateViewTemplate. (CreateViewTemplate lấy thiết lập riêng của view, KHÔNG theo template đang gán.) - Không xoá, không sửa view gốc, không sửa template nền.",
+ "transaction": "ARV - MB định vị cửa",
+ "source": "MatBang_DinhViCua.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên view mặt bằng gốc (để trống = view đang mở)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên view template mặt bằng định vị cửa",
+   "default": "MẶT BẰNG ĐỊNH VỊ CỬA",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Từ khoá tìm template nền khi phải tạo template mới (trống = template của view gốc)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Hạng mục để Halftone (tên BuiltInCategory), cách nhau bằng ;",
+   "default": "OST_Walls;OST_Floors",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Hạng mục cần ẩn (tên BuiltInCategory), cách nhau bằng ;",
+   "default": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Mẫu tên view mới ({tang} = tên tầng, {view} = tên view gốc)",
+   "default": "MẶT BẰNG ĐỊNH VỊ CỬA - {tang}",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run (True = chỉ báo cáo)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 7,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Mở view mới sau khi tạo",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "str",
+   "label": "Hạng mục bỏ Halftone (tên BuiltInCategory), cách nhau bằng ;",
+   "default": "OST_Doors;OST_Windows",
+   "kind": "normal"
+  }
+ ]
+}

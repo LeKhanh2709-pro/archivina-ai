@@ -1,0 +1,11 @@
+﻿Rong,SoCanh,Family,Type,TypeMau,DaoMat,DaoBanLe
+# MẪU – sửa theo dòng "Bề rộng nhận diện được" của báo cáo dry-run và family cửa đã load vào mô hình.
+# Rong = bề rộng cửa (mm), khớp trong dung sai ±50 mm. SoCanh = 1 hoặc 2 (để trống = mọi số cánh).
+# TypeMau (tuỳ chọn): type có sẵn cùng family. Nếu mô hình chưa có Type, công cụ duplicate từ TypeMau và đặt Width = Rong.
+# DaoMat / DaoBanLe = 1 nếu chạy thử thấy cửa loại đó mở ngược / bản lề ngược.
+# Tên family theo standards/naming-iso19650.md mục 6: ARV_<Category>_<Mô tả>_<Biến thể>.
+700,1,ARV_Door_Swing1,700x2200,900x2200,0,0
+800,1,ARV_Door_Swing1,800x2200,900x2200,0,0
+900,1,ARV_Door_Swing1,900x2200,,0,0
+1400,2,ARV_Door_Swing2,1400x2200,,0,0
+1600,2,ARV_Door_Swing2,1600x2200,1400x2200,0,0

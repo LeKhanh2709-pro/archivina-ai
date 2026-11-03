@@ -1,0 +1,112 @@
+{
+  "ten": "TagCua_TuDong",
+  "mo_ta": "Bấm trên mặt bằng tầng: tạo / mở mặt bằng định vị cửa 'MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>' (template 'MẶT BẰNG ĐỊNH VỊ CỬA': tường + sàn Halftone, cửa nét đậm, ẩn nội thất / thiết bị vệ sinh / thiết bị cơ điện) rồi tự động tag cửa đi (AV_Door Tag) + cửa sổ (AV_Window Tag) trên đó: bỏ đối tượng Type Comments Louver; tag khung chữ nhật 2 ô: Type Mark / rộngXcao (mm); tag ưu tiên ngay giữa cửa, không đè cửa / cánh mở / tường / chữ; lệch thì có leader; bấm lại không tạo trùng. Mặc định Dry-run.",
+  "py": "TagCua_TuDong.py",
+  "dau_vao": [
+    {
+      "ten": "Tên view mặt bằng (trống = view đang mở)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Family tag cửa đi",
+      "kieu": "string",
+      "gia_tri": "AV_Door Tag"
+    },
+    {
+      "ten": "Family tag cửa sổ",
+      "kieu": "string",
+      "gia_tri": "AV_Window Tag"
+    },
+    {
+      "ten": "Family tag lam / louver",
+      "kieu": "string",
+      "gia_tri": "AV_Louver Tag"
+    },
+    {
+      "ten": "Từ khoá nhận lam / louver (;)",
+      "kieu": "string",
+      "gia_tri": "Lam;Louver"
+    },
+    {
+      "ten": "Dry-run (True = chỉ báo cáo)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Tạo + gán view template ẩn nội thất",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Hạng mục nội thất cần ẩn (BuiltInCategory, ;)",
+      "kieu": "string",
+      "gia_tri": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures"
+    },
+    {
+      "ten": "Tên tham số chống cháy EI (;)",
+      "kieu": "string",
+      "gia_tri": "Fire Rating;EI;Giới hạn chịu lửa"
+    },
+    {
+      "ten": "Khoảng hở tag - vật cản (mm giấy)",
+      "kieu": "number",
+      "gia_tri": 1.0
+    },
+    {
+      "ten": "Thư mục log (trống = Documents, ARV_Logs)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Type Comments không tag (;)",
+      "kieu": "string",
+      "gia_tri": "Louver"
+    },
+    {
+      "ten": "Bỏ tiền tố nhãn Type Mark trong family tag (S3.)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Luôn bật leader",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Đặt lại vị trí tag cửa / cửa sổ đã có",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Xoá tag trên đối tượng có Type Comments không tag",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Tạo / mở mặt bằng định vị cửa rồi tag trên đó",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Tên view template mặt bằng định vị cửa",
+      "kieu": "string",
+      "gia_tri": "MẶT BẰNG ĐỊNH VỊ CỬA"
+    },
+    {
+      "ten": "Mẫu tên mặt bằng định vị cửa ({tang}, {view})",
+      "kieu": "string",
+      "gia_tri": "MẶT BẰNG ĐỊNH VỊ CỬA - {tang}"
+    },
+    {
+      "ten": "Thêm ô rộngXcao (mm) + khung 2 ô vào tag (tạm tắt: chờ family nguồn nhãn Width mm)",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Thư mục family nguồn nhãn (trống = lib\tag_cua của nút)",
+      "kieu": "string",
+      "gia_tri": ""
+    }
+  ]
+}

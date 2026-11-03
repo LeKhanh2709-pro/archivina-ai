@@ -1,0 +1,259 @@
+{
+  "Uuid": "c6933b10-16ec-4dd5-819e-74be50003d58",
+  "IsCustomNode": false,
+  "Description": "CHỈ ĐỌC: khảo sát cách nhóm sheet (giai đoạn / hạng mục), khung tên, sheet có sẵn, kiểu viewport, bảng thống kê; xuất ảnh vài sheet. Không sửa model.",
+  "Name": "Sheet_KhaoSat",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "aee6215d5fc94388b7541905196017cd",
+      "Name": "Thư mục ghi kết quả",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "D:\\AI\\_tmp\\revit_sheet\\khaosat",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "D:\\AI\\_tmp\\revit_sheet\\khaosat",
+      "Id": "aee6215d5fc94388b7541905196017cd",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "285dce38994a41d5b7298172fdd00499",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# CHỈ ĐỌC: khảo sát để đặt view lên sheet tự động – cách nhóm sheet trong Project Browser (giai đoạn / hạng mục),\n# tham số sheet, khung tên (family, khổ, kích thước), sheet có sẵn (số hiệu, tên, view trên đó, vị trí viewport),\n# kiểu viewport, bảng thống kê cửa có sẵn; xuất ảnh vài sheet để xem bố cục.\n# INPUT\n#   IN[0] (str)  Thư mục ghi kết quả\n# OUTPUT\n#   OUT (list[str])\nimport os\nimport traceback\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nfrom RevitServices.Persistence import DocumentManager\nfrom System.Collections.Generic import List as NetList\n\n_thu_muc = IN[0]\nos.makedirs(_thu_muc, exist_ok=True)\nOUT = None\n\n\ndef _chinh():\n    global OUT\n    doc = DocumentManager.Instance.CurrentDBDocument\n    L = []\n\n    def p(s=\"\"):\n        L.append(u\"%s\" % s)\n\n    def mm(v):\n        return round(UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters), 1)\n\n    def ten(e):\n        try:\n            return Element.Name.GetValue(e)\n        except Exception:\n            try:\n                return e.Name\n            except Exception:\n                return \"?\"\n\n    def gt(pr):\n        if pr is None:\n            return None\n        try:\n            if pr.StorageType == StorageType.String:\n                return pr.AsString()\n            if pr.StorageType == StorageType.ElementId:\n                e = doc.GetElement(pr.AsElementId())\n                return ten(e) if e is not None else pr.AsValueString()\n            return pr.AsValueString()\n        except Exception:\n            return \"?\"\n\n    p(\"== A. CÁCH NHÓM SHEET TRONG PROJECT BROWSER\")\n    try:\n        bo = BrowserOrganization.GetCurrentBrowserOrganizationForSheets(doc)\n        p(\"Browser organization sheet: '%s' id %d\" % (ten(bo), bo.Id.Value))\n        for prm in bo.Parameters:\n            if prm.HasValue:\n                p(\"   tham số tổ chức: %s = %s\" % (prm.Definition.Name, gt(prm)))\n        try:\n            p(\"   sắp xếp theo: %s\" % bo.SortingParameterId.Value)\n        except Exception:\n            pass\n        for nm in dir(bo):\n            if \"Folder\" in nm or \"Sort\" in nm:\n                p(\"   member: \" + nm)\n    except Exception as ex:\n        p(\"Không đọc được browser organization: %s\" % ex)\n    for e in FilteredElementCollector(doc).OfClass(BrowserOrganization):\n        p(\"   có tổ chức: '%s' id %d\" % (ten(e), e.Id.Value))\n\n    p(\"\")\n    p(\"== B. SHEET CÓ SẴN\")\n    sheets = sorted(FilteredElementCollector(doc).OfClass(ViewSheet), key=lambda s: s.SheetNumber)\n    bo = None\n    try:\n        bo = BrowserOrganization.GetCurrentBrowserOrganizationForSheets(doc)\n    except Exception:\n        pass\n    for s in sheets:\n        thu_muc = \"\"\n        if bo is not None:\n            try:\n                thu_muc = \" / \".join(\"%s\" % fi.Name for fi in bo.GetFolderItems(s.Id))\n            except Exception as ex:\n                thu_muc = \"?%s\" % ex\n        tb = list(FilteredElementCollector(doc, s.Id).OfCategory(BuiltInCategory.OST_TitleBlocks).WhereElementIsNotElementType())\n        tbs = \", \".join(\"%s : %s\" % (doc.GetElement(t.GetTypeId()).FamilyName, ten(doc.GetElement(t.GetTypeId()))) for t in tb)\n        p(\"-- %s | %s | thư mục: %s | khung: %s | placeholder=%s\" % (s.SheetNumber, s.Name, thu_muc, tbs, s.IsPlaceholder))\n        for prm in s.Parameters:\n            try:\n                if prm.Definition is not None and not prm.IsReadOnly and prm.HasValue and prm.StorageType == StorageType.String:\n                    v = prm.AsString()\n                    if v:\n                        p(\"     %s = %s\" % (prm.Definition.Name, v))\n            except Exception:\n                pass\n        for vid in s.GetAllPlacedViews():\n            v = doc.GetElement(vid)\n            p(\"     view: %s [%s] 1:%s\" % (ten(v), v.ViewType, getattr(v, \"Scale\", \"-\")))\n        for vp in FilteredElementCollector(doc, s.Id).OfClass(Viewport):\n            c = vp.GetBoxCenter()\n            o = vp.GetBoxOutline()\n            p(\"     viewport %s kiểu '%s' tâm (%s,%s) khung %s x %s\" % (ten(doc.GetElement(vp.ViewId)), ten(doc.GetElement(vp.GetTypeId())),\n                                                                    mm(c.X), mm(c.Y), mm(o.MaximumPoint.X - o.MinimumPoint.X), mm(o.MaximumPoint.Y - o.MinimumPoint.Y)))\n        for si in FilteredElementCollector(doc, s.Id).OfClass(ScheduleSheetInstance):\n            if si.IsTitleblockRevisionSchedule:\n                continue\n            bb = si.get_BoundingBox(s)\n            p(\"     bảng: %s tại (%s,%s)\" % (ten(doc.GetElement(si.ScheduleId)), mm(si.Point.X), mm(si.Point.Y)))\n        for t in tb:\n            bb = t.get_BoundingBox(s)\n            if bb is not None:\n                p(\"     khung tên bbox (%s,%s)-(%s,%s)\" % (mm(bb.Min.X), mm(bb.Min.Y), mm(bb.Max.X), mm(bb.Max.Y)))\n\n    p(\"\")\n    p(\"== C. FAMILY KHUNG TÊN\")\n    for s in FilteredElementCollector(doc).OfClass(FamilySymbol).OfCategory(BuiltInCategory.OST_TitleBlocks):\n        w = s.get_Parameter(BuiltInParameter.SHEET_WIDTH)\n        h = s.get_Parameter(BuiltInParameter.SHEET_HEIGHT)\n        p(\"   %s : %s | %s x %s\" % (s.FamilyName, ten(s), mm(w.AsDouble()) if w else \"-\", mm(h.AsDouble()) if h else \"-\"))\n        for prm in s.Parameters:\n            try:\n                if prm.Definition is not None and prm.StorageType == StorageType.Double and \"width\" not in prm.Definition.Name.lower():\n                    pass\n            except Exception:\n                pass\n\n    p(\"\")\n    p(\"== D. KIỂU VIEWPORT\")\n    for vt in FilteredElementCollector(doc).OfClass(ElementType):\n        try:\n            if vt.FamilyName == \"Viewport\":\n                tt = vt.get_Parameter(BuiltInParameter.VIEWPORT_ATTR_LABEL_TAG)\n                p(\"   '%s' title family: %s\" % (ten(vt), gt(tt)))\n        except Exception:\n            pass\n\n    p(\"\")\n    p(\"== E. BẢNG THỐNG KÊ\")\n    for vs in FilteredElementCollector(doc).OfClass(ViewSchedule):\n        if vs.IsTemplate or vs.IsTitleblockRevisionSchedule:\n            continue\n        try:\n            d = vs.Definition\n            cat = Category.GetCategory(doc, d.CategoryId)\n            cot = []\n            for i in range(d.GetFieldCount()):\n                f = d.GetField(i)\n                cot.append(\"%s%s\" % (f.GetName(), \"(ẩn)\" if f.IsHidden else \"\"))\n            loc = []\n            for i in range(d.GetFilterCount()):\n                fl = d.GetFilter(i)\n                loc.append(\"%s %s %s\" % (d.GetField(fl.FieldId).GetName(), fl.FilterType, fl.GetStringValue() if fl.IsStringValue else (fl.GetElementIdValue().Value if fl.IsElementIdValue else \"\")))\n            p(\"   '%s' [%s] cột: %s | lọc: %s | itemized=%s | tpl=%s\" % (ten(vs), cat.Name if cat else \"-\", \", \".join(cot), \"; \".join(loc), d.IsItemized,\n                                                                     ten(doc.GetElement(vs.ViewTemplateId)) if vs.ViewTemplateId != ElementId.InvalidElementId else \"-\"))\n        except Exception as ex:\n            p(\"   '%s' ? %s\" % (ten(vs), ex))\n\n    p(\"\")\n    p(\"== F. THAM SỐ DỰ ÁN (Project Information)\")\n    pi = doc.ProjectInformation\n    for prm in pi.Parameters:\n        try:\n            if prm.HasValue and prm.StorageType == StorageType.String and prm.AsString():\n                p(\"   %s = %s\" % (prm.Definition.Name, prm.AsString()))\n        except Exception:\n            pass\n\n    # Ảnh các sheet có view (tối đa 4)\n    try:\n        ds = NetList[ElementId]()\n        n = 0\n        for s in sheets:\n            if s.GetAllPlacedViews().Count and n < 4:\n                ds.Add(s.Id)\n                n += 1\n        if n:\n            opt = ImageExportOptions()\n            opt.ExportRange = ExportRange.SetOfViews\n            opt.SetViewsAndSheets(ds)\n            opt.FilePath = os.path.join(_thu_muc, \"sheet\")\n            opt.ZoomType = ZoomFitType.FitToPage\n            opt.PixelSize = 3000\n            opt.ImageResolution = ImageResolution.DPI_150\n            opt.HLRandWFViewsFileType = ImageFileType.PNG\n            opt.ShadowViewsFileType = ImageFileType.PNG\n            doc.ExportImage(opt)\n            p(\"ẢNH: %d sheet\" % n)\n    except Exception as ex:\n        p(\"Không xuất ảnh: %s\" % ex)\n    with open(os.path.join(_thu_muc, \"khaosat_sheet.txt\"), \"w\", encoding=\"utf-8\") as f:\n        f.write(\"\\n\".join(L))\n    with open(os.path.join(_thu_muc, \"da_chay.txt\"), \"w\", encoding=\"utf-8\") as f:\n        f.write(\"ok\")\n    OUT = L[:60]\n\n\ntry:\n    _chinh()\nexcept Exception:\n    with open(os.path.join(_thu_muc, \"loi.txt\"), \"w\", encoding=\"utf-8\") as _f:\n        _f.write(traceback.format_exc())\n    with open(os.path.join(_thu_muc, \"da_chay.txt\"), \"w\", encoding=\"utf-8\") as _f:\n        _f.write(\"loi\")\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "47a1a691ba794e0c9bdaa17d690ca729",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "acd43b37877341aab0cdaaa497e56bd2",
+          "Name": "IN[0]",
+          "Description": "Thư mục ghi kết quả",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "65867f9dce5e4558ad9b2ba33ecfe5a0",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "dade417a64ad4b3bba32de375d9a9872",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "9b97f7b91cea4e2bb130aa52fa0c0295",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3b35588be14348afa5be9118f5b019f9",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "285dce38994a41d5b7298172fdd00499",
+      "End": "acd43b37877341aab0cdaaa497e56bd2",
+      "Id": "9d60d4149d5a407fb3a041cad07c4db9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "65867f9dce5e4558ad9b2ba33ecfe5a0",
+      "End": "9b97f7b91cea4e2bb130aa52fa0c0295",
+      "Id": "cca4aa6da9944f609e668f51e6c80dce",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "aee6215d5fc94388b7541905196017cd",
+        "Name": "Thư mục ghi kết quả",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "47a1a691ba794e0c9bdaa17d690ca729",
+        "Name": "Sheet_KhaoSat",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "dade417a64ad4b3bba32de375d9a9872",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "c5283b52aed44e5ca40d9d802f17e6fd",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "aee6215d5fc94388b7541905196017cd"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 170.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 170.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "b96673aecf7c468fb11f2fcfe00b8518",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "47a1a691ba794e0c9bdaa17d690ca729"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "73c85b6a83f949c58246757dea53212a",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "dade417a64ad4b3bba32de375d9a9872"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

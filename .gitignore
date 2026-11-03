@@ -42,3 +42,12 @@ scripts/lisp/K-TOOL_lisp/
 
 # Gói K-TOOL mang sang máy khác (có Python mang theo ~150 MB, không đẩy lên GitHub)
 _dist/
+
+# Build MCP revit-archivina (sinh bằng scripts/mcp/revit-archivina/build.ps1)
+scripts/mcp/revit-archivina/addin/
+scripts/mcp/revit-archivina/**/bin/
+scripts/mcp/revit-archivina/**/obj/
+
+# Bộ AI REVIT nhận từ máy đồng nghiệp (repo git riêng, có dữ liệu dự án) - đã áp dụng vào D:\AI 2026-11-03
+AI REVIT/
+00. AI REVIT.rar

@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File \"D:\\AI\\_tools\\auto_push.ps1\" -Source ket-thuc-phien",
+            "timeout": 120
+          }
+        ]
+      }
+    ]
+  }
+}

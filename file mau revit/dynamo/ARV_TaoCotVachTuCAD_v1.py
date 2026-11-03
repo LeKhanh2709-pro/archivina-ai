@@ -1,4 +1,4 @@
-# TRẠNG THÁI: CHƯA DUYỆT
+# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29)
 # Mã nguồn của Python node trong ARV_TaoCotVachTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).
 #
 # Tạo cột và vách/lõi kết cấu từ mặt bằng định vị cột vách lõi (DWG đã Link/Import vào Revit).
@@ -47,6 +47,8 @@ TRANSACTION_NAME = u"ARV - Tạo cột vách kết cấu từ CAD"
 JOIN_TOL_MM = 1.0          # Sai số nối đầu mút line / gộp toạ độ
 DUP_TOL_MM = 5.0           # Khoảng cách coi là trùng cấu kiện
 ANGLE_TOL = 1e-3           # Sai số vuông góc / thẳng hàng (rad)
+SNAP_TOL_MM = 5.0          # Gộp toạ độ đỉnh lệch do sai số số học của CAD link
+SKEW_ANGLE_DEG = 0.2       # Cạnh lệch khỏi phương chính quá góc này mới coi là cạnh xiên
 # [cần xác nhận] standards chưa quy định tên type cột / vách; BIM Manager chốt rồi sửa tại đây
 COLUMN_TYPE_NAME = u"{b}x{h}"
 WALL_TYPE_NAME = u"{base}_{t}"
@@ -75,6 +77,12 @@ def from_mm(mm):
 
 def flat(p):
     return XYZ(p.X, p.Y, 0)
+
+
+def same_point(a, b, tol):
+    """So khoảng cách tuyệt đối. XYZ.IsAlmostEqualTo của Revit so tương đối theo độ lớn vector,
+    ở toạ độ xa gốc (CAD link) ngưỡng 0.1 mm thành hàng trăm mm và gộp mất đỉnh."""
+    return a.DistanceTo(b) <= tol
 
 
 def fmt_xy(p):
@@ -152,9 +160,9 @@ def simplify_loop(points):
     pts = []
     for p in points:
         p = flat(p)
-        if not pts or not pts[-1].IsAlmostEqualTo(p, tol):
+        if not pts or not same_point(pts[-1], p, tol):
             pts.append(p)
-    if len(pts) > 1 and pts[0].IsAlmostEqualTo(pts[-1], tol):
+    if len(pts) > 1 and same_point(pts[0], pts[-1], tol):
         pts.pop()
     changed = True
     while changed and len(pts) > 3:
@@ -176,11 +184,25 @@ def loops_from_lines(lines):
     def key(p):
         return (int(round(p.X / step)), int(round(p.Y / step)))
 
+    def near(p, q):
+        return same_point(p, q, step)
+
     segs = [(flat(l.GetEndPoint(0)), flat(l.GetEndPoint(1))) for l in lines]
     by_key = {}
     for idx, (a, b) in enumerate(segs):
         by_key.setdefault(key(a), []).append(idx)
         by_key.setdefault(key(b), []).append(idx)
+
+    def touching(p):
+        # Xét cả 8 ô lân cận để hai đầu mút lệch nhau qua biên ô làm tròn vẫn nối được
+        kx, ky = key(p)
+        found = []
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                found.extend(i for i in by_key.get((kx + dx, ky + dy), [])
+                             if near(segs[i][0], p) or near(segs[i][1], p))
+        return found
+
     used, loops = set(), []
     for start in range(len(segs)):
         if start in used:
@@ -189,16 +211,16 @@ def loops_from_lines(lines):
         first, current = segs[start]
         loop, closed = [first], False
         while True:
-            if key(current) == key(first):
+            if near(current, first):
                 closed = True
                 break
-            nxt = [i for i in by_key.get(key(current), []) if i not in used]
+            nxt = [i for i in touching(current) if i not in used]
             if not nxt:
                 break
             used.add(nxt[0])
             a, b = segs[nxt[0]]
             loop.append(current)
-            current = b if key(a) == key(current) else a
+            current = b if near(a, current) else a
         if closed and len(loop) >= 3:
             loops.append(loop)
     return loops
@@ -226,29 +248,38 @@ def point_in_poly(x, y, poly):
 
 
 def read_loops(objects, layers):
+    """Trả về (các vòng kín, số hình tròn, chuỗi chẩn đoán loại hình học đọc được)."""
     polylines, lines, circles = [], [], 0
+    kinds = {}
     for obj in objects:
         if layer_of(obj) not in layers:
             continue
+        kind = type(obj).__name__
+        kinds[kind] = kinds.get(kind, 0) + 1
         if isinstance(obj, PolyLine):
             polylines.append(list(obj.GetCoordinates()))
         elif isinstance(obj, Line):
             lines.append(obj)
         elif isinstance(obj, Arc) and not obj.IsBound:
             circles += 1
-    loops = []
+    loops, dups = [], 0
     tol = from_mm(DUP_TOL_MM)
-    for raw in polylines + loops_from_lines(lines):
+    line_loops = loops_from_lines(lines)
+    for raw in polylines + line_loops:
         pts = simplify_loop(raw)
         if len(pts) < 3:
             continue
         area, c = polygon_area(pts), centroid(pts)
         # Bỏ vòng vẽ chồng (cùng số đỉnh, cùng tâm, cùng diện tích) – kể cả ở hai layer khác nhau
-        if any(len(o) == len(pts) and c.IsAlmostEqualTo(centroid(o), tol)
-               and abs(polygon_area(o) - area) < tol * tol for o in loops):
+        if any(len(o) == len(pts) and same_point(c, centroid(o), tol)
+               and abs(polygon_area(o) - area) <= 0.01 * area for o in loops):
+            dups += 1
             continue
         loops.append(pts)
-    return loops, circles
+    diag = u"Hình học trên layer: {} → {} vòng kín (từ polyline {}, từ line {}), bỏ {} vòng vẽ chồng".format(
+        u", ".join(u"{} {}".format(k, v) for k, v in sorted(kinds.items())) or u"không có",
+        len(loops), len(polylines), len(line_loops), dups)
+    return loops, circles, diag
 
 
 def build_regions(loops):
@@ -276,22 +307,56 @@ def unique_sorted(values, tol):
     return result
 
 
+def snap_value(v, grid):
+    return min(grid, key=lambda g: abs(g - v))
+
+
+def snap_poly(poly):
+    """Đưa từng đỉnh về đúng lưới vuông góc: x lấy theo cạnh đứng kề, y lấy theo cạnh ngang kề."""
+    n = len(poly)
+    edges = []
+    for i in range(n):
+        (x0, y0), (x1, y1) = poly[i], poly[(i + 1) % n]
+        edges.append(abs(x1 - x0) <= abs(y1 - y0))  # True = cạnh đứng
+    result = []
+    for i in range(n):
+        x, y = poly[i]
+        for e in (i - 1, i):  # cạnh vào và cạnh ra của đỉnh i
+            (x0, y0), (x1, y1) = poly[e % n], poly[(e + 1) % n]
+            if edges[e % n]:
+                x = (x0 + x1) / 2.0
+            else:
+                y = (y0 + y1) / 2.0
+        result.append((x, y))
+    return result
+
+
 def decompose(outer, holes):
     """Tách vùng có cạnh vuông góc thành các hình chữ nhật lớn nhất có thể.
 
-    Trả về [(tâm, cạnh dài, cạnh ngắn, vector phương cạnh dài)] hoặc None nếu có cạnh xiên.
+    Trả về (pieces, lý do): pieces = [(tâm, cạnh dài, cạnh ngắn, vector phương cạnh dài)],
+    hoặc (None, mô tả cạnh xiên).
     """
-    ux = outer[1].Subtract(outer[0]).Normalize()
+    # Phương chính lấy theo cạnh dài nhất: ít bị ảnh hưởng bởi sai số toạ độ hơn cạnh đầu tiên
+    n = len(outer)
+    i_long = max(range(n), key=lambda i: outer[(i + 1) % n].Subtract(outer[i]).GetLength())
+    ux = outer[(i_long + 1) % n].Subtract(outer[i_long]).Normalize()
     uy = XYZ(-ux.Y, ux.X, 0)
     polys = [[(p.DotProduct(ux), p.DotProduct(uy)) for p in loop] for loop in [outer] + holes]
-    tol = from_mm(JOIN_TOL_MM)
+    tol = from_mm(SNAP_TOL_MM)
+    slope = math.tan(math.radians(SKEW_ANGLE_DEG))
     for poly in polys:
         for i in range(len(poly)):
             (x0, y0), (x1, y1) = poly[i], poly[(i + 1) % len(poly)]
-            if abs(x1 - x0) > tol and abs(y1 - y0) > tol:
-                return None
-    xs = unique_sorted([x for poly in polys for x, _ in poly], tol)
-    ys = unique_sorted([y for poly in polys for _, y in poly], tol)
+            dev, length = min(abs(x1 - x0), abs(y1 - y0)), max(abs(x1 - x0), abs(y1 - y0))
+            if dev > max(tol, length * slope):
+                return None, u"cạnh dài {:.0f} mm lệch {:.0f} mm khỏi phương chính ({} đỉnh, {} lỗ)".format(
+                    to_mm(length), to_mm(dev), len(outer), len(holes))
+    polys = [snap_poly(poly) for poly in polys]
+    snap = from_mm(SNAP_TOL_MM)
+    xs = unique_sorted([x for poly in polys for x, _ in poly], snap)
+    ys = unique_sorted([y for poly in polys for _, y in poly], snap)
+    polys = [[(snap_value(x, xs), snap_value(y, ys)) for x, y in poly] for poly in polys]
     free = set()
     for i in range(len(xs) - 1):
         for j in range(len(ys) - 1):
@@ -321,7 +386,7 @@ def decompose(outer, holes):
         center = ux.Multiply((x0 + x1) / 2.0).Add(uy.Multiply((y0 + y1) / 2.0))
         lx, ly = x1 - x0, y1 - y0
         pieces.append((center, lx, ly, ux) if lx >= ly else (center, ly, lx, uy))
-    return pieces
+    return pieces, None
 
 
 def column_frame(direction, along, across):
@@ -450,16 +515,19 @@ def main():
         raise Exception(u"Level đỉnh '{}' phải cao hơn level chân '{}'.".format(top_level_name, base_level_name))
 
     # Phân tích hình học
-    loops, circles = read_loops(objects, layers)
+    loops, circles, geo_diag = read_loops(objects, layers)
+    regions = build_regions(loops)
+    geo_diag += u"; {} vùng ({} lỗ)".format(len(regions), sum(len(h) for _, h in regions))
     columns, walls, skewed = [], [], []
-    for outer, holes in build_regions(loops):
-        pieces = decompose(outer, holes)
+    for outer, holes in regions:
+        pieces, reason = decompose(outer, holes)
         if pieces is None:
-            skewed.append(centroid(outer))
+            skewed.append((centroid(outer), reason))
             continue
         single = len(pieces) == 1
         for center, along, across, direction in pieces:
-            if single and along / across < wall_ratio:
+            # So tỉ lệ trên kích thước đã làm tròn mm để hình đúng bằng tỉ lệ không nhảy loại vì sai số
+            if single and round(to_mm(along)) / max(round(to_mm(across)), 1) < wall_ratio:
                 columns.append((center,) + column_frame(direction, along, across))
             else:
                 walls.append((center, along, across, direction, single))
@@ -504,7 +572,7 @@ def main():
                 new_col_types[k] = type_name
             row = [u"Cột", fmt_xy(center), u"{} x {}".format(*k), u"{:.2f}".format(math.degrees(angle)),
                    type_name + (u" (mới)" if k in new_col_types else u""), u"", u"", u"—", type_name]
-            if any(center.IsAlmostEqualTo(p, dup_tol) for p in existing):
+            if any(same_point(center, p, dup_tol) for p in existing):
                 row[5] = u"Bỏ qua – đã có cột"
             else:
                 row[5] = u"Sẽ tạo" if dry_run else u"Chờ tạo"
@@ -540,7 +608,7 @@ def main():
                    type_name + (u" (mới)" if wtype is None else u""), u"", u"", u"—", type_name]
             if wtype is not None and int(round(to_mm(wtype.Width))) != t:
                 row[5] = u"Bỏ qua – type '{}' đã có nhưng dày {:.0f} mm".format(type_name, to_mm(wtype.Width))
-            elif any(center.IsAlmostEqualTo(p, dup_tol) and direction.CrossProduct(dv).GetLength() < ANGLE_TOL
+            elif any(same_point(center, p, dup_tol) and direction.CrossProduct(dv).GetLength() < ANGLE_TOL
                      for p, dv in existing):
                 row[5] = u"Bỏ qua – đã có vách"
             else:
@@ -550,8 +618,9 @@ def main():
                 wall_jobs.append((XYZ(p0.X, p0.Y, z), XYZ(p1.X, p1.Y, z), t, len(rows)))
             rows.append(row)
 
-    for p in skewed:
-        rows.append([u"?", fmt_xy(p), u"", u"", u"", u"Bỏ qua – hình có cạnh xiên, cần vẽ tay", u"", u"—", u"—"])
+    for p, reason in skewed:
+        rows.append([u"?", fmt_xy(p), u"", u"", u"", u"Bỏ qua – hình có cạnh xiên, cần vẽ tay: " + reason,
+                     u"", u"—", u"—"])
 
     # --- Ghi vào mô hình
     if not dry_run and (col_jobs or wall_jobs):
@@ -610,7 +679,7 @@ def main():
         log_line = u"Log: " + write_log(rows, cad_name)
     except Exception as ex:
         log_line = u"Không ghi được file log: {}".format(ex)
-    return warnings + [summary] + notes + [u"Layer đã dùng: " + u"; ".join(sorted(layers)), log_line] \
+    return warnings + [summary] + notes + [u"Layer đã dùng: " + u"; ".join(sorted(layers)), geo_diag, log_line] \
         + [u" | ".join(u"{}".format(v) for v in r[:7]) for r in rows]
 
 

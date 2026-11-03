@@ -1,0 +1,3 @@
+title: "Vòi xịt\nlô giấy"
+tooltip: "Tạo vòi xịt + lô giấy (Plumbing Fixtures) cạnh bồn cầu ĐÃ ĐẶT trong mô hình (không cần CAD): 1. Mốc = bồn cầu trên level IN[0]: family tên chứa \"toilet\" / \"bon cau\" hoặc Comments của tool 16, trong Room có tên chứa một chuỗi trong IN[3]. Hướng + lưng + trục đọc từ KHỐI ĐẶC thật (như tool 16, không tin gốc / hướng family): két nước = phần cao ≥ 550 mm nằm phía lưng; thân dài = chiều sâu; trục = qua Mặc định chạy thử (dry-run). Nguồn: ARV_TaoVoiXitLoGiayWC_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

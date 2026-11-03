@@ -1,0 +1,3 @@
+title: "Trần\ncăn hộ"
+tooltip: "Tạo trần hoàn thiện (Ceiling) cho phòng ngủ, phòng khách, WC, logia của các căn hộ trên level của view mặt bằng / mặt bằng trần đang mở, theo biên các tấm SÀN HOÀN THIỆN đã có (ARV_TaoSanCanHoTuCAD_v1 / ARV_TaoSanHoanThien_v1): 1. Sàn nguồn = Floor trên level có Comments bắt đầu bằng IN[0] (mặc định \"ARV-SanCanHo\"). Comments dạng \"ARV-SanCanHo CH07 KHO\" → căn = từ thứ 2, loại = từ cuối (KHO / WC / Mặc định chạy thử (dry-run). Nguồn: ARV_TaoTranCanHo_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

@@ -1,4 +1,4 @@
-# TRẠNG THÁI: CHƯA DUYỆT
+# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29)
 # Mã nguồn của Python node trong ARV_TaoSanHoanThien_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).
 #
 # Tạo sàn hoàn thiện (Floor) cho từng CĂN HỘ theo bản CAD mặt bằng lát sàn đã Link (chuẩn CAD công ty):

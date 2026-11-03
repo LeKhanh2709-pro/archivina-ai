@@ -31,35 +31,77 @@ BUTTONS = [
     ("KienTruc", "TaoCuaSoTuCAD", u"Cửa sổ\ntừ CAD", "ARV_TaoCuaSoTuCAD_v1"),
     ("KienTruc", "TaoGoLogia", u"Gờ\nlogia", "ARV_TaoGoLogia_v1"),
     ("KienTruc", "TaoLanCanLouverLogia", u"Lan can\nlouver logia", "ARV_TaoLanCanLouverLogia_v1"),
+    ("KienTruc", "TraGoLogia", u"Trát gờ\nlogia", "ARV_TraGoLogia_v1"),
     ("HoanThien", "TaoSanHoanThien", u"Sàn hoàn thiện\n(có hatch)", "ARV_TaoSanHoanThien_v1"),
     ("HoanThien", "TaoSanCanHoTuCAD", u"Sàn căn hộ\ntừ CAD", "ARV_TaoSanCanHoTuCAD_v1"),
     ("HoanThien", "TaoTranCanHo", u"Trần\ncăn hộ", "ARV_TaoTranCanHo_v1"),
     ("HoanThien", "OpTuongWC", u"Ốp tường\nWC", "ARV_OpTuongWC_v1"),
     ("HoanThien", "TaoLenGo", u"Len\ngỗ", "ARV_TaoLenGo_v1"),
     ("HoanThien", "TaoLenGachLogia", u"Len gạch\nlogia", "ARV_TaoLenGachLogia_v1"),
+    ("HoanThien", "TaoLenChanTuong", u"Len chân\ntường", "ARV_TaoLenChanTuong_v1"),
     ("HoanThien", "DanTrangCanHo", u"Dàn trang\ncăn hộ", "ARV_DanTrangCanHo_v1"),
     ("MEP", "TaoThietBiWCTuCAD", u"Thiết bị WC\ntừ CAD", "ARV_TaoThietBiWCTuCAD_v1"),
     ("MEP", "TaoOngThoatNuocWC", u"Ống thoát\nnước WC", "ARV_TaoOngThoatNuocWC_v1"),
     ("MEP", "TaoOngThoatNuocTuCAD", u"Ống thoát nước\ntừ CAD", "ARV_TaoOngThoatNuocTuCAD_v1"),
     ("MEP", "TaoOngGioTuCAD", u"Ống gió\ntừ CAD", "ARV_TaoOngGioTuCAD_v1"),
+    # Bộ AI REVIT của đồng nghiệp (áp dụng 2026-11-03): thiết bị WC + nội thất từ DWG link
+    ("ThietBiWC", "TaoLavaboTuCAD", u"Lavabo\ntừ CAD", "ARV_TaoLavaboTuCAD_v1"),
+    ("ThietBiWC", "TaoSenTamTuCAD", u"Sen tắm\ntừ CAD", "ARV_TaoSenTamTuCAD_v1"),
+    ("ThietBiWC", "TaoBonCauTuCAD", u"Bồn cầu\ntừ CAD", "ARV_TaoBonCauTuCAD_v1"),
+    ("ThietBiWC", "TaoVachKinhTamTuCAD", u"Vách kính\ntắm", "ARV_TaoVachKinhTamTuCAD_v1"),
+    ("ThietBiWC", "TaoVoiXitLoGiayWC", u"Vòi xịt\nlô giấy", "ARV_TaoVoiXitLoGiayWC_v1"),
+    ("NoiThat", "TaoMayGiatTuCAD", u"Máy giặt\nlogia", "ARV_TaoMayGiatTuCAD_v1"),
+    ("NoiThat", "TaoCucNongDHTuCAD", u"Cục nóng\nđiều hoà", "ARV_TaoCucNongDHTuCAD_v1"),
+    ("NoiThat", "TaoGiuongTuCAD", u"Giường\ntừ CAD", "ARV_TaoGiuongTuCAD_v1"),
+    ("NoiThat", "TaoTuDauGiuongTuCAD", u"Tủ đầu\ngiường", "ARV_TaoTuDauGiuongTuCAD_v1"),
+    ("NoiThat", "TaoBanLamViecTuCAD", u"Bàn làm\nviệc", "ARV_TaoBanLamViecTuCAD_v1"),
+    ("NoiThat", "TaoTuTiViTuCAD", u"Tủ\nti vi", "ARV_TaoTuTiViTuCAD_v1"),
+    ("NoiThat", "TaoNoiThatBepTuCAD", u"Nội thất\nbếp", "ARV_TaoNoiThatBepTuCAD_v1"),
+    ("NoiThat", "TaoTuQuanAoTuCAD", u"Tủ\nquần áo", "ARV_TaoTuQuanAoTuCAD_v1"),
+    ("NoiThat", "TaoSofaTuCAD", u"Sofa\ntừ CAD", "ARV_TaoSofaTuCAD_v1"),
+    ("NoiThat", "TaoBanAnTuCAD", u"Bàn ăn\ntừ CAD", "ARV_TaoBanAnTuCAD_v1"),
     ("HoSo", "ChongTham", u"Chống\nthấm", "../dynamo/ChongTham_VeVenChanTuong"),
     ("HoSo", "NganChay", u"Ngăn\ncháy lan", "../dynamo/NganChay_TrucHKT"),
     ("HoSo", "LoMoShaft", u"Lỗ mở\nshaft", "../dynamo/LoMo_ShaftOpening"),
-    ("HoSo", "MBDinhViCua", u"MB định\nvị cửa", "../dynamo/MatBang_DinhViCua"),
-    ("HoSo", "TagCua", u"Tag\ncửa", "../dynamo/TagCua_TuDong"),
+    ("HoSo", "TagCua", u"Định vị\n+ tag cửa", "../dynamo/TagCua_TuDong"),
+    ("HoSo", "ChiTietCua", u"Chi tiết\ncửa", "../dynamo/ChiTietCua_TuDong"),
 ]
 # Nút "một chạm" (người dùng chốt 2026-10-27 cho Chống thấm): bấm là ghi luôn vào mô hình, không hộp thoại, trên view
 # đang mở nếu là view có chữ <tu_khoa> (tên view hoặc tên view template), không thì chọn trong các view đó.
 # Shift+bấm (config.py) = hộp thoại đầy đủ như các nút khác (Dry-run bật sẵn).
 #   view_in: chỉ số IN[] nhận tên view; tu_khoa: từ khoá (không dấu) nhận view
 #   tu_khoa rỗng: làm trên mặt bằng tầng đang mở (không phải mặt bằng tầng thì báo); view_in None: không truyền tên view
+#   khong_view: không cần view nào (vd. Chi tiết cửa: lõi tự lấy cửa đang chọn / hỏi chọn cửa trên màn hình)
 MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm"},
             "NganChay": {"view_in": 0, "tu_khoa": u"chay lan", "ten_view": u"chống cháy lan"},
             "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},
-            "MBDinhViCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},
-            "TagCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng"}}
+            "TagCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng", "hoi": u"arv_hoi_sheet.hoi"},
+            "ChiTietCua": {"view_in": None, "tu_khoa": u"", "ten_view": u"bất kỳ", "khong_view": True}}
 PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện", "MEP": u"MEP",
-                "HoSo": u"Hồ sơ"}
+                "HoSo": u"HS TKBVTC", "ThietBiWC": u"Thiết bị WC", "NoiThat": u"Nội thất"}
+# Bố cục gọn (người dùng yêu cầu 2026-11-03): panel có tên ở đây xếp nút nhỏ thành chồng 2–3 nút
+# (<Panel>.panel\<Panel><k>.stack\<Tên>.pushbutton), tiêu đề 1 dòng; panel không có tên ở đây (HS TKBVTC) giữ nút lớn.
+# Nút đã ở chỗ cũ (<Panel>.panel\<Tên>.pushbutton) thì builder chuyển cả thư mục sang chồng, không xoá gì.
+STACKS = {
+    "KetCau": [["TaoTrucTuCAD", "TaoCotVachTuCAD", "TaoDamTuCAD"], ["VeBaoSanTuCAD", "CatTuongTheoDamSan"]],
+    "KienTruc": [["TaoTuongTuCAD", "TaoCuaTuCAD", "TaoCuaSoTuCAD"],
+                 ["TaoGoLogia", "TraGoLogia", "TaoLanCanLouverLogia"]],
+    "HoanThien": [["TaoSanHoanThien", "TaoSanCanHoTuCAD", "TaoTranCanHo"],
+                  ["TaoLenGo", "TaoLenGachLogia", "TaoLenChanTuong"], ["OpTuongWC", "DanTrangCanHo"]],
+    "MEP": [["TaoThietBiWCTuCAD", "TaoOngThoatNuocWC"], ["TaoOngThoatNuocTuCAD", "TaoOngGioTuCAD"]],
+    "ThietBiWC": [["TaoLavaboTuCAD", "TaoSenTamTuCAD", "TaoBonCauTuCAD"], ["TaoVachKinhTamTuCAD", "TaoVoiXitLoGiayWC"]],
+    "NoiThat": [["TaoGiuongTuCAD", "TaoTuDauGiuongTuCAD", "TaoTuQuanAoTuCAD"],
+                ["TaoSofaTuCAD", "TaoTuTiViTuCAD", "TaoBanAnTuCAD"],
+                ["TaoNoiThatBepTuCAD", "TaoBanLamViecTuCAD"], ["TaoMayGiatTuCAD", "TaoCucNongDHTuCAD"]],
+}
+
+
+def stack_of(panel, name):
+    """Tên chồng chứa nút (vd. KetCau1), None nếu nút lớn."""
+    for k, grp in enumerate(STACKS.get(panel, []), 1):
+        if name in grp:
+            return u"{}{}".format(panel, k)
+    return None
 TAB = "ARV Tools.tab"
 # Panel viết tay (không sinh từ Dynamo, builder không đụng vào thư mục): chỉ thêm vào layout của tab
 PANEL_VIET_TAY = ["VachKinh"]
@@ -116,6 +158,8 @@ import Autodesk.Revit.UI as UI
 VIEW_IN = @@VIEW_IN@@
 TU_KHOA = u"@@TU_KHOA@@"
 TIEU_DE = u"@@TITLE1@@"
+KHONG_VIEW = @@KHONG_VIEW@@
+HOI = u"@@HOI@@"           # "<module trong lib>.<hàm>(doc, view)": hộp thoại hỏi thêm trước khi chạy, trả về {IN: giá trị} / None
 
 
 def khong_dau(s):
@@ -190,6 +234,18 @@ def chay():
         return
     doc = uidoc.Document
     av = doc.ActiveView
+    if KHONG_VIEW:             # lõi tự lấy đối tượng (vd. Chi tiết cửa: cửa đang chọn / chọn trên màn hình)
+        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={"@@DRY_IN@@": False})
+        try:
+            from pyrevit import script
+            out = script.get_output()
+            out.set_title(TIEU_DE)
+            out.print_md(u"## {}".format(TIEU_DE))
+        except Exception:
+            pass
+        for ln in lines or []:
+            print(ln)
+        return
     if not TU_KHOA:            # làm trên mặt bằng tầng đang mở (vd. Lỗ mở shaft)
         if av is None or av.ViewType not in (DB.ViewType.FloorPlan, DB.ViewType.EngineeringPlan) or av.GenLevel is None:
             UI.TaskDialog.Show(TIEU_DE, u"Hãy mở mặt bằng tầng cần làm rồi bấm lại.")
@@ -217,6 +273,12 @@ def chay():
     ov = {"@@DRY_IN@@": False}
     if VIEW_IN is not None:
         ov[VIEW_IN] = view.Name
+    if HOI:
+        m_, f_ = HOI.rsplit(".", 1)
+        them = getattr(__import__(m_), f_)(doc, view)
+        if them is None:
+            return
+        ov.update(them)
     lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
     try:
         from pyrevit import script
@@ -339,7 +401,9 @@ def build_spec(key, title, py_path, dyn_path):
             val = bool(val) if not isinstance(val, str) else val.lower() == "true"
         label = h["text"] or u"(không có chú thích)"
         kind = "normal"
-        if typ == "bool" and u"dry-run" in label.lower():
+        # Ô "Tạo lại: xoá …" có nhắc chữ dry-run trong mô tả (ARV_TaoSanCanHoTuCAD IN[16]) vẫn là ô xoá, không phải Dry-run
+        if typ == "bool" and u"dry-run" in label.lower() and not (
+                DESTRUCTIVE_RE.search(label) and not label.lower().lstrip().startswith(u"dry-run")):
             kind = "dry_run"
         elif typ == "bool" and DESTRUCTIVE_RE.search(label):
             kind = "destructive"
@@ -377,8 +441,21 @@ def main():
         tool = os.path.basename(tool)
         py_path = base + ".py"
         dyn_path = base + ".dyn"
+        stack = stack_of(panel, name)
+        if stack:
+            title = u" ".join(title.split(u"\n"))
         spec, warn = build_spec(name, title, py_path, dyn_path)
-        bdir = os.path.join(tab, panel + ".panel", name + ".pushbutton")
+        pdir = os.path.join(tab, panel + ".panel")
+        bdir = os.path.join(pdir, stack + ".stack", name + ".pushbutton") if stack else \
+            os.path.join(pdir, name + ".pushbutton")
+        # Nút đã có ở chỗ khác (nút lớn ↔ trong chồng) → chuyển nguyên thư mục, không tạo bản trùng trên ribbon
+        cu = [d for d in [os.path.join(pdir, name + ".pushbutton")] +
+              [os.path.join(pdir, s, name + ".pushbutton") for s in (os.listdir(pdir) if os.path.isdir(pdir) else [])
+               if s.endswith(".stack")] if d != bdir and os.path.isdir(d)]
+        if cu and not os.path.isdir(bdir):
+            if not os.path.isdir(os.path.dirname(bdir)):
+                os.makedirs(os.path.dirname(bdir))
+            shutil.move(cu[0], bdir)
         if not os.path.isdir(bdir):
             os.makedirs(bdir)
         shutil.copyfile(py_path, os.path.join(bdir, "core.py"))
@@ -395,14 +472,28 @@ def main():
             script_py = (SCRIPT_MOT_CHAM.replace(u"@@DOC@@", doc).replace(u"@@TITLE@@", title.replace(u"\n", u"\\n"))
                          .replace(u"@@TITLE1@@", title.replace(u"\n", u" ")).replace(u"@@VIEW_IN@@", str(mc["view_in"]))
                          .replace(u'"@@DRY_IN@@"', str(dry_in[0])).replace(u"@@TU_KHOA@@", mc["tu_khoa"])
-                         .replace(u"@@TEN_VIEW@@", mc["ten_view"]))
-            tip = u"Bấm: vẽ luôn trên view {} đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). " \
-                  u"Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. {} Nguồn: {}.".format(
-                      mc["ten_view"], spec["summary"][:300], tool + ".dyn")
+                         .replace(u"@@TEN_VIEW@@", mc["ten_view"])
+                         .replace(u"@@KHONG_VIEW@@", str(bool(mc.get("khong_view"))))
+                         .replace(u"@@HOI@@", mc.get("hoi", u"")))
+            if mc.get("khong_view"):
+                tip = u"Chọn 1 cửa đi / cửa sổ rồi bấm (hoặc bấm rồi chọn): tạo luôn, không hộp thoại, Ctrl+Z một " \
+                      u"lần là hoàn tác. Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. {} Nguồn: {}.".format(
+                          spec["summary"][:300], tool + ".dyn")
+            else:
+                tip = u"Bấm: vẽ luôn trên view {} đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). " \
+                      u"Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. {} Nguồn: {}.".format(
+                          mc["ten_view"], spec["summary"][:300], tool + ".dyn")
         write(os.path.join(bdir, "script.py"), script_py)
         write(os.path.join(bdir, "bundle.yaml"),
               u"title: {}\ntooltip: {}\nauthor: Archivina BIM\n".format(json.dumps(title, ensure_ascii=False),
                                                                        json.dumps(tip, ensure_ascii=False)))
+        # Icon (người dùng duyệt 2026-11-03): icons\<Tên>.png nét đen (giao diện sáng), <Tên>.dark.png nét trắng (tối)
+        for duoi in (".png", ".dark.png"):
+            icon = os.path.join(HERE, "icons", name + duoi)
+            if os.path.isfile(icon):
+                shutil.copyfile(icon, os.path.join(bdir, "icon" + duoi))
+            else:
+                warn.append(u"thiếu icons\\" + name + duoi)
         kinds = u", ".join(u"IN[{}]={}".format(it["index"], it["kind"]) for it in spec["inputs"]
                            if it["kind"] != "normal")
         print(u"{:24s} {:2d} đầu vào | {} {}".format(name, len(spec["inputs"]), kinds,
@@ -411,7 +502,14 @@ def main():
         if chi and not any(p == panel and n in chi for p, n, _, _ in BUTTONS):
             continue
         pdir = os.path.join(tab, panel + ".panel")
-        order = [n for p, n, _, _ in BUTTONS if p == panel]
+        order = []
+        for k, grp in enumerate(STACKS.get(panel, []), 1):
+            assert 2 <= len(grp) <= 3 and all(any(p == panel and n == m for p, n, _, _ in BUTTONS) for m in grp), \
+                panel + u": chồng phải có 2–3 nút có trong BUTTONS"
+            order.append(u"{}{}".format(panel, k))
+            write(os.path.join(pdir, order[-1] + ".stack", "bundle.yaml"),
+                  u"layout:\n{}".format(u"".join(u"  - {}\n".format(m) for m in grp)))
+        order += [n for p, n, _, _ in BUTTONS if p == panel and not stack_of(panel, n)]
         write(os.path.join(pdir, "bundle.yaml"), u"title: {}\nlayout:\n{}".format(
             PANEL_TITLES[panel], u"".join(u"  - {}\n".format(n) for n in order)))
     write(os.path.join(tab, "bundle.yaml"), u"layout:\n{}".format(

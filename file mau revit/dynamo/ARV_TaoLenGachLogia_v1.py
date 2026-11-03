@@ -1,4 +1,4 @@
-# TRẠNG THÁI: CHƯA DUYỆT
+# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29)
 # Mã nguồn của Python node trong ARV_TaoLenGachLogia_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).
 # Nhân bản từ ARV_TaoLenGo_v1 (không sửa bản gốc) – thêm chia viên len trùng mạch lát sàn logia.
 #

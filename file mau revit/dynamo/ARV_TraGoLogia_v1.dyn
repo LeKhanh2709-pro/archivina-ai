@@ -1,0 +1,626 @@
+{
+  "Uuid": "6f9eef5e-2dcb-40e0-baed-e4803201ecee",
+  "IsCustomNode": false,
+  "Description": "Trát 15 mm 3 mặt gờ logia (ARV-GoLogia): mặt bên bằng wall type trát, mặt trên bằng floor type trát.",
+  "Name": "12. ARV_TraGoLogia_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "1533c4d3ae0f4b769919c716a5e3e17a",
+      "Name": "IN[0] Dày trát (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "15",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "87e7e012efa24c5284e1059a6e8fa453",
+      "Name": "IN[1] Chân trát mặt trong so với chân gờ (mm) – mặc định = dày sàn logia",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "50",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "9ae0af7257f24373a483d7b04a3deb72",
+      "Name": "IN[2] Comments nhận gờ (bắt đầu bằng)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "ARV-GoLogia",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "7a39c2f315ac4e6d9dda3005918a45de",
+      "Name": "IN[3] Id gờ (trống = đang chọn; không chọn = cả level của view)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "620b3316a6604b48a7ffd937083f9f9c",
+      "Name": "IN[4] Type trát: MATBEN=wall type;MATTREN=floor type (chưa có → nhân bản)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "MATBEN=WA_M15;MATTREN=FA_FF_M15 (Trát gờ logia)",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "5925062a57c94d7894bf0883204d1d1a",
+      "Name": "IN[5] Chân trát mặt ngoài so với chân gờ (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "0",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "a5c014cf93184a3a9a50b0a0bdbf2798",
+      "Name": "IN[6] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "1533c4d3ae0f4b769919c716a5e3e17a",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4c8ce89b471541609d1bb3d22f7db16d",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 15.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "87e7e012efa24c5284e1059a6e8fa453",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a29a8edec05d4ea189bb883e7b97fb88",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 50.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "9ae0af7257f24373a483d7b04a3deb72",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1bea72ec873f43f6bb85d136a3a33eff",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "ARV-GoLogia"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "7a39c2f315ac4e6d9dda3005918a45de",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b8c7dd2fa0eb4a38a38b4fc901ac8e39",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "620b3316a6604b48a7ffd937083f9f9c",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "efa109961d2a4e15a67a70f091f83a04",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "MATBEN=WA_M15;MATTREN=FA_FF_M15 (Trát gờ logia)"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "5925062a57c94d7894bf0883204d1d1a",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e044f3aad7514cd8b246fd999a31efd9",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 0.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "a5c014cf93184a3a9a50b0a0bdbf2798",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a1ec9f5af8c14d13b608a423bc1000a3",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29)\n# Mã nguồn của Python node trong 12. ARV_TraGoLogia_v1.dyn.\n# Revit 2027 / Dynamo (CPython3)\n#\n# Trát gờ logia 3 mặt (mặt trong phía logia, mặt trên, mặt ngoài) cho gờ do tool gờ logia tạo (Comments \"ARV-GoLogia\"):\n#   1. Phạm vi: phần tử đang chọn / Id ở IN[3]; không chọn gì → mọi gờ (Wall, Comments bắt đầu bằng IN[2]) trên level\n#      của view mặt bằng đang mở; view khác (3D, mặt cắt…) → mọi gờ trong mô hình. Chỉ gờ thẳng.\n#   2. Mặt bên: tường trát (wall type MATBEN, VD \"WA_M15\" 15 mm) áp sát mặt bên gờ, dài bằng gờ, đỉnh = đỉnh gờ + dày\n#      trát (bọc mép lớp trát trên). Chân trát mặt trong = chân gờ + IN[1] (mặc định 50 = dày sàn logia, không chồng\n#      sàn đã có); chân trát mặt ngoài = chân gờ + IN[5].\n#   3. Phía logia: mặt bên có sàn logia của tool 06 (Comments \"ARV-SanCanHo … LOGIA\") cách mặt gờ ≤ 100 mm.\n#      Không xác định được → bỏ qua gờ đó, báo.\n#   4. Mặt trên: Floor dày = dày trát (type MATTREN), phủ đỉnh gờ + hai lớp trát bên, mặt = đỉnh gờ + dày trát.\n#      Type chưa có → khi chạy thật nhân bản một floor type có sẵn, gán 1 lớp (Structure) dày = dày trát, vật liệu = vật\n#      liệu lớp của wall type MATBEN (cùng vật liệu trát).\n#   5. Phần tử tạo: không Room Bounding (tường), không tự nối đầu, Comments \"ARV-TratGoLogia <Id gờ>\". Gờ đã có trát\n#      của tool → bỏ qua (xoá để làm lại).\n# INPUT\n#   IN[0] (float) Dày trát (mm), mặc định 15\n#   IN[1] (float) Chân trát mặt trong so với chân gờ (mm), mặc định 50\n#   IN[2] (str)   Comments nhận gờ (bắt đầu bằng), mặc định \"ARV-GoLogia\"\n#   IN[3] (str)   Id gờ, cách ';' (trống = đang chọn; không chọn = cả level của view)\n#   IN[4] (str)   Type trát: \"MATBEN=WA_M15;MATTREN=FA_FF_M15 (Trát gờ logia)\"\n#   IN[5] (float) Chân trát mặt ngoài so với chân gờ (mm), mặc định 0\n#   IN[6] (bool)  Dry-run: True = chỉ báo cáo + xem trước (mặc định True)\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo\n#   OUT[1] (list[Line]) Xem trước: tim lớp trát mặt bên + biên lớp trát trên (mm)\n\nimport os\nimport io\nimport csv\nimport datetime\nimport traceback\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, Line, Transaction, UnitUtils, UnitTypeId,\n                                   ModelPathUtils, BuiltInParameter, Floor, FloorType, Wall, WallType, WallUtils,\n                                   ElementId, LocationCurve, HostObjectUtils, ShellLayerType, PlanarFace, CurveLoop,\n                                   CompoundStructureLayer, MaterialFunctionAssignment, ViewType)\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    from System.Collections.Generic import List\n    doc = DocumentManager.Instance.CurrentDBDocument\n    uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\n\nTRANSACTION_NAME = u\"ARV - Trát gờ logia\"\nCOMMENT_TAG = u\"ARV-TratGoLogia\"\nFLOOR_TAG = u\"ARV-SanCanHo\"\nPROBE_MM = 100.0         # Dò sàn logia cách mặt gờ\nLOG_HEADER = [u\"Id gờ\", u\"Dài (mm)\", u\"Mặt\", u\"Chân → đỉnh (mm so với chân gờ)\", u\"Kết quả\", u\"ElementId\"]\n\n\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef id_value(eid):\n    return eid.Value\n\n\ndef type_name(t):\n    p = t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)\n    return p.AsString() if p is not None and p.AsString() else t.Name\n\n\ndef comments(el):\n    p = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    return (p.AsString() or u\"\") if p is not None else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef point_in(pt, poly):\n    x, y = pt\n    inside = False\n    j = len(poly) - 1\n    for i in range(len(poly)):\n        xi, yi = poly[i]\n        xj, yj = poly[j]\n        if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi) + xi:\n            inside = not inside\n        j = i\n    return inside\n\n\ndef parse_map(text):\n    result = {}\n    for part in (text or u\"\").split(u\";\"):\n        if u\"=\" in part:\n            k, v = part.split(u\"=\", 1)\n            result[k.strip().upper()] = v.strip()\n    return result\n\n\ndef logia_polys(level):\n    \"\"\"Vòng biên (mm) các sàn logia của tool 06 trên level.\"\"\"\n    polys = []\n    for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        parts = comments(fl).split()\n        if fl.LevelId != level.Id or len(parts) < 3 or parts[0] != FLOOR_TAG or parts[-1].upper() != u\"LOGIA\":\n            continue\n        sk = doc.GetElement(fl.SketchId)\n        for ca in sk.Profile:\n            pts = []\n            for c in ca:\n                p = c.GetEndPoint(0)\n                pts.append((to_mm(p.X), to_mm(p.Y)))\n            if len(pts) >= 3:\n                polys.append(pts)\n    return polys\n\n\ndef side_faces(w):\n    \"\"\"[(PlanarFace, pháp tuyến ngang)] hai mặt bên của tường.\"\"\"\n    out = []\n    for side in (ShellLayerType.Interior, ShellLayerType.Exterior):\n        for ref in HostObjectUtils.GetSideFaces(w, side):\n            f = w.GetGeometryObjectFromReference(ref)\n            if isinstance(f, PlanarFace) and abs(f.FaceNormal.Z) < 1e-6:\n                n = XYZ(f.FaceNormal.X, f.FaceNormal.Y, 0).Normalize()\n                out.append((f, n))\n                break\n    return out\n\n\ndef collect_curbs(id_text, prefix):\n    if id_text:\n        elems = [doc.GetElement(ElementId(int(s))) for s in id_text.replace(u\",\", u\";\").split(u\";\") if s.strip()]\n        how = u\"Id nhập ở IN[3]\"\n    else:\n        elems = [doc.GetElement(i) for i in uidoc.Selection.GetElementIds()]\n        how = u\"phần tử đang chọn\"\n    elems = [e for e in elems if isinstance(e, Wall) and comments(e).startswith(prefix)]\n    if not elems:\n        view = doc.ActiveView\n        level = view.GenLevel if view.ViewType in (ViewType.FloorPlan, ViewType.CeilingPlan) else None\n        elems = [w for w in FilteredElementCollector(doc).OfClass(Wall).ToElements()\n                 if comments(w).startswith(prefix) and (level is None or w.LevelId == level.Id)]\n        how = u\"mọi gờ '{}' {}\".format(prefix, u\"trên \" + level.Name if level is not None else\n                                       u\"trong mô hình (view đang mở không phải mặt bằng)\")\n    return elems, how\n\n\ndef existing_plaster():\n    done = {}\n    for cls in (Wall, Floor):\n        for e in FilteredElementCollector(doc).OfClass(cls).ToElements():\n            c = comments(e)\n            if c.startswith(COMMENT_TAG + u\" \"):\n                done.setdefault(c[len(COMMENT_TAG) + 1:].strip(), []).append(id_value(e.Id))\n    return done\n\n\ndef plan_curb(w, t_mm, in_base_mm, out_base_mm, polys):\n    \"\"\"Kế hoạch trát một gờ → dict hoặc chuỗi lý do bỏ qua.\"\"\"\n    lc = w.Location\n    if not isinstance(lc, LocationCurve) or not isinstance(lc.Curve, Line):\n        return u\"Bỏ qua: gờ không thẳng\"\n    bb = w.get_BoundingBox(None)\n    a, b = lc.Curve.GetEndPoint(0), lc.Curve.GetEndPoint(1)\n    faces = side_faces(w)\n    if len(faces) != 2:\n        return u\"Bỏ qua: không đọc được 2 mặt bên\"\n    mid = XYZ((a.X + b.X) / 2.0, (a.Y + b.Y) / 2.0, 0)\n    sides = []\n    for f, n in faces:\n        o = f.Origin\n        dist = (mid.X - o.X) * n.X + (mid.Y - o.Y) * n.Y        # < 0: tâm gờ nằm phía trong mặt\n        probe = (to_mm(mid.X - n.X * dist + n.X * from_mm(PROBE_MM)),\n                 to_mm(mid.Y - n.Y * dist + n.Y * from_mm(PROBE_MM)))\n        logia = any(point_in(probe, p) for p in polys)\n        sides.append(dict(n=n, d=-dist, logia=logia))\n    if sides[0][\"logia\"] == sides[1][\"logia\"]:\n        return u\"Bỏ qua: không xác định được phía logia ({} mặt giáp sàn logia)\".format(\n            u\"cả 2\" if sides[0][\"logia\"] else u\"không\")\n    base_mm, top_mm = to_mm(bb.Min.Z), to_mm(bb.Max.Z)\n    u = XYZ(b.X - a.X, b.Y - a.Y, 0).Normalize()\n    plan = dict(wall=w, length=to_mm(lc.Curve.Length), base=base_mm, top=top_mm, sides=[], u=u, a=a, b=b)\n    for s in sides:\n        off = s[\"d\"] + from_mm(t_mm) / 2.0          # tim lớp trát cách tim định vị gờ\n        p0 = XYZ(a.X + s[\"n\"].X * off, a.Y + s[\"n\"].Y * off, 0)\n        p1 = XYZ(b.X + s[\"n\"].X * off, b.Y + s[\"n\"].Y * off, 0)\n        z0 = base_mm + (in_base_mm if s[\"logia\"] else out_base_mm)\n        plan[\"sides\"].append(dict(label=u\"Mặt trong (logia)\" if s[\"logia\"] else u\"Mặt ngoài\", p0=p0, p1=p1,\n                                  n=s[\"n\"], z0=z0, z1=top_mm + t_mm, d=s[\"d\"]))\n    # Lớp trát trên: chữ nhật dọc gờ, ngang từ mặt ngoài lớp trát bên này tới mặt ngoài lớp trát bên kia\n    s0, s1 = plan[\"sides\"]\n    e0 = s0[\"d\"] + from_mm(t_mm)\n    e1 = s1[\"d\"] + from_mm(t_mm)\n    n0, n1 = s0[\"n\"], s1[\"n\"]\n    plan[\"top_pts\"] = [XYZ(a.X + n0.X * e0, a.Y + n0.Y * e0, 0), XYZ(b.X + n0.X * e0, b.Y + n0.Y * e0, 0),\n                       XYZ(b.X + n1.X * e1, b.Y + n1.Y * e1, 0), XYZ(a.X + n1.X * e1, a.Y + n1.Y * e1, 0)]\n    return plan\n\n\ndef make_floor_type(name, t_mm, mat_id):\n    base = None\n    for ft in FilteredElementCollector(doc).OfClass(FloorType).ToElements():\n        if ft.GetCompoundStructure() is not None and not ft.IsFoundationSlab:\n            base = ft\n            break\n    nt = base.Duplicate(name)\n    # Giữ cấu tạo của floor type gốc (điều kiện EndCap của sàn), chỉ thay lớp: CreateSingleLayerCompoundStructure\n    # cho EndCap của tường → SetCompoundStructure báo \"wrong EndCap condition\" (thử 2026-10-29)\n    cs = nt.GetCompoundStructure()\n    cs.SetLayers(List[CompoundStructureLayer]([\n        CompoundStructureLayer(from_mm(t_mm), MaterialFunctionAssignment.Structure, mat_id)]))\n    cs.SetNumberOfShellLayers(ShellLayerType.Exterior, 0)\n    cs.SetNumberOfShellLayers(ShellLayerType.Interior, 0)\n    try:\n        cs.StructuralMaterialIndex = 0\n    except Exception:\n        pass\n    nt.SetCompoundStructure(cs)\n    return nt\n\n\ndef set_comment(el, text):\n    p = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    if p is not None and not p.IsReadOnly:\n        p.Set(text)\n\n\ndef write_log(rows, dry_run, settings):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TraGoLogia_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Thiết lập: {}\\n\".format(settings))\n        f.write(u\"# Đơn vị: mm\\n\")\n        wr = csv.writer(f)\n        wr.writerow(LOG_HEADER)\n        wr.writerows(rows)\n    return path\n\n\ndef preview(plans):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n        out = []\n        for pl in plans:\n            for s in pl[\"sides\"]:\n                out.append(DSLine.ByStartPointEndPoint(\n                    DSPoint.ByCoordinates(to_mm(s[\"p0\"].X), to_mm(s[\"p0\"].Y), s[\"z1\"]),\n                    DSPoint.ByCoordinates(to_mm(s[\"p1\"].X), to_mm(s[\"p1\"].Y), s[\"z1\"])))\n            pts = pl[\"top_pts\"]\n            for i in range(4):\n                p, q = pts[i], pts[(i + 1) % 4]\n                out.append(DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(to_mm(p.X), to_mm(p.Y), pl[\"top\"]),\n                                                       DSPoint.ByCoordinates(to_mm(q.X), to_mm(q.Y), pl[\"top\"])))\n        return out\n    except Exception:\n        return []\n\n\ndef main(t_mm, in_base_mm, prefix, id_text, type_text, out_base_mm, dry_run):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    if t_mm <= 0 or t_mm > 50:\n        raise StopReport([u\"DỪNG: dày trát IN[0] phải trong khoảng 0–50 mm.\"])\n    tmap = parse_map(type_text)\n    wtypes = dict((norm(type_name(t)), t) for t in FilteredElementCollector(doc).OfClass(WallType).ToElements())\n    ftypes = dict((norm(type_name(t)), t) for t in FilteredElementCollector(doc).OfClass(FloorType).ToElements())\n    wt = wtypes.get(norm(tmap.get(u\"MATBEN\", u\"\")))\n    if wt is None:\n        raise StopReport([u\"DỪNG: không có wall type trát '{}' (IN[4] MATBEN=…).\".format(tmap.get(u\"MATBEN\", u\"\"))])\n    warns = []\n    if abs(to_mm(wt.Width) - t_mm) > 0.5:\n        warns.append(u\"wall type '{}' dày {:.0f} mm ≠ dày trát {:.0f} mm – lớp trát bên dày theo type\".format(\n            type_name(wt), to_mm(wt.Width), t_mm))\n    ft_name = tmap.get(u\"MATTREN\", u\"\")\n    if not ft_name:\n        raise StopReport([u\"DỪNG: chưa khai báo floor type trát mặt trên (IN[4] MATTREN=…).\"])\n    ft = ftypes.get(norm(ft_name))\n    mat_id = None\n    if ft is None:\n        layers = list(wt.GetCompoundStructure().GetLayers())\n        mat_id = layers[0].MaterialId if layers else ElementId.InvalidElementId\n\n    curbs, how = collect_curbs(id_text, prefix)\n    if not curbs:\n        raise StopReport([u\"DỪNG: không tìm thấy gờ '{}' ({}).\".format(prefix, how)])\n    polys_by_level = {}\n    done = existing_plaster()\n    plans, rows, skipped = [], [], 0\n    for w in curbs:\n        key = str(id_value(w.Id))\n        if key in done:\n            rows.append([key, u\"\", u\"\", u\"\", u\"Bỏ qua: đã có trát (Id {}) – xoá để làm lại\".format(\n                u\", \".join(str(i) for i in done[key][:5])), u\"\"])\n            skipped += 1\n            continue\n        lid = id_value(w.LevelId)\n        if lid not in polys_by_level:\n            polys_by_level[lid] = logia_polys(doc.GetElement(w.LevelId))\n        pl = plan_curb(w, t_mm, in_base_mm, out_base_mm, polys_by_level[lid])\n        if not isinstance(pl, dict):\n            rows.append([key, u\"\", u\"\", u\"\", pl, u\"\"])\n            skipped += 1\n            continue\n        plans.append(pl)\n\n    if not dry_run and plans:\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            if ft is None:\n                ft = make_floor_type(ft_name, t_mm, mat_id)\n            for pl in plans:\n                w = pl[\"wall\"]\n                lev = doc.GetElement(w.LevelId)\n                for s in pl[\"sides\"]:\n                    h = from_mm(s[\"z1\"] - s[\"z0\"])\n                    off = from_mm(s[\"z0\"]) - lev.Elevation\n                    nw = Wall.Create(doc, Line.CreateBound(XYZ(s[\"p0\"].X, s[\"p0\"].Y, lev.Elevation),\n                                                           XYZ(s[\"p1\"].X, s[\"p1\"].Y, lev.Elevation)),\n                                     wt.Id, lev.Id, h, off, False, False)\n                    rb = nw.get_Parameter(BuiltInParameter.WALL_ATTR_ROOM_BOUNDING)\n                    if rb is not None and not rb.IsReadOnly:\n                        rb.Set(0)\n                    WallUtils.DisallowWallJoinAtEnd(nw, 0)\n                    WallUtils.DisallowWallJoinAtEnd(nw, 1)\n                    set_comment(nw, u\"{} {}\".format(COMMENT_TAG, id_value(w.Id)))\n                    s[\"id\"] = id_value(nw.Id)\n                pts = pl[\"top_pts\"]\n                loop = CurveLoop()\n                for i in range(4):\n                    p, q = pts[i], pts[(i + 1) % 4]\n                    loop.Append(Line.CreateBound(XYZ(p.X, p.Y, lev.Elevation), XYZ(q.X, q.Y, lev.Elevation)))\n                fl = Floor.Create(doc, List[CurveLoop]([loop]), ft.Id, lev.Id)\n                fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).Set(\n                    from_mm(pl[\"top\"] + t_mm) - lev.Elevation)\n                set_comment(fl, u\"{} {}\".format(COMMENT_TAG, id_value(w.Id)))\n                pl[\"top_id\"] = id_value(fl.Id)\n            doc.Regenerate()\n            for pl in plans:\n                for s in pl[\"sides\"]:\n                    nw = doc.GetElement(ElementId(s[\"id\"]))\n                    o = nw.Orientation\n                    if o.X * s[\"n\"].X + o.Y * s[\"n\"].Y < 0:\n                        nw.Flip()\n            tx.Commit()\n        except Exception as ex:\n            tx.RollBack()\n            return [u\"LỖI khi tạo lớp trát, mọi thay đổi đã được hoàn tác: {}\".format(ex), traceback.format_exc()], []\n\n    n_wall = 0\n    for pl in plans:\n        key = id_value(pl[\"wall\"].Id)\n        for s in pl[\"sides\"]:\n            n_wall += 1\n            rows.append([key, u\"{:.0f}\".format(pl[\"length\"]), s[\"label\"],\n                         u\"{:+.0f} → {:+.0f}\".format(s[\"z0\"] - pl[\"base\"], s[\"z1\"] - pl[\"base\"]),\n                         u\"Sẽ tạo\" if dry_run else u\"Đã tạo\", s.get(\"id\", u\"\")])\n        rows.append([key, u\"{:.0f}\".format(pl[\"length\"]), u\"Mặt trên\",\n                     u\"{:+.0f} → {:+.0f}\".format(pl[\"top\"] - pl[\"base\"], pl[\"top\"] - pl[\"base\"] + t_mm),\n                     u\"Sẽ tạo\" if dry_run else u\"Đã tạo\", pl.get(\"top_id\", u\"\")])\n\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\")]\n    report.append(u\"Phạm vi: {} – {} gờ, trát {} gờ, bỏ qua {}\".format(how, len(curbs), len(plans), skipped))\n    report.append(u\"Trát dày {:.0f} mm: mặt bên = wall type '{}' ({} lớp), mặt trên = floor type '{}' ({} tấm)\".format(\n        t_mm, type_name(wt), n_wall, ft_name, len(plans)))\n    report.append(u\"Chân trát mặt trong = chân gờ {:+.0f} mm (mặt sàn logia), mặt ngoài = chân gờ {:+.0f} mm; \"\n                  u\"đỉnh trát bên = đỉnh gờ + {:.0f} mm\".format(in_base_mm, out_base_mm, t_mm))\n    if mat_id is not None:\n        m = doc.GetElement(mat_id)\n        report.append(u\"Floor type '{}' chưa có → {} (1 lớp {:.0f} mm, vật liệu '{}' = vật liệu '{}')\".format(\n            ft_name, u\"sẽ nhân bản khi chạy thật\" if dry_run else u\"đã nhân bản\", t_mm,\n            m.Name if m is not None else u\"—\", type_name(wt)))\n    for w in warns:\n        report.append(u\"CẢNH BÁO: \" + w)\n    settings = u\"dày {} mm, chân trong {}, chân ngoài {}, {}\".format(t_mm, in_base_mm, out_base_mm, type_text)\n    try:\n        report.append(u\"Log: \" + write_log(rows, dry_run, settings))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra xem trước (OUT[1]) + log. Đúng thì đổi Dry-run = False và Run lại. \"\n                      u\"Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows]\n    return report, preview(plans)\n\n\nif DYNAMO:\n    def _num(v, default):\n        try:\n            return float(v) if v is not None and u\"{}\".format(v).strip() != u\"\" else default\n        except Exception:\n            return default\n\n    try:\n        OUT = list(main(\n            _num(IN[0], 15.0),\n            _num(IN[1], 50.0),\n            (IN[2] or u\"ARV-GoLogia\").strip(),\n            (IN[3] or u\"\").strip(),\n            (IN[4] or u\"MATBEN=WA_M15;MATTREN=FA_FF_M15 (Trát gờ logia)\").strip(),\n            _num(IN[5], 0.0),\n            True if IN[6] is None else bool(IN[6]),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "ef2dafa590fa432a81f13ba776cadbfe",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "e89b10df3a344ab3ac2ae2ed73309368",
+          "Name": "IN[0]",
+          "Description": "IN[0] Chiều cao len (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6c28d607f6474077b04340f3c79f4337",
+          "Name": "IN[1]",
+          "Description": "IN[1] Chân len so với mặt sàn hoàn thiện (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "40bb7a0184524170887901eebf82634c",
+          "Name": "IN[2]",
+          "Description": "IN[2] Nhận sàn gỗ theo Comments / tên type sàn (cách ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fe4e7715ad2946f698b63d32204eb4e3",
+          "Name": "IN[3]",
+          "Description": "IN[3] Id sàn gỗ (trống = đang chọn; không chọn = cả level của view)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c538e06435fd4223ab60f22d4ccd2073",
+          "Name": "IN[4]",
+          "Description": "IN[4] Wall type len (có sẵn trong template)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "eda95ec437284f14883c8a587988ad25",
+          "Name": "IN[5]",
+          "Description": "IN[5] Đồ gỗ bếp bỏ len – chuỗi con tên family / type (trống = len cả sau tủ bếp)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e5b56aa53b1c424da546f051b2b4451a",
+          "Name": "IN[6]",
+          "Description": "IN[6] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fbad3951a0194021bb1087297379d4e9",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "f2eacfa4022545cfb4234e27acf1248e",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "9ea32a4e8ec04946ae814eb657cbb932",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a0a682e0363d46e78a6f533a5b271e09",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "4c8ce89b471541609d1bb3d22f7db16d",
+      "End": "e89b10df3a344ab3ac2ae2ed73309368",
+      "Id": "c4f440ff0b8b4a389e050147a9620642",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a29a8edec05d4ea189bb883e7b97fb88",
+      "End": "6c28d607f6474077b04340f3c79f4337",
+      "Id": "82b61206bff548b086562bee92e0a8f6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1bea72ec873f43f6bb85d136a3a33eff",
+      "End": "40bb7a0184524170887901eebf82634c",
+      "Id": "4f050cc5190249f19d331ffd95e6e92e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b8c7dd2fa0eb4a38a38b4fc901ac8e39",
+      "End": "fe4e7715ad2946f698b63d32204eb4e3",
+      "Id": "c98b69e8c0794c499bba3e66aec0c016",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "efa109961d2a4e15a67a70f091f83a04",
+      "End": "c538e06435fd4223ab60f22d4ccd2073",
+      "Id": "4de68b77f5ea462b817f098240db8474",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e044f3aad7514cd8b246fd999a31efd9",
+      "End": "eda95ec437284f14883c8a587988ad25",
+      "Id": "134eab9083e146d6b99e4bdd6a642773",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a1ec9f5af8c14d13b608a423bc1000a3",
+      "End": "e5b56aa53b1c424da546f051b2b4451a",
+      "Id": "a18c7258758d40eb97cb5b9aeb422b7c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fbad3951a0194021bb1087297379d4e9",
+      "End": "9ea32a4e8ec04946ae814eb657cbb932",
+      "Id": "6df2a66ace61420a99cc31fc1d359a8d",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "4.2.1.5887",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "1533c4d3ae0f4b769919c716a5e3e17a",
+        "Name": "IN[0] Dày trát (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "87e7e012efa24c5284e1059a6e8fa453",
+        "Name": "IN[1] Chân trát mặt trong so với chân gờ (mm) – mặc định = dày sàn logia",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "9ae0af7257f24373a483d7b04a3deb72",
+        "Name": "IN[2] Comments nhận gờ (bắt đầu bằng)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "7a39c2f315ac4e6d9dda3005918a45de",
+        "Name": "IN[3] Id gờ (trống = đang chọn; không chọn = cả level của view)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "620b3316a6604b48a7ffd937083f9f9c",
+        "Name": "IN[4] Type trát: MATBEN=wall type;MATTREN=floor type (chưa có → nhân bản)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "5925062a57c94d7894bf0883204d1d1a",
+        "Name": "IN[5] Chân trát mặt ngoài so với chân gờ (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "a5c014cf93184a3a9a50b0a0bdbf2798",
+        "Name": "IN[6] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "ef2dafa590fa432a81f13ba776cadbfe",
+        "Name": "Trát gờ logia 3 mặt (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 750.0,
+        "Y": 400.0
+      },
+      {
+        "Id": "f2eacfa4022545cfb4234e27acf1248e",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1150.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "0fdababae2df477c83839dc853d07e7e",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Chọn sàn gỗ hoàn thiện (SHT-Gỗ Công Nghiệp) trong Revit, hoặc không chọn gì và mở view mặt bằng của tầng để làm mọi sàn gỗ trên tầng. Giữ Dry-run = True cho lần chạy đầu, đọc Báo cáo rồi mới đổi False.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "1533c4d3ae0f4b769919c716a5e3e17a",
+          "87e7e012efa24c5284e1059a6e8fa453",
+          "9ae0af7257f24373a483d7b04a3deb72",
+          "7a39c2f315ac4e6d9dda3005918a45de",
+          "620b3316a6604b48a7ffd937083f9f9c",
+          "5925062a57c94d7894bf0883204d1d1a",
+          "a5c014cf93184a3a9a50b0a0bdbf2798"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 680.0,
+        "Height": 874.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 805.0,
+        "TextblockHeight": 72.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "d1ca9985f5894938a67ce7335b5c6e8d",
+        "Title": "2. Trát gờ logia 3 mặt (mặt trong, mặt trên, mặt ngoài)",
+        "DescriptionText": "Dò mặt tường Revit quanh biên WC, ốp mặt ngoài áp mặt tường, cao từ mặt sàn WC; lối mở không ốp, ô cửa ốp liền rồi Join với tường chủ để cửa cắt. Wall type GO-Gạch ốp-{gạch}, tự nhân bản + vật liệu + Model pattern khi chưa có. Chặn file central, log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29).",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "ef2dafa590fa432a81f13ba776cadbfe"
+        ],
+        "HasNestedGroups": false,
+        "Left": 740.0,
+        "Top": 116.0,
+        "Width": 303.0,
+        "Height": 626.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 400.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 274.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "92fd691a288c424e8fbe33f8499089ef",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "Tóm tắt, cảnh báo, đường dẫn log, từng đoạn ốp. Tim lớp ốp xem trước hiện trên nền 3D Dynamo.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "f2eacfa4022545cfb4234e27acf1248e"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1140.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 242.5058605960217,
+    "Y": 50.808073192856796,
+    "Zoom": 0.7243766768685218
+  }
+}

@@ -1,0 +1,3 @@
+title: "Ống thoát nước\ntừ CAD"
+tooltip: "Tạo ống thoát nước uPVC + phụ kiện (co, Y 45°, tê, côn) từ mặt bằng cấp thoát nước (DWG CTN đã Link vào Revit). Đọc từ BẢN SAO DWG qua AutoCAD Core Console (chữ, dim, block trong bản link Revit không đọc được): - Ống: LINE 1 nét trên các layer IN[1]. Đoạn tách tại nút T, khe hở cùng layer ≤ 50 mm được nối. - DN: dimension có dimstyle chứa \"Dxxx\" (VD \"AV-Dim 1-75 (D160)\", \"0.T D110 (1-200)\") gán ch Mặc định chạy thử (dry-run). Nguồn: ARV_TaoOngThoatNuocTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

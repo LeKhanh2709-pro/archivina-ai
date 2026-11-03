@@ -1,0 +1,3 @@
+title: "Tủ\nti vi"
+tooltip: "Đặt tủ ti vi (Furniture 2D) trong phòng ngủ từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool 22 giường (Revit gộp nét block vào một GeometryInstance nên không dùng tên block). Tách từ phần tủ TV của tool 21. 1. Tủ TV trên CAD, layer A-Nội thất = hình chữ nhật sâu 200…350, dài 1200…2000 (G19: 1600 × 250) chứa thanh TV mảnh (G19: 1500 × 40) lệch về phía lưng. Lưng = cạnh dài gần thanh TV.  Mặc định chạy thử (dry-run). Nguồn: ARV_TaoTuTiViTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

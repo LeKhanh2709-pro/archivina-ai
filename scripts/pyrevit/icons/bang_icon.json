@@ -1,0 +1,292 @@
+{
+ "KetCau": {
+  "title": "Kết cấu",
+  "stacks": [
+   [
+    [
+     "TaoTrucTuCAD",
+     "Tạo trục từ CAD",
+     "grid"
+    ],
+    [
+     "TaoCotVachTuCAD",
+     "Cột vách từ CAD",
+     "pillar"
+    ],
+    [
+     "TaoDamTuCAD",
+     "Dầm từ CAD",
+     "minus-box-outline"
+    ]
+   ],
+   [
+    [
+     "VeBaoSanTuCAD",
+     "Bao sàn từ CAD",
+     "vector-square"
+    ],
+    [
+     "CatTuongTheoDamSan",
+     "Cắt tường theo dầm sàn",
+     "content-cut"
+    ]
+   ]
+  ]
+ },
+ "KienTruc": {
+  "title": "Kiến trúc",
+  "stacks": [
+   [
+    [
+     "TaoTuongTuCAD",
+     "Tường từ CAD",
+     "wall"
+    ],
+    [
+     "TaoCuaTuCAD",
+     "Cửa đi từ CAD",
+     "door"
+    ],
+    [
+     "TaoCuaSoTuCAD",
+     "Cửa sổ từ CAD",
+     "window-closed-variant"
+    ]
+   ],
+   [
+    [
+     "TaoGoLogia",
+     "Gờ logia",
+     "border-bottom-variant"
+    ],
+    [
+     "TraGoLogia",
+     "Trát gờ logia",
+     "format-paint"
+    ],
+    [
+     "TaoLanCanLouverLogia",
+     "Lan can louver logia",
+     "fence"
+    ]
+   ]
+  ]
+ },
+ "HoanThien": {
+  "title": "Hoàn thiện",
+  "stacks": [
+   [
+    [
+     "TaoSanHoanThien",
+     "Sàn hoàn thiện (có hatch)",
+     "floor-plan"
+    ],
+    [
+     "TaoSanCanHoTuCAD",
+     "Sàn căn hộ từ CAD",
+     "texture-box"
+    ],
+    [
+     "TaoTranCanHo",
+     "Trần căn hộ",
+     "ceiling-light-outline"
+    ]
+   ],
+   [
+    [
+     "TaoLenGo",
+     "Len gỗ",
+     "border-bottom"
+    ],
+    [
+     "TaoLenGachLogia",
+     "Len gạch logia",
+     "view-grid-compact"
+    ],
+    [
+     "TaoLenChanTuong",
+     "Len chân tường",
+     "format-align-bottom"
+    ]
+   ],
+   [
+    [
+     "OpTuongWC",
+     "Ốp tường WC",
+     "view-grid-outline"
+    ],
+    [
+     "DanTrangCanHo",
+     "Dàn trang căn hộ",
+     "book-open-page-variant-outline"
+    ]
+   ]
+  ]
+ },
+ "MEP": {
+  "title": "MEP",
+  "stacks": [
+   [
+    [
+     "TaoThietBiWCTuCAD",
+     "Thiết bị WC từ CAD",
+     "bathtub-outline"
+    ],
+    [
+     "TaoOngThoatNuocWC",
+     "Ống thoát nước WC",
+     "pipe"
+    ]
+   ],
+   [
+    [
+     "TaoOngThoatNuocTuCAD",
+     "Ống thoát nước từ CAD",
+     "pipe-valve"
+    ],
+    [
+     "TaoOngGioTuCAD",
+     "Ống gió từ CAD",
+     "hvac"
+    ]
+   ]
+  ]
+ },
+ "ThietBiWC": {
+  "title": "Thiết bị WC",
+  "stacks": [
+   [
+    [
+     "TaoLavaboTuCAD",
+     "Lavabo từ CAD",
+     "faucet"
+    ],
+    [
+     "TaoSenTamTuCAD",
+     "Sen tắm từ CAD",
+     "shower-head"
+    ],
+    [
+     "TaoBonCauTuCAD",
+     "Bồn cầu từ CAD",
+     "toilet"
+    ]
+   ],
+   [
+    [
+     "TaoVachKinhTamTuCAD",
+     "Vách kính tắm",
+     "shower"
+    ],
+    [
+     "TaoVoiXitLoGiayWC",
+     "Vòi xịt lô giấy",
+     "paper-roll-outline"
+    ]
+   ]
+  ]
+ },
+ "NoiThat": {
+  "title": "Nội thất",
+  "stacks": [
+   [
+    [
+     "TaoGiuongTuCAD",
+     "Giường từ CAD",
+     "bed-outline"
+    ],
+    [
+     "TaoTuDauGiuongTuCAD",
+     "Tủ đầu giường",
+     "dresser-outline"
+    ],
+    [
+     "TaoTuQuanAoTuCAD",
+     "Tủ quần áo",
+     "wardrobe-outline"
+    ]
+   ],
+   [
+    [
+     "TaoSofaTuCAD",
+     "Sofa từ CAD",
+     "sofa-outline"
+    ],
+    [
+     "TaoTuTiViTuCAD",
+     "Tủ ti vi",
+     "television"
+    ],
+    [
+     "TaoBanAnTuCAD",
+     "Bàn ăn từ CAD",
+     "table-chair"
+    ]
+   ],
+   [
+    [
+     "TaoNoiThatBepTuCAD",
+     "Nội thất bếp",
+     "stove"
+    ],
+    [
+     "TaoBanLamViecTuCAD",
+     "Bàn làm việc",
+     "desk"
+    ]
+   ],
+   [
+    [
+     "TaoMayGiatTuCAD",
+     "Máy giặt logia",
+     "washing-machine"
+    ],
+    [
+     "TaoCucNongDHTuCAD",
+     "Cục nóng điều hoà",
+     "air-conditioner"
+    ]
+   ]
+  ]
+ },
+ "HoSo": {
+  "title": "HS TKBVTC",
+  "large": [
+   [
+    "ChongTham",
+    "Chống\nthấm",
+    "water-check"
+   ],
+   [
+    "NganChay",
+    "Ngăn\ncháy lan",
+    "wall-fire"
+   ],
+   [
+    "LoMoShaft",
+    "Lỗ mở\nshaft",
+    "close-box-outline"
+   ],
+   [
+    "TagCua",
+    "Định vị\n+ tag cửa",
+    "tag-outline"
+   ],
+   [
+    "ChiTietCua",
+    "Chi tiết\ncửa",
+    "door-open"
+   ]
+  ]
+ },
+ "VachKinh": {
+  "title": "Vách kính",
+  "large": [
+   [
+    "VachKinh",
+    "Vách\nkính",
+    "view-column-outline"
+   ]
+  ]
+ }
+}

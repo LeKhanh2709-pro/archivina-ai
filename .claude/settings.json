@@ -11,5 +11,36 @@
         ]
       }
     ]
+  },
+  "enabledMcpjsonServers": ["revit-archivina"],
+  "permissions": {
+    "allow": [
+      "mcp__revit-archivina__rv_ket_noi",
+      "mcp__revit-archivina__rv_thong_tin",
+      "mcp__revit-archivina__rv_liet_ke",
+      "mcp__revit-archivina__rv_chi_tiet",
+      "mcp__revit-archivina__rv_dang_chon",
+      "mcp__revit-archivina__rv_chon",
+      "mcp__revit-archivina__rv_phong",
+      "mcp__revit-archivina__rv_canh_bao",
+      "mcp__revit-archivina__rv_danh_sach_view",
+      "mcp__revit-archivina__rv_khoi_luong",
+      "mcp__revit-archivina__rv_bang_thong_ke",
+      "mcp__revit-archivina__rv_chup_view"
+    ],
+    "ask": [
+      "mcp__revit-archivina__rv_xuat_dwg",
+      "mcp__revit-archivina__rv_mo_file",
+      "mcp__revit-archivina__rv_luu_ban_sao",
+      "mcp__revit-archivina__rv_tao_du_an",
+      "mcp__revit-archivina__rv_dung_ket_cau",
+      "mcp__revit-archivina__rv_dung_can_ho",
+      "mcp__revit-archivina__rv_dat_tham_so",
+      "mcp__revit-archivina__rv_tao_view_3d",
+      "mcp__revit-archivina__rv_ve_2d"
+    ],
+    "deny": [
+      "mcp__revit"
+    ]
   }
 }

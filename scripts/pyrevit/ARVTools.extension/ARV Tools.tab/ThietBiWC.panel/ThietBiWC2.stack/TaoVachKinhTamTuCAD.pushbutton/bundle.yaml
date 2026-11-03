@@ -1,0 +1,3 @@
+title: "Vách kính tắm"
+tooltip: "Tạo vách kính tắm (Plumbing Fixtures) từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG, nhân bản type từ type người dùng chọn cho khớp chiều dài CAD. Đo trên G19 TẦNG 3 2026-10-30 (layer A-Interior WC, 30 buồng trong 32 WC): 1. Mốc nhận diện = CUNG MỞ CÁNH: bán kính trong [IN[6], IN[7]] (mặc định 450–900, G19: 620), góc quét 20–60°; tâm cung = bản lề, một đầu cung = mép cánh khi đóng. - Buồng THẲ Mặc định chạy thử (dry-run). Nguồn: ARV_TaoVachKinhTamTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

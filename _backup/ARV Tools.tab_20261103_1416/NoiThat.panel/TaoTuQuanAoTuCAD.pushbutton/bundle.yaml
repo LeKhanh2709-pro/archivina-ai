@@ -1,0 +1,3 @@
+title: "Tủ\nquần áo"
+tooltip: "Đặt tủ quần áo (Furniture 2D) trong phòng ngủ từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool 22 giường (Revit gộp nét block vào một GeometryInstance nên không dùng tên block). Tách từ phần tủ áo của tool 21. 1. Tủ áo trên CAD, layer A-Nội thất = hình chữ nhật sâu 500…700, dài 1000…2400 (G19: sâu 600, dài 1200…2135) có thanh treo dọc gần trục giữa. 2. Room chứa tâm tủ phải có tên chứa m Mặc định chạy thử (dry-run). Nguồn: ARV_TaoTuQuanAoTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

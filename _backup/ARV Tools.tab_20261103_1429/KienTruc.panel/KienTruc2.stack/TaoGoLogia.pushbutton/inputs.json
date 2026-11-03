@@ -1,0 +1,81 @@
+{
+ "key": "TaoGoLogia",
+ "title": "Gờ logia",
+ "summary": "Tạo gờ bê tông mặt ngoài logia (Basic Wall), lấy tuyến từ mặt bằng DWG đã Link (KTS chốt 2026-10-21): 1. Logia = sàn (Floor) trên level IN[5] có tên type chứa IN[2] (VD \"SHT-Gach Lat Logia-300x600\"), lấy hộp bao. 2. Tuyến gờ = đường giữa cặp nét song song cách nhau 150 mm (± 3) trên layer IN[1], sát cạnh hộp bao logia (≤ 300 mm), phủ ≥ 50 % cạnh đó, dài từ tường đến tường (đầu nét CAD) – cùng cách dò với ARV_TaoLanCanLouverLogia_v1. Nét dài hơn logia → cắt ở cạnh logia rồi bắt vào đầu tường Revit trên tuyến (≤ 400 mm); không có tường → giữ mép logia, báo \"KIỂM TRA ĐẦU\". 3. Gờ = Wall type IN[3] (VD \"VBT-150\"), tâm tường trên đường giữa cặp nét, không nối (join) đầu tường. Type chưa có → nhân bản type mẫu IN[4] (VD \"VBT-200\", một lớp bê tông) với tên IN[3], đổi chiều dày lớp = bề dày cặp nét CAD (150). Dry-run chỉ báo \"SẼ NHÂN BẢN\". 4. Cao độ theo từng logia (so với level): đỉnh gờ = mặt sàn hoàn thiện logia + IN[6] (VD -30 + 100 = +70); chân gờ = IN[7] nếu có, trống = đáy sàn hoàn thiện logia (VD -30 - 50 = -80). 5. Gờ tạo ra có Comments \"ARV-GoLogia\". Chạy lại, trong phạm vi tuyến từng logia: - Tường có Comments đó, đúng kế hoạch (đầu tuyến ± 20 mm, chân/đỉnh ± 2 mm, đúng type) → giữ. - Có Comments đó mà sai kế hoạch → XOÁ rồi tạo lại (báo \"thay\"). - Tường khác trùng tuyến (dựng tay) → không đụng, logia đó bỏ qua, báo \"đã có tường dựng tay\".",
+ "transaction": "ARV - Tạo gờ bê tông logia từ CAD",
+ "source": "ARV_TaoGoLogia_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (trống = bản CAD duy nhất có layer khớp IN[1])",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Layer nét mặt ngoài logia, cách nhau ';' (khớp đúng tên) – VD \"A-Line;A-line1;A-line2\"",
+   "default": "A-Line;A-line1;A-line2",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Chuỗi con tên floor type sàn logia – VD \"Logia\"",
+   "default": "Logia",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Wall type gờ – VD \"VBT-150\"",
+   "default": "VBT-150",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Wall type mẫu để nhân bản khi IN[3] chưa có – VD \"VBT-200\"",
+   "default": "VBT-200",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Level – VD \"Tầng 1\"",
+   "default": "Tầng 1",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "float",
+   "label": "Gờ cao trên mặt sàn hoàn thiện logia (mm) – VD 100",
+   "default": "100",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Chân gờ so với level (mm); trống = đáy sàn hoàn thiện logia",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)",
+   "default": false,
+   "kind": "dry_run"
+  }
+ ]
+}

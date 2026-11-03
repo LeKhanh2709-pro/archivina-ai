@@ -1,0 +1,65 @@
+{
+ "key": "TraGoLogia",
+ "title": "Trát gờ logia",
+ "summary": "Trát gờ logia 3 mặt (mặt trong phía logia, mặt trên, mặt ngoài) cho gờ do tool gờ logia tạo (Comments \"ARV-GoLogia\"): 1. Phạm vi: phần tử đang chọn / Id ở IN[3]; không chọn gì → mọi gờ (Wall, Comments bắt đầu bằng IN[2]) trên level của view mặt bằng đang mở; view khác (3D, mặt cắt…) → mọi gờ trong mô hình. Chỉ gờ thẳng. 2. Mặt bên: tường trát (wall type MATBEN, VD \"WA_M15\" 15 mm) áp sát mặt bên gờ, dài bằng gờ, đỉnh = đỉnh gờ + dày trát (bọc mép lớp trát trên). Chân trát mặt trong = chân gờ + IN[1] (mặc định 50 = dày sàn logia, không chồng sàn đã có); chân trát mặt ngoài = chân gờ + IN[5]. 3. Phía logia: mặt bên có sàn logia của tool 06 (Comments \"ARV-SanCanHo … LOGIA\") cách mặt gờ ≤ 100 mm. Không xác định được → bỏ qua gờ đó, báo. 4. Mặt trên: Floor dày = dày trát (type MATTREN), phủ đỉnh gờ + hai lớp trát bên, mặt = đỉnh gờ + dày trát. Type chưa có → khi chạy thật nhân bản một floor type có sẵn, gán 1 lớp (Structure) dày = dày trát, vật liệu = vật liệu lớp của wall type MATBEN (cùng vật liệu trát). 5. Phần tử tạo: không Room Bounding (tường), không tự nối đầu, Comments \"ARV-TratGoLogia <Id gờ>\". Gờ đã có trát của tool → bỏ qua (xoá để làm lại).",
+ "transaction": "ARV - Trát gờ logia",
+ "source": "ARV_TraGoLogia_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "float",
+   "decl": "float",
+   "label": "Dày trát (mm), mặc định 15",
+   "default": 15.0,
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "float",
+   "decl": "float",
+   "label": "Chân trát mặt trong so với chân gờ (mm), mặc định 50",
+   "default": 50.0,
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Comments nhận gờ (bắt đầu bằng), mặc định \"ARV-GoLogia\"",
+   "default": "ARV-GoLogia",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Id gờ, cách ';' (trống = đang chọn; không chọn = cả level của view)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Type trát: \"MATBEN=WA_M15;MATTREN=FA_FF_M15 (Trát gờ logia)\"",
+   "default": "MATBEN=WA_M15;MATTREN=FA_FF_M15 (Trát gờ logia)",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "float",
+   "decl": "float",
+   "label": "Chân trát mặt ngoài so với chân gờ (mm), mặc định 0",
+   "default": 0.0,
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = chỉ báo cáo + xem trước (mặc định True)",
+   "default": false,
+   "kind": "dry_run"
+  }
+ ]
+}

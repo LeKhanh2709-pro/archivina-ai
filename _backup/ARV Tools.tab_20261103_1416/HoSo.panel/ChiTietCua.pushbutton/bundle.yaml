@@ -1,0 +1,3 @@
+title: "Chi tiết\ncửa"
+tooltip: "Chọn 1 cửa đi / cửa sổ rồi bấm (hoặc bấm rồi chọn): tạo luôn, không hộp thoại, Ctrl+Z một lần là hoàn tác. Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. Triển khai chi tiết cửa (người dùng yêu cầu 2026-11-03, mẫu bản vẽ \"CHI TIẾT CỬA\" A.CD.22.13): chọn 1 cửa đi / cửa sổ có sẵn family → tạo mặt bằng, mặt đứng, mặt cắt tỉ lệ 1/25 rồi đặt vào ô trống tiếp theo của sheet \"CHI TIẾT CỬA\" (khung A1 chia 6 ô: 2 hàng × 3 cột). Ký hiệu, vật liệu, phụ kiện ngư Nguồn: ChiTietCua_TuDong.dyn."
+author: Archivina BIM

@@ -1,0 +1,8 @@
+{
+  "ten": "Sheet_KhaoSat",
+  "mo_ta": "CHỈ ĐỌC: khảo sát cách nhóm sheet (giai đoạn / hạng mục), khung tên, sheet có sẵn, kiểu viewport, bảng thống kê; xuất ảnh vài sheet. Không sửa model.",
+  "py": "Sheet_KhaoSat.py",
+  "dau_vao": [
+    {"ten": "Thư mục ghi kết quả", "kieu": "string", "gia_tri": "D:\\AI\\_tmp\\revit_sheet\\khaosat"}
+  ]
+}

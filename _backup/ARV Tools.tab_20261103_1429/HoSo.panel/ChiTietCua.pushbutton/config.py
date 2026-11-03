@@ -1,0 +1,15 @@
+#! python3
+# -*- coding: utf-8 -*-
+# File sinh tự động bởi scripts/pyrevit/build_from_dynamo.py – không sửa tay.
+"""Triển khai chi tiết cửa (người dùng yêu cầu 2026-11-03, mẫu bản vẽ "CHI TIẾT CỬA" A.CD.22.13): chọn 1 cửa đi / cửa sổ có sẵn family → tạo mặt bằng, mặt đứng, mặt cắt tỉ lệ 1/25 rồi đặt vào ô trống tiếp theo của sheet "CHI TIẾT CỬA" (khung A1 chia 6 ô: 2 hàng × 3 cột). Ký hiệu, vật liệu, phụ kiện người dùng tự điền vào phần trống của ô. - Mặt bằng: callout từ mặt bằng tầng của cửa (ưu tiên view đang mở nếu đúng tầng), khung nhìn = cửa + lề IN[5]; khung callout trên mặt bằng gốc ẩn bằng Hide in View (IN[13]). - Mặt đứng: section đặt trước mặt tường, không cắt cửa, nhìn từ NGOÀI NHÀ. Phía ngoài nhà: một bên không có room → bên đó; cả 2 bên có room thì bên có tên lô gia / ban công / sân; không rõ → phía KHÔNG mở cánh (theo cung mở trên mặt bằng); cửa không có cung mở → mặt ngoài family (Facing). IN[11] ép phía nhìn. - Mặt cắt: section vuông góc tường, cắt qua cánh cửa (cách tâm cửa 1/4 bề rộng), ngoài nhà nằm bên phải. Ký hiệu section ẩn ở tỉ lệ thô hơn 1:<tỉ lệ> (mặt bằng 1/100 không thấy), mặt đứng / mặt cắt ẩn ký hiệu của nhau. - View template: IN[6] – IN[8]; đã có thì dùng nguyên, KHÔNG sửa; chưa có thì tạo từ template nền (theo từ khoá IN[9], không có thì template cùng tỉ lệ), tỉ lệ IN[4], Detail Level Fine, ẩn hạng mục IN[10], để view tự giữ Far Clipping (template nền điều khiển Far Clipping thì mặt cắt thấy cả phòng phía sau). - Kích thước tổng (IN[12]): mặt bằng = rộng; mặt đứng = rộng + cao (cửa sổ: cao độ bậu tính từ sàn + cao cửa); mặt cắt = cao. Reference lấy từ family (Left / Right / Top / Bottom); family không có thì lấy mặt lỗ mở của tường (mép, đỉnh, bậu); chân cửa đi lấy level. - Sheet: tên IN[2]; chỉ dùng sheet do công cụ này tạo (có group lưới ô "ARV_ChiTietCua_Luoi ..."), KHÔNG đặt view vào sheet người dùng tự làm dù trùng tên. Hết ô thì tạo sheet mới khung IN[1], số sheet = số lớn nhất của các sheet tên IN[2] + 1 (chưa có sheet nào tên đó thì IN[3]). Lưới ô: Detail Line trên sheet (2 nét đứng, 1 nét ngang chia vùng vẽ của khung tên + 1 nét ngăn dải thông tin dưới mỗi ô). - Mỗi type cửa chỉ làm 1 lần: đã có view "CT CỬA <Type Mark> - MẶT ĐỨNG" thì báo và mở sheet chứa view đó. - Không xoá, không sửa cửa / tường / view gốc / template đã có. Giới hạn: mặt bằng không xoay theo cửa (cửa trên tường xiên thì khung callout là hình chữ nhật theo trục dự án); cửa trong file link không chọn được."""
+__title__ = "Chi tiết\ncửa"
+import os
+import sys
+
+_here = os.path.dirname(os.path.abspath(__file__))
+_lib = os.path.normpath(os.path.join(_here, "..", "..", "..", "lib"))
+if _lib not in sys.path:
+    sys.path.insert(0, _lib)
+
+import arv_dynamo_host
+arv_dynamo_host.run_button(_here, __revit__)

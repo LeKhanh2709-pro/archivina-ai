@@ -28,6 +28,7 @@ import Autodesk.Revit.UI as UI
 VIEW_IN = 0
 TU_KHOA = u""
 TIEU_DE = u"Lỗ mở shaft"
+KHONG_VIEW = False
 
 
 def khong_dau(s):
@@ -102,6 +103,18 @@ def chay():
         return
     doc = uidoc.Document
     av = doc.ActiveView
+    if KHONG_VIEW:             # lõi tự lấy đối tượng (vd. Chi tiết cửa: cửa đang chọn / chọn trên màn hình)
+        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={4: False})
+        try:
+            from pyrevit import script
+            out = script.get_output()
+            out.set_title(TIEU_DE)
+            out.print_md(u"## {}".format(TIEU_DE))
+        except Exception:
+            pass
+        for ln in lines or []:
+            print(ln)
+        return
     if not TU_KHOA:            # làm trên mặt bằng tầng đang mở (vd. Lỗ mở shaft)
         if av is None or av.ViewType not in (DB.ViewType.FloorPlan, DB.ViewType.EngineeringPlan) or av.GenLevel is None:
             UI.TaskDialog.Show(TIEU_DE, u"Hãy mở mặt bằng tầng cần làm rồi bấm lại.")

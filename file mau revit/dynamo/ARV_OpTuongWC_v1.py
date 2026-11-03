@@ -1,7 +1,7 @@
-# TRẠNG THÁI: CHƯA DUYỆT
+# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29)
 # Mã nguồn của Python node trong ARV_OpTuongWC_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).
 #
-# Tạo lớp ốp gạch tường WC (Basic Wall mỏng, type "GO-Gạch ốp-…") cao IN[2] tính từ mặt sàn hoàn thiện WC:
+# Tạo lớp ốp gạch tường WC (Basic Wall mỏng, type IN[6] có sẵn trong template) cao IN[2] tính từ mặt sàn hoàn thiện WC:
 #   1. Nguồn biên WC: sàn hoàn thiện WC (Floor, VD do ARV_TaoSanCanHoTuCAD_v1 tạo – Comments "ARV-SanCanHo CHxx WC")
 #      hoặc Room tên WC / vệ sinh (biên "At wall finish"). Phạm vi: phần tử đang chọn / Id ở IN[5]; không chọn gì
 #      → mọi WC trên level của view đang mở (ưu tiên sàn; không có sàn WC mới lấy Room).
@@ -10,9 +10,9 @@
 #      bằng type. Đoạn không có tường ở cả hai cao độ (lối mở, hộp kỹ thuật hở) → không ốp. Ô cửa (có lanh tô) ốp
 #      liền rồi nối khối (Join) với tường chủ → cửa đi / cửa sổ tự cắt lớp ốp (đã kiểm: cửa 830 cắt 1,87 m²).
 #   3. Góc: hai lớp ốp kề nhau gặp nhau tại giao tim, kéo thêm nửa chiều dày (không hở góc lồi / cột).
-#   4. Wall type theo kích thước gạch IN[0] + hướng IN[1]: "GO-Gạch ốp-{nhỏ}x{lớn}" (+ "-dọc"). Chưa có → nhân bản
-#      type mẫu IN[6], vật liệu "Gạch Ceramic {nhỏ}x{lớn}mm" (+ " dọc") với mẫu Model pattern đúng ô gạch
-#      (lưới ngang cách = cao viên, lưới đứng cách = rộng viên; dùng lại pattern có sẵn nếu trùng lưới).
+#   4. Wall type: dùng THẲNG type IN[6] có sẵn trong mô hình (KTS chốt 2026-10-28, VD "WA_F1_10_Op gach 300x600"),
+#      KHÔNG nhân bản type / vật liệu / Model pattern. Thiếu type → DỪNG, liệt kê các type mỏng có sẵn. Mẫu vật liệu
+#      lớp ốp khác ô gạch IN[0] + IN[1] (lưới ngang cách = cao viên, lưới đứng cách = rộng viên) → cảnh báo.
 #   5. Tường ốp: không Room Bounding, không tự nối đầu (DisallowWallJoinAtEnd), Comments "ARV-OpTuongWC <Id nguồn>".
 #      WC đã có ốp của tool (tường ốp nằm trong biên WC, không phụ thuộc Id sàn – sàn dựng lại đổi Id) → bỏ qua,
 #      hoặc xoá ốp cũ rồi dựng lại khi IN[10] = True (chỉ xoá tường có Comments "ARV-OpTuongWC…").
@@ -21,8 +21,8 @@
 #        Flip không đổi). Vị trí mạch sàn đo trực tiếp trên mặt sàn WC (Dimension tới đường mạch của Model pattern trên
 #        view mặt bằng tạm, rồi hoàn tác) → mỗi đoạn ốp tách đôi tại một mạch sàn, hai nửa cùng bắt đầu từ điểm đó →
 #        mạch đứng ốp nối tiếp mạch sàn (bước gạch tường / sàn là bội của nhau thì mọi mạch sàn đều có mạch tường).
-#      - Mạch NGANG bắt đầu từ cốt LEVEL chân tường (không theo Base Offset). Sàn WC −15 → dùng Model pattern có gốc
-#        lưới ngang dời −15 (Origin V) để hàng gạch đầu tiên bắt đầu từ mặt sàn: type "GO-Gạch ốp-300x600 (mạch -15)".
+#      - Mạch NGANG bắt đầu từ cốt LEVEL chân tường (không theo Base Offset). Không tạo type riêng nên không dời được
+#        gốc mạch ngang: sàn WC −15 → mạch ngang đầu tiên cách mặt sàn 15 mm, báo cáo cảnh báo.
 #      Nguồn là Room (không có sàn) → không căn được mạch đứng, báo cáo.
 # INPUT
 #   IN[0] (str)   Kích thước gạch ốp (mm), VD "300x600", "300x300", "600x600", "400x800"
@@ -31,7 +31,7 @@
 #   IN[3] (float) Chân ốp so với mặt sàn hoàn thiện WC (mm), mặc định 0
 #   IN[4] (str)   Nhận WC: chuỗi con trong Comments / tên type sàn / tên phòng, cách nhau ';' (mặc định "WC;vệ sinh")
 #   IN[5] (str)   Id sàn / phòng WC, cách nhau ';' (trống = đang chọn trong Revit; không chọn = cả level của view)
-#   IN[6] (str)   Wall type ốp mẫu để nhân bản (mặc định "GO-Gạch ốp-300x600")
+#   IN[6] (str)   Wall type ốp dùng trực tiếp (mặc định "WA_F1_10_Op gach 300x600")
 #   IN[7] (bool)  Nối khối lớp ốp với tường chủ để cửa đi / cửa sổ cắt lớp ốp (mặc định True)
 #   IN[8] (bool)  Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)
 #   IN[9] (bool)  Căn mạch ốp trùng mạch lát sàn (mạch đứng + hàng gạch đầu từ mặt sàn) (mặc định True)
@@ -52,12 +52,11 @@ DYNAMO = "IN" in globals()
 if DYNAMO:
     import clr
     clr.AddReference("RevitAPI")
-    from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, UV, Line, Transaction, UnitUtils, UnitTypeId,
+    from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, Line, Transaction, UnitUtils, UnitTypeId,
                                    ModelPathUtils, BuiltInParameter, BuiltInCategory, Floor, Wall, WallType,
                                    WallUtils, JoinGeometryUtils, Options, ViewDetailLevel, Solid, GeometryInstance,
                                    ElementId, SolidCurveIntersectionOptions, SolidCurveIntersectionMode, ViewType,
-                                   Material, FillPattern, FillPatternElement, FillPatternTarget, FillGrid,
-                                   FillPatternHostOrientation, Outline, BoundingBoxIntersectsFilter,
+                                   FillPatternTarget, Outline, BoundingBoxIntersectsFilter,
                                    ElementMulticategoryFilter, SpatialElementBoundaryOptions,
                                    SpatialElementBoundaryLocation, FamilyInstance, HostObjectUtils, ViewPlan,
                                    ViewFamilyType, ViewFamily, ReferenceArray, Reference, SubTransaction,
@@ -73,8 +72,8 @@ if DYNAMO:
 TRANSACTION_NAME = u"ARV - Tạo ốp tường WC"
 SCRIPT_TAG = u"ARV_OpTuongWC_v1"
 COMMENT_TAG = u"ARV-OpTuongWC"
-TYPE_PREFIX = u"GO-Gạch ốp-"          # [cần xác nhận] quy ước tên type ốp mới (theo type có sẵn GO-Gạch ốp-300x600)
-MATERIAL_PREFIX = u"Gạch Ceramic "     # [cần xác nhận] tên vật liệu mới: "Gạch Ceramic 300x600mm"
+DEFAULT_TYPE = u"WA_F1_10_Op gach 300x600"   # type ốp WC của template WA_ (10 mm, AV_Porcelain_300x600)
+MAX_THICK_MM = 60.0     # Type dày hơn → không phải lớp ốp
 STEP_MM = 100.0         # Bước dò dọc cạnh
 END_MM = 2.0            # Điểm dò đầu / cuối cạnh lùi vào
 RAY_BACK_MM = 20.0      # Tia bắt đầu lùi vào trong WC
@@ -376,79 +375,22 @@ def grid_match(fpe, w, h, v0=0.0):
     return got == set([(0, int(round(h)), int(round(wrap(v0, h)))), (90, int(round(w)), 0)])
 
 
-def find_pattern(w, h, v0=0.0):
-    for fpe in FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements():
-        if grid_match(fpe, w, h, v0):
-            return fpe
-    return None
-
-
-def mach_suffix(v0):
-    """Hậu tố tên khi mạch ngang dời khỏi cốt level: ' (mạch -15)'."""
-    return u"" if abs(v0) < 0.5 else u" (mạch {:+.0f})".format(v0).replace(u"+", u"")
-
-
-def create_pattern(w, h, v0=0.0):
-    name = u"{}x{}{}".format(fmt_mm(h), fmt_mm(w), u"" if abs(v0) < 0.5 else u" ({:.0f})".format(v0))
-    existing = set(get_name(f) for f in FilteredElementCollector(doc).OfClass(FillPatternElement).ToElements())
-    while name in existing:
-        name += u" ARV"
-    fp = FillPattern(name, FillPatternTarget.Model, FillPatternHostOrientation.ToHost)
-    g1, g2 = FillGrid(), FillGrid()
-    g1.Angle, g1.Offset, g1.Origin = 0.0, from_mm(h), UV(0, from_mm(v0))
-    g2.Angle, g2.Offset, g2.Origin = math.pi / 2.0, from_mm(w), UV(0, 0)
-    fp.SetFillGrids(List[FillGrid]([g1, g2]))
-    return FillPatternElement.Create(doc, fp)
-
-
 def material_pattern(mat):
     return doc.GetElement(mat.SurfaceForegroundPatternId) if mat is not None else None
 
 
-def pick_material(small, large, suffix, w, h, v0=0.0):
-    """Vật liệu có sẵn chứa '{nhỏ}x{lớn}mm' (+ ' dọc') và mẫu đúng ô gạch + gốc mạch; None nếu chưa có."""
-    key = u"{}x{}mm".format(fmt_mm(small), fmt_mm(large))
-    for m in FilteredElementCollector(doc).OfClass(Material).ToElements():
-        name = norm(m.Name)
-        if key in name.replace(u" ", u"") and ((u"dọc" in name.lower()) == bool(suffix)):
-            fpe = material_pattern(m)
-            if fpe is not None and grid_match(fpe, w, h, v0):
-                return m
-    return None
-
-
 def type_material(wt):
+    """Vật liệu lớp dày nhất của type (lớp ốp)."""
     cs = wt.GetCompoundStructure()
     if cs is None or cs.LayerCount == 0:
         return None
-    return doc.GetElement(cs.GetMaterialId(0))
+    i = max(range(cs.LayerCount), key=lambda k: cs.GetLayerWidth(k))
+    return doc.GetElement(cs.GetMaterialId(i))
 
 
-def ensure_wall_type(name, template, small, large, suffix, w, h, notes, v0=0.0):
-    """Gọi trong Transaction. Nhân bản template → name, gán vật liệu đúng mẫu gạch (gốc mạch ngang v0)."""
-    mat = pick_material(small, large, suffix, w, h, v0)
-    if mat is None:
-        fpe = find_pattern(w, h, v0)
-        if fpe is None:
-            fpe = create_pattern(w, h, v0)
-            notes.append(u"ĐÃ TẠO Model pattern '{}' (ô {} rộng × {} cao, mạch ngang dời {:.0f})".format(
-                get_name(fpe), fmt_mm(w), fmt_mm(h), v0))
-        base = type_material(template)
-        mname = u"{}{}x{}mm{}{}".format(MATERIAL_PREFIX, fmt_mm(small), fmt_mm(large), u" dọc" if suffix else u"",
-                                        mach_suffix(v0))
-        names = set(norm(m.Name) for m in FilteredElementCollector(doc).OfClass(Material).ToElements())
-        while norm(mname) in names:
-            mname += u" ARV"
-        mat = base.Duplicate(mname) if base is not None else doc.GetElement(Material.Create(doc, mname))
-        mat.SurfaceForegroundPatternId = fpe.Id
-        notes.append(u"ĐÃ TẠO vật liệu '{}' (mẫu '{}')".format(mat.Name, get_name(fpe)))
-    new = template.Duplicate(name)
-    cs = new.GetCompoundStructure()
-    for i in range(cs.LayerCount):
-        cs.SetMaterialId(i, mat.Id)
-    new.SetCompoundStructure(cs)
-    notes.append(u"ĐÃ NHÂN BẢN wall type '{}' từ '{}' (vật liệu '{}')".format(name, type_name(template), mat.Name))
-    return new
+def thin_types(types):
+    """Tên các Basic Wall mỏng (≤ MAX_THICK_MM) có sẵn – gợi ý khi thiếu type IN[6]."""
+    return sorted(k for k, t in types.items() if 0 < to_mm(t.Width) <= MAX_THICK_MM)
 
 
 # --- Nguồn biên WC -------------------------------------------------------------------
@@ -805,17 +747,18 @@ def main(tile_text, direction, height_mm, base_mm, filters, id_text, template_na
         raise StopReport([u"DỪNG: chiều cao ốp IN[2] phải > 0."])
 
     types = wall_types_by_name()
-    tname = u"{}{}x{}{}".format(TYPE_PREFIX, fmt_mm(small), fmt_mm(large), suffix)
-    template = types.get(norm(template_name)) if template_name else None
-    base_type = types.get(norm(tname))
-    if base_type is None and template is None:
-        raise StopReport([u"DỪNG: chưa có wall type '{}' và không có type mẫu '{}' (IN[6]) để nhân bản. Các type ốp: {}"
-                          .format(tname, template_name, u", ".join(sorted(k for k in types if k.startswith(norm(TYPE_PREFIX))))
-                                  or u"không có")])
-    ref_type = base_type or template
-    thickness = to_mm(ref_type.Width)
-    if thickness <= 0 or thickness > 60:
-        raise StopReport([u"DỪNG: type '{}' dày {:.1f} mm – không phải lớp ốp.".format(type_name(ref_type), thickness)])
+    wtype = types.get(norm(template_name))
+    if wtype is None:
+        raise StopReport([u"DỪNG: không có wall type '{}' (IN[6]) trong mô hình – tool không tự tạo type. "
+                          u"Các type mỏng ≤ {:.0f} mm có sẵn: {}".format(template_name, MAX_THICK_MM,
+                                                                      u", ".join(thin_types(types)) or u"không có")])
+    tname = type_name(wtype)
+    thickness = to_mm(wtype.Width)
+    if thickness <= 0 or thickness > MAX_THICK_MM:
+        raise StopReport([u"DỪNG: type '{}' dày {:.1f} mm – không phải lớp ốp.".format(tname, thickness)])
+    mat = type_material(wtype)
+    fpe = material_pattern(mat)
+    pattern_ok = fpe is not None and grid_match(fpe, tw, th)
 
     sources, how = collect_sources(id_text, filters)
     if not sources:
@@ -847,7 +790,10 @@ def main(tile_text, direction, height_mm, base_mm, filters, id_text, template_na
                             u"tường?) – không ốp".format(bare / 1000.0, RAY_MM))
         # Gốc mạch ngang so với cốt level chân tường (mạch ngang của mẫu tính từ level)
         src.v0 = wrap(to_mm(src.base - src.level.Elevation) + base_mm, th) if align else 0.0
-        src.tname = tname + mach_suffix(src.v0)
+        src.tname = tname
+        if abs(src.v0) >= 0.5:
+            src.warn.append(u"chân ốp lệch cốt level {:.0f} mm – type dùng chung không dời được gốc mạch ngang, "
+                            u"mạch ngang đầu tiên cách mặt sàn {:.0f} mm".format(src.v0, (-src.v0) % th or th))
         for s in src.segs:
             s["align"] = u"tắt" if not align else u""
 
@@ -887,11 +833,6 @@ def main(tile_text, direction, height_mm, base_mm, filters, id_text, template_na
             s.segs = new
             s.grids = g
 
-    # Wall type theo từng gốc mạch ngang
-    need = sorted(set(s.tname for s in jobs))
-    v0_of = dict((s.tname, s.v0) for s in jobs)
-    missing = [n for n in need if norm(n) not in types]
-    notes = []
     join_fail = []
     deleted = 0
     if not dry_run and jobs:
@@ -899,10 +840,6 @@ def main(tile_text, direction, height_mm, base_mm, filters, id_text, template_na
         tx = Transaction(doc, TRANSACTION_NAME)
         tx.Start()
         try:
-            wtypes = {}
-            for n in need:
-                wtypes[n] = types.get(norm(n)) or ensure_wall_type(n, base_type or template, small, large, suffix,
-                                                                   tw, th, notes, v0_of[n])
             for src in jobs:
                 for i in src.old:
                     el = doc.GetElement(ElementId(int(i)))
@@ -913,7 +850,7 @@ def main(tile_text, direction, height_mm, base_mm, filters, id_text, template_na
             for src in jobs:
                 offset = (src.base - src.level.Elevation) + base_ft
                 for seg in src.segs:
-                    w = create_cladding(src, seg, wtypes[src.tname], height_ft, offset)
+                    w = create_cladding(src, seg, wtype, height_ft, offset)
                     seg["id"] = id_value(w.Id)
                     created.append((w, seg))
                 src.status = u"Đã tạo"
@@ -955,24 +892,23 @@ def main(tile_text, direction, height_mm, base_mm, filters, id_text, template_na
     report.append(u"Gạch {}x{} {} – dày {:.0f} mm – ô mẫu {} rộng × {} cao".format(
         fmt_mm(small), fmt_mm(large), u"đặt dọc" if suffix else (u"đặt ngang" if small != large else u"vuông"),
         thickness, fmt_mm(tw), fmt_mm(th)))
-    for n in need:
-        report.append(u"Wall type '{}' {}".format(n, u"(có sẵn)" if n not in missing else (
-            u"(sẽ nhân bản từ '{}', mẫu mạch ngang dời {:.0f})".format(type_name(base_type or template), v0_of[n])
-            if dry_run else u"(đã nhân bản)")))
+    report.append(u"Wall type '{}' (có sẵn, dùng trực tiếp) – vật liệu '{}', mẫu '{}'".format(
+        tname, mat.Name if mat is not None else u"—", get_name(fpe) if fpe is not None else u"không có"))
+    if not pattern_ok:
+        report.append(u"CẢNH BÁO: mẫu vật liệu lớp ốp không phải lưới {} rộng × {} cao – mạch ốp trên mô hình sẽ không "
+                      u"đúng ô gạch IN[0] / IN[1].".format(fmt_mm(tw), fmt_mm(th)))
     report.append(u"Cao ốp {} mm, chân ốp = mặt sàn WC {:+.0f} mm. Đoạn ốp {}: {} – tổng dài {:.2f} m – diện tích "
                   u"thô ≈ {:.2f} m² (chưa trừ cửa)".format(fmt_mm(height_mm), base_mm,
                                                           u"sẽ tạo" if dry_run else u"đã tạo", nseg,
                                                           total_len / 1000.0, area))
     if align:
-        report.append(u"Căn mạch theo lát sàn: BẬT – {} / {} đoạn bắt đầu tại mạch sàn; hàng gạch đầu từ mặt sàn WC.".format(
+        report.append(u"Căn mạch theo lát sàn: BẬT – {} / {} đoạn bắt đầu tại mạch sàn; mạch ngang tính từ cốt level.".format(
             nsplit, nseg))
         for src in jobs:
             g = getattr(src, "grids", None)
             if g:
                 report.append(u"  Mạch sàn {} ({}): {}".format(id_value(src.el.Id), src.label, u"; ".join(
                     u"trục {:.0f}° bước {:.0f} pha {:.1f}".format(k, v[0], v[1]) for k, v in sorted(g.items()))))
-    for n in notes:
-        report.append(n)
     if do_join:
         report.append(u"Nối khối lớp ốp với tường chủ: BẬT – cửa đi / cửa sổ cắt lớp ốp.")
     else:
@@ -985,7 +921,7 @@ def main(tile_text, direction, height_mm, base_mm, filters, id_text, template_na
             report.append(u"CẢNH BÁO {} {} ({}): {}".format(src.kind, id_value(src.el.Id), src.label, w))
     settings = u"gạch {}x{}{}, cao {}, chân {}, căn mạch {}, type {}".format(
         fmt_mm(small), fmt_mm(large), suffix, fmt_mm(height_mm), fmt_mm(base_mm), u"bật" if align else u"tắt",
-        u", ".join(need))
+        tname)
     try:
         report.append(u"Log: " + write_log(rows, dry_run, settings))
     except Exception as ex:
@@ -1039,7 +975,7 @@ if DYNAMO:
             _num(IN[3], 0.0),
             split_filters(IN[4] or u"WC;vệ sinh"),
             (IN[5] or u"").strip(),
-            (IN[6] or u"GO-Gạch ốp-300x600").strip(),
+            (IN[6] or DEFAULT_TYPE).strip(),
             True if IN[7] is None else bool(IN[7]),
             True if IN[8] is None else bool(IN[8]),
             True if len(IN) <= 9 or IN[9] is None else bool(IN[9]),

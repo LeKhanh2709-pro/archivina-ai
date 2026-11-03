@@ -1,0 +1,3 @@
+title: "Trát gờ\nlogia"
+tooltip: "Trát gờ logia 3 mặt (mặt trong phía logia, mặt trên, mặt ngoài) cho gờ do tool gờ logia tạo (Comments \"ARV-GoLogia\"): 1. Phạm vi: phần tử đang chọn / Id ở IN[3]; không chọn gì → mọi gờ (Wall, Comments bắt đầu bằng IN[2]) trên level của view mặt bằng đang mở; view khác (3D, mặt cắt…) → mọi gờ trong mô hình. Chỉ gờ thẳng. 2. Mặt bên: tường trát (wall type MATBEN, VD \"WA_M15\" 15 mm) áp sát mặt bên gờ Mặc định chạy thử (dry-run). Nguồn: ARV_TraGoLogia_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

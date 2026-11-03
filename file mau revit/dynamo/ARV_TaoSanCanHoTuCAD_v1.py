@@ -1,4 +1,4 @@
-# TRẠNG THÁI: CHƯA DUYỆT
+# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29)
 # Mã nguồn của Python node trong ARV_TaoSanCanHoTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).
 # Revit 2026 / Dynamo 3.6 (CPython3)
 #
@@ -14,7 +14,7 @@
 #      thiết bị CAD layer IN[8] → WC (> 10 m² → chỉ báo "KIỂM TRA", không tạo); vùng hở ≤ 6 m² (không có tường
 #      Revit bao kín, VD logia giặt có máy giặt, cửa đi mở quay) → LOGIA; còn lại → phòng khô (lớn nhất căn
 #      = khách, ≥ 6 m² = ngủ, nhỏ hơn = sảnh / kho). Phòng khô dùng chung một floor type.
-#   4. WC lùi biên thêm IN[11] = 10 mm khỏi mặt trát (= dày gạch ốp, KTS chốt 2026-10-20). Tường ốp mỏng < 30 mm
+#   4. WC lùi biên thêm IN[11] = 10 mm khỏi mặt trát (= dày gạch ốp, KTS chốt 2026-10-20). Tường ốp mỏng < 12 mm
 #      (VD "GO-Gạch ốp-300x600" 10 mm) không làm biên sàn → biên WC trùng mặt gạch ốp.
 #   5. Floor type / cao độ mặt sàn theo loại (IN[9], IN[10]). Bỏ qua vùng < 0,5 m² (hộp kỹ thuật) và dải mảnh
 #      rộng TB < 300 mm. Bỏ qua phòng đã có sàn tạo bởi tool này. Comments = "ARV-SanCanHo <căn> <loại>".
@@ -28,8 +28,14 @@
 #   IN[6]  (str)  Nhận cửa ra logia theo tên family/type (chuỗi con, cách ';'), VD "trượt"
 #   IN[7]  (num)  Điểm dò logia cách tâm cửa về phía Facing (mm), VD 400
 #   IN[8]  (str)  Layer thiết bị WC trong CAD, VD "A-Interior WC"
-#   IN[9]  (str)  Floor type theo loại: "KHO=…;WC=…;LOGIA=…"
-#   IN[10] (str)  Cao độ mặt sàn so với Level (mm): "KHO=0;WC=-15;LOGIA=-30"
+#   IN[9]  (str)  Floor type theo loại: "KHO=…;WC=…;LOGIA=…". Thêm "KHACH=…" (tuỳ chọn) để phòng khách dùng type
+#                 riêng (VD sàn gỗ); không khai báo KHACH → phòng khách dùng type KHO, gộp chung sàn khô như cũ.
+#                 Có KHACH: ô cửa ngủ ↔ khách lát đá chân cửa (type CHANCUA).
+#                 Thêm "HANHLANG=…" (tuỳ chọn): sàn hành lang = biên Room tên chứa "Hành lang" (mặt hoàn thiện) trên
+#                 level, trừ tường / vách KC; thang bộ, sảnh thang ("Khu vực chung"…) không lát. Chỉ tạo khi IN[12]
+#                 trống (cả tầng).
+#   IN[10] (str)  Cao độ ĐÁY sàn so với Level = SFL (mm): "KHO=0;KHACH=0;WC=0;LOGIA=0;CHANCUA=0". Mọi tấm sàn đặt
+#                 trên SFL: mặt = Level + dày floor type + IN[10] (KTS chốt 2026-10-29: đáy mọi sàn = SFL).
 #   IN[11] (num)  WC lùi biên khỏi mặt trát (mm) = dày gạch ốp, VD 10
 #   IN[12] (str)  Chỉ làm các căn (cách ';', VD "CH01;CH02"; trống = tất cả)
 #   IN[13] (bool) Dry-run: True = chỉ báo cáo + xem trước (mặc định True)
@@ -44,6 +50,8 @@
 #   IN[16] (bool) Tạo lại: xoá sàn cũ của tool (Comments ARV-SanCanHo) trong các căn đang làm + mọi Detail Line
 #                 line style IN[15] trên view nằm trong các căn đó (cách polyline căn ≤ 300 mm), rồi tạo lại
 #                 (mặc định False). Không bật: nét bo đã có trùng vị trí được giữ, không vẽ chồng.
+#                 Dù không bật: sàn cũ của tool KHÁC floor type IN[9] (VD đổi phòng khách sang gỗ) vẫn tự xoá + tạo lại
+#                 (liệt kê Id trong báo cáo dry-run).
 # OUTPUT
 #   OUT[0] (list[str])  Báo cáo: tóm tắt, cảnh báo, đường dẫn log, từng tấm sàn
 #   OUT[1] (list[Line]) Xem trước: biên các tấm sàn sẽ tạo (mm, tại cao độ Level)
@@ -71,7 +79,8 @@ if DYNAMO:
                                    FamilyInstance, Options, GeometryInstance, PlanarFace, ViewPlan,
                                    GeometryCreationUtilities, BooleanOperationsUtils, BooleanOperationsType,
                                    SolidUtils, GraphicsStyleType, Solid, SolidCurveIntersectionOptions,
-                                   SolidCurveIntersectionMode, ElementId)
+                                   SolidCurveIntersectionMode, ElementId, RevitLinkInstance,
+                                   SpatialElementBoundaryOptions, SpatialElementBoundaryLocation)
     clr.AddReference("RevitServices")
     from RevitServices.Persistence import DocumentManager
     from RevitServices.Transactions import TransactionManager
@@ -82,7 +91,8 @@ if DYNAMO:
 TRANSACTION_NAME = u"ARV - Tạo sàn căn hộ từ CAD"
 SCRIPT_TAG = u"ARV_TaoSanCanHoTuCAD_v1"
 COMMENT_TAG = u"ARV-SanCanHo"
-KINDS = ("KHO", "WC", "LOGIA", "CHANCUA")   # CHANCUA = đá chân cửa WC (ô cửa phòng khô ↔ WC)
+KINDS = ("KHO", "KHACH", "WC", "LOGIA", "CHANCUA", "HANHLANG")   # CHANCUA = đá chân cửa WC (ô cửa phòng khô ↔ WC)
+DRY_KINDS = ("KHO", "KHACH")   # KHACH = phòng khách tách type riêng (tuỳ chọn, IN[9])
 CORE_TIMEOUT_S = 180
 MIN_APT_M2 = 20.0         # Polyline căn tối thiểu
 MAX_LABEL_MM = 6000.0     # Tên căn cách polyline căn tối đa (chữ thường đặt ngoài mặt bằng)
@@ -90,11 +100,14 @@ MIN_PIECE_M2 = 0.5        # Vùng nhỏ hơn = hộp kỹ thuật, bỏ
 MIN_WIDTH_MM = 300.0      # Dải mảnh (rộng TB = 2·DT/chu vi) nhỏ hơn → bỏ
 OPEN_MM = 250.0           # Đỉnh vùng ra ngoài polyline căn quá giá trị này → vùng hở, cắt theo polyline căn
 MARGIN_MM = 2000.0        # Nới vùng bao các căn
+HALL_ROOM_KEY = u"hanhlang"  # Room tên chứa "Hành lang" (so bỏ dấu) = biên sàn hành lang
+LOGIA_EXT_MM = 400.0      # Logia hở: kéo cạnh ra tới mặt ngoài tường ôm góc tối đa chừng này
 WC_MIN_PTS = 5            # Số điểm nét thiết bị WC tối thiểu trong phòng
 WC_MAX_M2 = 10.0
 BEDROOM_MIN_M2 = 6.0
 OPEN_LOGIA_MAX_M2 = 6.0   # Vùng hở (không có tường Revit bao kín) nhỏ hơn, không có thiết bị WC → logia
-THIN_WALL_MM = 30.0       # Tường mỏng hơn = tường ốp (gạch ốp WC), không làm biên sàn
+THIN_WALL_MM = 12.0       # Tường mỏng hơn = tường ốp (gạch ốp WC 10 mm), không làm biên sàn. Lớp trát 15 mm
+                          # (WA_M15 quanh vách BTCT ở mô hình KC link) vẫn làm biên – 30 mm cũ làm hở phòng (2026-10-28)
 PROBE_Z_MM = 300.0       # Tường được tính nếu cắt qua cao độ Level + 300
 DUP_PT_MM = 2.0
 COLLINEAR_MM = 0.5
@@ -230,6 +243,12 @@ def split_filters(text):
 
 def norm(s):
     return unicodedata.normalize("NFC", (s or u"")).strip()
+
+
+def loose_key(s):
+    """Khoá so khớp nới cho tên line style: bỏ dấu (kể cả đ), chữ thường, chỉ giữ chữ + số."""
+    t = unicodedata.normalize("NFD", (s or u"")).replace(u"đ", u"d").replace(u"Đ", u"d")
+    return u"".join(c for c in t if c.isalnum() and not unicodedata.combining(c)).lower()
 
 
 def matches(layer, filters):
@@ -539,6 +558,121 @@ def wall_cutters(level, z, warns):
     return cutters
 
 
+def link_struct_cutters(z, box_mm, warns):
+    """Khối vách + cột kết cấu trong các link Revit (mô hình KC) cắt qua cao độ Level + PROBE_Z_MM, trong vùng box_mm.
+    Mô hình KT chỉ có lớp trát mỏng quanh vách BTCT → không trừ vách KC thì sàn chạy vào trong vách. Chỉ đọc link."""
+    zc = z + from_mm(PROBE_Z_MM)
+    x0, y0, x1, y1 = [from_mm(v) for v in box_mm]
+    opt = Options()
+    cutters, n_links = [], 0
+    for li in FilteredElementCollector(doc).OfClass(RevitLinkInstance).ToElements():
+        ldoc = li.GetLinkDocument()
+        if ldoc is None:
+            continue
+        n_links += 1
+        tf = li.GetTotalTransform()
+        els = list(FilteredElementCollector(ldoc).OfClass(Wall).ToElements()) +             list(FilteredElementCollector(ldoc).OfCategory(BuiltInCategory.OST_StructuralColumns)
+                 .WhereElementIsNotElementType().ToElements())
+        for e in els:
+            bb = e.get_BoundingBox(None)
+            if bb is None:
+                continue
+            cs = [tf.OfPoint(XYZ(x, y, zz)) for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)
+                  for zz in (bb.Min.Z, bb.Max.Z)]
+            if min(c.Z for c in cs) > zc or max(c.Z for c in cs) < zc or                     max(c.X for c in cs) < x0 or min(c.X for c in cs) > x1 or                     max(c.Y for c in cs) < y0 or min(c.Y for c in cs) > y1:
+                continue
+            geo = e.get_Geometry(opt)
+            if geo is None:
+                continue
+            stack = list(geo)
+            while stack:
+                g = stack.pop()
+                if isinstance(g, GeometryInstance):
+                    stack.extend(g.GetInstanceGeometry())
+                elif isinstance(g, Solid) and g.Volume > 1e-6:
+                    try:
+                        cutters.append(SolidUtils.CreateTransformed(g, tf))
+                    except Exception:
+                        pass
+    if not n_links:
+        warns.append(u"Không có link Revit kết cấu đã tải – vách / cột BTCT không trừ khỏi sàn, soát biên quanh vách")
+    return cutters
+
+
+def cutter_boxes(cutters):
+    """[(khối, (x0, y0, x1, y1) mm)] – bbox mặt bằng của từng khối cắt."""
+    result = []
+    for c in cutters:
+        try:
+            bb = c.GetBoundingBox()
+            a, b = bb.Transform.OfPoint(bb.Min), bb.Transform.OfPoint(bb.Max)
+            result.append((c, (to_mm(min(a.X, b.X)), to_mm(min(a.Y, b.Y)), to_mm(max(a.X, b.X)), to_mm(max(a.Y, b.Y)))))
+        except Exception:
+            pass
+    return result
+
+
+def covered(spans, lo, hi):
+    """Tỉ lệ đoạn [lo, hi] được phủ bởi các khoảng spans."""
+    if hi - lo <= 0:
+        return 0.0
+    total, cur = 0.0, lo
+    for a, b in sorted((max(a, lo), min(b, hi)) for a, b in spans if b > lo and a < hi):
+        if b > cur:
+            total += b - max(a, cur)
+            cur = b
+    return total / (hi - lo)
+
+
+def extend_logia(p, cut_boxes, z, others):
+    """Logia hở cắt theo polyline căn (đường đo DT) có thể hụt so với mặt tường phía sau polyline (VD khe 100 mm giữa
+    logia và vách lõi thang) → kéo cạnh bbox ra tới mép ngoài tường ôm góc (≤ LOGIA_EXT_MM), trừ lại tường.
+    Chỉ kéo cạnh mà dải thêm có tường che phía sau ≥ 60 % chiều dài cạnh; cạnh trông ra lan can / không gian ngoài
+    (lan can chỉ có trong CAD) giữ theo polyline (KTS chốt 2026-10-29). Phần thêm ≤ 35 %, không lấn phòng khác;
+    không được → None (giữ nguyên)."""
+    x0, y0, x1, y1 = p.box
+    tol = 30.0
+    near = [cb for c, cb in cut_boxes
+            if cb[0] <= x1 + LOGIA_EXT_MM and cb[2] >= x0 - LOGIA_EXT_MM and
+            cb[1] <= y1 + LOGIA_EXT_MM and cb[3] >= y0 - LOGIA_EXT_MM]
+    corner = [cb for cb in near if cb[0] <= x1 + tol and cb[2] >= x0 - tol and cb[1] <= y1 + tol and cb[3] >= y0 - tol]
+    nx0 = min([cb[0] for cb in corner if cb[2] > x0 + tol and x0 - LOGIA_EXT_MM <= cb[0] < x0] + [x0])
+    nx1 = max([cb[2] for cb in corner if cb[0] < x1 - tol and x1 < cb[2] <= x1 + LOGIA_EXT_MM] + [x1])
+    ny0 = min([cb[1] for cb in corner if cb[3] > y0 + tol and y0 - LOGIA_EXT_MM <= cb[1] < y0] + [y0])
+    ny1 = max([cb[3] for cb in corner if cb[1] < y1 - tol and y1 < cb[3] <= y1 + LOGIA_EXT_MM] + [y1])
+    # Tường phía sau dải thêm: nằm trong dải (bỏ phần trùng bbox logia), phủ dọc cạnh
+    if nx0 < x0 - 5 and covered([(cb[1], cb[3]) for cb in near if cb[0] < x0 - 5 and cb[2] > nx0], y0, y1) < 0.6:
+        nx0 = x0
+    if nx1 > x1 + 5 and covered([(cb[1], cb[3]) for cb in near if cb[2] > x1 + 5 and cb[0] < nx1], y0, y1) < 0.6:
+        nx1 = x1
+    if ny0 < y0 - 5 and covered([(cb[0], cb[2]) for cb in near if cb[1] < y0 - 5 and cb[3] > ny0], x0, x1) < 0.6:
+        ny0 = y0
+    if ny1 > y1 + 5 and covered([(cb[0], cb[2]) for cb in near if cb[3] > y1 + 5 and cb[1] < ny1], x0, x1) < 0.6:
+        ny1 = y1
+    if max(x0 - nx0, nx1 - x1, y0 - ny0, ny1 - y1) < 5.0:
+        return None
+    sol = prism(poly_loop([(nx0, ny0), (nx1, ny0), (nx1, ny1), (nx0, ny1)], z), 1.0)
+    for c, cb in cut_boxes:
+        if cb[0] < nx1 and cb[2] > nx0 and cb[1] < ny1 and cb[3] > ny0:
+            try:
+                sol = BooleanOperationsUtils.ExecuteBooleanOperation(sol, c, BooleanOperationsType.Difference)
+            except Exception:
+                return None
+    best = None
+    for sub in SolidUtils.SplitVolumes(sol):
+        for o, h in solid_regions(sub):
+            if in_region(p.ip, o, h):
+                best = (o, h)
+    if best is None:
+        return None
+    q = Piece(p.apt, best[0], best[1], p.is_open)
+    if q.area < p.area - 0.01 or q.area > p.area * 1.35 or any(in_region(o.ip, q.outer, q.holes) for o in others):
+        return None
+    q.kind, q.label = p.kind, p.label
+    q.status = u"Logia: kéo cạnh hở tới mặt ngoài tường (+{:.2f} m²)".format(q.area - p.area)
+    return q
+
+
 def column_cutters(cols, gap_mm, z):
     cutters = []
     for c in cols:
@@ -670,9 +804,10 @@ def extend_toward(rect, pt, dist):
     return out
 
 
-def door_strips(level, z, kept, kinds_ok):
-    """Ô cửa đi giữa hai phòng khô (VD ngủ ↔ khách): chữ nhật = lỗ cửa đo trên khối tường Revit (dọc tim tường, cao
-    Level + PROBE_Z_MM) × bề dày tường (mặt hoàn thiện ↔ mặt hoàn thiện). → [(đỉnh mm, phòng +n, phòng −n, cửa)]."""
+def door_strips(level, z, kept, outside):
+    """Ô cửa đi trên level: chữ nhật = lỗ cửa đo trên khối tường Revit (dọc tim tường, cao Level + PROBE_Z_MM; đo
+    không được – tường dừng ngay mép cửa / lớp trát cạnh vách KC – thì lấy bề rộng bbox cửa) × bề dày tường.
+    → [(đỉnh mm, phòng +n, phòng −n, cửa)]; một phía có thể None khi phía đó là hành lang (outside(pt) = True)."""
     opts = SolidCurveIntersectionOptions()
     opts.ResultType = SolidCurveIntersectionMode.CurveSegmentsInside
     zc = z + from_mm(PROBE_Z_MM)
@@ -688,6 +823,8 @@ def door_strips(level, z, kept, kinds_ok):
     for d in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Doors).WhereElementIsNotElementType():
         w = getattr(d, "Host", None)
         if not isinstance(d, FamilyInstance) or not isinstance(w, Wall) or not isinstance(d.Location, LocationPoint):
+            continue
+        if d.LevelId != level.Id:
             continue
         if not isinstance(w.Location, LocationCurve) or not isinstance(w.Location.Curve, Line):
             continue
@@ -715,19 +852,101 @@ def door_strips(level, z, kept, kinds_ok):
                     hi = min(hi, s0)
                 else:
                     blocked = True
-        if blocked or lo <= -span or hi >= span or not (from_mm(300) <= hi - lo <= from_mm(3000)):
+        bb = d.get_BoundingBox(None)
+        if (blocked or lo <= -span or hi >= span) and bb is not None:
+            ss = [(x - c.X) * u.X + (y - c.Y) * u.Y for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)]
+            lo, hi, blocked = min(ss), max(ss), False
+        if blocked or not (from_mm(300) <= hi - lo <= from_mm(3000)):
             continue
         h = w.Width / 2.0
-        probe_mm = to_mm(h) + 150.0
         cx, cy = to_mm(c.X), to_mm(c.Y)
-        pa = piece_at((cx + n.X * probe_mm, cy + n.Y * probe_mm))
-        pb = piece_at((cx - n.X * probe_mm, cy - n.Y * probe_mm))
-        if pa is None or pb is None or pa.kind not in kinds_ok or pb.kind not in kinds_ok:
+        sides = []
+        for sg in (1.0, -1.0):
+            hit, out = None, False
+            for extra in (150.0, 300.0, 500.0):
+                pt = (cx + sg * n.X * (to_mm(h) + extra), cy + sg * n.Y * (to_mm(h) + extra))
+                hit = piece_at(pt)
+                if hit is not None:
+                    break
+                out = out or outside(pt)
+            sides.append((hit, out and hit is None))
+        (pa, out_a), (pb, out_b) = sides
+        if (pa is None and not out_a) or (pb is None and not out_b) or (pa is None and pb is None):
             continue
         rect = [(to_mm(c.X + u.X * s + n.X * k), to_mm(c.Y + u.Y * s + n.Y * k))
                 for s, k in ((lo, -h), (hi, -h), (hi, h), (lo, h))]
         result.append((clean_poly(rect), pa, pb, d))
     return result
+
+
+def door_solids(door):
+    """Các khối đặc của cửa (toạ độ mô hình), kể cả family lồng."""
+    result, stack = [], list(door.get_Geometry(Options()) or [])
+    while stack:
+        g = stack.pop()
+        if isinstance(g, GeometryInstance):
+            stack.extend(g.GetInstanceGeometry())
+        elif isinstance(g, Solid) and g.Volume > 1e-9:
+            result.append(g)
+    return result
+
+
+def split_at_frame(rect, door):
+    """Ô cửa (4 đỉnh theo door_strips: (lo,−h), (hi,−h), (hi,+h), (lo,+h)) → (dải phía +n, dải phía −n) từ mặt tường
+    tới mặt khung cửa; dải mỏng < 5 mm → None. Bề dày khung đo trên các khối chính của cửa (≥ 5 % khối lớn nhất) –
+    bỏ tay nắm / phụ kiện nhô qua mặt tường (bbox cả cửa phủ kín bề dày tường)."""
+    if len(rect) != 4:
+        return None, None
+    p0, p1, p3 = rect[0], rect[1], rect[3]
+    ln = math.hypot(p1[0] - p0[0], p1[1] - p0[1])
+    th = math.hypot(p3[0] - p0[0], p3[1] - p0[1])
+    if ln < 1 or th < 1:
+        return None, None
+    uv = ((p1[0] - p0[0]) / ln, (p1[1] - p0[1]) / ln)
+    nv = ((p3[0] - p0[0]) / th, (p3[1] - p0[1]) / th)
+    o = ((p0[0] + p3[0]) / 2.0, (p0[1] + p3[1]) / 2.0)
+    sols = door_solids(door)
+    ks = []
+    if sols:
+        vmax = max(s.Volume for s in sols)
+        for s in sols:
+            if s.Volume < 0.05 * vmax:
+                continue
+            for e in s.Edges:
+                for q in e.Tessellate():
+                    ks.append((to_mm(q.X) - o[0]) * nv[0] + (to_mm(q.Y) - o[1]) * nv[1])
+    if not ks:
+        bb = door.get_BoundingBox(None)
+        if bb is None:
+            return None, None
+        ks = [(to_mm(x) - o[0]) * nv[0] + (to_mm(y) - o[1]) * nv[1]
+              for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)]
+    h = th / 2.0
+    f0, f1 = max(min(ks), -h), min(max(ks), h)
+
+    def band(k0, k1):
+        if k1 - k0 < 5.0:
+            return None
+        return [(o[0] + uv[0] * s + nv[0] * k, o[1] + uv[1] * s + nv[1] * k)
+                for s, k in ((0.0, k0), (ln, k0), (ln, k1), (0.0, k1))]
+    return band(f1, h), band(-h, f0)
+
+
+def merge_into(p, rect, z):
+    """Gộp dải chữ nhật vào tấm p (Union) → Piece mới cùng loại, hoặc None nếu không gộp được."""
+    try:
+        loops = [poly_loop(p.outer, z)] + [poly_loop(h[::-1], z) for h in p.holes]
+        a = GeometryCreationUtilities.CreateExtrusionGeometry(List[CurveLoop](loops), XYZ.BasisZ, 1.0)
+        u = BooleanOperationsUtils.ExecuteBooleanOperation(a, prism(poly_loop(rect, z), 1.0),
+                                                           BooleanOperationsType.Union)
+        for o, h in solid_regions(u):
+            if in_region(p.ip, o, h):
+                q = Piece(p.apt, o, h, p.is_open)
+                q.kind, q.label, q.status, q.tag = p.kind, p.label, p.status, p.tag
+                return q
+    except Exception:
+        pass
+    return None
 
 
 def preview_lines(regions, z_mm):
@@ -809,25 +1028,59 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
         except ValueError:
             raise StopReport([u"DỪNG: cao độ '{}={}' ở IN[10] không phải số.".format(k, v)])
     all_types = {norm(type_name(t)): t for t in FilteredElementCollector(doc).OfClass(FloorType).ToElements()}
-    template = all_types.get(norm(template_name)) if template_name else None
+    loose_types = {loose_key(n): t for n, t in all_types.items()}
+
+    def find_type(name):
+        # Khớp đúng tên trước, sau đó khớp nới (bỏ dấu, hoa/thường, ký tự phân cách)
+        return all_types.get(norm(name)) or loose_types.get(loose_key(name))
+
+    def type_list():
+        # Mỗi floor type một dòng để đọc được trong Watch của Dynamo
+        return [u"   - " + n for n in sorted(all_types.keys())]
+
+    template = find_type(template_name) if template_name else None
     if template_name and template is None:
-        raise StopReport([u"DỪNG: không có floor type mẫu '{}' (IN[14]). Các floor type: {}".format(
-            template_name, u", ".join(sorted(all_types.keys())))])
-    ftypes, pending = {}, {}
+        # Chỉ cần type mẫu khi có type ở IN[9] chưa có trong file → kiểm tra ở vòng dưới
+        warns.append(u"Không có floor type mẫu '{}' (IN[14]) – chỉ dùng được các type IN[9] đã có sẵn".format(
+            template_name))
+    ftypes, pending, missing = {}, {}, []
     for k in KINDS:
         name = norm(type_map.get(k, u""))
+        if not name and k in ("KHACH", "HANHLANG"):
+            continue   # Không tách phòng khách → dùng type KHO
         if not name:
             warns.append(u"Chưa gán floor type cho {} (IN[9]) – phòng loại này chỉ báo cáo".format(k))
             continue
-        if name in all_types:
-            ftypes[k] = all_types[name]
+        hit = find_type(name)
+        if hit is not None:
+            ftypes[k] = hit
         elif template is not None:
             # Chưa có → nhân bản từ type mẫu khi ghi; dry-run tạm dùng type mẫu
             pending[k] = name
             ftypes[k] = template
         else:
-            raise StopReport([u"DỪNG: không có floor type '{}' ({}) và chưa có type mẫu để nhân bản (IN[14]). "
-                              u"Các floor type: {}".format(name, k, u", ".join(sorted(all_types.keys())))])
+            missing.append(u"   - {} = '{}'".format(k, name))
+    if missing:
+        head = [u"DỪNG: các floor type ở IN[9] chưa có trong file:"] + missing
+        if template_name:
+            head.append(u"và cũng không có floor type mẫu '{}' (IN[14]) để nhân bản.".format(template_name))
+        else:
+            head.append(u"và IN[14] (floor type mẫu để nhân bản) đang trống.")
+        raise StopReport(head + [u"Cách sửa: đổi IN[9] sang type có sẵn, HOẶC đặt IN[14] = một type có sẵn "
+                                 u"để tool nhân bản ra các type còn thiếu. Floor type trong file:"] + type_list())
+
+    # Level = SFL; đáy mọi tấm sàn = Level + IN[10] → mặt = Level + dày floor type của loại + IN[10]
+    thick = {}
+    for k, ft in ftypes.items():
+        try:
+            thick[k] = to_mm(ft.GetCompoundStructure().GetWidth())
+        except Exception:
+            thick[k] = 0.0
+            warns.append(u"Không đọc được bề dày floor type {} – mặt sàn {} đặt theo Level + IN[10]".format(
+                type_name(ft), k))
+
+    def top_mm(k):
+        return thick.get(k, 0.0) + offsets.get(k, 0.0)
 
     def ft_label(k):
         if k in pending:
@@ -887,7 +1140,8 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
     x1 = max(b[2] for b in boxes) + MARGIN_MM
     y1 = max(b[3] for b in boxes) + MARGIN_MM
     region = prism(poly_loop([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], z), 1.0)
-    cutters = wall_cutters(level, z, warns) + column_cutters(cols, col_gap, z)
+    link_cut = link_struct_cutters(z, (x0, y0, x1, y1), warns)
+    cutters = wall_cutters(level, z, warns) + column_cutters(cols, col_gap, z) + link_cut
     fails = 0
     for c in cutters:
         try:
@@ -899,6 +1153,7 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
 
     apt_prisms = {i: prism(poly_loop(apts[i], z - 0.5), 2.0) for i in targets}
     pieces, skipped = [], []
+    free_region = region      # Vùng trống sau khi trừ tường / cột / vách KC (cắt sàn hành lang)
     for sol in SolidUtils.SplitVolumes(region):
         for outer, holes in solid_regions(sol):
             ip = interior_point(outer)
@@ -969,25 +1224,102 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
             p.status = u"Lưu ý: logia nhận theo vùng hở ≤ {:.0f} m² – soát".format(OPEN_LOGIA_MAX_M2)
         else:
             p.kind = "KHO"
+    # Logia hở: bo kín tới mặt ngoài tường như logia kín (KTS chốt 2026-10-29), không dừng ở polyline đo DT
+    cut_boxes = cutter_boxes(cutters)
+    for k, p in enumerate(kept):
+        if p.kind == "LOGIA" and p.is_open:
+            q = extend_logia(p, cut_boxes, z, [o for o in kept if o is not p and o.apt == p.apt])
+            if q is not None:
+                kept[k] = q
     for i in targets:
         dry = sorted([p for p in kept if p.apt == i and p.kind == "KHO"], key=lambda p: -p.area)
         for n, p in enumerate(dry):
             p.label = u"Khách" if n == 0 else (u"Ngủ" if p.area >= BEDROOM_MIN_M2 else u"Sảnh / kho")
+            if n == 0 and "KHACH" in ftypes:
+                p.kind = "KHACH"
             if p.is_open:
                 p.label += u" (vùng hở)"
                 if n > 0:
                     p.status = u"Lưu ý: vùng hở theo polyline căn – soát tường / cửa"
 
-    # Sàn ô cửa: hai bên phòng khô (ngủ ↔ khách) → sàn phòng khô; phòng khô ↔ WC → đá chân cửa (CHANCUA)
+    # Sàn ô cửa: hai bên phòng khô (ngủ ↔ khách) → sàn phòng khô; đá chân cửa (CHANCUA) ở cửa WC, cửa logia 1 cánh
+    # (không ở cửa trượt IN[6]) và cửa chính căn hộ ra hành lang (KTS chốt 2026-10-29)
     n_doors = n_sills = 0
-    for rect, pa, pb, d in door_strips(level, z, kept, ("KHO", "WC")):
+    sill_count = {}
+    tgt_polys = [apts[i] for i in targets]
+
+    def outside(pt):
+        return not any(point_in(pt, a) for a in tgt_polys)
+
+    replaced_logia = {}
+    hall_pts = []
+    for rect, pa, pb, d in door_strips(level, z, kept, outside):
         if len(rect) < 3:
             continue
-        if pa.kind == "KHO" and pb.kind == "KHO":
+        if pa is None or pb is None:
+            # Cửa chính căn hộ: một phía hành lang (ngoài mọi polyline căn)
+            room = pa or pb
+            if room.kind not in DRY_KINDS:
+                continue
+            s = Piece(room.apt, rect, [], False)
+            s.kind, s.label, s.tag = "CHANCUA", u"Đá chân cửa căn hộ", u"CHANCUA"
+            n_sills += 1
+            sill_count[u"căn hộ"] = sill_count.get(u"căn hộ", 0) + 1
+            kept.append(s)
+            # Điểm dò phía hành lang: tâm ô cửa lùi ra ngoài nửa bề dày tường + 300 mm
+            if len(rect) == 4:
+                mx = sum(q[0] for q in rect) / 4.0
+                my = sum(q[1] for q in rect) / 4.0
+                nx, ny = rect[3][0] - rect[0][0], rect[3][1] - rect[0][1]
+                th = math.hypot(nx, ny)
+                if th > 1:
+                    nx, ny = nx / th, ny / th
+                    sg = -1.0 if (room.ip[0] - mx) * nx + (room.ip[1] - my) * ny > 0 else 1.0
+                    hall_pts.append(((mx + sg * nx * (th / 2.0 + 300.0), my + sg * ny * (th / 2.0 + 300.0)), room.apt))
+            continue
+        if pa.apt != pb.apt:
+            continue
+        if "LOGIA" in (pa.kind, pb.kind) and (pa.kind in DRY_KINDS or pb.kind in DRY_KINDS):
+            # Cửa logia: cửa trượt (khớp IN[6]) không làm đá – sàn gỗ và sàn logia kéo vào sát mặt khung cửa hai bên
+            # (KTS chốt 2026-10-29); cửa đi 1 cánh → đá chân cửa
+            if matches(d.Symbol.Family.Name + u" " + type_name(d.Symbol), logia_filters):
+                band_a, band_b = split_at_frame(rect, d)
+                sill_count[u"cửa trượt (không đá)"] = sill_count.get(u"cửa trượt (không đá)", 0) + 1
+                if band_a is None and band_b is None:
+                    warns.append(u"Cửa trượt {}: khung cửa phủ kín bề dày tường – không kéo được sàn vào sát khung".format(
+                        id_value(d.Id)))
+                for room, band in ((pa, band_a), (pb, band_b)):
+                    if band is None:
+                        continue
+                    if room.kind in DRY_KINDS:
+                        s = Piece(room.apt, band, [], False)
+                        s.kind, s.label, s.tag = room.kind, u"Ô cửa trượt phía {}".format(room.label),                             u"{}-CUA".format(room.kind)
+                        kept.append(s)
+                        n_doors += 1
+                    else:
+                        lg = replaced_logia.get(id(room), room)
+                        q = merge_into(lg, band, z)
+                        if q is not None:
+                            kept[kept.index(lg)] = q
+                            replaced_logia[id(room)] = q
+                            replaced_logia[id(lg)] = q
+                continue
             s = Piece(pa.apt, rect, [], False)
-            s.kind, s.label, s.tag = "KHO", u"Ô cửa {} ↔ {}".format(pa.label, pb.label), u"KHO-CUA"
+            s.kind, s.label, s.tag = "CHANCUA", u"Đá chân cửa logia", u"CHANCUA"
+            n_sills += 1
+            sill_count[u"logia"] = sill_count.get(u"logia", 0) + 1
+            kept.append(s)
+            continue
+        if pa.kind in DRY_KINDS and pb.kind in DRY_KINDS and pa.kind != pb.kind:
+            # Ô cửa ngủ (KHO) ↔ khách (KHACH) khác vật liệu → đá chân cửa (KTS chốt 2026-10-28)
+            s = Piece(pa.apt, rect, [], False)
+            s.kind, s.label, s.tag = "CHANCUA", u"Đá chân cửa {} ↔ {}".format(pa.label, pb.label), u"CHANCUA"
+            n_sills += 1
+        elif pa.kind in DRY_KINDS and pb.kind in DRY_KINDS:
+            s = Piece(pa.apt, rect, [], False)
+            s.kind, s.label, s.tag = pa.kind, u"Ô cửa {} ↔ {}".format(pa.label, pb.label), u"{}-CUA".format(pa.kind)
             n_doors += 1
-        elif "WC" in (pa.kind, pb.kind) and "KHO" in (pa.kind, pb.kind):
+        elif "WC" in (pa.kind, pb.kind) and pa.kind != pb.kind and None not in (pa.kind, pb.kind):
             wc, dry = (pa, pb) if pa.kind == "WC" else (pb, pa)
             if wc_extra > 0:
                 # Kéo đá thêm wc_extra về phía WC cho khít mép sàn WC (WC lùi biên thêm wc_extra)
@@ -995,16 +1327,66 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
             s = Piece(dry.apt, rect, [], False)
             s.kind, s.label, s.tag = "CHANCUA", u"Đá chân cửa WC", u"CHANCUA"
             n_sills += 1
+            sill_count[u"WC"] = sill_count.get(u"WC", 0) + 1
         else:
             continue
         kept.append(s)
+
+    # Sàn hành lang: biên Room "Hành lang" (mặt hoàn thiện) ∩ vùng trống (đã trừ tường / cột / vách KC) – thang bộ,
+    # sảnh thang là Room "Khu vực chung" riêng nên không lát (KTS chốt 2026-10-29). Comments gắn theo căn có cửa
+    # chính mở ra Room đó.
+    n_hall = 0
+    if "HANHLANG" in ftypes:
+        if only:
+            warns.append(u"Sàn hành lang chỉ tạo khi chạy cả tầng (IN[12] trống) – lần này bỏ qua")
+        else:
+            bopt = SpatialElementBoundaryOptions()
+            bopt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish
+            halls = []
+            for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType():
+                pn = r.get_Parameter(BuiltInParameter.ROOM_NAME)
+                if r.LevelId == level.Id and r.Area > 0 and pn is not None and                         HALL_ROOM_KEY in loose_key(pn.AsString() or u""):
+                    halls.append(r)
+            for r in halls:
+                loops = []
+                for segs in r.GetBoundarySegments(bopt):
+                    pts = []
+                    for sg in segs:
+                        pts.extend((to_mm(q.X), to_mm(q.Y)) for q in list(sg.GetCurve().Tessellate())[:-1])
+                    pts = clean_poly(pts)
+                    if len(pts) >= 3:
+                        loops.append(pts)
+                if not loops:
+                    continue
+                loops.sort(key=lambda l: -abs(signed_area(l)))
+                outer = loops[0] if signed_area(loops[0]) > 0 else loops[0][::-1]
+                holes = [h if signed_area(h) < 0 else h[::-1] for h in loops[1:]]
+                apt = next((a for pt, a in hall_pts if in_region(pt, outer, holes)), targets[0])
+                try:
+                    cl = [poly_loop(outer, z)] + [poly_loop(h, z) for h in holes]
+                    rs = GeometryCreationUtilities.CreateExtrusionGeometry(List[CurveLoop](cl), XYZ.BasisZ, 1.0)
+                    part = BooleanOperationsUtils.ExecuteBooleanOperation(rs, free_region, BooleanOperationsType.Intersect)
+                except Exception as ex:
+                    warns.append(u"Room {} '{}': không cắt được theo tường ({}) – bỏ qua".format(
+                        r.Number, pn.AsString(), ex))
+                    continue
+                for sub in SolidUtils.SplitVolumes(part):
+                    for o, h in solid_regions(sub):
+                        s = Piece(apt, o, h, False)
+                        if s.area < MIN_PIECE_M2:
+                            continue
+                        s.kind, s.label, s.tag = "HANHLANG", u"Hành lang (Room {})".format(r.Number), u"HANHLANG"
+                        kept.append(s)
+                        n_hall += 1
+            if not halls:
+                warns.append(u"Không có Room tên 'Hành lang' trên level '{}' – không tạo sàn hành lang".format(level.Name))
 
     # Gộp sàn khô mỗi căn (khách + ô cửa + phòng ngủ nối qua cửa) thành 1 tấm → mạch ván liền nhau
     # (KTS chốt 2026-10-20: mỗi tấm Revit tự đặt gốc mẫu hatch theo hình của nó, API không dời được gốc mẫu)
     # Chiều hatch: song song cạnh dài nhất phòng khách (force_dir).
     merge_warns = []
     for i in targets:
-        rooms = [p for p in kept if p.apt == i and p.kind == "KHO" and p.tag is None]
+        rooms = [p for p in kept if p.apt == i and p.kind in DRY_KINDS and p.tag is None]
         if not rooms:
             continue
         ang = edge_dir(max(rooms, key=lambda p: p.area).outer)
@@ -1029,16 +1411,19 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
                     names[i], ex))
         for outer, holes, members in groups:
             g = Piece(i, outer, holes, any(p.is_open for p in members))
-            n_bed = sum(1 for p in members if p.tag is None) - 1
+            has_living = any(p.tag is None and p.label.startswith(u"Khách") for p in members)
+            n_bed = sum(1 for p in members if p.tag is None) - (1 if has_living else 0)
             n_cua = sum(1 for p in members if p.tag is not None)
-            g.kind, g.label = "KHO", u"Sàn khô gộp (khách + {} phòng + {} ô cửa)".format(n_bed, n_cua)
+            g.kind, g.label = "KHO", u"Sàn khô gộp ({}{} phòng + {} ô cửa)".format(
+                u"khách + " if has_living else u"", n_bed, n_cua)
             g.bo_loops = [l for p in members if p.tag is None for l in [p.outer] + p.holes]
+            g.members = members
             for p in members:
                 p.merged = True
                 p.status = u"Gộp vào sàn khô chung của căn"
             kept.append(g)
         for p in kept:
-            if p.apt == i and p.kind == "KHO" and not p.merged:
+            if p.apt == i and p.kind in DRY_KINDS and not p.merged:
                 p.floor_outer = force_dir(p.floor_outer, ang)
 
     # Sàn đã có (hoặc xoá để tạo lại), WC lùi biên
@@ -1050,6 +1435,23 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
             if apt in target_names:
                 old_floors[fid] = fl
         existing = [e for e in existing if e[1] not in old_floors]
+    # Sàn cũ của tool khác floor type IN[9] (VD vừa đổi phòng khách sang gỗ) → tự xoá + tạo lại, không cần IN[16].
+    # Tấm gộp: dò tại từng phòng thành phần; nằm trên > 1 sàn cũ (cách chia tấm đã đổi) → thay tất cả sàn đó.
+    replaced = {}
+    for p in kept:
+        if p.kind is None or p.merged or p.kind not in ftypes:
+            continue
+        want = pending.get(p.kind) or type_name(ftypes[p.kind])
+        pts = [p.ip] + [m.ip for m in getattr(p, "members", [])]
+        hits = {}
+        for poly, fid, apt, fl in existing:
+            if any(point_in(q, poly) for q in pts):
+                hits[fid] = fl
+        if len(hits) > 1 or any(norm(type_name(doc.GetElement(fl.GetTypeId()))) != norm(want)
+                                for fl in hits.values()):
+            replaced.update(hits)
+    old_floors.update(replaced)
+    existing = [e for e in existing if e[1] not in old_floors]
     warns += merge_warns
     jobs = []
     for p in kept:
@@ -1078,9 +1480,18 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
         subs = list(doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines).SubCategories)
         hit = [s for s in subs if norm(s.Name) == norm(line_style_name)]
         if not hit:
-            raise StopReport([u"DỪNG: không có line style '{}' (IN[15]). Các line style: {}".format(
-                line_style_name, u", ".join(sorted(s.Name for s in subs)))])
-        line_style = hit[0].GetGraphicsStyle(GraphicsStyleType.Projection)
+            # So khớp nới: bỏ dấu tiếng Việt, hoa/thường, dấu chấm/gạch/khoảng trắng
+            hit = [s for s in subs if loose_key(s.Name) == loose_key(line_style_name)]
+        if hit:
+            line_style = hit[0].GetGraphicsStyle(GraphicsStyleType.Projection)
+            line_style_name = hit[0].Name
+        else:
+            # Không dừng: vẫn tạo sàn, chỉ bỏ vẽ đường bo phòng
+            av = sorted(s.Name for s in subs if loose_key(s.Name).startswith(u"av"))
+            warns.append(u"Không có line style '{}' (IN[15]) trong file – KHÔNG vẽ đường bo phòng, sàn vẫn tạo. "
+                         u"Tạo line style này (Manage > Additional Settings > Line Styles) hoặc đổi IN[15] "
+                         u"sang line style có sẵn{}".format(
+                             line_style_name, u": " + u"; ".join(av) if av else u""))
 
     # Ghi vào mô hình
     created_errors, created_types, line_errors = [], [], []
@@ -1106,7 +1517,7 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
                         continue
                     a, b = gc.GetEndPoint(0), gc.GetEndPoint(1)
                     old_lines.setdefault(seg_key((to_mm(a.X), to_mm(a.Y)), (to_mm(b.X), to_mm(b.Y))), []).append(ce.Id)
-            if rebuild:
+            if rebuild or old_floors:
                 # Xoá sàn cũ của tool + mọi nét đường bo trùng cạnh sàn cũ / sàn sắp tạo (kể cả nét bị nhân đôi)
                 step[0] = u"xoá sàn + đường bo cũ"
                 edges = set()
@@ -1153,7 +1564,7 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
                     p.status = u"LỖI Floor.Create: {}".format(ex)
                     created_errors.append(p)
                     continue
-                fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).Set(from_mm(offsets.get(p.kind, 0.0)))
+                fl.get_Parameter(BuiltInParameter.FLOOR_HEIGHTABOVELEVEL_PARAM).Set(from_mm(top_mm(p.kind)))
                 cm = fl.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)
                 if cm is not None and not cm.IsReadOnly:
                     cm.Set(u"{} {} {}".format(COMMENT_TAG, names[p.apt], p.tag or p.kind))
@@ -1195,11 +1606,11 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
 
     # Báo cáo
     rows = []
-    allp = sorted(kept, key=lambda p: (names[p.apt], {"KHO": 0, "WC": 1, "LOGIA": 2, "CHANCUA": 3}.get(p.kind, 4), -p.area))
+    allp = sorted(kept, key=lambda p: (names[p.apt], {"KHACH": 0, "KHO": 1, "WC": 2, "LOGIA": 3, "CHANCUA": 4, "HANHLANG": 5}.get(p.kind, 6), -p.area))
     for p in allp:
         rows.append([names[p.apt], p.label or u"—", p.kind or u"—", fmt(p.ip),
                      ft_label(p.kind) if p.kind in ftypes else u"—",
-                     u"{:.0f}".format(offsets.get(p.kind, 0.0)) if p.kind else u"—",
+                     u"{:.0f}".format(top_mm(p.kind)) if p.kind else u"—",
                      u"{:.2f}".format(p.area), u"{:.2f}".format(p.floor_area),
                      u"hở" if p.is_open else u"kín", p.status, p.id])
     for p, why in skipped:
@@ -1212,17 +1623,26 @@ def main(cad_filter, apt_filters, name_filters, name_pattern, col_filters, col_g
     counts = {}
     for p in jobs:
         counts[p.kind] = counts.get(p.kind, 0) + 1
-    report.append(u"Tấm sàn {}: {} (khô {}, WC {}, logia {}) – bỏ qua vùng nhỏ / mảnh: {}".format(
+    report.append(u"Tấm sàn {}: {} (khô {}, khách {}, WC {}, logia {}, hành lang {}) – bỏ qua vùng nhỏ / mảnh: {}".format(
         u"sẽ tạo" if dry_run else u"đã tạo", len(jobs) - len(created_errors), counts.get("KHO", 0),
-        counts.get("WC", 0), counts.get("LOGIA", 0), len(skipped)))
-    report.append(u"Ô cửa: {} ô ngủ ↔ khách (sàn phòng khô, …KHO-CUA) + {} đá chân cửa WC (CHANCUA)".format(
-        n_doors, n_sills))
+        counts.get("KHACH", 0), counts.get("WC", 0), counts.get("LOGIA", 0), counts.get("HANHLANG", 0),
+        len(skipped)))
+    report.append(u"Ô cửa: {} ô ngủ ↔ khách (sàn phòng khô, …KHO-CUA) + {} đá chân cửa CHANCUA ({})".format(
+        n_doors, n_sills, u", ".join(u"{} {}".format(k, v) for k, v in sorted(sill_count.items())) or u"không"))
     report.append(u"Chiều hatch sàn khô: mỗi căn song song cạnh dài nhất của phòng khách (ngủ + khách + ô cửa)")
+    report.append(u"Cao độ: Level '{}' = SFL; đáy sàn = SFL + IN[10], mặt = đáy + dày type ({})".format(
+        level.Name, u", ".join(u"{} +{:.0f}".format(k, top_mm(k)) for k in KINDS if k in thick)))
+    report.append(u"Biên sàn: tường KT (≥ {:.0f} mm) + cột CAD + {} khối vách / cột KC từ link Revit".format(
+        THIN_WALL_MM, len(link_cut)))
     if rebuild:
         report.append(u"Tạo lại: {} {} sàn cũ của tool trong các căn đang làm{}".format(
             u"sẽ xoá" if dry_run else u"đã xoá", len(old_floors),
             u" + các đoạn đường bo trùng cạnh (kể cả nét nhân đôi)" if dry_run else
             u" + {} đoạn đường bo trùng cạnh".format(n_del_lines)))
+    if replaced:
+        report.append(u"Thay sàn khác floor type IN[9]: {} {} sàn cũ của tool – Id: {}".format(
+            u"sẽ xoá + tạo lại" if dry_run else u"đã xoá + tạo lại", len(replaced),
+            u", ".join(u"{}".format(f) for f in sorted(replaced))))
     if line_style is not None:
         report.append(u"Đường bo phòng (Detail Line '{}', view '{}'): {}".format(
             line_style_name, view.Name, u"vẽ theo biên các tấm sàn sẽ tạo" if dry_run else

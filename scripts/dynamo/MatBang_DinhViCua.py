@@ -1,3 +1,5 @@
+# ĐÃ GỘP vào TagCua_TuDong.py (IN[16] – IN[18], nút Tag cửa) theo yêu cầu người dùng 2026-11-03; file này giữ lại để
+# chạy riêng bằng Dynamo, KHÔNG còn nút pyRevit và không cập nhật thêm (vd. chưa ẩn Mechanical Equipment).
 # Tạo mặt bằng định vị cửa từ mặt bằng đang mở (người dùng yêu cầu 2026-11-02, mẫu theo ảnh mặt bằng chống cháy lan):
 #   - Nhân bản view mặt bằng gốc (Duplicate, KHÔNG kèm chú thích / filled region), đặt tên theo mẫu IN[5]
 #     (vd. "MẶT BẰNG ĐỊNH VỊ CỬA - Tầng 1"). View tên đó đã có thì không tạo thêm, chỉ mở view đó.

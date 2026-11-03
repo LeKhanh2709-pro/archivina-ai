@@ -1,0 +1,3 @@
+title: "Cục nóng\nđiều hoà"
+tooltip: "Đặt cục nóng điều hòa (Mechanical Equipment) ở logia từ mặt bằng DWG đã Link, cùng khuôn với tool 19 máy giặt: 1. Cục nóng trên CAD (đo trên G19 TẦNG 3 2026-10-31, DWG TDH_LINK-REVIT: 17 block \"Mini-VRF - 4-6HP (12.0-16.0kW) 1250\" layer AUDIT_D_260526144445-144, mỗi căn một cục ở logia LG1) = HÌNH CHỮ NHẬT 1100 × 500 chứa MŨI TÊN hướng thổi. Revit gộp nét block vào một GeometryInstance nên không d Mặc định chạy thử (dry-run). Nguồn: ARV_TaoCucNongDHTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

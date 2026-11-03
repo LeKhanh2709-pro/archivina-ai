@@ -1,0 +1,3 @@
+title: "MB định\nvị cửa"
+tooltip: "Bấm: vẽ luôn trên view mặt bằng tầng đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. Tạo mặt bằng định vị cửa từ mặt bằng đang mở (người dùng yêu cầu 2026-11-02, mẫu theo ảnh mặt bằng chống cháy lan): - Nhân bản view mặt bằng gốc (Duplicate, KHÔNG kèm chú thích / filled region), đặt tên theo mẫu IN[5] (vd. \"MẶT BẰNG ĐỊNH VỊ CỬA - Tầng 1\"). View tên đó đã có thì không tạo thêm, chỉ m Nguồn: MatBang_DinhViCua.dyn."
+author: Archivina BIM

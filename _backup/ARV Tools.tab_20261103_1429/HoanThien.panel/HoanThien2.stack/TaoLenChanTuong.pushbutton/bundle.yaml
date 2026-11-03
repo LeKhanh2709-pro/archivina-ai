@@ -1,0 +1,3 @@
+title: "Len chân tường"
+tooltip: "Nhân bản từ 0.8 ARV_TaoLenGachLogia_v1 (không sửa bản gốc) – mở rộng cho mọi loại sàn của tool 06. Tạo len chân tường (Basic Wall mỏng, wall type có sẵn theo từng loại sàn), cho sàn do ARV_TaoSanCanHoTuCAD_v1 tạo: 1. Nguồn biên: Floor có Comments \"ARV-SanCanHo <căn> <loại>\" với <loại> trong IN[2] (mặc định KHO;LOGIA;HANHLANG). Ô cửa (…-CUA) và đá chân cửa (CHANCUA) không làm len. Phạm vi: phần tử  Mặc định chạy thử (dry-run). Nguồn: ARV_TaoLenChanTuong_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

@@ -1,0 +1,847 @@
+{
+  "Uuid": "0c645196-9b03-4d18-8185-14f13e58c4e7",
+  "IsCustomNode": false,
+  "Description": "Đặt máy giặt (Furniture) ở logia từ DWG đã link, nhận diện theo hình: hình vuông chứa lồng giặt tròn; lưng áp mặt hoàn thiện, đứng trên mặt sàn logia, type chọn ở IN[3]. Dry-run mặc định.",
+  "Name": "19. ARV_TaoMayGiatTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "fe2ba9d270ac445eb1e717dc8ad82565",
+      "Name": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "6803e96ae8934ef59c7081591216c380",
+      "Name": "IN[1] Lọc layer (trống = dò mọi layer, VD A-Nội thất)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "f1c78854dd0e42e990e672f8a6f8fe3e",
+      "Name": "IN[2] Level đặt máy giặt",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "TẦNG 3",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "035c6b7dcdc84755b66523823921fead",
+      "Name": "IN[4] Room chứa máy (cách nhau bằng ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "logia;lô gia",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "fb1273cae670454eaeb0ce9ca8751ed5",
+      "Name": "IN[5] Cạnh hình vuông máy CAD tối thiểu (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "550",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "2835e3082e1b4da3958f403f042f7adf",
+      "Name": "IN[6] Cạnh hình vuông máy CAD tối đa (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "750",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "53d3a6ad6f434ce794962aa2a67c5cc4",
+      "Name": "IN[7] Lưng CAD cách mặt tường tối đa (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "100",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "061ab52b4c734ede9c31865e89f677ca",
+      "Name": "IN[8] Cạnh bên CAD cách tường bên tối đa (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "100",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "8667e7e8f1d3411ea1a92b0acb70d8b7",
+      "Name": "IN[9] Đảo hướng (True nếu máy quay lưng ra phòng)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "25dd5e03e5464796acffb7d69bd68394",
+      "Name": "IN[10] Dry-run (True = đặt thử rồi hoàn tác)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "efdb104ab1eb457b80b84c68e86b8d2f",
+      "Name": "Báo cáo",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "fe2ba9d270ac445eb1e717dc8ad82565",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1050aef6675840bd9a3c3459920b11fd",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "6803e96ae8934ef59c7081591216c380",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "10dbfad89b154beaa8783a4cd656709c",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "f1c78854dd0e42e990e672f8a6f8fe3e",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0fa5e2acafdc4029afe0eed86f496e18",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "TẦNG 3"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": 0,
+      "SelectedString": "AV_FT_may giat1:AV_FT_may giat 2",
+      "NodeType": "ExtensionNode",
+      "Id": "a28a2f64f4a948c5ba54bf7d63b9f576",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0c38289fff3b49698f434c45c6b05401",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "035c6b7dcdc84755b66523823921fead",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1745143b7b594cab985bdb390d954663",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "logia;lô gia"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "fb1273cae670454eaeb0ce9ca8751ed5",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d54d1089159c43d6b4cb668081f0f83f",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 550.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "2835e3082e1b4da3958f403f042f7adf",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f780763d4cba4759ad455c33e7f1d554",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 750.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "53d3a6ad6f434ce794962aa2a67c5cc4",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3e1ff527632f4f5aa8c81d3fccd2e6fd",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 100.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "061ab52b4c734ede9c31865e89f677ca",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1790a46e888b4da9a77e595c44bea15d",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 100.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "8667e7e8f1d3411ea1a92b0acb70d8b7",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "88d32b656e6d429a8b387e852793d0fd",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "25dd5e03e5464796acffb7d69bd68394",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "91419c005224473d8d2ae9b6b9b7aa6b",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-31)\n# Mã nguồn của Python node trong 19. ARV_TaoMayGiatTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Đặt máy giặt (Furniture) ở logia từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool lavabo (không cần tên block):\n#   1. Máy giặt trên CAD (đo trên G19 TẦNG 3 2026-10-30, DWG TDH_LINK-REVIT: 17 block \"X-U-2PN-7$0$May giat\" layer\n#      A-Nội thất, nét layer 0, mỗi căn một máy, đều ở logia LG1) = HÌNH VUÔNG 650 × 650 chứa VÒNG TRÒN lồng giặt R 171 và\n#      một NÉT DẢI song song một cạnh, cách cạnh đó 138 mm. Cả 17 máy: dải ở phía RA PHÒNG, cạnh đối diện sát tường →\n#      hướng mặt trước = từ tâm ra phía nét dải. Không thấy nét dải → lấy cạnh gần biên Room nhất làm lưng, báo \"cần soát\".\n#      Nét vào Revit (file chẩn đoán 2026-10-31 09:10): hình vuông = PolyLine 9 đỉnh đi hai vòng, nét dải + nét chéo = PolyLine\n#      3 đỉnh, lồng giặt = Arc không giới hạn R 171, layer A-Nội thất. Vì vậy hình vuông ghép từ cạnh, không chỉ từ vòng kín;\n#      nhận khi có lồng giặt HOẶC nét dải. Dry-run ghi file CHANDOAN (mọi nét trong logia + tên block). IN[1] trống = dò mọi\n#      layer, kể cả nét Revit không trả tên layer; có chuỗi = chỉ layer chứa chuỗi đó. Block tên chứa \"may giat\" cũng được đọc.\n#   2. Room chứa tâm máy phải có tên chứa một chuỗi trong IN[4] (mặc định \"logia;lô gia\"; trống = mọi phòng).\n#   3. Lưng máy áp mặt nhô ra phòng nhất trong biên Room (Finish) và mặt tường Revit trên level, cách lưng CAD ≤ IN[7]. Tính cả\n#      len chân tường tool 11 (`WF_03_10…` dày 10, cao 100, nằm trước biên Room): bản đầu bỏ qua nên máy ăn vào len 10 mm\n#      (người dùng báo 2026-10-31). Không có mặt nào → giữ theo CAD, báo \"cần soát\".\n#   4. Dọc tường: CAD rộng 650, family rộng 600 → có tường bên (cả len) cách cạnh CAD ≤ IN[8] thì máy áp tường bên (như lavabo góc);\n#      hai bên đều có thì đặt giữa; không có thì giữ tâm CAD.\n#   5. Cao độ: máy đứng trên MẶT SÀN LOGIA, không phải trên level (G19: sàn Comments \"ARV-SanCanHo CAN-02 LOGIA\", đỉnh =\n#      level + 50). Elevation from Level = đỉnh sàn logia tại vị trí máy − level; không có sàn → 0, báo \"cần soát\".\n#   6. Type: chọn ở IN[3], mặc định \"AV_FT_may giat1 : AV_FT_may giat 2\" (Furniture 3D, đặt theo level, khung −300,3…300,3 ×\n#      −600…0, cao 900: gốc ở giữa mép lưng, mặt trước về −Y → FacingOrientation chỉ VÀO TƯỜNG). Quay ngược → IN[9] = True.\n#      Căn theo khung type (dùng được cả family 2.5D không có khối đặc); dry-run cũng đặt thử rồi hoàn tác. Comments =\n#      \"ARV-TaoMayGiatTuCAD\". Máy của tool đã có mà lệch / sai hướng / sai cao độ / khác type → sửa tại chỗ; máy cùng family\n#      người dùng tự đặt → bỏ qua.\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (để trống = bản CAD duy nhất trong mô hình / có layer khớp IN[1])\n#   IN[1] (str)   Lọc layer, nhiều chuỗi cách ';' (khớp chuỗi con); trống = dò mọi layer (mặc định)\n#   IN[2] (str)   Tên level đặt máy, VD \"TẦNG 3\"\n#   IN[3] (FamilyType | str) Type máy giặt (node Family Types, hoặc \"AV_FT_may giat1 : AV_FT_may giat 2\")\n#   IN[4] (str)   Tên Room chứa máy, nhiều chuỗi cách ';', VD \"logia;lô gia\" (trống = mọi phòng)\n#   IN[5] (float) Cạnh hình vuông máy giặt CAD tối thiểu (mm), VD 550\n#   IN[6] (float) Cạnh hình vuông máy giặt CAD tối đa (mm), VD 750\n#   IN[7] (float) Lưng CAD cách mặt tường tối đa (mm), VD 100\n#   IN[8] (float) Cạnh bên CAD cách tường bên tối đa để áp tường bên (mm), VD 100\n#   IN[9] (bool)  Đảo hướng: True nếu máy quay lưng ra phòng (mặc định False)\n#   IN[10] (bool) Dry-run: True = đặt thử, báo cáo rồi hoàn tác, không ghi vào mô hình (mặc định True)\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, đường dẫn log, rồi từng máy giặt\n#   OUT[1] (list[Line]) Xem trước: hình vuông CAD, khung máy sẽ đặt, đoạn hướng mặt trước (mm)\n\nimport os\nimport io\nimport re\nimport csv\nimport math\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, Options, GeometryInstance, PolyLine,\n                                   Line, Arc, Ellipse, NurbSpline, HermiteSpline, Curve, XYZ, Transaction, Floor,\n                                   TransactionStatus, UnitUtils, UnitTypeId, ModelPathUtils, BuiltInParameter,\n                                   BuiltInCategory, Level, Wall, LocationCurve, LocationPoint, FamilySymbol,\n                                   FamilyPlacementType,\n                                   ElementTransformUtils, SpatialElementBoundaryOptions,\n                                   SpatialElementBoundaryLocation, ElementId, Solid, ViewDetailLevel,\n                                   WorksharingUtils, CheckoutStatus)\n    from Autodesk.Revit.DB.Structure import StructuralType\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo máy giặt từ CAD\"\nSCRIPT_TAG = u\"ARV_TaoMayGiatTuCAD_v1\"\nCOMMENT_TAG = u\"ARV-TaoMayGiatTuCAD\"\nFLOOR_TAG = u\"ARV-SanCanHo\"      # Comments sàn tool 06: \"ARV-SanCanHo <căn> LOGIA\"\nFLOOR_KIND = u\"LOGIA\"\nMAX_EDGE_MM = 3000.0             # Nét dài hơn không thể là nét máy giặt – bỏ khi đọc CAD\nSNAP_MM = 1.0                    # Đầu mút cách nhau ≤ chừng này coi là nối nhau\nMAX_LOOP_EDGES = 64\nRIGHT_COS = 0.02                 # Góc vuông: |cos| ≤ chừng này (lệch ≤ ~1°)\nBLOCK_KEY = u\"may giat\"          # Tên block CAD (so không dấu, không phân biệt hoa thường) chứa chuỗi này = máy giặt\nEDGE_TOL_MM = 5.0                # Cạnh rời của hình vuông lệch vị trí tối đa\nSQUARE_MM = 50.0                 # Hai cạnh hình vuông máy giặt lệch nhau tối đa\nCORE_MM = 200.0                  # Nét cong trong hình vuông phải phủ tối thiểu chừng này mỗi chiều (lồng giặt)\nBAND_MIN_MM = 60.0               # Nét dải cách cạnh hình vuông trong khoảng này (G19: 138)\nBAND_MAX_MM = 250.0\nBAND_RATIO = 0.8                 # Nét dải dài tối thiểu chừng này × cạnh hình vuông\nPARALLEL_COS = 0.995             # Mặt song song / vuông góc: |cos| ≥ chừng này\nSAME_MM = 100.0                  # Hai hình vuông có tâm cách ≤ chừng này = cùng một ký hiệu\nEXIST_TOL_MM = 500.0             # Máy cùng family có tâm cách tâm CAD ≤ chừng này → đã có\nBODY_MAX_MM = 1500.0             # Khối đặc của family lớn hơn (trên mặt bằng) = vùng thông thủy – bỏ\nTOP_MM = 1000.0                  # Tường có chân cao hơn level chừng này không vướng máy (máy cao 900 + sàn 50)\nROOM_INSET_MM = 5.0              # Kiểm tra máy nằm trong Room: thu khung vào chừng này\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\ndef sub(a, b):\n    return (a[0] - b[0], a[1] - b[1])\n\n\ndef dot(a, b):\n    return a[0] * b[0] + a[1] * b[1]\n\n\ndef unit(v):\n    l = math.hypot(v[0], v[1])\n    return (v[0] / l, v[1] / l)\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef loose(s):\n    \"\"\"So tên không phân biệt dấu / hoa thường: \"Vệ sinh\" ≈ \"VE SINH\".\"\"\"\n    s = unicodedata.normalize(\"NFD\", norm(s).replace(u\"đ\", u\"d\").replace(u\"Đ\", u\"D\"))\n    return u\"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower()\n\n\ndef rotate(p, ang, c):\n    \"\"\"Xoay điểm p quanh c một góc ang (rad, ngược chiều kim đồng hồ).\"\"\"\n    ca, sa = math.cos(ang), math.sin(ang)\n    x, y = p[0] - c[0], p[1] - c[1]\n    return (c[0] + x * ca - y * sa, c[1] + x * sa + y * ca)\n\n\nclass Item(object):\n    \"\"\"Một nét CAD: danh sách điểm (mm) + có phải nét cong.\"\"\"\n\n    def __init__(self, pts, curved):\n        self.pts, self.curved = pts, curved\n\n\nclass Seg(object):\n    \"\"\"Một đoạn biên Room trên mặt bằng (mm).\"\"\"\n\n    def __init__(self, a, b):\n        self.a, self.b = a, b\n\n\ndef same(p, q):\n    return abs(p[0] - q[0]) <= SNAP_MM and abs(p[1] - q[1]) <= SNAP_MM\n\n\ndef find_loops(items):\n    \"\"\"Vòng kín từ nét thẳng: polyline tự khép (hoặc polyline 4 đỉnh – Revit có thể bỏ điểm khép), hoặc chuỗi nét nối\n    đầu mút mà mọi nút có đúng 2 nét. Trả về [điểm]. (Như tool sen tắm – dùng để tìm vách kính.)\"\"\"\n    loops, opens = [], []\n    for it in items:\n        if it.curved:\n            continue\n        if len(it.pts) >= 4 and same(it.pts[0], it.pts[-1]):\n            loops.append(it.pts[:-1])\n        elif len(it.pts) == 4:\n            loops.append(it.pts)\n        elif len(it.pts) >= 2:\n            opens.append(it)\n    nodes = {}\n\n    def key(p):\n        return (int(round(p[0] / SNAP_MM)), int(round(p[1] / SNAP_MM)))\n\n    for i, it in enumerate(opens):\n        nodes.setdefault(key(it.pts[0]), []).append(i)\n        nodes.setdefault(key(it.pts[-1]), []).append(i)\n    used = set()\n    for start in range(len(opens)):\n        if start in used:\n            continue\n        k0, k = key(opens[start].pts[0]), key(opens[start].pts[-1])\n        if len(nodes[k0]) != 2 or len(nodes[k]) != 2:\n            continue\n        chain, pts, cur = [start], list(opens[start].pts), start\n        closed = False\n        while len(chain) <= MAX_LOOP_EDGES:\n            if k == k0 and len(chain) > 1:\n                closed = True\n                break\n            if len(nodes[k]) != 2:\n                break\n            nxt = nodes[k][0] if nodes[k][1] == cur else nodes[k][1]\n            if nxt == cur or nxt in chain:\n                break\n            seg = opens[nxt].pts\n            if key(seg[0]) != k:\n                seg = seg[::-1]\n            pts.extend(seg[1:])\n            chain.append(nxt)\n            cur, k = nxt, key(seg[-1])\n        if closed:\n            used.update(chain)\n            loops.append(pts[:-1])\n    return loops\n\n\ndef rect_corners(pts):\n    \"\"\"4 góc nếu vòng là hình chữ nhật (bỏ điểm trùng / thẳng hàng), None nếu không.\"\"\"\n    clean = []\n    for p in pts:\n        if not clean or not same(p, clean[-1]):\n            clean.append(p)\n    if len(clean) > 1 and same(clean[0], clean[-1]):\n        clean.pop()\n    corners = []\n    n = len(clean)\n    for i in range(n):\n        a, b, c = clean[i - 1], clean[i], clean[(i + 1) % n]\n        u, v = sub(b, a), sub(c, b)\n        lu, lv = math.hypot(*u), math.hypot(*v)\n        if lu < 1e-6 or lv < 1e-6:\n            return None\n        cos = dot(u, v) / (lu * lv)\n        if cos > 1.0 - 1e-6:\n            continue                    # thẳng hàng\n        if abs(cos) > RIGHT_COS:\n            return None\n        corners.append(b)\n    return corners if len(corners) == 4 else None\n\n\ndef inside_loops(p, loops):\n    \"\"\"Điểm trong vùng giới hạn bởi các vòng biên (chẵn lẻ – lỗ trong Room tự trừ).\"\"\"\n    c = False\n    for pts in loops:\n        for i in range(len(pts)):\n            (x1, y1), (x2, y2) = pts[i - 1], pts[i]\n            if (y1 > p[1]) != (y2 > p[1]) and p[0] < x1 + (p[1] - y1) * (x2 - x1) / (y2 - y1):\n                c = not c\n    return c\n\n\nclass Washer(object):\n    \"\"\"Máy giặt nhận diện được trên CAD + máy sẽ đặt. Hệ trục riêng: gốc = giữa lưng CAD, dir = hướng mặt trước (ra\n    phòng), u = dọc tường; s = toạ độ dọc tường, d = toạ độ ra phòng (lưng CAD d = 0, mặt trước d = depth).\"\"\"\n\n    def __init__(self, c, d, width, depth, corners, band):\n        self.c, self.width, self.depth, self.corners, self.band = c, width, depth, corners, band\n        self.set_dir(d)\n        self.mount_d = 0.0       # mặt dựa (d)\n        self.sides = []          # [(s mặt tường bên, phía −1 / +1)]\n        self.final = None        # khung máy sau khi căn (s0, s1, d0, d1)\n        self.room = u\"\"\n        self.number = u\"\"\n        self.status = u\"\"\n        self.type_name = u\"\"\n        self.eid = u\"\"\n        self.note = u\"\"\n        self.dups = []\n\n    def set_dir(self, d):\n        self.dir = d\n        self.u = (-d[1], d[0])\n        self.back = (self.c[0] - d[0] * self.depth / 2.0, self.c[1] - d[1] * self.depth / 2.0)\n\n    def local(self, p):\n        q = sub(p, self.back)\n        return dot(q, self.u), dot(q, self.dir)\n\n    def world(self, s, d):\n        return (self.back[0] + self.u[0] * s + self.dir[0] * d, self.back[1] + self.u[1] * s + self.dir[1] * d)\n\n    def target_s(self, body_width):\n        \"\"\"Tâm máy dọc tường: áp tường bên; hai bên đều có → giữa; không có → tâm CAD.\"\"\"\n        if len(self.sides) >= 2:\n            return sum(s for s, _ in self.sides) / len(self.sides)\n        if self.sides:\n            return self.sides[0][0] - self.sides[0][1] * body_width / 2.0\n        return 0.0\n\n\ndef band_front(items, cen, e1, e2, l1, l2):\n    \"\"\"Hướng mặt trước theo nét dải: đoạn thẳng trong hình vuông, song song một cạnh, cách cạnh đó BAND_MIN–MAX_MM.\"\"\"\n    def inside(p):\n        q = sub(p, cen)\n        return abs(dot(q, e1)) <= l1 / 2.0 + SNAP_MM and abs(dot(q, e2)) <= l2 / 2.0 + SNAP_MM\n\n    front = None\n    for it in items:\n        if it.curved:\n            continue\n        for k in range(1, len(it.pts)):\n            a, b = it.pts[k - 1], it.pts[k]\n            ln = math.hypot(*sub(b, a))\n            if ln < 1.0 or not inside(a) or not inside(b):\n                continue\n            m = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)\n            v = ((b[0] - a[0]) / ln, (b[1] - a[1]) / ln)\n            for along, axis, half, side in ((e1, e2, l2 / 2.0, l1), (e2, e1, l1 / 2.0, l2)):\n                t = dot(sub(m, cen), axis)\n                if abs(dot(v, along)) >= PARALLEL_COS and ln >= BAND_RATIO * side and \\\n                        BAND_MIN_MM <= half - abs(t) <= BAND_MAX_MM:\n                    front = axis if t > 0 else (-axis[0], -axis[1])\n    return front\n\n\ndef make_washer(c, items):\n    \"\"\"Máy giặt từ 4 góc hình vuông + các nét để tìm nét dải.\"\"\"\n    l1, l2 = math.hypot(*sub(c[1], c[0])), math.hypot(*sub(c[2], c[1]))\n    cen = ((c[0][0] + c[2][0]) / 2.0, (c[0][1] + c[2][1]) / 2.0)\n    e1, e2 = unit(sub(c[1], c[0])), unit(sub(c[2], c[1]))\n    front = band_front(items, cen, e1, e2, l1, l2)\n    band = front is not None\n    d = front if band else e2\n    along_e2 = abs(dot(d, e2)) > 0.5\n    return Washer(cen, d, l1 if along_e2 else l2, l2 if along_e2 else l1, c, band)\n\n\ndef block_washer(items):\n    \"\"\"Máy giặt từ các nét của MỘT block tên chứa BLOCK_KEY: vòng chữ nhật lớn nhất, không có thì khung bao các nét\n    (Revit có thể tách / bỏ polyline của block). None nếu block không có nét.\"\"\"\n    best = None\n    for pts in find_loops(items):\n        c = rect_corners(pts)\n        if c is not None:\n            area = math.hypot(*sub(c[1], c[0])) * math.hypot(*sub(c[2], c[1]))\n            if best is None or area > best[0]:\n                best = (area, c)\n    if best is not None:\n        return make_washer(best[1], items)\n    pts = [p for it in items for p in it.pts]\n    if not pts:\n        return None\n    x0, x1 = min(p[0] for p in pts), max(p[0] for p in pts)\n    y0, y1 = min(p[1] for p in pts), max(p[1] for p in pts)\n    if x1 - x0 < 1.0 or y1 - y0 < 1.0:\n        return None\n    return make_washer([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], items)\n\n\ndef edge_squares(items, min_side, max_side):\n    \"\"\"[4 góc] hình vuông ghép từ các cạnh. Block máy giặt có polyline trùng 4 line: Revit gộp thành PolyLine 9 đỉnh đi hai vòng\n    quanh hình vuông (file chẩn đoán 2026-10-31 09:10), rect_corners ra 8 góc nên find_loops không dùng được.\"\"\"\n    segs, cells = [], {}\n\n    def cell(p):\n        return (int(p[0] // max_side), int(p[1] // max_side))\n\n    for it in items:\n        if it.curved:\n            continue\n        for k in range(1, len(it.pts)):\n            a, b = it.pts[k - 1], it.pts[k]\n            ln = math.hypot(*sub(b, a))\n            if min_side <= ln <= max_side:\n                m = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)\n                cells.setdefault(cell(m), []).append(len(segs))\n                segs.append((m, unit(sub(b, a)), ln))\n\n    def around(p):\n        c = cell(p)\n        return [i for dx in (-1, 0, 1) for dy in (-1, 0, 1) for i in cells.get((c[0] + dx, c[1] + dy), [])]\n\n    def has_edge(p, u):\n        for i in around(p):\n            m, v, _ = segs[i]\n            if abs(dot(u, v)) <= RIGHT_COS and math.hypot(*sub(m, p)) <= EDGE_TOL_MM:\n                return True\n        return False\n\n    result = []\n    for i, (m, u, ln) in enumerate(segs):\n        n = (-u[1], u[0])\n        for j in around(m):\n            m2, u2, ln2 = segs[j]\n            if j <= i or abs(dot(u, u2)) < PARALLEL_COS or abs(ln - ln2) > SQUARE_MM:\n                continue\n            v = sub(m2, m)\n            h = dot(v, n)\n            if abs(dot(v, u)) > EDGE_TOL_MM or not (min_side <= abs(h) <= max_side) or abs(abs(h) - ln) > SQUARE_MM:\n                continue\n            k = ln / 2.0\n            c = [(m[0] - u[0] * k, m[1] - u[1] * k), (m[0] + u[0] * k, m[1] + u[1] * k)]\n            c += [(c[1][0] + n[0] * h, c[1][1] + n[1] * h), (c[0][0] + n[0] * h, c[0][1] + n[1] * h)]\n            mid1 = ((c[1][0] + c[2][0]) / 2.0, (c[1][1] + c[2][1]) / 2.0)\n            mid2 = ((c[0][0] + c[3][0]) / 2.0, (c[0][1] + c[3][1]) / 2.0)\n            if has_edge(mid1, u) and has_edge(mid2, u):\n                result.append(c)\n    return result\n\n\ndef find_washers(items, min_side, max_side, stats=None, blocks=()):\n    \"\"\"Hình vuông cạnh min_side–max_side (vòng kín hoặc 4 cạnh rời) có lồng giặt (nét cong phủ ≥ CORE_MM mỗi chiều) hoặc\n    nét dải, cộng block tên chứa BLOCK_KEY; nét dải cho hướng mặt trước.\"\"\"\n    rects = [c for c in (rect_corners(pts) for pts in find_loops(items)) if c is not None]\n    rects += edge_squares(items, min_side, max_side)\n    squares = cores = bands = 0\n    found, seen = [], []\n    for c in rects:\n        l1, l2 = math.hypot(*sub(c[1], c[0])), math.hypot(*sub(c[2], c[1]))\n        if not (min_side <= l1 <= max_side and min_side <= l2 <= max_side) or abs(l1 - l2) > SQUARE_MM:\n            continue\n        cen = ((c[0][0] + c[2][0]) / 2.0, (c[0][1] + c[2][1]) / 2.0)\n        if any(math.hypot(*sub(cen, s)) <= SAME_MM for s in seen):\n            continue\n        seen.append(cen)\n        squares += 1\n        e1, e2 = unit(sub(c[1], c[0])), unit(sub(c[2], c[1]))\n\n        def inside(p):\n            q = sub(p, cen)\n            return abs(dot(q, e1)) <= l1 / 2.0 + SNAP_MM and abs(dot(q, e2)) <= l2 / 2.0 + SNAP_MM\n\n        core = [p for it in items if it.curved and all(inside(p) for p in it.pts) for p in it.pts]\n        has_core = bool(core) and min(max(dot(p, e) for p in core) - min(dot(p, e) for p in core)\n                                      for e in (e1, e2)) >= CORE_MM\n        w = make_washer(c, items)\n        cores += 1 if has_core else 0\n        bands += 1 if w.band else 0\n        if has_core or w.band:\n            found.append(w)\n    # Block trước: block cho đủ nét dải của đúng máy đó\n    found = [w for w in (block_washer(b) for b in blocks) if w is not None] + found\n    result = []\n    for w in found:\n        if all(math.hypot(*sub(w.c, r.c)) > SAME_MM for r in result):\n            result.append(w)\n    if stats is not None:\n        stats.update(squares=squares, cores=cores, bands=bands)\n    return result\n\n\ndef mount_offset(w, segs, tol):\n    \"\"\"d của mặt song song lưng máy, chạm bề rộng máy, cách lưng CAD ≤ tol: mặt NHÔ RA PHÒNG NHẤT để máy không ăn vào lớp nào\n    (len chân tường 10 mm nằm trước biên Room, lần chạy 2026-10-31); None nếu không có.\"\"\"\n    best = None\n    half = w.width / 2.0\n    for sg in segs:\n        sa, da = w.local(sg.a)\n        sb, db = w.local(sg.b)\n        ln = math.hypot(sb - sa, db - da)\n        if ln < 1.0 or abs(sb - sa) / ln < PARALLEL_COS or max(sa, sb) <= -half or min(sa, sb) >= half:\n            continue\n        d = (da + db) / 2.0\n        if abs(d) <= tol and (best is None or d > best):\n            best = d\n    return best\n\n\ndef fit_back(w, segs, tol):\n    \"\"\"Mặt dựa. Không có nét dải → thử 4 cạnh, cạnh gần biên Room nhất là lưng. Trả về ghi chú.\"\"\"\n    if w.band:\n        d = mount_offset(w, segs, tol)\n        if d is None:\n            return u\"không có biên Room sau lưng máy (≤ {:.0f} mm) – giữ theo CAD, cần soát\".format(tol)\n        w.mount_d = d\n        return u\"\"\n    best = None\n    for k in range(4):\n        trial = (w.dir[0], w.dir[1])\n        w.set_dir(rotate(trial, k * math.pi / 2.0, (0.0, 0.0)))\n        d = mount_offset(w, segs, tol)\n        if d is not None and (best is None or abs(d) < abs(best[0])):\n            best = (d, w.dir)\n        w.set_dir(trial)\n    if best is None:\n        return u\"không thấy nét dải, không có biên Room quanh máy – giữ theo CAD, hướng cần soát\"\n    w.mount_d = best[0]\n    w.set_dir(best[1])\n    return u\"không thấy nét dải – lấy cạnh gần tường nhất làm lưng, cần soát hướng\"\n\n\ndef fit_sides(w, segs, tol):\n    \"\"\"Tường bên: mặt vuông góc mặt dựa, chạm dải chiều sâu máy, cách cạnh CAD ≤ tol, nhô vào máy nhất. Trả về ghi chú.\"\"\"\n    half = w.width / 2.0\n    best = {}\n    for sg in segs:\n        sa, da = w.local(sg.a)\n        sb, db = w.local(sg.b)\n        ln = math.hypot(sb - sa, db - da)\n        if ln < 1.0 or abs(db - da) / ln < PARALLEL_COS:\n            continue\n        if max(da, db) < w.mount_d + 1.0 or min(da, db) > w.mount_d + w.depth:\n            continue\n        s = (sa + sb) / 2.0\n        side = 1 if s > 0 else -1\n        # Mặt nhô vào máy nhất trong khoảng tol: len chân tường trước mặt tường\n        if abs(abs(s) - half) <= tol and (side not in best or abs(s) < abs(best[side])):\n            best[side] = s\n    w.sides = [(best[k], k) for k in sorted(best)]\n    if not w.sides:\n        return u\"không có tường bên – giữ tâm CAD\"\n    return u\"giữa hai tường bên\" if len(w.sides) == 2 else u\"áp tường bên\"\n\n\ndef analyse(items, min_side, max_side, back_tol, side_tol, room_at=None, room_keys=(), stats=None, blocks=(), walls=()):\n    \"\"\"items: [Item] mm; blocks: [[Item]] nét từng block máy giặt; room_at(pt) → (tên, [vòng], số phòng) | None;\n    walls: [Seg] mặt tường trên level. Trả về [Washer] đã gán trạng thái.\"\"\"\n    washers = find_washers(items, min_side, max_side, stats, blocks)\n    for w in washers:\n        hit = room_at(w.c) if room_at is not None else None\n        w.room = hit[0] if hit else u\"\"\n        w.number = hit[2] if hit else u\"\"\n        if room_at is not None and room_keys and not any(k in loose(w.room) for k in room_keys):\n            w.status = u\"Bỏ qua – không nằm trong phòng {} (phòng: {})\".format(\n                u\"/\".join(room_keys), w.room or u\"không có Room\")\n            continue\n        segs = [Seg(pts[i - 1], pts[i]) for pts in (hit[1] if hit else []) for i in range(len(pts))] + list(walls)\n        note = fit_back(w, segs, back_tol)\n        side_note = fit_sides(w, segs, side_tol)\n        w.note = u\"; \".join(v for v in (note, side_note) if v)\n        w.status = u\"OK\"\n    washers.sort(key=lambda x: (-round(x.c[1]), round(x.c[0])))\n    return washers\n\n\ndef wall_faces(p0, p1, along_x):\n    \"\"\"Hai mặt bên (Seg) của tường song song trục X / Y từ khung bao (p0, p1 mm): khung bao đúng cả khi Location Line của\n    tường không ở tim.\"\"\"\n    if along_x:\n        return [Seg((p0[0], y), (p1[0], y)) for y in (p0[1], p1[1])]\n    return [Seg((x, p0[1]), (x, p1[1])) for x in (p0[0], p1[0])]\n\n\ndef body_fit(pts, w):\n    \"\"\"Căn khung khối (điểm (x, y) mm của instance) theo máy đích. Trả về (dời (dx, dy), khung (s0, s1, d0, d1)).\"\"\"\n    ss = [w.local(p)[0] for p in pts]\n    ds = [w.local(p)[1] for p in pts]\n    body_w = max(ss) - min(ss)\n    m_s = w.target_s(body_w) - (min(ss) + max(ss)) / 2.0\n    m_d = w.mount_d - min(ds)\n    move = (w.u[0] * m_s + w.dir[0] * m_d, w.u[1] * m_s + w.dir[1] * m_d)\n    return move, (min(ss) + m_s, max(ss) + m_s, min(ds) + m_d, max(ds) + m_d)\n\n\ndef inside_room(w, loops):\n    \"\"\"Bốn góc khung máy (thu vào ROOM_INSET_MM) nằm trong Room.\"\"\"\n    s0, s1, d0, d1 = w.final\n    k = ROOM_INSET_MM\n    return all(inside_loops(w.world(s, d), loops) for s in (s0 + k, s1 - k) for d in (d0 + k, d1 - k))\n\n\n# --- Revit ---------------------------------------------------------------------------\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return style.GraphicsStyleCategory.Name\n    return None\n\n\ndef cad_objects(cad):\n    \"\"\"Mọi đối tượng hình học của CAD, kể cả trong block lồng nhau.\"\"\"\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            else:\n                result.append(obj)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef match_layers(all_layers, filters):\n    # So khớp không phân biệt hoa thường, chuẩn hoá Unicode; không lọc = mọi layer\n    if not filters:\n        return set(all_layers)\n    return set(l for l in all_layers if any(norm(f).lower() in norm(l).lower() for f in filters))\n\n\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef pick_cad(cad_filter, filters):\n    \"\"\"Chọn bản CAD theo tên; để trống thì lấy bản CAD duy nhất (có layer khớp). Trả về (cad, tên, objects, layers).\"\"\"\n    found = []\n    for inst in FilteredElementCollector(doc).OfClass(ImportInstance).ToElements():\n        name = get_name(doc.GetElement(inst.GetTypeId()))\n        if cad_filter and cad_filter.lower() not in name.lower():\n            continue\n        objects = cad_objects(inst)\n        all_layers = sorted(set(l for l in (layer_of(o) for o in objects) if l))\n        found.append((inst, name, objects, all_layers))\n    hits = [f for f in found if f[2] and match_layers(f[3], filters)]\n    if len(hits) == 1:\n        return hits[0]\n    if not hits:\n        lines = [u\"DỪNG: không có bản CAD{} nào{} đọc được hình học (link CAD chưa load?).\".format(\n            u\" khớp '{}'\".format(cad_filter) if cad_filter else u\"\",\n            u\" có layer chứa '{}'\".format(u\"; \".join(filters)) if filters else u\"\")]\n        for inst, name, _, layers in found:\n            lines.append(u\"Layer của {}: {}\".format(name, u\", \".join(layers) or u\"(không đọc được hình học)\"))\n        raise StopReport(lines)\n    raise StopReport([u\"DỪNG: {} bản CAD – nhập tên bản CAD vào ô IN[0]: {}\".format(\n        len(hits), u\", \".join(h[1] for h in hits))])\n\n\ndef find_level(name):\n    levels = list(FilteredElementCollector(doc).OfClass(Level).ToElements())\n    for l in levels:\n        if norm(l.Name).lower() == norm(name).lower():\n            return l\n    raise StopReport([u\"DỪNG: không có level '{}'. Các level: {}\".format(\n        name, u\", \".join(l.Name for l in sorted(levels, key=lambda x: x.Elevation)))])\n\n\ndef xy(p):\n    return (to_mm(p.X), to_mm(p.Y))\n\n\ndef block_name(inst):\n    \"\"\"Tên block của GeometryInstance CAD; rỗng nếu Revit không cho biết.\"\"\"\n    try:\n        sym = doc.GetElement(inst.GetSymbolGeometryId().SymbolId)\n        if sym is not None:\n            return get_name(sym)\n    except Exception:\n        pass\n    try:\n        return get_name(inst.Symbol)\n    except Exception:\n        return u\"\"\n\n\ndef block_groups(cad):\n    \"\"\"[[đối tượng]] từng block tên chứa BLOCK_KEY, đã ở toạ độ mô hình. G19 ra 0 block: Revit gộp mọi nét vào một\n    GeometryInstance của bản CAD (file chẩn đoán 2026-10-31 09:10); giữ cho bản CAD có block riêng.\"\"\"\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    groups = []\n\n    def flat(geo, out):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                flat(obj.GetInstanceGeometry(), out)\n            else:\n                out.append(obj)\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                if BLOCK_KEY in loose(block_name(obj)):\n                    out = []\n                    flat(obj.GetInstanceGeometry(), out)\n                    groups.append(out)\n                else:\n                    walk(obj.GetInstanceGeometry())\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return groups\n\n\ndef read_items(objects, layers):\n    \"\"\"Nét ngắn – ứng viên nét máy giặt (thẳng + cong); layers = None: mọi nét, kể cả nét Revit không trả tên layer.\n    Trả về (items, {loại: số}).\"\"\"\n    items, kinds, lim = [], {}, from_mm(MAX_EDGE_MM)\n    for obj in objects:\n        if layers is not None and layer_of(obj) not in layers:\n            continue\n        kind = obj.GetType().Name\n        kinds[kind] = kinds.get(kind, 0) + 1\n        if isinstance(obj, PolyLine):\n            pts = list(obj.GetCoordinates())\n            if len(pts) >= 2:\n                ext = max(max(p.X for p in pts) - min(p.X for p in pts), max(p.Y for p in pts) - min(p.Y for p in pts))\n                if ext <= lim:\n                    # PolyLine ≥ 12 đỉnh = cung Revit đã chia đoạn (Revit 2027 đổi elip / spline thành PolyLine, tool 14)\n                    items.append(Item([xy(p) for p in pts], len(pts) >= 12))\n        elif isinstance(obj, Arc) and not obj.IsBound:\n            # Vòng tròn CAD: Arc không giới hạn, tự chia theo tâm + bán kính\n            c, r = xy(obj.Center), to_mm(obj.Radius)\n            if r <= MAX_EDGE_MM:\n                items.append(Item([(c[0] + r * math.cos(k * math.pi / 12.0), c[1] + r * math.sin(k * math.pi / 12.0))\n                                   for k in range(25)], True))\n        elif isinstance(obj, Curve) and obj.IsBound:\n            if isinstance(obj, Line):\n                if obj.Length <= lim:\n                    items.append(Item([xy(obj.GetEndPoint(0)), xy(obj.GetEndPoint(1))], False))\n            elif isinstance(obj, (Arc, Ellipse, NurbSpline, HermiteSpline)) and obj.Length <= 2 * lim:\n                items.append(Item([xy(p) for p in obj.Tessellate()], True))\n    return items, kinds\n\n\ndef room_finder(level):\n    \"\"\"Hàm room_at(pt mm) → (tên Room, [vòng biên Finish mm], số Room) trên level chứa điểm, None nếu không có.\"\"\"\n    opt = SpatialElementBoundaryOptions()\n    opt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish\n    rooms = []\n    for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms) \\\n            .WhereElementIsNotElementType().ToElements():\n        if r.LevelId != level.Id or r.Area <= 0:\n            continue\n        loops = []\n        for segs in r.GetBoundarySegments(opt) or []:\n            pts = []\n            for seg in segs:\n                pts.extend(xy(q) for q in list(seg.GetCurve().Tessellate())[:-1])\n            if len(pts) >= 3:\n                loops.append(pts)\n        if not loops:\n            continue\n        xs = [q[0] for l in loops for q in l]\n        ys = [q[1] for l in loops for q in l]\n        name = r.get_Parameter(BuiltInParameter.ROOM_NAME)\n        number = r.get_Parameter(BuiltInParameter.ROOM_NUMBER)\n        rooms.append(((min(xs), min(ys), max(xs), max(ys)), loops, name.AsString() if name is not None else u\"\",\n                      number.AsString() if number is not None else u\"\"))\n\n    def room_at(p):\n        for box, loops, name, number in rooms:\n            if box[0] <= p[0] <= box[2] and box[1] <= p[1] <= box[3] and inside_loops(p, loops):\n                return name, loops, number\n        return None\n    return room_at, len(rooms)\n\n\ndef wall_segs(level):\n    \"\"\"[Seg] mặt tường thẳng song song trục toạ độ trên level, gồm lớp ốp, trát, len chân tường (tool 09, 11, 12); bỏ tường có\n    chân cao hơn TOP_MM so với level (không vướng máy).\"\"\"\n    segs = []\n    lim = level.Elevation + from_mm(TOP_MM)\n    for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n        loc, bb = wl.Location, wl.get_BoundingBox(None)\n        if wl.LevelId != level.Id or bb is None or bb.Min.Z > lim:\n            continue\n        if not isinstance(loc, LocationCurve) or not isinstance(loc.Curve, Line):\n            continue\n        d = loc.Curve.Direction\n        if max(abs(d.X), abs(d.Y)) >= PARALLEL_COS:\n            segs += wall_faces(xy(bb.Min), xy(bb.Max), abs(d.X) > abs(d.Y))\n    return segs\n\n\ndef logia_floors(level):\n    \"\"\"[(x0, y0, x1, y1, đỉnh sàn so với level mm)] sàn logia của tool 06 trên level (Comments \"ARV-SanCanHo <căn> LOGIA\").\"\"\"\n    result = []\n    for fl in FilteredElementCollector(doc).OfClass(Floor).OfCategory(BuiltInCategory.OST_Floors):\n        if fl.LevelId != level.Id:\n            continue\n        cm = fl.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n        text = (cm.AsString() or u\"\") if cm is not None else u\"\"\n        bb = fl.get_BoundingBox(None)\n        if bb is None or not text.startswith(FLOOR_TAG) or not text.endswith(FLOOR_KIND):\n            continue\n        x0, y0 = xy(bb.Min)\n        x1, y1 = xy(bb.Max)\n        result.append((x0, y0, x1, y1, to_mm(bb.Max.Z - level.Elevation)))\n    return result\n\n\ndef floor_top(floors, p):\n    \"\"\"Đỉnh sàn logia tại điểm p (sàn có khung bao nhỏ nhất chứa p); None nếu không có sàn.\"\"\"\n    hits = [f for f in floors if f[0] <= p[0] <= f[2] and f[1] <= p[1] <= f[3]]\n    if not hits:\n        return None\n    return min(hits, key=lambda f: (f[2] - f[0]) * (f[3] - f[1]))[4]\n\n\ndef furniture_symbols():\n    return [s for s in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Furniture)\n            .WhereElementIsElementType().ToElements() if isinstance(s, FamilySymbol)]\n\n\ndef pick_template(value):\n    \"\"\"IN[3]: FamilyType của node Family Types (Dynamo) hoặc chuỗi \"Family : Type\" → FamilySymbol máy giặt.\"\"\"\n    symbols = furniture_symbols()\n    families = u\", \".join(sorted(set(s.FamilyName for s in symbols))) or u\"không có\"\n    if isinstance(value, str):\n        parts = [norm(p) for p in value.split(u\":\")]\n        if len(parts) != 2 or not all(parts):\n            raise StopReport([u\"DỪNG: ô IN[3] phải là type chọn từ node Family Types hoặc chuỗi 'Family : Type' \"\n                              u\"(đang là '{}').\".format(value)])\n        hits = [s for s in symbols if norm(s.FamilyName) == parts[0] and norm(get_name(s)) == parts[1]]\n        if not hits:\n            raise StopReport([u\"DỪNG: không có type máy giặt '{}'. Family Furniture: {}\".format(value, families)])\n        return hits[0]\n    sym = UnwrapElement(value) if value is not None else None\n    if not isinstance(sym, FamilySymbol):\n        raise StopReport([u\"DỪNG: chưa chọn type máy giặt ở IN[3].\"])\n    if sym.Category is None or sym.Category.BuiltInCategory != BuiltInCategory.OST_Furniture:\n        raise StopReport([u\"DỪNG: type '{} : {}' không thuộc Furniture. Family Furniture: {}\".format(\n            sym.FamilyName, get_name(sym), families)])\n    return sym\n\n\ndef body_points(fi):\n    \"\"\"Khung máy trên mặt bằng (x, y mm): 4 góc khung TYPE đưa về vị trí instance (dùng được cả family 2.5D, khung cao 0, không\n    có khối đặc); không có khung thì đỉnh các khối đặc, rồi khung bao instance.\"\"\"\n    bb = fi.Symbol.get_BoundingBox(None)\n    if bb is not None and bb.Max.X - bb.Min.X > 1e-3 and bb.Max.Y - bb.Min.Y > 1e-3:\n        tf = fi.GetTransform()\n        return [xy(tf.OfPoint(XYZ(x, y, 0.0))) for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)]\n    opt = Options()\n    opt.DetailLevel = ViewDetailLevel.Fine\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            elif isinstance(obj, Solid) and obj.Volume > 1e-6:\n                pts = []\n                for e in obj.Edges:\n                    pts.extend(xy(p) for p in e.Tessellate())\n                if not pts:\n                    continue\n                xs, ys = [p[0] for p in pts], [p[1] for p in pts]\n                if max(max(xs) - min(xs), max(ys) - min(ys)) <= BODY_MAX_MM:\n                    result.extend(pts)\n\n    geo = fi.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    if result:\n        return result\n    bb = fi.get_BoundingBox(None)\n    if bb is None:\n        return []\n    x0, y0 = xy(bb.Min)\n    x1, y1 = xy(bb.Max)\n    return [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]\n\n\ndef existing_fixtures(family_name, level):\n    \"\"\"[(tâm mm, Id, có Comments của tool)] máy giặt đã đặt trên level: cùng family, hoặc do tool tạo.\"\"\"\n    result = []\n    for fi in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Furniture) \\\n            .WhereElementIsNotElementType().ToElements():\n        sym = getattr(fi, \"Symbol\", None)\n        if sym is None or fi.LevelId != level.Id or not isinstance(getattr(fi, \"Location\", None), LocationPoint):\n            continue\n        cm = fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n        mine = cm is not None and cm.AsString() == COMMENT_TAG\n        if norm(sym.FamilyName) != family_name and not mine:\n            continue\n        pts = body_points(fi)\n        if pts:\n            c = ((min(p[0] for p in pts) + max(p[0] for p in pts)) / 2.0,\n                 (min(p[1] for p in pts) + max(p[1] for p in pts)) / 2.0)\n        else:\n            c = xy(fi.Location.Point)\n        result.append((c, fi.Id.Value, mine))\n    return result\n\n\ndef elevation_param(fi):\n    \"\"\"Cao độ instance so với level (\"Elevation from Level\" / \"Offset from Host\").\"\"\"\n    return fi.get_Parameter(BuiltInParameter.INSTANCE_ELEVATION_PARAM) or \\\n        fi.get_Parameter(BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM)\n\n\ndef settle(fi, w, want, elev, sym):\n    \"\"\"Trong Transaction: đổi type, xoay, đặt cao độ, dời cho khung khối về đúng đích. Trả về [việc đã làm].\"\"\"\n    todo = []\n    if fi.Symbol.Id != sym.Id:\n        todo.append(u\"đổi type {} : {}\".format(fi.Symbol.FamilyName, get_name(fi.Symbol)))\n        fi.ChangeTypeId(sym.Id)\n    doc.Regenerate()\n    f = fi.FacingOrientation\n    ang = math.atan2(f.X * want[1] - f.Y * want[0], f.X * want[0] + f.Y * want[1])\n    if abs(ang) > 1e-3:\n        p = fi.Location.Point\n        ElementTransformUtils.RotateElement(doc, fi.Id, Line.CreateBound(p, XYZ(p.X, p.Y, p.Z + 1.0)), ang)\n        todo.append(u\"xoay {:.0f}°\".format(math.degrees(ang)))\n    ep = elevation_param(fi)\n    if ep is not None and not ep.IsReadOnly and abs(to_mm(ep.AsDouble()) - elev) > 0.5:\n        todo.append(u\"cao độ {:.0f} → {:.0f}\".format(to_mm(ep.AsDouble()), elev))\n        ep.Set(from_mm(elev))\n    doc.Regenerate()\n    pts = body_points(fi)\n    if not pts:\n        w.final = (w.target_s(w.width) - w.width / 2.0, w.target_s(w.width) + w.width / 2.0,\n                   w.mount_d, w.mount_d + w.depth)\n        return todo + [u\"không đọc được khung của family – đặt theo gốc family, cần soát\"]\n    move, w.final = body_fit(pts, w)\n    if math.hypot(*move) > 0.5:\n        ElementTransformUtils.MoveElement(doc, fi.Id, XYZ(from_mm(move[0]), from_mm(move[1]), 0.0))\n        todo.append(u\"dời {:.0f} mm\".format(math.hypot(*move)))\n    return todo\n\n\nDIAG_HEADER = [u\"Phòng\", u\"Số phòng\", u\"Loại\", u\"Layer\", u\"Xmin\", u\"Ymin\", u\"Rộng X\", u\"Rộng Y\", u\"Số điểm\", u\"Khép kín\",\n               u\"Bán kính\", u\"Thể tích (mm3)\", u\"Toạ độ (x y; …)\"]\n\n\ndef object_points(obj):\n    \"\"\"Điểm (x, y mm) của một đối tượng CAD để chẩn đoán; [] nếu không đọc được.\"\"\"\n    try:\n        if isinstance(obj, PolyLine):\n            return [xy(p) for p in obj.GetCoordinates()]\n        if isinstance(obj, Arc) and not obj.IsBound:\n            c, r = xy(obj.Center), to_mm(obj.Radius)\n            return [(c[0] - r, c[1] - r), (c[0] + r, c[1] + r)]\n        if isinstance(obj, Curve):\n            return [xy(p) for p in obj.Tessellate()]\n        if isinstance(obj, Solid):\n            return [xy(p) for e in obj.Edges for p in e.Tessellate()]\n    except Exception:\n        pass\n    return []\n\n\ndef write_diag(cad, objects, room_at, keys):\n    \"\"\"File chẩn đoán (chỉ dry-run): mọi đối tượng CAD có tâm trong Room khớp keys, kèm số lượng theo tên block.\"\"\"\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    path = os.path.join(folder, \"TaoMayGiatTuCAD_CHANDOAN_{}.csv\".format(datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")))\n    names = {}\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n\n    def walk(geo, depth):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                k = (depth, block_name(obj))\n                names[k] = names.get(k, 0) + 1\n                walk(obj.GetInstanceGeometry(), depth + 1)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo, 0)\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        w = csv.writer(f)\n        w.writerow(DIAG_HEADER)\n        for obj in objects:\n            pts = object_points(obj)\n            if not pts:\n                continue\n            x0, x1 = min(p[0] for p in pts), max(p[0] for p in pts)\n            y0, y1 = min(p[1] for p in pts), max(p[1] for p in pts)\n            hit = room_at(((x0 + x1) / 2.0, (y0 + y1) / 2.0))\n            if hit is None or (keys and not any(k in loose(hit[0]) for k in keys)):\n                continue\n            w.writerow([hit[0], hit[2], obj.GetType().Name, layer_of(obj) or u\"(không có)\", u\"{:.1f}\".format(x0),\n                        u\"{:.1f}\".format(y0), u\"{:.1f}\".format(x1 - x0), u\"{:.1f}\".format(y1 - y0), len(pts),\n                        u\"có\" if len(pts) > 2 and same(pts[0], pts[-1]) else u\"\",\n                        u\"{:.1f}\".format(to_mm(obj.Radius)) if isinstance(obj, Arc) else u\"\",\n                        u\"{:.0f}\".format(obj.Volume * to_mm(1.0) ** 3) if isinstance(obj, Solid) else u\"\",\n                        u\"; \".join(u\"{:.1f} {:.1f}\".format(p[0], p[1]) for p in pts[:40])])\n        w.writerow([])\n        w.writerow([u\"TÊN BLOCK\", u\"Độ sâu\", u\"Số lần\"])\n        for (depth, name), n in sorted(names.items(), key=lambda kv: (kv[0][0], u\"{}\".format(kv[0][1]))):\n            w.writerow([name or u\"(không đọc được tên)\", depth, n])\n    return path\n\n\ndef preview_lines(washers, z_mm):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n\n        def seg(a, e):\n            return DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(a[0], a[1], z_mm),\n                                               DSPoint.ByCoordinates(e[0], e[1], z_mm))\n        lines = []\n        for w in washers:\n            lines += [seg(w.corners[i - 1], w.corners[i]) for i in range(4)]\n            if w.final is not None:\n                s0, s1, d0, d1 = w.final\n                box = [w.world(s0, d0), w.world(s1, d0), w.world(s1, d1), w.world(s0, d1)]\n                lines += [seg(box[i - 1], box[i]) for i in range(4)]\n                s = (s0 + s1) / 2.0\n                lines.append(seg(w.world(s, (d0 + d1) / 2.0), w.world(s, d1 + 200.0)))\n        return lines\n    except Exception:\n        return []\n\n\nLOG_HEADER = [u\"STT\", u\"Tâm máy CAD (mm)\", u\"Phòng\", u\"Số phòng\", u\"Đo khối (rộng × sâu, mm)\", u\"Cao độ so với level (mm)\",\n              u\"Type\", u\"Kết quả\", u\"ElementId\", u\"Ghi chú\"]\n\n\ndef write_log(rows, source, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoMayGiatTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# File nguồn: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef main(cad_filter, layer_filters, level_name, template_in, room_keys, min_side, max_side, back_tol, side_tol, flip,\n         dry_run):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    if re.search(r\"[-_]S[-_]\", doc.Title or u\"\"):\n        return [u\"DỪNG: tên file '{}' là mô hình Kết cấu (S) – máy giặt chỉ đặt trên mô hình Kiến trúc (A).\".format(\n            doc.Title)], []\n    sym = pick_template(template_in)\n    fam = norm(sym.FamilyName)\n    type_label = u\"{} : {}\".format(fam, get_name(sym))\n    if sym.Family.FamilyPlacementType != FamilyPlacementType.OneLevelBased:\n        raise StopReport([u\"DỪNG: family '{}' kiểu đặt {} – công cụ chỉ hỗ trợ family đặt theo level.\".format(\n            fam, sym.Family.FamilyPlacementType)])\n    cad, cad_name, objects, all_layers = pick_cad(cad_filter, layer_filters)\n    layers = match_layers(all_layers, layer_filters)\n    level = find_level(level_name)\n    level_z = to_mm(level.Elevation)\n    room_at, n_rooms = room_finder(level)\n    keys = [loose(k) for k in room_keys if k.strip()]\n    if keys and not n_rooms:\n        raise StopReport([u\"DỪNG: level '{}' chưa có Room – cần Room để lọc máy giặt ở logia (hoặc để trống IN[4]).\"\n                          .format(level_name)])\n\n    items, kinds = read_items(objects, layers if layer_filters else None)\n    groups = block_groups(cad)\n    blocks = [read_items(g, None)[0] for g in groups]\n    stats = {}\n    walls = wall_segs(level)\n    washers = analyse(items, min_side, max_side, back_tol, side_tol, room_at, keys, stats, blocks, walls)\n    floors = logia_floors(level)\n    existing = existing_fixtures(fam, level)\n\n    rows, jobs, fixes = [], [], []\n    for idx, w in enumerate(washers, 1):\n        if w.status == u\"OK\":\n            near = sorted((math.hypot(*sub(c, w.c)), eid, mine) for c, eid, mine in existing\n                          if math.hypot(*sub(c, w.c)) <= EXIST_TOL_MM)\n            if near:\n                w.eid = near[0][1]\n                w.dups = [eid for _, eid, _ in near[1:]]\n                w.status = u\"Bỏ qua – đã có máy cùng family (Id {})\".format(w.eid)\n                if near[0][2]:\n                    fi = doc.GetElement(ElementId(w.eid))\n                    if WorksharingUtils.GetCheckoutStatus(doc, fi.Id) == CheckoutStatus.OwnedByOtherUser:\n                        w.status = u\"Bỏ qua – người khác đang mượn máy (Id {})\".format(w.eid)\n                    else:\n                        fixes.append((fi, len(rows), w))\n            else:\n                jobs.append((w, len(rows)))\n        rows.append([idx, fmt(w.c), w.room or u\"—\", w.number or u\"—\", u\"—\", u\"—\", u\"—\", w.status, w.eid,\n                     u\"; \".join(v for v in [w.note] + [u\"TRÙNG Id {}\".format(d) for d in w.dups] if v)])\n\n    changed = 0\n    created = []\n    if jobs or fixes:\n        # Dry-run cũng đặt thử rồi RollBack: Báo cáo là số đo khối thật của family, không ghi vào mô hình\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            if not sym.IsActive:\n                sym.Activate()\n                doc.Regenerate()\n\n            def finish(fi, ri, w, todo, elev, done):\n                if w.final is not None:\n                    rows[ri][4] = u\"{:.0f} × {:.0f}\".format(w.final[1] - w.final[0], w.final[3] - w.final[2])\n                    hit = room_at(w.c)\n                    if hit is not None and not inside_room(w, hit[1]):\n                        todo = todo + [u\"máy lòi khỏi Room, cần soát\"]\n                rows[ri][5] = u\"{:.0f}\".format(elev)\n                rows[ri][6] = type_label\n                rows[ri][7] = done\n                rows[ri][8] = fi.Id.Value\n                rows[ri][9] = u\"; \".join(v for v in [rows[ri][9]] + todo if v)\n\n            def level_of(w):\n                top = floor_top(floors, w.c)\n                if top is None:\n                    return 0.0, [u\"không có sàn logia – cao độ 0, cần soát\"]\n                return top, []\n\n            for fi, ri, w in fixes:\n                elev, note = level_of(w)\n                want = w.dir if flip else (-w.dir[0], -w.dir[1])\n                todo = settle(fi, w, want, elev, sym)\n                if todo:\n                    changed += 1\n                    finish(fi, ri, w, note + todo, elev, u\"Sẽ sửa\" if dry_run else u\"Đã sửa\")\n                else:\n                    finish(fi, ri, w, note, elev, u\"Bỏ qua – đã đúng (Id {})\".format(fi.Id.Value))\n            # Family đặt theo level: Revit hiểu Z của điểm đặt là độ lệch so với level → Z = 0 rồi đặt Elevation from Level\n            # (bài học tool lavabo 2026-10-30 10:16)\n            for w, ri in jobs:\n                elev, note = level_of(w)\n                p = w.world(w.target_s(w.width), w.mount_d)\n                pt = XYZ(from_mm(p[0]), from_mm(p[1]), 0.0)\n                fi = doc.Create.NewFamilyInstance(pt, sym, level, StructuralType.NonStructural)\n                want = w.dir if flip else (-w.dir[0], -w.dir[1])\n                todo = settle(fi, w, want, elev, sym)\n                cm = fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n                if cm is not None and not cm.IsReadOnly:\n                    cm.Set(COMMENT_TAG)\n                keep = [t for t in todo if u\"cần soát\" in t]\n                finish(fi, ri, w, note + keep, elev, u\"Sẽ tạo\" if dry_run else u\"Đã tạo\")\n                if dry_run:\n                    rows[ri][8] = u\"\"\n                created.append((fi, ri))\n            if dry_run:\n                tx.RollBack()\n            else:\n                status = tx.Commit()\n                if status != TransactionStatus.Committed:\n                    return [u\"LỖI: Revit không lưu được Transaction ({}), mọi thay đổi đã được hoàn tác.\".format(\n                        status)], []\n        except Exception as ex:\n            if tx.HasStarted() and not tx.HasEnded():\n                tx.RollBack()\n            return [u\"LỖI khi đặt máy giặt, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n        if not dry_run:\n            for fi, ri in created:\n                if not fi.IsValidObject:\n                    rows[ri][7] = u\"Revit đã xoá sau khi tạo\"\n\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (đã hoàn tác, không ghi vào mô hình)\" if dry_run\n                                else u\"ĐÃ THỰC HIỆN\")]\n    report.append(u\"CAD: {} – dò {} – {} nét – nhận diện {} máy giặt (hình vuông chứa lồng giặt)\".format(\n        cad_name, u\"layer \" + u\"; \".join(sorted(layers)) if layer_filters else u\"mọi layer ({})\".format(len(layers)),\n        len(items), len(washers)))\n    report.append(u\"Máy giặt: {} – level {} – phòng chứa: {} – mặt trước family {}\".format(\n        type_label, level.Name, u\"; \".join(room_keys) if keys else u\"mọi phòng\",\n        u\"quay ra phòng (đảo hướng)\" if flip else u\"−Y (Facing chỉ vào tường)\"))\n    report.append(u\"Máy giặt {}: {}\".format(u\"sẽ tạo\" if dry_run else u\"đã tạo\", len(jobs)))\n    if fixes:\n        report.append(u\"Máy của tool {}: {} / {} máy đã có\".format(u\"sẽ sửa\" if dry_run else u\"đã sửa\", changed, len(fixes)))\n    dups = [(w, d) for w in washers for d in w.dups]\n    if dups:\n        report.append(u\"TRÙNG: {} máy thừa cạnh nhau – xoá tay (giữ Id trong ngoặc): {}\".format(\n            len(dups), u\", \".join(u\"{} (giữ {})\".format(d, w.eid) for w, d in dups)))\n    soat = [r for r in rows if u\"cần soát\" in u\"{}\".format(r[9])]\n    if soat:\n        report.append(u\"CẦN SOÁT: {} máy – xem cột Ghi chú\".format(len(soat)))\n    counts = {}\n    for r in rows:\n        if r[7].startswith(u\"Bỏ qua\"):\n            k = re.sub(r\"[\\d(].*\", u\"\", r[7].split(u\" – \", 1)[1]).strip()\n            counts[k] = counts.get(k, 0) + 1\n    for k in sorted(counts):\n        report.append(u\"Bỏ qua {} máy: {}\".format(counts[k], k))\n    report.append(u\"Chẩn đoán nhận diện: {} hình vuông cạnh {:.0f}–{:.0f} mm – {} có lồng giặt – {} có nét dải – {} block tên \"\n                  u\"chứa '{}' ({} nét) – {} sàn logia – {} mặt tường – Room trên level: {}\".format(\n                      stats.get(\"squares\", 0), min_side, max_side, stats.get(\"cores\", 0), stats.get(\"bands\", 0),\n                      len(groups), BLOCK_KEY, sum(len(b) for b in blocks), len(floors), len(walls), n_rooms))\n    if blocks:\n        lays = sorted(set(u\"{}\".format(layer_of(o)) for g in groups for o in g))\n        types = sorted(set(o.GetType().Name for g in groups for o in g))\n        report.append(u\"Nét trong block máy giặt: layer {} – loại {}\".format(u\", \".join(lays), u\", \".join(types)))\n    report.append(u\"Đối tượng CAD theo loại: \" + u\", \".join(u\"{} {}\".format(k, v) for k, v in sorted(kinds.items())))\n    try:\n        report.append(u\"Log: \" + write_log(rows, cad_name, dry_run))\n        if dry_run:\n            report.append(u\"Chẩn đoán nét CAD trong logia: \" + write_diag(cad, objects, room_at, keys))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra hình vuông CAD + khung máy + đoạn hướng mặt trước (nét xanh trong Dynamo) và log. Thiếu máy → \"\n                      u\"nới IN[5], IN[6]. Đúng thì đổi Dry-run = False và Run lại. Undo bằng mục \\\"{}\\\".\"\n                      .format(TRANSACTION_NAME))\n    else:\n        report.append(u\"Soát hướng vài máy trên 3D: quay ngược → Undo mục \\\"{}\\\", IN[9] = True, Run lại.\".format(\n            TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows\n               if not r[7].startswith(u\"Bỏ qua – không nằm trong phòng\")]\n    return report, preview_lines([w for w, _ in jobs] + [f[2] for f in fixes], level_z)\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\ndef num(i, default):\n    return float(IN[i]) if len(IN) > i and IN[i] is not None else default\n\n\nif DYNAMO:\n    import traceback\n    try:\n        OUT = list(main(\n            (IN[0] or u\"\").strip(),\n            [s.strip() for s in (IN[1] or u\"\").split(u\";\") if s.strip()],\n            (IN[2] or u\"TẦNG 3\"),\n            IN[3] if IN[3] is not None else u\"AV_FT_may giat1 : AV_FT_may giat 2\",\n            (u\"logia;lô gia\" if IN[4] is None else IN[4]).split(u\";\"),\n            num(5, 550.0),\n            num(6, 750.0),\n            num(7, 100.0),\n            num(8, 100.0),\n            False if IN[9] is None else bool(IN[9]),\n            True if IN[10] is None else bool(IN[10]),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoMayGiatTuCAD_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "ff7f85e0169b4d9197b02f2709132938",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "cca7db48c6b241fbb5e01c1b4ebf7a62",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e0d9b497903147dda09f36122e00ad70",
+          "Name": "IN[1]",
+          "Description": "IN[1] Lọc layer (trống = dò mọi layer, VD A-Nội thất)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0313e8c2bbe041a6980f05c9e0a6ef44",
+          "Name": "IN[2]",
+          "Description": "IN[2] Level đặt máy giặt",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c9422d2049e747d39a4afb357b2f9553",
+          "Name": "IN[3]",
+          "Description": "IN[3] CHỌN TYPE MÁY GIẶT",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4a77aaf01367457d924996acfbfc05a2",
+          "Name": "IN[4]",
+          "Description": "IN[4] Room chứa máy (cách nhau bằng ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5d9bfc288de14f0394598f3c04b46790",
+          "Name": "IN[5]",
+          "Description": "IN[5] Cạnh hình vuông máy CAD tối thiểu (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b5e48cee550d447ea62a955ce6c1cfa4",
+          "Name": "IN[6]",
+          "Description": "IN[6] Cạnh hình vuông máy CAD tối đa (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c4f702ec4119480db26670b98568397a",
+          "Name": "IN[7]",
+          "Description": "IN[7] Lưng CAD cách mặt tường tối đa (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "891a950747f54604a52237fbb9d1ae2f",
+          "Name": "IN[8]",
+          "Description": "IN[8] Cạnh bên CAD cách tường bên tối đa (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c0caac5dc28346bebb36abebdd7780cd",
+          "Name": "IN[9]",
+          "Description": "IN[9] Đảo hướng (True nếu máy quay lưng ra phòng)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "29503998c34840bebef8de49246a2fdd",
+          "Name": "IN[10]",
+          "Description": "IN[10] Dry-run (True = đặt thử rồi hoàn tác)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1d62a5dbc82640efad42683923674bb4",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "efdb104ab1eb457b80b84c68e86b8d2f",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "8cd80df1223445cc91f68cf67012d47c",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5598c52853a9489c8ee309904df8c5be",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "1050aef6675840bd9a3c3459920b11fd",
+      "End": "cca7db48c6b241fbb5e01c1b4ebf7a62",
+      "Id": "7d4aaa0313ee4e6fac87e5fc3d664007",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "10dbfad89b154beaa8783a4cd656709c",
+      "End": "e0d9b497903147dda09f36122e00ad70",
+      "Id": "1251625c5db140e296da85b3b09a0622",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0fa5e2acafdc4029afe0eed86f496e18",
+      "End": "0313e8c2bbe041a6980f05c9e0a6ef44",
+      "Id": "b6ff556a0bf243adb385bd76e9587b37",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0c38289fff3b49698f434c45c6b05401",
+      "End": "c9422d2049e747d39a4afb357b2f9553",
+      "Id": "6c04bdd387af48ecb3d9910213626dd2",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1745143b7b594cab985bdb390d954663",
+      "End": "4a77aaf01367457d924996acfbfc05a2",
+      "Id": "6d60d0ff3b4d4b639871f2a05f828257",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d54d1089159c43d6b4cb668081f0f83f",
+      "End": "5d9bfc288de14f0394598f3c04b46790",
+      "Id": "6b0667998fdf4558a18c7e163942379e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f780763d4cba4759ad455c33e7f1d554",
+      "End": "b5e48cee550d447ea62a955ce6c1cfa4",
+      "Id": "a1dd603eaa3a4468b382b39e96e7a578",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "3e1ff527632f4f5aa8c81d3fccd2e6fd",
+      "End": "c4f702ec4119480db26670b98568397a",
+      "Id": "22f9b152605948bfb7c288447fc2bbea",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1790a46e888b4da9a77e595c44bea15d",
+      "End": "891a950747f54604a52237fbb9d1ae2f",
+      "Id": "a509dd29b2fc4afbb6297c545c5ca532",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "88d32b656e6d429a8b387e852793d0fd",
+      "End": "c0caac5dc28346bebb36abebdd7780cd",
+      "Id": "3f4e300e3704445f89bd08ee237d529b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "91419c005224473d8d2ae9b6b9b7aa6b",
+      "End": "29503998c34840bebef8de49246a2fdd",
+      "Id": "354fff11692647a4b6e02c5a405d12a9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1d62a5dbc82640efad42683923674bb4",
+      "End": "8cd80df1223445cc91f68cf67012d47c",
+      "Id": "785e16cca5dc4cc1a807e5cf720f47f7",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "4.2.1.5887",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "fe2ba9d270ac445eb1e717dc8ad82565",
+        "Name": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "6803e96ae8934ef59c7081591216c380",
+        "Name": "IN[1] Lọc layer (trống = dò mọi layer, VD A-Nội thất)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "f1c78854dd0e42e990e672f8a6f8fe3e",
+        "Name": "IN[2] Level đặt máy giặt",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "a28a2f64f4a948c5ba54bf7d63b9f576",
+        "Name": "IN[3] CHỌN TYPE MÁY GIẶT",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "035c6b7dcdc84755b66523823921fead",
+        "Name": "IN[4] Room chứa máy (cách nhau bằng ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "fb1273cae670454eaeb0ce9ca8751ed5",
+        "Name": "IN[5] Cạnh hình vuông máy CAD tối thiểu (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "2835e3082e1b4da3958f403f042f7adf",
+        "Name": "IN[6] Cạnh hình vuông máy CAD tối đa (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "53d3a6ad6f434ce794962aa2a67c5cc4",
+        "Name": "IN[7] Lưng CAD cách mặt tường tối đa (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "061ab52b4c734ede9c31865e89f677ca",
+        "Name": "IN[8] Cạnh bên CAD cách tường bên tối đa (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "8667e7e8f1d3411ea1a92b0acb70d8b7",
+        "Name": "IN[9] Đảo hướng (True nếu máy quay lưng ra phòng)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "25dd5e03e5464796acffb7d69bd68394",
+        "Name": "IN[10] Dry-run (True = đặt thử rồi hoàn tác)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "ff7f85e0169b4d9197b02f2709132938",
+        "Name": "Tạo máy giặt từ CAD (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 660.0,
+        "Y": 560.0
+      },
+      {
+        "Id": "efdb104ab1eb457b80b84c68e86b8d2f",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1060.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "bf791f8e50404ce1ac64e9e5e0a18530",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "CHỌN TYPE MÁY GIẶT ở IN[3]; level; Room logia; cỡ hình vuông CAD để nhận diện. Ô sai thì node Báo cáo liệt kê giá trị hợp lệ. Giữ Dry-run = True cho lần chạy đầu.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "fe2ba9d270ac445eb1e717dc8ad82565",
+          "6803e96ae8934ef59c7081591216c380",
+          "f1c78854dd0e42e990e672f8a6f8fe3e",
+          "a28a2f64f4a948c5ba54bf7d63b9f576",
+          "035c6b7dcdc84755b66523823921fead",
+          "fb1273cae670454eaeb0ce9ca8751ed5",
+          "2835e3082e1b4da3958f403f042f7adf",
+          "53d3a6ad6f434ce794962aa2a67c5cc4",
+          "061ab52b4c734ede9c31865e89f677ca",
+          "8667e7e8f1d3411ea1a92b0acb70d8b7",
+          "25dd5e03e5464796acffb7d69bd68394"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 522.0,
+        "Height": 1310.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1465.0,
+        "TextblockHeight": 72.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "3226735422114c439a8a9809e9d0e794",
+        "Title": "2. Tạo máy giặt (Python)",
+        "DescriptionText": "Hình vuông chứa lồng giặt, trong Room logia → nét dải cho hướng ra phòng → lưng áp biên Room, áp tường bên nếu có, đứng trên mặt sàn logia; dry-run đặt thử rồi hoàn tác; chặn file central / mô hình S; log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-31).",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "ff7f85e0169b4d9197b02f2709132938"
+        ],
+        "HasNestedGroups": false,
+        "Left": 650.0,
+        "Top": 363.0,
+        "Width": 296.0,
+        "Height": 731.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 560.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 187.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "7ad7e71bbfb24cddba143b0b4ddfdecd",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "OUT[0] báo cáo từng máy; OUT[1] hình vuông CAD + khung máy + hướng mặt trước xem trước.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "efdb104ab1eb457b80b84c68e86b8d2f"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1050.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 339.7721665439873,
+    "Y": -74.6975001225835,
+    "Zoom": 0.5585788600612013
+  }
+}

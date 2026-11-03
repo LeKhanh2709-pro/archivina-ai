@@ -1,0 +1,5 @@
+title: "Tạo trục\ntừ CAD"
+tooltip: >-
+  Tạo lưới trục (Grid) từ layer trục trong bản AutoCAD đã Link/Import.
+  Mặc định chạy thử (dry-run). TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29).
+author: Archivina BIM

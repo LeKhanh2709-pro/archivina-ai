@@ -1,0 +1,2 @@
+title: Tạo cột vách từ CAD
+tooltip: Tạo cột và vách/lõi kết cấu từ mặt bằng định vị cột vách lõi trong file DWG (link/import). Lõi hình L/T/U/rỗng được tách thành các đoạn vách. Mặc định chạy thử (dry-run).

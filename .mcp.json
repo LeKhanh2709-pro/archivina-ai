@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "revit-archivina": {
+      "type": "stdio",
+      "command": "D:/AI/_tools/venv/Scripts/python.exe",
+      "args": ["D:/AI/scripts/mcp/revit-archivina/revit_mcp.py"],
+      "env": { "PYTHONUTF8": "1", "TEMP": "D:/AI/_tmp", "TMP": "D:/AI/_tmp" }
+    }
+  }
+}

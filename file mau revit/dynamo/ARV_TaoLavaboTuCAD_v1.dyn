@@ -1,0 +1,959 @@
+{
+  "Uuid": "02782212-08da-4374-98c2-1d7ed93c633b",
+  "IsCustomNode": false,
+  "Description": "Tạo lavabo (Plumbing Fixtures) trong WC từ DWG đã link, nhận diện theo hình: mặt bàn chữ nhật chứa lòng chậu cong; đặt lavabo rộng 900 sát tường dựa, type chọn ở IN[3]. Dry-run mặc định.",
+  "Name": "14. ARV_TaoLavaboTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "5b537e991fca44d7b296f58ea9f0d271",
+      "Name": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "da5809799906461280fff360db6ab10d",
+      "Name": "IN[1] Lọc layer (trống = dò mọi layer, VD A-Interior WC)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "57baef98f5da4a63851a1a143d42cdec",
+      "Name": "IN[2] Level đặt lavabo",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "TẦNG 3",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "f2009925272a4892b4c96a9340b81e19",
+      "Name": "IN[4] Tham số type bề rộng (trống = dùng thẳng type)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Width",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "be310801cc21484cbd20051d509bf402",
+      "Name": "IN[5] Bề rộng lavabo (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "900",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "8ecf7f4ddffc4cb3bc0d18d2556c18cd",
+      "Name": "IN[6] Room chứa lavabo (cách nhau bằng ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "WC;vệ sinh",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "a9b0e21ea1c9466fb7934414fc896158",
+      "Name": "IN[7] Mặt bàn CAD – cạnh dài tối thiểu (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "600",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "54ad356d058c47da977b05f6edcbf629",
+      "Name": "IN[8] Mặt bàn CAD – cạnh dài tối đa (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "1500",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "86b5792d6d1a431888fccc08453f056e",
+      "Name": "IN[9] Mặt bàn CAD – cạnh ngắn tối đa (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "650",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "f6eedc8e31594feba7048c12219add30",
+      "Name": "IN[10] Khe mặt bàn – mặt tường tối đa (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "100",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "4213727428404c338fb8e69168425f75",
+      "Name": "IN[11] Đảo hướng (True nếu lavabo quay vào tường)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "5b7dea079a8a472fa9b28bee4368f809",
+      "Name": "IN[12] Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "df84ecb9280d438391b8d4025dff42e4",
+      "Name": "Báo cáo",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "5b537e991fca44d7b296f58ea9f0d271",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "73e392a81ba9493da20221ff0de0df69",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "da5809799906461280fff360db6ab10d",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a2d6f22aa29f4f3196b538ea969aec82",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "57baef98f5da4a63851a1a143d42cdec",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fd6dd13242ec47c9be430918a8d4a104",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "TẦNG 3"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": 0,
+      "SelectedString": "Lavabo_BanAm1:900",
+      "NodeType": "ExtensionNode",
+      "Id": "30e5f25cd9ff4a17aaf2217917220553",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "365b790092d94dbfbd51a80320a014a5",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "f2009925272a4892b4c96a9340b81e19",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "47c5e3bd77ac416eb883197ece4b24cc",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Width"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "be310801cc21484cbd20051d509bf402",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "929e014894a94e6ba3bec8c5fc0869ff",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 900.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "8ecf7f4ddffc4cb3bc0d18d2556c18cd",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8f08964ca7604424adbe153f90586db1",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "WC;vệ sinh"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "a9b0e21ea1c9466fb7934414fc896158",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e0070e2ccd69462b8bdb657ec9ea90cb",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 600.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "54ad356d058c47da977b05f6edcbf629",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0d814d0164cd44abaae8374b0d6e80c8",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 1500.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "86b5792d6d1a431888fccc08453f056e",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "42b6fa36641a4d9cb10b4c707c21cf78",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 650.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "f6eedc8e31594feba7048c12219add30",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "530f997c32c048a1a7ca62f9e4bfe483",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 100.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "4213727428404c338fb8e69168425f75",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fb83178601964135b619ebb2fce707d0",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "5b7dea079a8a472fa9b28bee4368f809",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "dfd1e81a02b544d79ad381bf7fcac128",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-30)\n# Mã nguồn của Python node trong 14. ARV_TaoLavaboTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo lavabo (Plumbing Fixtures) từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG (không cần biết layer):\n#   1. Lavabo trên CAD = MẶT BÀN CHỮ NHẬT có LÒNG CHẬU CONG bên trong (đo trên G19 2026-10-30: block động\n#      \"设计行-半挂式台盆\" layer A-Interior WC = polyline kín 900×500 + elip / cung / spline lòng chậu; lòng chậu ghép\n#      nhiều nét hở nên không nhận theo lòng chậu):\n#      - chữ nhật: polyline kín 4 đỉnh, hoặc nét thẳng nối đầu mút thành vòng 4 góc vuông (kể cả trong block);\n#      - cạnh dài trong [IN[7], IN[8]] (mặc định 600–1500), cạnh ngắn trong [300, IN[9]] (mặc định 650);\n#      - các nét cong (cung, elip, spline, tròn) nằm trọn trong mặt bàn gộp lại phủ ≥ 200 × 200 mm (lòng chậu) – loại\n#        bàn phấn, tủ. Trong Revit lòng chậu G19 là chữ nhật bo góc (đoạn thẳng + 4 cung góc ~50 mm).\n#      Chữ nhật trùng tâm (≤ 80 mm) → lấy cái lớn. IN[1] trống = dò mọi layer; có chuỗi = chỉ layer chứa chuỗi đó.\n#   2. Room chứa tâm mặt bàn phải có tên chứa một chuỗi trong IN[6] (mặc định \"WC;vệ sinh\"; trống = mọi phòng) – loại\n#      chậu rửa bếp.\n#   3. Tường dựa: tường thẳng Revit trên level IN[2] (dày ≥ 50 mm) gần mép mặt bàn nhất (khe ≤ IN[10], mặc định\n#      100 mm), mặt bàn nằm trọn một phía tường.\n#   4. Lavabo bề rộng cố định IN[5] (mặc định 900 – người dùng chốt 2026-10-30), tâm theo tâm mặt bàn CAD dọc tường,\n#      mép sau áp mặt tường – hoặc mặt ngoài lớp ốp / hoàn thiện mỏng (tường < 50 mm, VD ốp gạch 10 mm của tool 09)\n#      để gương không chìm vào lớp ốp. Mặt bàn chạm tường / lớp ốp vuông góc (lavabo ở góc) → dời áp mặt đó.\n#      Lavabo của tool đã có (Comments) mà sai cao độ hoặc lệch vị trí → sửa (Offset 0, dời), không tạo lại.\n#   5. Type: người dùng chọn type mẫu ở IN[3] (node Family Types hoặc chuỗi \"Family : Type\"). Type cùng family có tham\n#      số bề rộng IN[4] = IN[5] → dùng (ưu tiên type mẫu); chưa có → nhân bản type mẫu, đặt bề rộng. Chiều sâu, chiều\n#      cao giữ theo type mẫu.\n#   6. Đặt instance tại giữa mép sau (gốc family = giữa mép sát tường, mặt trước theo +Y như các family lavabo của dự\n#      án), xoay mặt trước ra khỏi tường; IN[11] = True nếu family quay ngược. Family gắn tường → gắn vào tường dựa.\n#      Comments = \"ARV-TaoLavaboTuCAD\". Đã có thiết bị cùng family tại vị trí → bỏ qua.\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (để trống = bản CAD duy nhất trong mô hình / có layer khớp IN[1])\n#   IN[1] (str)   Lọc layer, nhiều chuỗi cách ';' (khớp chuỗi con); trống = dò mọi layer (mặc định – nét layer 0 trong\n#                 block có thể mang layer \"0\" thay vì layer block \"A-Interior WC\"; G19: mọi layer + lọc WC = 32/32 WC)\n#   IN[2] (str)   Tên level đặt lavabo, VD \"TẦNG 3\"\n#   IN[3] (FamilyType | str) Type mẫu lavabo (chọn ở node Family Types, hoặc \"Lavabo_BanAm1 : 900\" – người dùng\n#                 chọn 2026-10-30; Width = 900, Depth = 450). Lavabo của tool đặt bằng family khác → đổi type tại chỗ.\n#   IN[4] (str)   Tên tham số TYPE bề rộng, VD \"Width\"; trống = dùng thẳng type mẫu, không nhân bản (family có bề\n#                 rộng cố định – lưu ý \"AV-Bàn Lavabo khong ban da : 900\" thực tế rộng 600, không dùng cho 900)\n#   IN[5] (float) Bề rộng lavabo (mm), VD 900 – dùng để căn tâm / áp tường bên và đặt tham số IN[4]\n#   IN[6] (str)   Tên Room chứa lavabo, nhiều chuỗi cách ';', VD \"WC;vệ sinh\" (trống = mọi phòng)\n#   IN[7] (float) Cạnh dài mặt bàn lavabo tối thiểu (mm), VD 600\n#   IN[8] (float) Cạnh dài mặt bàn lavabo tối đa (mm), VD 1500\n#   IN[9] (float) Cạnh ngắn mặt bàn lavabo tối đa (mm), VD 650\n#   IN[10] (float) Khe mặt bàn – mặt tường tối đa (mm), VD 100\n#   IN[11] (bool) Đảo hướng: True nếu family có mặt trước theo −Y (lavabo quay vào tường khi chạy)\n#   IN[12] (bool) Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, đường dẫn log, rồi từng lavabo\n#   OUT[1] (list[Line]) Xem trước: mặt bàn CAD nhận diện + khung lavabo IN[5] áp mặt tường (mm)\n\nimport os\nimport io\nimport re\nimport csv\nimport math\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, Options, GeometryInstance, PolyLine,\n                                   Line, Arc, Ellipse, NurbSpline, HermiteSpline, Curve, XYZ, Transaction,\n                                   TransactionStatus, UnitUtils, UnitTypeId, ModelPathUtils, BuiltInParameter,\n                                   BuiltInCategory, Level, Wall, LocationCurve, LocationPoint, FamilySymbol,\n                                   FamilyPlacementType, ElementTransformUtils, StorageType,\n                                   SpatialElementBoundaryOptions, SpatialElementBoundaryLocation, ElementId)\n    from Autodesk.Revit.DB.Structure import StructuralType\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo lavabo từ CAD\"\nSCRIPT_TAG = u\"ARV_TaoLavaboTuCAD_v1\"\nCOMMENT_TAG = u\"ARV-TaoLavaboTuCAD\"\nMAX_EDGE_MM = 2000.0             # Nét dài hơn không thể là cạnh mặt bàn lavabo – bỏ khi đọc CAD cho nhanh\nSNAP_MM = 1.0                    # Đầu mút cách nhau ≤ chừng này coi là nối nhau\nMAX_LOOP_EDGES = 64\nMIN_SHORT_MM = 300.0             # Cạnh ngắn mặt bàn tối thiểu\nRIGHT_COS = 0.02                 # Góc vuông: |cos| ≤ chừng này (lệch ≤ ~1°)\nMIN_BOWL_MM = 200.0              # Vùng các nét cong lòng chậu (gộp) tối thiểu mỗi chiều\nINSIDE_TOL_MM = 5.0              # Nét lòng chậu lấn ra ngoài mặt bàn tối đa\nNESTED_MM = 80.0                 # Hai mặt bàn có tâm cách ≤ chừng này = cùng một lavabo\nWALL_TOL_MM = 30.0               # Cho phép nét lấn vào mặt tường chừng này\nMIN_HOST_WIDTH_MM = 50.0         # Tường mỏng hơn là lớp hoàn thiện, không làm tường dựa\nSIDE_DEPTH_MM = 300.0            # Tường vuông góc trong dải này tính từ mặt tường dựa → chặn mép bàn\nMAX_SIDE_SHIFT_MM = 50.0         # Dời áp tường bên tối đa (trát + ốp); lớn hơn = vướng tường khác → giữ theo CAD\n                                 # (lần chạy 2026-10-30 10:40 dời 225 mm, tạo trùng lavabo ở 4 WC)\nEXIST_TOL_MM = 150.0             # Thiết bị cùng family cách điểm đặt ≤ chừng này → đã có\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\ndef sub(a, b):\n    return (a[0] - b[0], a[1] - b[1])\n\n\ndef dot(a, b):\n    return a[0] * b[0] + a[1] * b[1]\n\n\ndef unit(v):\n    l = math.hypot(v[0], v[1])\n    return (v[0] / l, v[1] / l)\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef loose(s):\n    \"\"\"So tên không phân biệt dấu / hoa thường: \"Vệ sinh\" ≈ \"VE SINH\".\"\"\"\n    s = unicodedata.normalize(\"NFD\", norm(s).replace(u\"đ\", u\"d\").replace(u\"Đ\", u\"D\"))\n    return u\"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower()\n\n\nclass HostWall(object):\n    \"\"\"Tường trên mặt bằng (mm): trục a → b, pháp tuyến n (bên trái chiều vẽ).\"\"\"\n\n    def __init__(self, wid, a, b, width, name=u\"\"):\n        self.id, self.a, self.b, self.width, self.name = wid, a, b, width, name\n        self.length = math.hypot(b[0] - a[0], b[1] - a[1])\n        self.u = unit(sub(b, a))\n        self.n = (-self.u[1], self.u[0])\n\n    def local(self, p):\n        d = sub(p, self.a)\n        return dot(d, self.u), dot(d, self.n)\n\n    def point(self, s, d=0.0):\n        return (self.a[0] + self.u[0] * s + self.n[0] * d, self.a[1] + self.u[1] * s + self.n[1] * d)\n\n\nclass Item(object):\n    \"\"\"Một nét CAD: danh sách điểm (mm) + có phải nét cong.\"\"\"\n\n    def __init__(self, pts, curved):\n        self.pts, self.curved = pts, curved\n\n\ndef same(p, q):\n    return abs(p[0] - q[0]) <= SNAP_MM and abs(p[1] - q[1]) <= SNAP_MM\n\n\ndef find_loops(items):\n    \"\"\"Vòng kín từ nét thẳng: polyline tự khép (hoặc polyline 4 đỉnh – Revit có thể bỏ điểm khép), hoặc chuỗi nét nối\n    đầu mút mà mọi nút có đúng 2 nét. Trả về [điểm].\"\"\"\n    loops, opens = [], []\n    for it in items:\n        if it.curved:\n            continue\n        if len(it.pts) >= 4 and same(it.pts[0], it.pts[-1]):\n            loops.append(it.pts[:-1])\n        elif len(it.pts) == 4:\n            loops.append(it.pts)\n        elif len(it.pts) >= 2:\n            opens.append(it)\n    nodes = {}\n\n    def key(p):\n        return (int(round(p[0] / SNAP_MM)), int(round(p[1] / SNAP_MM)))\n\n    for i, it in enumerate(opens):\n        nodes.setdefault(key(it.pts[0]), []).append(i)\n        nodes.setdefault(key(it.pts[-1]), []).append(i)\n    used = set()\n    for start in range(len(opens)):\n        if start in used:\n            continue\n        k0, k = key(opens[start].pts[0]), key(opens[start].pts[-1])\n        if len(nodes[k0]) != 2 or len(nodes[k]) != 2:\n            continue\n        chain, pts, cur = [start], list(opens[start].pts), start\n        closed = False\n        while len(chain) <= MAX_LOOP_EDGES:\n            if k == k0 and len(chain) > 1:\n                closed = True\n                break\n            if len(nodes[k]) != 2:\n                break\n            nxt = nodes[k][0] if nodes[k][1] == cur else nodes[k][1]\n            if nxt == cur or nxt in chain:\n                break\n            seg = opens[nxt].pts\n            if key(seg[0]) != k:\n                seg = seg[::-1]\n            pts.extend(seg[1:])\n            chain.append(nxt)\n            cur, k = nxt, key(seg[-1])\n        if closed:\n            used.update(chain)\n            loops.append(pts[:-1])\n    return loops\n\n\nclass Basin(object):\n    \"\"\"Mặt bàn lavabo nhận diện được (chữ nhật CAD) + lavabo sẽ đặt.\"\"\"\n\n    def __init__(self, corners, axis, long_side, short_side):\n        self.pts, self.axis = corners, axis\n        self.long, self.short = long_side, short_side\n        self.area = long_side * short_side\n        self.c = (sum(p[0] for p in corners) / 4.0, sum(p[1] for p in corners) / 4.0)\n        self.wall = None\n        self.side = 0            # +1 / -1: phía lavabo theo pháp tuyến n của tường\n        self.s0 = self.s1 = 0.0  # mép lavabo theo trục tường\n        self.face = 0.0          # mặt tường (khoảng cách tới tim, dương)\n        self.front = 0.0         # mép trước mặt bàn CAD\n        self.gap = 0.0\n        self.room = u\"\"\n        self.status = u\"\"\n        self.type_name = u\"\"\n        self.eid = u\"\"\n        self.note = u\"\"\n        self.dups = []           # Id lavabo cùng family trùng chỗ (thừa)\n\n    def insert_point(self):\n        \"\"\"Giữa mép sau lavabo, trên mặt tường.\"\"\"\n        return self.wall.point((self.s0 + self.s1) / 2.0, self.side * self.face)\n\n    def facing(self):\n        return (self.wall.n[0] * self.side, self.wall.n[1] * self.side)\n\n\ndef rect_corners(pts):\n    \"\"\"4 góc nếu vòng là hình chữ nhật (bỏ điểm trùng / thẳng hàng), None nếu không.\"\"\"\n    clean = []\n    for p in pts:\n        if not clean or not same(p, clean[-1]):\n            clean.append(p)\n    if len(clean) > 1 and same(clean[0], clean[-1]):\n        clean.pop()\n    corners = []\n    n = len(clean)\n    for i in range(n):\n        a, b, c = clean[i - 1], clean[i], clean[(i + 1) % n]\n        u, v = sub(b, a), sub(c, b)\n        lu, lv = math.hypot(*u), math.hypot(*v)\n        if lu < 1e-6 or lv < 1e-6:\n            return None\n        cos = dot(u, v) / (lu * lv)\n        if cos > 1.0 - 1e-6:\n            continue                    # thẳng hàng\n        if abs(cos) > RIGHT_COS:\n            return None\n        corners.append(b)\n    return corners if len(corners) == 4 else None\n\n\ndef counter_shape(pts, min_long, max_long, max_short):\n    \"\"\"Vòng kín là mặt bàn chữ nhật đúng cỡ → Basin, không thì None.\"\"\"\n    corners = rect_corners(pts)\n    if corners is None:\n        return None\n    e1, e2 = sub(corners[1], corners[0]), sub(corners[2], corners[1])\n    l1, l2 = math.hypot(*e1), math.hypot(*e2)\n    long_side, short_side = max(l1, l2), min(l1, l2)\n    if not (min_long <= long_side <= max_long and MIN_SHORT_MM <= short_side <= max_short):\n        return None\n    axis = unit(e1) if l1 >= l2 else unit(e2)\n    return Basin(corners, axis, long_side, short_side)\n\n\ndef has_bowl(b, curves):\n    \"\"\"Mặt bàn có lòng chậu: các nét cong nằm trọn trong mặt bàn, gộp lại phủ vùng ≥ MIN_BOWL_MM × MIN_BOWL_MM.\n    Revit 2027 đổi elip / spline của block thành PolyLine; lòng chậu G19 vào Revit là chữ nhật bo góc (cạnh thẳng +\n    4 cung góc ~50 mm, chẩn đoán 2026-10-30 10:12) nên xét cả các cung nhỏ gộp lại.\"\"\"\n    nrm = (-b.axis[1], b.axis[0])\n    hu, hv = b.long / 2.0 + INSIDE_TOL_MM, b.short / 2.0 + INSIDE_TOL_MM\n    us, vs = [], []\n    for pts in curves:\n        loc = [(dot(sub(p, b.c), b.axis), dot(sub(p, b.c), nrm)) for p in pts]\n        if all(abs(u) <= hu and abs(v) <= hv for u, v in loc):\n            us += [u for u, _ in loc]\n            vs += [v for _, v in loc]\n    return bool(us) and max(us) - min(us) >= MIN_BOWL_MM and max(vs) - min(vs) >= MIN_BOWL_MM\n\n\ndef covers(b, p):\n    \"\"\"Điểm p nằm trong mặt bàn b.\"\"\"\n    q = sub(p, b.c)\n    return abs(dot(q, b.axis)) <= b.long / 2.0 and abs(dot(q, (-b.axis[1], b.axis[0]))) <= b.short / 2.0\n\n\ndef find_basins(items, min_long, max_long, max_short, stats=None):\n    loops = find_loops(items)\n    found = [b for b in (counter_shape(p, min_long, max_long, max_short) for p in loops) if b]\n    bowls = [it.pts for it in items if it.curved]\n    if stats is not None:\n        stats.update(loops=len(loops), rects=len(found), bowls=len(bowls))\n    found = [b for b in found if has_bowl(b, bowls)]\n    # Chữ nhật trùng tâm hoặc chồng lên nhau (vẽ chồng / trạng thái block động) → giữ cái lớn\n    found.sort(key=lambda b: -b.area)\n    result = []\n    for b in found:\n        if all(math.hypot(b.c[0] - r.c[0], b.c[1] - r.c[1]) > NESTED_MM and not covers(r, b.c) for r in result):\n            result.append(b)\n    return result\n\n\ndef fit_wall(b, walls, max_gap):\n    \"\"\"Tường dựa = tường song song cạnh dài mặt bàn (lavabo ở góc chạm cả tường bên), gần mép mặt bàn nhất, mặt bàn\n    nằm trọn một phía. Trả về lỗi hoặc None.\"\"\"\n    best = None\n    for w in walls:\n        loc = [w.local(p) for p in b.pts]\n        ds = [d for _, d in loc]\n        h = w.width / 2.0 - WALL_TOL_MM\n        if min(ds) >= h:\n            side = 1\n        elif max(ds) <= -h:\n            side = -1\n        else:\n            continue\n        near = min(side * d for d in ds)\n        gap = near - w.width / 2.0\n        if gap > max_gap:\n            continue\n        sc = w.local(b.c)[0]\n        if not (0.0 <= sc <= w.length):\n            continue\n        key = (abs(dot(w.u, b.axis)) >= 0.9, -gap)\n        if best is None or key > best[0]:\n            best = (key, gap, w, side, sc, max(side * d for d in ds))\n    if best is None:\n        return u\"không có tường Revit cách mép mặt bàn ≤ {:.0f} mm\".format(max_gap)\n    _, b.gap, b.wall, b.side, sc, b.front = best\n    b.face = b.wall.width / 2.0\n    b.s0, b.s1 = sc, sc\n    return None\n\n\ndef finish_offset(b, thin):\n    \"\"\"Bề dày lớp ốp / hoàn thiện mỏng (tường < MIN_HOST_WIDTH_MM) áp mặt tường dựa ở phía lavabo, phủ vị trí lavabo\n    → mặt sau lavabo (gương) áp mặt ngoài lớp ốp. Lần chạy 2026-10-30: gương chìm 10 mm trong lớp ốp\n    \"WA_F1_10_Op gach 300x600\" do tool 09 dựng.\"\"\"\n    w = b.wall\n    mid = (b.s0 + b.s1) / 2.0\n    extra = 0.0\n    for x in thin:\n        if abs(abs(dot(x.u, w.u)) - 1.0) > 1e-3:\n            continue\n        sa, da = w.local(x.a)\n        sb, _ = w.local(x.b)\n        d = b.side * da\n        if abs(d - x.width / 2.0 - b.face) > 3.0:\n            continue\n        if not (min(sa, sb) - 1.0 <= mid <= max(sa, sb) + 1.0):\n            continue\n        extra = max(extra, d + x.width / 2.0 - b.face)\n    return extra\n\n\ndef place_counter(b, walls, width):\n    \"\"\"Lavabo rộng width, tâm theo tâm mặt bàn CAD; tường vuông góc chạm mặt bàn (lavabo ở góc) → dời mép bàn áp mặt tường đó.\n    Trả về ghi chú dời (hoặc u\"\").\"\"\"\n    w = b.wall\n    mid = (b.s0 + b.s1) / 2.0\n    lo, hi = mid - width / 2.0, mid + width / 2.0\n    shift = 0.0\n    for x in walls:\n        if x is w or abs(dot(x.u, w.u)) > 0.1:\n            continue\n        sa, da = w.local(x.a)\n        sb, db = w.local(x.b)\n        ds = sorted((b.side * da, b.side * db))\n        # Tường vuông góc phải nằm cùng phía, phủ dải sát mặt tường dựa\n        if ds[1] < b.face + 1.0 or ds[0] > b.face + SIDE_DEPTH_MM:\n            continue\n        s_axis, t = (sa + sb) / 2.0, x.width / 2.0\n        if s_axis < mid and s_axis + t > lo:\n            shift = max(shift, s_axis + t - lo)\n        elif s_axis >= mid and s_axis - t < hi:\n            shift = min(shift, s_axis - t - hi)\n    if abs(shift) > MAX_SIDE_SHIFT_MM:\n        b.s0, b.s1 = lo, hi\n        return u\"vướng tường bên {:+.0f} mm – giữ theo CAD, cần soát\".format(shift)\n    b.s0, b.s1 = lo + shift, hi + shift\n    return u\"dời {:+.0f} mm để áp tường bên\".format(shift) if abs(shift) >= 1.0 else u\"\"\n\n\ndef analyse(items, walls, width, min_long, max_long, max_short, max_gap, room_at=None, room_keys=(), existing=(),\n            stats=None, thin=()):\n    \"\"\"items: [Item] mm; walls: [HostWall]; room_keys: chuỗi tên Room (đã loose); existing: [(điểm mm, Id)] thiết bị\n    cùng family trên level; thin: [HostWall] lớp ốp / hoàn thiện mỏng. Trả về [Basin] đã gán trạng thái.\"\"\"\n    basins = find_basins(items, min_long, max_long, max_short, stats)\n    for b in basins:\n        if room_at is not None:\n            b.room = room_at(b.c) or u\"\"\n            if room_keys and not any(k in loose(b.room) for k in room_keys):\n                b.status = u\"Bỏ qua – không nằm trong phòng {} (phòng: {})\".format(\n                    u\"/\".join(room_keys), b.room or u\"không có Room\")\n                continue\n        err = fit_wall(b, walls, max_gap)\n        if err:\n            b.status = u\"Bỏ qua – \" + err\n            continue\n        clad = finish_offset(b, thin)\n        b.face += clad\n        b.note = u\"; \".join(v for v in (u\"mặt bàn CAD {:.0f}x{:.0f}\".format(b.long, b.short),\n                                        u\"áp mặt lớp ốp {:.0f} mm\".format(clad) if clad else u\"\",\n                                        place_counter(b, list(walls) + list(thin), width)) if v)\n        p = b.insert_point()\n        # Lavabo cùng family đã có trong vùng mặt bàn (không chỉ quanh điểm đặt mới – điểm đặt đổi giữa các bản) →\n        # giữ cái gần điểm đặt nhất, các cái còn lại là TRÙNG (báo để xoá tay)\n        near = sorted((math.hypot(q[0] - p[0], q[1] - p[1]), eid) for q, eid in existing\n                      if math.hypot(q[0] - b.c[0], q[1] - b.c[1]) <= max(b.long, width) / 2.0 + EXIST_TOL_MM)\n        if near:\n            b.eid = near[0][1]\n            b.dups = [eid for _, eid in near[1:]]\n            b.status = u\"Bỏ qua – đã có lavabo cùng family (Id {})\".format(b.eid)\n            continue\n        b.status = u\"OK\"\n    basins.sort(key=lambda b: (-round(b.c[1]), round(b.c[0])))\n    return basins\n\n\ndef new_type_name(template_name, width, taken):\n    \"\"\"Tên type mới theo bề rộng: tên mẫu chỉ là số (VD \"900\") → \"<rộng>\"; có số dạng \"<rộng>x<sâu>\" → đổi số rộng;\n    còn lại → \"<tên mẫu>_<rộng>\". Trùng tên type khác → thêm hậu tố.\"\"\"\n    w = str(int(width))\n    m = re.search(r\"(\\d+)([xX])(\\d+)\", template_name)\n    if re.match(r\"^\\s*\\d+\\s*$\", template_name):\n        name = w\n    elif m:\n        name = template_name[:m.start()] + w + template_name[m.start(2):]\n    else:\n        name = u\"{}_{}\".format(template_name, w)\n    base, i = name, 2\n    while norm(name) in taken:\n        name, i = u\"{}_{}\".format(base, i), i + 1\n    return name\n\n\n# --- Revit ---------------------------------------------------------------------------\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return style.GraphicsStyleCategory.Name\n    return None\n\n\ndef cad_objects(cad):\n    \"\"\"Mọi đối tượng hình học của CAD, kể cả trong block lồng nhau.\"\"\"\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            else:\n                result.append(obj)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef match_layers(all_layers, filters):\n    # So khớp không phân biệt hoa thường, chuẩn hoá Unicode; không lọc = mọi layer\n    if not filters:\n        return set(all_layers)\n    return set(l for l in all_layers if any(norm(f).lower() in norm(l).lower() for f in filters))\n\n\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef pick_cad(cad_filter, filters):\n    \"\"\"Chọn bản CAD theo tên; để trống thì lấy bản CAD duy nhất (có layer khớp). Trả về (cad, tên, objects, layers).\"\"\"\n    found = []\n    for inst in FilteredElementCollector(doc).OfClass(ImportInstance).ToElements():\n        name = get_name(doc.GetElement(inst.GetTypeId()))\n        if cad_filter and cad_filter.lower() not in name.lower():\n            continue\n        objects = cad_objects(inst)\n        all_layers = sorted(set(l for l in (layer_of(o) for o in objects) if l))\n        found.append((inst, name, objects, all_layers))\n    hits = [f for f in found if f[2] and match_layers(f[3], filters)]\n    if len(hits) == 1:\n        return hits[0]\n    if not hits:\n        lines = [u\"DỪNG: không có bản CAD{} nào{} đọc được hình học (link CAD chưa load?).\".format(\n            u\" khớp '{}'\".format(cad_filter) if cad_filter else u\"\",\n            u\" có layer chứa '{}'\".format(u\"; \".join(filters)) if filters else u\"\")]\n        for inst, name, _, layers in found:\n            lines.append(u\"Layer của {}: {}\".format(name, u\", \".join(layers) or u\"(không đọc được hình học)\"))\n        raise StopReport(lines)\n    raise StopReport([u\"DỪNG: {} bản CAD – nhập tên bản CAD vào ô IN[0]: {}\".format(\n        len(hits), u\", \".join(h[1] for h in hits))])\n\n\ndef find_level(name):\n    levels = list(FilteredElementCollector(doc).OfClass(Level).ToElements())\n    for l in levels:\n        if norm(l.Name).lower() == norm(name).lower():\n            return l\n    raise StopReport([u\"DỪNG: không có level '{}'. Các level: {}\".format(\n        name, u\", \".join(l.Name for l in sorted(levels, key=lambda x: x.Elevation)))])\n\n\ndef xy(p):\n    return (to_mm(p.X), to_mm(p.Y))\n\n\ndef read_items(objects, layers, raw=None):\n    \"\"\"Nét ngắn (≤ MAX_EDGE_MM) trên các layer – ứng viên cạnh mặt bàn và lòng chậu.\n    raw (list): nhận mọi đối tượng trên các layer (loại, layer, điểm mm, có dùng) để ghi file chẩn đoán.\"\"\"\n    items, lim = [], from_mm(MAX_EDGE_MM)\n    for obj in objects:\n        layer = layer_of(obj)\n        if layer not in layers:\n            continue\n        pts, kept = None, False\n        if isinstance(obj, PolyLine):\n            pts = list(obj.GetCoordinates())\n            if len(pts) >= 2:\n                ext = max(max(p.X for p in pts) - min(p.X for p in pts), max(p.Y for p in pts) - min(p.Y for p in pts))\n                if ext <= lim:\n                    items.append(Item([xy(p) for p in pts], False))\n                    kept = True\n        elif isinstance(obj, Curve):\n            try:\n                length = obj.Length if obj.IsBound else obj.ApproximateLength\n            except Exception:\n                length = obj.ApproximateLength\n            curved = isinstance(obj, (Arc, Ellipse, NurbSpline, HermiteSpline))\n            pts = [obj.GetEndPoint(0), obj.GetEndPoint(1)] if isinstance(obj, Line) else list(obj.Tessellate())\n            if (curved and length <= 4 * lim) or (not curved and length <= lim):\n                items.append(Item([xy(p) for p in pts], curved))\n                kept = True\n        elif raw is not None:\n            try:\n                bb = obj.GetBoundingBox()\n                pts = [bb.Transform.OfPoint(bb.Min), bb.Transform.OfPoint(bb.Max)]\n            except Exception:\n                try:\n                    pts = list(obj.Vertices)\n                except Exception:\n                    pts = None\n        if raw is not None:\n            raw.append((obj.GetType().Name, layer, [xy(p) for p in pts] if pts else [], kept))\n    return items\n\n\ndef write_diag(raw, room_at, room_keys, dry_run):\n    \"\"\"File chẩn đoán: mọi đối tượng CAD có tâm nằm trong Room WC (loại, layer, khung bao, số điểm, khép kín).\"\"\"\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    path = os.path.join(folder, \"TaoLavaboTuCAD_CHANDOAN_{}.csv\".format(\n        datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")))\n    n = 0\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        w = csv.writer(f)\n        w.writerow([u\"Phòng\", u\"Loại\", u\"Layer\", u\"Xmin\", u\"Ymin\", u\"Rộng X\", u\"Rộng Y\", u\"Số điểm\", u\"Khép kín\",\n                    u\"Dùng\"])\n        for kind, layer, pts, kept in raw:\n            if not pts:\n                continue\n            xs, ys = [p[0] for p in pts], [p[1] for p in pts]\n            c = ((min(xs) + max(xs)) / 2.0, (min(ys) + max(ys)) / 2.0)\n            room = room_at(c) or u\"\"\n            if not any(k in loose(room) for k in room_keys):\n                continue\n            w.writerow([room, kind, layer, u\"{:.0f}\".format(min(xs)), u\"{:.0f}\".format(min(ys)),\n                        u\"{:.0f}\".format(max(xs) - min(xs)), u\"{:.0f}\".format(max(ys) - min(ys)), len(pts),\n                        u\"có\" if len(pts) > 2 and same(pts[0], pts[-1]) else u\"\", u\"có\" if kept else u\"\"])\n            n += 1\n    return path, n\n\n\ndef host_walls(level):\n    \"\"\"(tường dựa ≥ MIN_HOST_WIDTH_MM, {id: Wall}, tường mỏng – lớp ốp / hoàn thiện).\"\"\"\n    result, by_id, thin = [], {}, []\n    for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n        loc = wl.Location\n        if wl.LevelId == level.Id and isinstance(loc, LocationCurve) and isinstance(loc.Curve, Line):\n            c = loc.Curve\n            hw = HostWall(wl.Id.Value, xy(c.GetEndPoint(0)), xy(c.GetEndPoint(1)), to_mm(wl.Width), get_name(wl))\n            if hw.length < 1.0:\n                continue\n            if hw.width >= MIN_HOST_WIDTH_MM:\n                result.append(hw)\n                by_id[hw.id] = wl\n            else:\n                thin.append(hw)\n    return result, by_id, thin\n\n\ndef inside_loops(p, loops):\n    \"\"\"Điểm trong vùng giới hạn bởi các vòng biên (chẵn lẻ – lỗ trong Room tự trừ).\"\"\"\n    c = False\n    for pts in loops:\n        for i in range(len(pts)):\n            (x1, y1), (x2, y2) = pts[i - 1], pts[i]\n            if (y1 > p[1]) != (y2 > p[1]) and p[0] < x1 + (p[1] - y1) * (x2 - x1) / (y2 - y1):\n                c = not c\n    return c\n\n\ndef room_finder(level):\n    \"\"\"Hàm room_at(pt mm) → tên Room trên level chứa điểm, None nếu không có. Xét trên mặt bằng theo đường biên Room\n    (mặt hoàn thiện) – không phụ thuộc cao độ như Room.IsPointInRoom (lần chạy 2026-10-30 10:06 nhận 0/25 bằng\n    IsPointInRoom).\"\"\"\n    opt = SpatialElementBoundaryOptions()\n    opt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish\n    rooms = []\n    for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms)             .WhereElementIsNotElementType().ToElements():\n        if r.LevelId != level.Id or r.Area <= 0:\n            continue\n        loops = []\n        for segs in r.GetBoundarySegments(opt) or []:\n            pts = []\n            for seg in segs:\n                pts.extend(xy(q) for q in list(seg.GetCurve().Tessellate())[:-1])\n            if len(pts) >= 3:\n                loops.append(pts)\n        if not loops:\n            continue\n        xs = [q[0] for l in loops for q in l]\n        ys = [q[1] for l in loops for q in l]\n        prm = r.get_Parameter(BuiltInParameter.ROOM_NAME)\n        rooms.append(((min(xs), min(ys), max(xs), max(ys)), loops, prm.AsString() if prm is not None else u\"\"))\n\n    def room_at(p):\n        for box, loops, name in rooms:\n            if box[0] <= p[0] <= box[2] and box[1] <= p[1] <= box[3] and inside_loops(p, loops):\n                return name\n        return None\n    return room_at, len(rooms)\n\n\ndef fixture_symbols():\n    return [s for s in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_PlumbingFixtures)\n            .WhereElementIsElementType().ToElements() if isinstance(s, FamilySymbol)]\n\n\ndef pick_template(value):\n    \"\"\"IN[3]: FamilyType của node Family Types (Dynamo) hoặc chuỗi \"Family : Type\" → FamilySymbol lavabo mẫu.\"\"\"\n    symbols = fixture_symbols()\n    families = u\", \".join(sorted(set(s.FamilyName for s in symbols))) or u\"không có\"\n    if isinstance(value, str):\n        parts = [norm(p) for p in value.split(u\":\")]\n        if len(parts) != 2 or not all(parts):\n            raise StopReport([u\"DỪNG: ô IN[3] phải là type chọn từ node Family Types hoặc chuỗi 'Family : Type' \"\n                              u\"(đang là '{}').\".format(value)])\n        hits = [s for s in symbols if norm(s.FamilyName) == parts[0] and norm(get_name(s)) == parts[1]]\n        if not hits:\n            raise StopReport([u\"DỪNG: không có type lavabo '{}'. Family thiết bị vệ sinh: {}\".format(value, families)])\n        return hits[0]\n    sym = UnwrapElement(value) if value is not None else None\n    if not isinstance(sym, FamilySymbol):\n        raise StopReport([u\"DỪNG: chưa chọn type mẫu ở IN[3].\"])\n    if sym.Category is None or sym.Category.BuiltInCategory != BuiltInCategory.OST_PlumbingFixtures:\n        raise StopReport([u\"DỪNG: type '{} : {}' không thuộc Plumbing Fixtures. Family thiết bị vệ sinh: {}\".format(\n            sym.FamilyName, get_name(sym), families)])\n    return sym\n\n\ndef width_param(symbol, name):\n    # Tham số bề rộng là tham số family (không phải shared parameter, không có GUID / BuiltInParameter)\n    # nên phải tìm theo tên người dùng nhập ở IN[4].\n    return symbol.LookupParameter(name)\n\n\ndef length_params(symbol):\n    return sorted(set(p.Definition.Name for p in symbol.Parameters\n                      if p.StorageType == StorageType.Double and not p.IsReadOnly))\n\n\ndef symbol_width(s, name):\n    p = width_param(s, name)\n    return to_mm(p.AsDouble()) if p is not None else None\n\n\ndef existing_fixtures(family_name, level):\n    \"\"\"[(điểm mm, Id)] lavabo đã đặt trên level: cùng family, hoặc do tool tạo (Comments) bằng family khác – người\n    dùng đổi family 2026-10-30 (\"AV-Bàn Lavabo khong ban da\" thực tế rộng 600 → \"Lavabo_BanAm1 : 900\").\"\"\"\n    result = []\n    for fi in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_PlumbingFixtures) \\\n            .WhereElementIsNotElementType().ToElements():\n        loc = getattr(fi, \"Location\", None)\n        sym = getattr(fi, \"Symbol\", None)\n        if sym is None or not isinstance(loc, LocationPoint) or fi.LevelId != level.Id:\n            continue\n        cm = fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n        if norm(sym.FamilyName) == family_name or (cm is not None and cm.AsString() == COMMENT_TAG):\n            result.append((xy(loc.Point), fi.Id.Value))\n    return result\n\n\ndef elevation_param(fi):\n    \"\"\"Cao độ instance so với level (\"Elevation from Level\" / \"Offset from Host\").\"\"\"\n    return fi.get_Parameter(BuiltInParameter.INSTANCE_ELEVATION_PARAM) or         fi.get_Parameter(BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM)\n\n\ndef set_elevation_zero(fi):\n    p = elevation_param(fi)\n    if p is not None and not p.IsReadOnly and abs(p.AsDouble()) > 1e-9:\n        p.Set(0.0)\n\n\ndef orient(fi, want, pivot):\n    \"\"\"Xoay instance quanh trục đứng qua pivot cho FacingOrientation trùng hướng want (2D).\"\"\"\n    doc.Regenerate()\n    f = fi.FacingOrientation\n    ang = math.atan2(f.X * want[1] - f.Y * want[0], f.X * want[0] + f.Y * want[1])\n    if abs(ang) > 1e-6:\n        axis = Line.CreateBound(pivot, XYZ(pivot.X, pivot.Y, pivot.Z + 1.0))\n        ElementTransformUtils.RotateElement(doc, fi.Id, axis, ang)\n\n\ndef preview_lines(basins, z_mm):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n\n        def seg(a, e):\n            return DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(a[0], a[1], z_mm),\n                                               DSPoint.ByCoordinates(e[0], e[1], z_mm))\n        lines = []\n        for b in basins:\n            pts = b.pts\n            lines += [seg(pts[i - 1], pts[i]) for i in range(len(pts)) if math.hypot(*sub(pts[i], pts[i - 1])) > 1.0]\n            w = b.wall\n            corners = [w.point(s, b.side * d) for s, d in ((b.s0, b.face), (b.s1, b.face), (b.s1, b.front),\n                                                           (b.s0, b.front))]\n            lines += [seg(a, e) for a, e in zip(corners, corners[1:] + corners[:1])]\n        return lines\n    except Exception:\n        return []\n\n\nLOG_HEADER = [u\"STT\", u\"Tâm mặt bàn (mm)\", u\"Mặt bàn CAD (mm)\", u\"Rộng lavabo (mm)\", u\"Phòng\", u\"Tường dựa\", u\"Type\",\n              u\"Kết quả\", u\"ElementId\", u\"Ghi chú\"]\n\n\ndef write_log(rows, source, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoLavaboTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# File nguồn: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef main(cad_filter, layer_filters, level_name, template_in, w_name, width, room_keys, min_long, max_long,\n         max_short, max_gap, reverse, dry_run):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    if re.search(r\"[-_]S[-_]\", doc.Title or u\"\"):\n        return [u\"DỪNG: tên file '{}' là mô hình Kết cấu (S) – lavabo chỉ dựng trên mô hình Kiến trúc (A).\".format(\n            doc.Title)], []\n    if width <= 0:\n        raise StopReport([u\"DỪNG: bề rộng lavabo IN[5] phải > 0.\"])\n    tpl = pick_template(template_in)\n    fam, tname = norm(tpl.FamilyName), norm(get_name(tpl))\n    fixed_type = not w_name\n    if not fixed_type and width_param(tpl, w_name) is None:\n        raise StopReport([u\"DỪNG: type '{} : {}' không có tham số type '{}'. Tham số chiều dài sửa được: {} – nhập lại \"\n                          u\"IN[4], hoặc để trống IN[4] để dùng thẳng type mẫu (bề rộng cố định trong family).\"\n                          .format(fam, tname, w_name, u\", \".join(length_params(tpl)))])\n    placement = tpl.Family.FamilyPlacementType\n    if placement not in (FamilyPlacementType.OneLevelBased, FamilyPlacementType.OneLevelBasedHosted):\n        raise StopReport([u\"DỪNG: family '{}' kiểu đặt {} – công cụ chỉ hỗ trợ family đặt theo level hoặc gắn tường.\"\n                          .format(fam, placement)])\n    cad, cad_name, objects, all_layers = pick_cad(cad_filter, layer_filters)\n    layers = match_layers(all_layers, layer_filters)\n    level = find_level(level_name)\n    walls, wall_by_id, thin = host_walls(level)\n    if not walls:\n        raise StopReport([u\"DỪNG: level '{}' chưa có tường thẳng nào để đặt lavabo sát tường.\".format(level_name)])\n    room_at, n_rooms = room_finder(level)\n    keys = [loose(k) for k in room_keys if k.strip()]\n    if keys and not n_rooms:\n        raise StopReport([u\"DỪNG: level '{}' chưa có Room – cần Room để lọc lavabo trong WC (hoặc để trống IN[6]).\"\n                          .format(level_name)])\n\n    raw = []\n    items = read_items(objects, layers, raw)\n    stats = {}\n    basins = analyse(items, walls, width, min_long, max_long, max_short, max_gap, room_at, keys,\n                     existing_fixtures(fam, level), stats, thin)\n\n    # Type: ưu tiên type mẫu, rồi type cùng family đã có bề rộng này; chưa có → nhân bản\n    symbols = [s for s in fixture_symbols() if norm(s.FamilyName) == fam]\n    sym = tpl if fixed_type else None\n    for s in ([] if fixed_type else [tpl] + [s for s in symbols if s.Id != tpl.Id]):\n        sw = symbol_width(s, w_name)\n        if sw is not None and abs(sw - width) <= 1.0:\n            sym = s\n            break\n    new_name = None if sym is not None else new_type_name(tname, width, set(norm(get_name(s)) for s in symbols))\n    type_label = u\"{} : {}\".format(fam, get_name(sym) if sym is not None else new_name + u\" (mới)\")\n\n    rows, jobs, fixes = [], [], []\n    for idx, b in enumerate(basins, 1):\n        if b.status == u\"OK\":\n            b.type_name = type_label\n            b.status = u\"Sẽ tạo\" if dry_run else u\"Chờ tạo\"\n            jobs.append((b, len(rows)))\n        elif b.eid:\n            # Lavabo của tool đã có nhưng sai cao độ (bản 10:16 đặt Offset = cao độ level) hoặc lệch vị trí (bản trước\n            # chưa tính lớp ốp) → sửa: Offset về 0, dời tới điểm đặt mới. Chỉ sửa lavabo có Comments của tool.\n            fi = doc.GetElement(ElementId(b.eid))\n            cm = fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS) if fi is not None else None\n            if cm is not None and cm.AsString() == COMMENT_TAG:\n                todo = []\n                retype = sym is None or fi.Symbol.Id != sym.Id\n                if retype:\n                    todo.append(u\"đổi type {} : {} → {}\".format(fi.Symbol.FamilyName, get_name(fi.Symbol),\n                                                                type_label.split(u\" : \", 1)[1]))\n                ep = elevation_param(fi)\n                elev = ep is not None and abs(to_mm(ep.AsDouble())) > 1.0\n                if elev:\n                    todo.append(u\"cao độ {:.0f} → 0\".format(to_mm(ep.AsDouble())))\n                cur, want_p = xy(fi.Location.Point), b.insert_point()\n                move = (want_p[0] - cur[0], want_p[1] - cur[1])\n                if math.hypot(*move) > 1.0:\n                    todo.append(u\"dời {:.0f} mm\".format(math.hypot(*move)))\n                else:\n                    move = None\n                f = b.facing()\n                want = (-f[0], -f[1]) if reverse else f\n                ff = fi.FacingOrientation\n                turn = ff.X * want[0] + ff.Y * want[1] < 0.9998       # lệch > ~1°\n                if turn:\n                    todo.append(u\"xoay {:.0f}°\".format(math.degrees(math.atan2(\n                        ff.X * want[1] - ff.Y * want[0], ff.X * want[0] + ff.Y * want[1]))))\n                if retype and not turn:\n                    # Family mới có thể khác hướng gốc → luôn kiểm tra lại hướng sau khi đổi type\n                    want_retype = want\n                else:\n                    want_retype = want if turn else None\n                if todo:\n                    b.note = u\"; \".join(v for v in [b.note] + todo if v)\n                    b.status = u\"Sẽ sửa\" if dry_run else u\"Chờ sửa\"\n                    fixes.append((fi, len(rows), elev, move, want_retype, want_p, retype))\n        rows.append([idx, fmt(b.c), u\"{:.0f}x{:.0f}\".format(b.long, b.short),\n                     int(width) if b.wall else u\"—\", b.room or u\"—\",\n                     u\"{} ({})\".format(b.wall.id, b.wall.name) if b.wall else u\"—\", b.type_name or u\"—\", b.status,\n                     b.eid, u\"; \".join(v for v in [b.note] + [u\"TRÙNG Id {}\".format(d) for d in b.dups] if v)])\n\n    created = []\n    if not dry_run and (jobs or fixes):\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            if sym is None:\n                sym = tpl.Duplicate(new_name)\n                p = width_param(sym, w_name)\n                if p is None or p.IsReadOnly:\n                    raise Exception(u\"Type '{}' không đặt được tham số {}.\".format(new_name, w_name))\n                p.Set(from_mm(width))\n            if not sym.IsActive:\n                sym.Activate()\n                doc.Regenerate()\n            # Revit hiểu Z của điểm đặt là độ lệch so với level (Z = cao độ level → Offset = cao độ level, lỗi lần\n            # chạy 2026-10-30 10:16) → đặt Z = 0 và gán lại Offset = 0 sau khi tạo\n            z = 0.0\n            for fi, ri, elev, move, want, want_p, retype in fixes:\n                if retype:\n                    fi.ChangeTypeId(sym.Id)\n                    doc.Regenerate()\n                    set_elevation_zero(fi)\n                if elev:\n                    set_elevation_zero(fi)\n                if move:\n                    ElementTransformUtils.MoveElement(doc, fi.Id, XYZ(from_mm(move[0]), from_mm(move[1]), 0.0))\n                if want:\n                    orient(fi, want, XYZ(from_mm(want_p[0]), from_mm(want_p[1]), 0.0))\n                rows[ri][7] = u\"Đã sửa\"\n            for b, ri in jobs:\n                p = b.insert_point()\n                pt = XYZ(from_mm(p[0]), from_mm(p[1]), z)\n                if placement == FamilyPlacementType.OneLevelBasedHosted:\n                    fi = doc.Create.NewFamilyInstance(pt, sym, wall_by_id[b.wall.id], level,\n                                                      StructuralType.NonStructural)\n                else:\n                    fi = doc.Create.NewFamilyInstance(pt, sym, level, StructuralType.NonStructural)\n                f = b.facing()\n                want = (-f[0], -f[1]) if reverse else f\n                if placement == FamilyPlacementType.OneLevelBasedHosted:\n                    doc.Regenerate()\n                    ff = fi.FacingOrientation\n                    if ff.X * want[0] + ff.Y * want[1] < 0 and fi.CanFlipFacing:\n                        fi.flipFacing()\n                else:\n                    orient(fi, want, pt)\n                set_elevation_zero(fi)\n                cm = fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n                if cm is not None and not cm.IsReadOnly:\n                    cm.Set(COMMENT_TAG)\n                rows[ri][7] = u\"Đã tạo\"\n                rows[ri][8] = fi.Id.Value\n                created.append((fi, ri))\n            status = tx.Commit()\n        except Exception as ex:\n            tx.RollBack()\n            return [u\"LỖI khi tạo lavabo, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n        if status != TransactionStatus.Committed:\n            return [u\"LỖI: Revit không lưu được Transaction ({}), mọi thay đổi đã được hoàn tác.\".format(status)], []\n        for fi, ri in created:\n            if not fi.IsValidObject:\n                rows[ri][7] = u\"Revit đã xoá sau khi tạo\"\n\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\")]\n    report.append(u\"CAD: {} – dò {} – {} nét ngắn – nhận diện {} mặt bàn lavabo (chữ nhật có lòng chậu)\".format(\n        cad_name, u\"layer \" + u\"; \".join(sorted(layers)) if layer_filters else u\"mọi layer ({})\".format(len(layers)),\n        len(items), len(basins)))\n    report.append(u\"Lavabo: {} – {} – level {} – phòng chứa: {}\".format(\n        type_label, u\"dùng thẳng type mẫu (IN[4] trống), bề rộng đặt chỗ {:.0f} mm\".format(width) if fixed_type\n        else u\"{} = {:.0f} mm\".format(w_name, width), level.Name, u\"; \".join(room_keys) if keys else u\"mọi phòng\"))\n    report.append(u\"Lavabo {}: {}\".format(u\"sẽ tạo\" if dry_run else u\"đã tạo\", len(jobs)))\n    if fixes:\n        report.append(u\"Lavabo của tool {}: {} (đổi type: {}, cao độ về 0: {}, dời: {}, xoay/kiểm hướng: {})\".format(\n            u\"sẽ sửa\" if dry_run else u\"đã sửa\", len(fixes), len([1 for f in fixes if f[6]]),\n            len([1 for f in fixes if f[2]]), len([1 for f in fixes if f[3]]), len([1 for f in fixes if f[4]])))\n    dups = [(b, d) for b in basins for d in b.dups]\n    if dups:\n        report.append(u\"TRÙNG: {} lavabo cùng family thừa trong cùng WC – xoá tay (giữ Id bên phải): {}\".format(\n            len(dups), u\", \".join(u\"{} (giữ {})\".format(d, b.eid) for b, d in dups)))\n    counts = {}\n    for b in basins:\n        if b.status.startswith(u\"Bỏ qua\"):\n            k = re.sub(r\"[\\d(].*\", u\"\", b.status.split(u\" – \", 1)[1]).strip()\n            counts[k] = counts.get(k, 0) + 1\n    for k in sorted(counts):\n        report.append(u\"Bỏ qua {} lavabo: {}\".format(counts[k], k))\n    by_room = {}\n    for b in basins:\n        if b.status.startswith(u\"Bỏ qua – không nằm trong phòng\"):\n            by_room[b.room or u\"không có Room\"] = by_room.get(b.room or u\"không có Room\", 0) + 1\n    if by_room:\n        report.append(u\"  – phòng chứa các mặt bàn bị loại: \" + u\", \".join(\n            u\"{} ×{}\".format(k, v) for k, v in sorted(by_room.items(), key=lambda kv: -kv[1])))\n    report.append(u\"Chẩn đoán nhận diện: {} vòng kín – {} chữ nhật đúng cỡ – {} nét cong – {} mặt bàn có lòng chậu (nét cong \"\n                  u\"phủ ≥ {:.0f} mm) – Room trên level: {}\".format(stats.get(\"loops\", 0), stats.get(\"rects\", 0),\n                                                    stats.get(\"bowls\", 0), len(basins), MIN_BOWL_MM, n_rooms))\n    kinds = {}\n    for kind, _, _, _ in raw:\n        kinds[kind] = kinds.get(kind, 0) + 1\n    report.append(u\"Đối tượng CAD theo loại: \" + u\", \".join(u\"{} {}\".format(k, v) for k, v in sorted(kinds.items())))\n    if keys:\n        try:\n            path, n = write_diag(raw, room_at, keys, dry_run)\n            report.append(u\"Chẩn đoán WC: {} đối tượng CAD trong Room WC → {}\".format(n, path))\n        except Exception as ex:\n            report.append(u\"Không ghi được file chẩn đoán: {}\".format(ex))\n    try:\n        report.append(u\"Log: \" + write_log(rows, cad_name, dry_run))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra mặt bàn CAD + khung lavabo (đoạn xanh trong Dynamo) và log. Thiếu lavabo → nới IN[7]–IN[10]. \"\n                      u\"Đúng thì đổi Dry-run = False và Run lại. Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    else:\n        report.append(u\"Soát hướng vài lavabo (quay ngược vào tường → Undo, đổi IN[11] rồi Run lại). Undo bằng mục \"\n                      u\"\\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    # Mặt bàn ngoài WC (bàn bếp, bàn phấn…) chỉ ghi trong log, không liệt kê ở đây\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows\n               if not r[7].startswith(u\"Bỏ qua – không nằm trong phòng\")]\n    return report, preview_lines([b for b, _ in jobs], to_mm(level.Elevation))\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\ndef num(i, default):\n    return float(IN[i]) if len(IN) > i and IN[i] is not None else default\n\n\nif DYNAMO:\n    import traceback\n    try:\n        OUT = list(main(\n            (IN[0] or u\"\").strip(),\n            [s.strip() for s in (IN[1] or u\"\").split(u\";\") if s.strip()],\n            (IN[2] or u\"TẦNG 3\"),\n            IN[3],\n            (IN[4] or u\"\").strip(),\n            num(5, 900.0),\n            (u\"WC;vệ sinh\" if IN[6] is None else IN[6]).split(u\";\"),\n            num(7, 600.0),\n            num(8, 1500.0),\n            num(9, 650.0),\n            num(10, 100.0),\n            False if IN[11] is None else bool(IN[11]),\n            True if IN[12] is None else bool(IN[12]),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoLavaboTuCAD_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "a870b256a63f4b988d131707956b57ba",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "ac9c64aed132453c8c316b31185b48d2",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "de38ef6ad0a1459e8d12da3f34c237f4",
+          "Name": "IN[1]",
+          "Description": "IN[1] Lọc layer (trống = dò mọi layer, VD A-Interior WC)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "92627038458f4bbaaf05d2275bd3ceb1",
+          "Name": "IN[2]",
+          "Description": "IN[2] Level đặt lavabo",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b9094825498c48edab8027e19c2e1e44",
+          "Name": "IN[3]",
+          "Description": "IN[3] CHỌN TYPE LAVABO",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b495579a66ab4b0384f3478377d65e96",
+          "Name": "IN[4]",
+          "Description": "IN[4] Tham số type bề rộng (trống = dùng thẳng type)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "02c4ccb5583b4d74a4661c863ca8d212",
+          "Name": "IN[5]",
+          "Description": "IN[5] Bề rộng lavabo (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7356606161ad404db204acfc4ccc0897",
+          "Name": "IN[6]",
+          "Description": "IN[6] Room chứa lavabo (cách nhau bằng ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "35fc674237be4e1da64353dbabb68f58",
+          "Name": "IN[7]",
+          "Description": "IN[7] Mặt bàn CAD – cạnh dài tối thiểu (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f98398711d09429783493f98026dde0e",
+          "Name": "IN[8]",
+          "Description": "IN[8] Mặt bàn CAD – cạnh dài tối đa (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4a40288c5cca4aa0b6131f3164683e7f",
+          "Name": "IN[9]",
+          "Description": "IN[9] Mặt bàn CAD – cạnh ngắn tối đa (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "eac742af7be44ee3a5249da59413514a",
+          "Name": "IN[10]",
+          "Description": "IN[10] Khe mặt bàn – mặt tường tối đa (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "42924eb2da2f42d5b1ada44d86d86368",
+          "Name": "IN[11]",
+          "Description": "IN[11] Đảo hướng (True nếu lavabo quay vào tường)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b5f18373304440139a58e6dfc06b6930",
+          "Name": "IN[12]",
+          "Description": "IN[12] Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "69154c5d90714c0b964fe6ee91689af6",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "df84ecb9280d438391b8d4025dff42e4",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "aa6fa9c2f3e048ce8d60759f6d80558f",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "458f788cba824b5283ec652df740f7c2",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "73e392a81ba9493da20221ff0de0df69",
+      "End": "ac9c64aed132453c8c316b31185b48d2",
+      "Id": "d5b5038faf8042479f12bfd37ccc6c3f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a2d6f22aa29f4f3196b538ea969aec82",
+      "End": "de38ef6ad0a1459e8d12da3f34c237f4",
+      "Id": "14e8a5bf291f47cab410503d74d85d81",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fd6dd13242ec47c9be430918a8d4a104",
+      "End": "92627038458f4bbaaf05d2275bd3ceb1",
+      "Id": "d9386d881d8d4c97990ccadcb08c289d",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "365b790092d94dbfbd51a80320a014a5",
+      "End": "b9094825498c48edab8027e19c2e1e44",
+      "Id": "da8a3385b8da43ce9d787203d58d1602",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "47c5e3bd77ac416eb883197ece4b24cc",
+      "End": "b495579a66ab4b0384f3478377d65e96",
+      "Id": "c32f5235bbb1410a9bcab9976cd3eb4f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "929e014894a94e6ba3bec8c5fc0869ff",
+      "End": "02c4ccb5583b4d74a4661c863ca8d212",
+      "Id": "caf3838d2c864e68bfbd11b6050fab5b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8f08964ca7604424adbe153f90586db1",
+      "End": "7356606161ad404db204acfc4ccc0897",
+      "Id": "f0eece5a158c49f2832edc843244fd15",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e0070e2ccd69462b8bdb657ec9ea90cb",
+      "End": "35fc674237be4e1da64353dbabb68f58",
+      "Id": "f262d76cf5a54cc587695a8bbf857c21",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0d814d0164cd44abaae8374b0d6e80c8",
+      "End": "f98398711d09429783493f98026dde0e",
+      "Id": "2729921b36804ae0ae310cf24d0249b5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "42b6fa36641a4d9cb10b4c707c21cf78",
+      "End": "4a40288c5cca4aa0b6131f3164683e7f",
+      "Id": "3d9ac02c76e146b08bc7e91ba68218e5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "530f997c32c048a1a7ca62f9e4bfe483",
+      "End": "eac742af7be44ee3a5249da59413514a",
+      "Id": "0af24bcbdea64273877be891131b1f05",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fb83178601964135b619ebb2fce707d0",
+      "End": "42924eb2da2f42d5b1ada44d86d86368",
+      "Id": "96c5eca4cccd4a399941381b51825a63",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "dfd1e81a02b544d79ad381bf7fcac128",
+      "End": "b5f18373304440139a58e6dfc06b6930",
+      "Id": "8cd1e25630a4460cb43f970b124894e8",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "69154c5d90714c0b964fe6ee91689af6",
+      "End": "aa6fa9c2f3e048ce8d60759f6d80558f",
+      "Id": "5a81942e55554bccbb9e237418a6f923",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "4.2.1.5887",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "5b537e991fca44d7b296f58ea9f0d271",
+        "Name": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "da5809799906461280fff360db6ab10d",
+        "Name": "IN[1] Lọc layer (trống = dò mọi layer, VD A-Interior WC)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "57baef98f5da4a63851a1a143d42cdec",
+        "Name": "IN[2] Level đặt lavabo",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "30e5f25cd9ff4a17aaf2217917220553",
+        "Name": "IN[3] CHỌN TYPE LAVABO",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "f2009925272a4892b4c96a9340b81e19",
+        "Name": "IN[4] Tham số type bề rộng (trống = dùng thẳng type)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "be310801cc21484cbd20051d509bf402",
+        "Name": "IN[5] Bề rộng lavabo (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "8ecf7f4ddffc4cb3bc0d18d2556c18cd",
+        "Name": "IN[6] Room chứa lavabo (cách nhau bằng ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "a9b0e21ea1c9466fb7934414fc896158",
+        "Name": "IN[7] Mặt bàn CAD – cạnh dài tối thiểu (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "54ad356d058c47da977b05f6edcbf629",
+        "Name": "IN[8] Mặt bàn CAD – cạnh dài tối đa (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "86b5792d6d1a431888fccc08453f056e",
+        "Name": "IN[9] Mặt bàn CAD – cạnh ngắn tối đa (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "f6eedc8e31594feba7048c12219add30",
+        "Name": "IN[10] Khe mặt bàn – mặt tường tối đa (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "4213727428404c338fb8e69168425f75",
+        "Name": "IN[11] Đảo hướng (True nếu lavabo quay vào tường)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1210.0
+      },
+      {
+        "Id": "5b7dea079a8a472fa9b28bee4368f809",
+        "Name": "IN[12] Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1320.0
+      },
+      {
+        "Id": "a870b256a63f4b988d131707956b57ba",
+        "Name": "Tạo lavabo từ CAD (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 660.0,
+        "Y": 560.0
+      },
+      {
+        "Id": "df84ecb9280d438391b8d4025dff42e4",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1060.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "ce353aaaac254b96862b117f648dcddb",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "CHỌN TYPE LAVABO ở IN[3]; level; Room WC; cỡ mặt bàn CAD để nhận diện. Ô sai thì node Báo cáo liệt kê giá trị hợp lệ. Giữ Dry-run = True cho lần chạy đầu.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "5b537e991fca44d7b296f58ea9f0d271",
+          "da5809799906461280fff360db6ab10d",
+          "57baef98f5da4a63851a1a143d42cdec",
+          "30e5f25cd9ff4a17aaf2217917220553",
+          "f2009925272a4892b4c96a9340b81e19",
+          "be310801cc21484cbd20051d509bf402",
+          "8ecf7f4ddffc4cb3bc0d18d2556c18cd",
+          "a9b0e21ea1c9466fb7934414fc896158",
+          "54ad356d058c47da977b05f6edcbf629",
+          "86b5792d6d1a431888fccc08453f056e",
+          "f6eedc8e31594feba7048c12219add30",
+          "4213727428404c338fb8e69168425f75",
+          "5b7dea079a8a472fa9b28bee4368f809"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 522.0,
+        "Height": 1530.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1465.0,
+        "TextblockHeight": 72.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "68dedf5b05c347aabf1a79b2ca1ec58b",
+        "Title": "2. Tạo lavabo (Python)",
+        "DescriptionText": "Chữ nhật mặt bàn chứa nét cong lòng chậu, trong Room WC → tường Revit song song cạnh dài, sát nhất → lavabo 900 tâm theo mặt bàn, áp mặt tường (lavabo góc áp tường bên), mặt trước quay ra; chặn file central / mô hình S; log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-30).",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "a870b256a63f4b988d131707956b57ba"
+        ],
+        "HasNestedGroups": false,
+        "Left": 650.0,
+        "Top": 363.0,
+        "Width": 296.0,
+        "Height": 731.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 560.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 187.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "c9ea69a856a04d2b9a811fd5474e6195",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "OUT[0] báo cáo từng lavabo; OUT[1] mặt bàn CAD + khung lavabo xem trước (nền 3D).",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "df84ecb9280d438391b8d4025dff42e4"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1050.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 339.7721665439873,
+    "Y": -74.6975001225835,
+    "Zoom": 0.5585788600612013
+  }
+}

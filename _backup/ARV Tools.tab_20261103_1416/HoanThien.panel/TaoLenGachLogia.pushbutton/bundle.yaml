@@ -1,0 +1,3 @@
+title: "Len gạch\nlogia"
+tooltip: "Nhân bản từ ARV_TaoLenGo_v1 (không sửa bản gốc) – thêm chia viên len trùng mạch lát sàn logia. Tạo len gạch chân tường logia (Basic Wall mỏng, type có sẵn \"LCT-Gạch\"), mỗi viên len một đoạn tường: 1. Nguồn biên: sàn hoàn thiện logia (Floor, VD do ARV_TaoSanCanHoTuCAD_v1 tạo – type \"SHT-Gach Lat Logia-300x600\", Comments \"ARV-SanCanHo CHxx LOGIA\"). Phạm vi: phần tử đang chọn / Id ở IN[3]; không chọn Mặc định chạy thử (dry-run). Nguồn: ARV_TaoLenGachLogia_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

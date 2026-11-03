@@ -1,0 +1,903 @@
+{
+  "Uuid": "78602407-f3eb-41f8-a596-ebe7a5cbde09",
+  "IsCustomNode": false,
+  "Description": "Đặt cục nóng điều hòa (Mechanical Equipment) ở logia từ DWG đã link, nhận diện theo hình: hình chữ nhật chứa mũi tên hướng thổi; lưng theo CAD, áp mặt hoàn thiện khi sát, cao độ so với level ở IN[11], type chọn ở IN[3]. Dry-run mặc định.",
+  "Name": "20. ARV_TaoCucNongDHTuCAD_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "c5c2c269b99f429aa76a51cb541f68bb",
+      "Name": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "c4bd2ec9ae114bbbabc3bfb4be1b8314",
+      "Name": "IN[1] Lọc layer cục nóng (trống = dò mọi layer)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AUDIT_D_260526144445-144",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "f4640ea647674818947c63222cafe643",
+      "Name": "IN[2] Level đặt cục nóng",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "TẦNG 3",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "8512c9d5a1c84b74b95b4e98ccd57e1d",
+      "Name": "IN[4] Room chứa cục nóng (cách nhau bằng ;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "logia;lô gia",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "6692e89cee644a859c031fb67556b7d3",
+      "Name": "IN[5] Cạnh dài hình chữ nhật CAD tối thiểu (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "1000",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "eb02310b8024458582616d623c18d73a",
+      "Name": "IN[6] Cạnh dài hình chữ nhật CAD tối đa (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "1200",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "21c0a1f065684b329f886bf3b613c48f",
+      "Name": "IN[7] Lưng CAD cách mặt tường tối đa để áp (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "50",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "9e9e7576e36a414483f2294f8ea3802e",
+      "Name": "IN[8] Cạnh bên CAD cách mặt bên tối đa để áp (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "50",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    },
+    {
+      "Id": "be6d309c20dd42a39b0d99065f3d4989",
+      "Name": "IN[9] Đảo hướng (True nếu cục nóng quay ngược mũi tên CAD)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "3018c58cc62741df986f7f7da3d26bd3",
+      "Name": "IN[10] Dry-run (True = đặt thử rồi hoàn tác)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "cff0102831f447f5836c8db76a3900d1",
+      "Name": "IN[11] Cao độ cục nóng so với level (mm)",
+      "Type": "number",
+      "Type2": "number",
+      "Value": "1500",
+      "NumberType": "Double",
+      "Description": "Creates a number."
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "faa5c0128ad74e4baa09ec068f597972",
+      "Name": "Báo cáo",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c5c2c269b99f429aa76a51cb541f68bb",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "93a18f95acde408eabee90ecd27bf402",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c4bd2ec9ae114bbbabc3bfb4be1b8314",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fedb23d1ddde444db92988f7100eb478",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AUDIT_D_260526144445-144"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "f4640ea647674818947c63222cafe643",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9df08988c1844f809888c9fab08022a7",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "TẦNG 3"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": 0,
+      "SelectedString": "AV_MT_cuc nong dieu hoa loai dai1:AV_Cuc nong DH 3",
+      "NodeType": "ExtensionNode",
+      "Id": "2a0ba8e792354105a6ca58c0c88caa55",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6e5db69902bc4cdb96a082d6243cd368",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "8512c9d5a1c84b74b95b4e98ccd57e1d",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "48ebbd7e960d4094b002cffe91a56ec0",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "logia;lô gia"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "6692e89cee644a859c031fb67556b7d3",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d0e77cb59fe445e4a0845eaca00edb0f",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 1000.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "eb02310b8024458582616d623c18d73a",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0d421effe72e4dde9a08b9190bdc26af",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 1200.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "21c0a1f065684b329f886bf3b613c48f",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "32b765e46dac48e59c27255b17a58ee5",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 50.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "9e9e7576e36a414483f2294f8ea3802e",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f7cbb660f0664c0484b6070de8bb4396",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 50.0
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "be6d309c20dd42a39b0d99065f3d4989",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a10dce37ecdc44bf832009175c857845",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": false
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "3018c58cc62741df986f7f7da3d26bd3",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "737c3f1736c1441b9b24417ddf27b357",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NumberType": "Double",
+      "Id": "cff0102831f447f5836c8db76a3900d1",
+      "NodeType": "NumberInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1989639441f545c1921870693284df0e",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a number.",
+      "InputValue": 1500.0
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong 20. ARV_TaoCucNongDHTuCAD_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Đặt cục nóng điều hòa (Mechanical Equipment) ở logia từ mặt bằng DWG đã Link, cùng khuôn với tool 19 máy giặt:\n#   1. Cục nóng trên CAD (đo trên G19 TẦNG 3 2026-10-31, DWG TDH_LINK-REVIT: 17 block \"Mini-VRF - 4-6HP (12.0-16.0kW) 1250\" layer\n#      AUDIT_D_260526144445-144, mỗi căn một cục ở logia LG1) = HÌNH CHỮ NHẬT 1100 × 500 chứa MŨI TÊN hướng thổi. Revit gộp nét\n#      block vào một GeometryInstance nên không dùng tên block; nét layer 0 vào Revit mang layer của block (file chẩn đoán\n#      2026-10-31 09:36: hình chữ nhật = PolyLine 5 đỉnh khép kín). IN[1] có chuỗi = chỉ layer chứa chuỗi đó; trống = dò mọi\n#      layer, chỉ nhận hình có mũi tên.\n#   2. Hướng: mặt trước = hướng mũi tên trên CAD, cạnh dài đối diện là lưng. Mũi tên trên CAD không đồng nhất giữa các căn\n#      (có căn thổi ra lan can, có căn thổi vào logia, CH10 thổi vào tường cuối logia): giữ theo CAD, thổi vào tường thì báo\n#      \"cần soát\". Không thấy mũi tên → cạnh dài gần tường / biên Room nhất làm lưng, báo \"cần soát\".\n#   3. Room chứa tâm cục nóng phải có tên chứa một chuỗi trong IN[4] (mặc định \"logia;lô gia\"; trống = mọi phòng).\n#   4. Lưng áp mặt nhô ra phòng nhất trong biên Room (Finish) và mặt tường Revit ngang tầm cục nóng (len chân tường, tường thấp\n#      dưới đáy cục không tính), cách lưng CAD ≤ IN[7]. Mặc định 50, nhỏ hơn máy giặt: CAD cố ý để hở 100 mm ở vài căn (CH05, 08, 09, 13), snap xa hơn sẽ dời sai.\n#      Không có mặt nào → giữ theo CAD (cục đứng tự do sau lưng, không phải lỗi).\n#   5. Dọc tường: có mặt bên cách cạnh CAD ≤ IN[8] thì áp mặt đó; hai bên đều có thì đặt giữa; không có thì giữ tâm CAD.\n#      Hốc hẹp hơn 1100 (CH01, 04, 14, 17: 1085; CH10: 1035) → đặt giữa hoặc áp mặt bên có tường, khung type lấn ra ngoài, báo \"lòi khỏi Room\".\n#   6. Cao độ: Elevation from Level = IN[11] (mặc định 1500 mm so với LEVEL, không phải so với sàn logia), mọi cục như nhau.\n#   7. Type: chọn ở IN[3], mặc định \"AV_MT_cuc nong dieu hoa loai dai1 : AV_Cuc nong DH 3\" (Mechanical Equipment, đặt theo\n#      level, khung −550…550 × −476…0, cao 880). Giả định gốc ở giữa mép lưng, mặt trước về −Y như family máy giặt, chưa xem\n#      được hình family: quay ngược → IN[9] = True. Comments = \"ARV-TaoCucNongDHTuCAD\". Cục của tool đã có mà lệch / sai\n#      hướng / sai cao độ / khác type → sửa tại chỗ; cục cùng family người dùng tự đặt → bỏ qua.\n# INPUT\n#   IN[0] (str)   Một phần tên bản CAD (để trống = bản CAD duy nhất trong mô hình / có layer khớp IN[1])\n#   IN[1] (str)   Lọc layer, nhiều chuỗi cách ';' (khớp chuỗi con), VD \"AUDIT_D_260526144445-144\"; trống = dò mọi layer\n#   IN[2] (str)   Tên level đặt cục nóng, VD \"TẦNG 3\"\n#   IN[3] (FamilyType | str) Type cục nóng (node Family Types, hoặc \"AV_MT_cuc nong dieu hoa loai dai1 : AV_Cuc nong DH 3\")\n#   IN[4] (str)   Tên Room chứa cục nóng, nhiều chuỗi cách ';', VD \"logia;lô gia\" (trống = mọi phòng)\n#   IN[5] (float) Cạnh dài hình chữ nhật CAD tối thiểu (mm), VD 1000\n#   IN[6] (float) Cạnh dài hình chữ nhật CAD tối đa (mm), VD 1200\n#   IN[7] (float) Lưng CAD cách mặt tường tối đa để áp tường (mm), VD 50\n#   IN[8] (float) Cạnh bên CAD cách mặt bên tối đa để áp mặt bên (mm), VD 50\n#   IN[9] (bool)  Đảo hướng: True nếu cục nóng quay lưng về phía mũi tên CAD (mặc định False)\n#   IN[10] (bool) Dry-run: True = đặt thử, báo cáo rồi hoàn tác, không ghi vào mô hình (mặc định True)\n#   IN[11] (float) Cao độ cục nóng so với level (mm), VD 1500\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, đường dẫn log, rồi từng cục nóng\n#   OUT[1] (list[Line]) Xem trước: hình chữ nhật CAD, khung cục nóng sẽ đặt, đoạn hướng mặt trước (mm)\n\nimport os\nimport io\nimport re\nimport csv\nimport math\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, Options, GeometryInstance, PolyLine,\n                                   Line, Arc, Ellipse, NurbSpline, HermiteSpline, Curve, XYZ, Transaction,\n                                   TransactionStatus, UnitUtils, UnitTypeId, ModelPathUtils, BuiltInParameter,\n                                   BuiltInCategory, Level, Wall, LocationCurve, LocationPoint, FamilySymbol,\n                                   FamilyPlacementType,\n                                   ElementTransformUtils, SpatialElementBoundaryOptions,\n                                   SpatialElementBoundaryLocation, ElementId, Solid, ViewDetailLevel,\n                                   WorksharingUtils, CheckoutStatus)\n    from Autodesk.Revit.DB.Structure import StructuralType\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo cục nóng điều hòa từ CAD\"\nSCRIPT_TAG = u\"ARV_TaoCucNongDHTuCAD_v1\"\nCOMMENT_TAG = u\"ARV-TaoCucNongDHTuCAD\"\nMAX_EDGE_MM = 3000.0             # Nét dài hơn không thể là nét cục nóng – bỏ khi đọc CAD\nSNAP_MM = 1.0                    # Đầu mút cách nhau ≤ chừng này coi là nối nhau\nMAX_LOOP_EDGES = 64\nRIGHT_COS = 0.02                 # Góc vuông: |cos| ≤ chừng này (lệch ≤ ~1°)\nSHORT_MIN = 0.3                  # Cạnh ngắn / cạnh dài của hình chữ nhật (G19: 500 / 1100)\nSHORT_MAX = 0.6\nARROW_MIN_MM = 20.0              # Nét chéo đầu mũi tên dài trong khoảng này (G19: 32)\nARROW_MAX_MM = 60.0\nARROW_COS = (0.3, 0.9)           # |cos| giữa nét chéo mũi tên và cạnh dài\nARROW_SPAN_MM = 100.0            # Mũi tên nằm cách tâm hình chữ nhật dọc cạnh dài tối đa (G19: 25)\nPARALLEL_COS = 0.995             # Mặt song song / vuông góc: |cos| ≥ chừng này\nSAME_MM = 100.0                  # Hai hình chữ nhật có tâm cách ≤ chừng này = cùng một ký hiệu\nEXIST_TOL_MM = 500.0             # Cục cùng family có tâm cách tâm CAD ≤ chừng này → đã có\nBODY_MAX_MM = 1500.0             # Khối đặc của family lớn hơn (trên mặt bằng) = vùng thông thủy – bỏ\nTOP_MM = 1000.0                  # Tường có chân cao hơn đáy cục chừng này không vướng cục nóng (cao 880)\nROOM_INSET_MM = 5.0              # Kiểm tra cục nóng nằm trong Room: thu khung vào chừng này\nBLOW_MM = 150.0                  # Tường trước mũi tên trong khoảng này = thổi vào tường\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\ndef sub(a, b):\n    return (a[0] - b[0], a[1] - b[1])\n\n\ndef dot(a, b):\n    return a[0] * b[0] + a[1] * b[1]\n\n\ndef unit(v):\n    l = math.hypot(v[0], v[1])\n    return (v[0] / l, v[1] / l)\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef loose(s):\n    \"\"\"So tên không phân biệt dấu / hoa thường: \"Vệ sinh\" ≈ \"VE SINH\".\"\"\"\n    s = unicodedata.normalize(\"NFD\", norm(s).replace(u\"đ\", u\"d\").replace(u\"Đ\", u\"D\"))\n    return u\"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower()\n\n\ndef rotate(p, ang, c):\n    \"\"\"Xoay điểm p quanh c một góc ang (rad, ngược chiều kim đồng hồ).\"\"\"\n    ca, sa = math.cos(ang), math.sin(ang)\n    x, y = p[0] - c[0], p[1] - c[1]\n    return (c[0] + x * ca - y * sa, c[1] + x * sa + y * ca)\n\n\nclass Item(object):\n    \"\"\"Một nét CAD: danh sách điểm (mm) + có phải nét cong.\"\"\"\n\n    def __init__(self, pts, curved):\n        self.pts, self.curved = pts, curved\n\n\nclass Seg(object):\n    \"\"\"Một đoạn biên Room trên mặt bằng (mm).\"\"\"\n\n    def __init__(self, a, b):\n        self.a, self.b = a, b\n\n\ndef same(p, q):\n    return abs(p[0] - q[0]) <= SNAP_MM and abs(p[1] - q[1]) <= SNAP_MM\n\n\ndef find_loops(items):\n    \"\"\"Vòng kín từ nét thẳng: polyline tự khép (hoặc polyline 4 đỉnh – Revit có thể bỏ điểm khép), hoặc chuỗi nét nối\n    đầu mút mà mọi nút có đúng 2 nét. Trả về [điểm]. (Như tool sen tắm – dùng để tìm vách kính.)\"\"\"\n    loops, opens = [], []\n    for it in items:\n        if it.curved:\n            continue\n        if len(it.pts) >= 4 and same(it.pts[0], it.pts[-1]):\n            loops.append(it.pts[:-1])\n        elif len(it.pts) == 4:\n            loops.append(it.pts)\n        elif len(it.pts) >= 2:\n            opens.append(it)\n    nodes = {}\n\n    def key(p):\n        return (int(round(p[0] / SNAP_MM)), int(round(p[1] / SNAP_MM)))\n\n    for i, it in enumerate(opens):\n        nodes.setdefault(key(it.pts[0]), []).append(i)\n        nodes.setdefault(key(it.pts[-1]), []).append(i)\n    used = set()\n    for start in range(len(opens)):\n        if start in used:\n            continue\n        k0, k = key(opens[start].pts[0]), key(opens[start].pts[-1])\n        if len(nodes[k0]) != 2 or len(nodes[k]) != 2:\n            continue\n        chain, pts, cur = [start], list(opens[start].pts), start\n        closed = False\n        while len(chain) <= MAX_LOOP_EDGES:\n            if k == k0 and len(chain) > 1:\n                closed = True\n                break\n            if len(nodes[k]) != 2:\n                break\n            nxt = nodes[k][0] if nodes[k][1] == cur else nodes[k][1]\n            if nxt == cur or nxt in chain:\n                break\n            seg = opens[nxt].pts\n            if key(seg[0]) != k:\n                seg = seg[::-1]\n            pts.extend(seg[1:])\n            chain.append(nxt)\n            cur, k = nxt, key(seg[-1])\n        if closed:\n            used.update(chain)\n            loops.append(pts[:-1])\n    return loops\n\n\ndef rect_corners(pts):\n    \"\"\"4 góc nếu vòng là hình chữ nhật (bỏ điểm trùng / thẳng hàng), None nếu không.\"\"\"\n    clean = []\n    for p in pts:\n        if not clean or not same(p, clean[-1]):\n            clean.append(p)\n    if len(clean) > 1 and same(clean[0], clean[-1]):\n        clean.pop()\n    corners = []\n    n = len(clean)\n    for i in range(n):\n        a, b, c = clean[i - 1], clean[i], clean[(i + 1) % n]\n        u, v = sub(b, a), sub(c, b)\n        lu, lv = math.hypot(*u), math.hypot(*v)\n        if lu < 1e-6 or lv < 1e-6:\n            return None\n        cos = dot(u, v) / (lu * lv)\n        if cos > 1.0 - 1e-6:\n            continue                    # thẳng hàng\n        if abs(cos) > RIGHT_COS:\n            return None\n        corners.append(b)\n    return corners if len(corners) == 4 else None\n\n\ndef inside_loops(p, loops):\n    \"\"\"Điểm trong vùng giới hạn bởi các vòng biên (chẵn lẻ – lỗ trong Room tự trừ).\"\"\"\n    c = False\n    for pts in loops:\n        for i in range(len(pts)):\n            (x1, y1), (x2, y2) = pts[i - 1], pts[i]\n            if (y1 > p[1]) != (y2 > p[1]) and p[0] < x1 + (p[1] - y1) * (x2 - x1) / (y2 - y1):\n                c = not c\n    return c\n\nclass Condenser(object):\n    \"\"\"Cục nóng nhận diện được trên CAD + cục sẽ đặt. Hệ trục riêng: gốc = giữa lưng CAD, dir = hướng mặt trước (theo\n    mũi tên), u = dọc tường; s = toạ độ dọc tường, d = toạ độ về phía mũi tên (lưng CAD d = 0, mặt trước d = depth).\"\"\"\n\n    def __init__(self, c, d, width, depth, corners, arrow):\n        self.c, self.width, self.depth, self.corners, self.arrow = c, width, depth, corners, arrow\n        self.set_dir(d)\n        self.mount_d = 0.0       # mặt dựa (d)\n        self.sides = []          # [(s mặt tường bên, phía −1 / +1)]\n        self.final = None        # khung cục nóng sau khi căn (s0, s1, d0, d1)\n        self.room = u\"\"\n        self.number = u\"\"\n        self.status = u\"\"\n        self.type_name = u\"\"\n        self.eid = u\"\"\n        self.note = u\"\"\n        self.dups = []\n\n    def set_dir(self, d):\n        self.dir = d\n        self.u = (-d[1], d[0])\n        self.back = (self.c[0] - d[0] * self.depth / 2.0, self.c[1] - d[1] * self.depth / 2.0)\n\n    def local(self, p):\n        q = sub(p, self.back)\n        return dot(q, self.u), dot(q, self.dir)\n\n    def world(self, s, d):\n        return (self.back[0] + self.u[0] * s + self.dir[0] * d, self.back[1] + self.u[1] * s + self.dir[1] * d)\n\n    def target_s(self, body_width):\n        \"\"\"Tâm cục nóng dọc tường: áp mặt bên; hai bên đều có → giữa; không có → tâm CAD.\"\"\"\n        if len(self.sides) >= 2:\n            return sum(s for s, _ in self.sides) / len(self.sides)\n        if self.sides:\n            return self.sides[0][0] - self.sides[0][1] * body_width / 2.0\n        return 0.0\n\ndef arrow_front(items, cen, along, across, depth):\n    \"\"\"Hướng mũi tên: các nét chéo đầu mũi tên quanh tâm hình chữ nhật, hai bên trục mũi tên, chụm về phía mũi. None nếu không có.\"\"\"\n    parts = []\n    for it in items:\n        if it.curved:\n            continue\n        for k in range(1, len(it.pts)):\n            a, b = it.pts[k - 1], it.pts[k]\n            ln = math.hypot(*sub(b, a))\n            if not (ARROW_MIN_MM <= ln <= ARROW_MAX_MM):\n                continue\n            if not (ARROW_COS[0] <= abs(dot(sub(b, a), along)) / ln <= ARROW_COS[1]):\n                continue\n            sa, da = dot(sub(a, cen), along), dot(sub(a, cen), across)\n            sb, db = dot(sub(b, cen), along), dot(sub(b, cen), across)\n            if max(abs(sa), abs(sb)) <= ARROW_SPAN_MM and max(abs(da), abs(db)) <= depth / 2.0:\n                parts.append((sa, da, sb, db))\n    if len(parts) < 2:\n        return None\n    axis = sum(p[0] + p[2] for p in parts) / (2.0 * len(parts))\n    if not (any(p[0] + p[2] > 2.0 * axis for p in parts) and any(p[0] + p[2] < 2.0 * axis for p in parts)):\n        return None\n    vote = 0.0\n    for sa, da, sb, db in parts:\n        vote += (db - da) if abs(sb - axis) < abs(sa - axis) else (da - db)\n    if abs(vote) < 1.0:\n        return None\n    return across if vote > 0 else (-across[0], -across[1])\n\n\ndef make_unit(c, items):\n    \"\"\"Cục nóng từ 4 góc hình chữ nhật + các nét để tìm mũi tên.\"\"\"\n    l1, l2 = math.hypot(*sub(c[1], c[0])), math.hypot(*sub(c[2], c[1]))\n    cen = ((c[0][0] + c[2][0]) / 2.0, (c[0][1] + c[2][1]) / 2.0)\n    e1, e2 = unit(sub(c[1], c[0])), unit(sub(c[2], c[1]))\n    along, across, length, depth = (e1, e2, l1, l2) if l1 >= l2 else (e2, e1, l2, l1)\n    front = arrow_front(items, cen, along, across, depth)\n    return Condenser(cen, front or across, length, depth, c, front is not None)\n\n\ndef find_units(items, min_long, max_long, stats=None, need_arrow=False):\n    \"\"\"Hình chữ nhật cạnh dài min_long–max_long, tỉ lệ SHORT_MIN–MAX; need_arrow = chỉ nhận hình có mũi tên (dò mọi layer).\"\"\"\n    rectangles = arrows = 0\n    result = []\n    for c in (rect_corners(pts) for pts in find_loops(items)):\n        if c is None:\n            continue\n        l1, l2 = math.hypot(*sub(c[1], c[0])), math.hypot(*sub(c[2], c[1]))\n        long_side, short_side = max(l1, l2), min(l1, l2)\n        if not (min_long <= long_side <= max_long and SHORT_MIN <= short_side / long_side <= SHORT_MAX):\n            continue\n        u = make_unit(c, items)\n        if any(math.hypot(*sub(u.c, r.c)) <= SAME_MM for r in result):\n            continue\n        rectangles += 1\n        arrows += 1 if u.arrow else 0\n        if u.arrow or not need_arrow:\n            result.append(u)\n    if stats is not None:\n        stats.update(rects=rectangles, arrows=arrows)\n    return result\n\n\ndef mount_offset(w, segs, tol):\n    \"\"\"d của mặt song song lưng cục nóng, chạm bề rộng cục nóng, cách lưng CAD ≤ tol: mặt NHÔ RA PHÒNG NHẤT để cục nóng không ăn vào lớp nào\n    (len chân tường 10 mm nằm trước biên Room, lần chạy 2026-10-31); None nếu không có.\"\"\"\n    best = None\n    half = w.width / 2.0\n    for sg in segs:\n        sa, da = w.local(sg.a)\n        sb, db = w.local(sg.b)\n        ln = math.hypot(sb - sa, db - da)\n        if ln < 1.0 or abs(sb - sa) / ln < PARALLEL_COS or max(sa, sb) <= -half or min(sa, sb) >= half:\n            continue\n        d = (da + db) / 2.0\n        if abs(d) <= tol and (best is None or d > best):\n            best = d\n    return best\n\n\ndef fit_back(w, segs, tol):\n    \"\"\"Mặt dựa. Có mũi tên → lưng theo CAD, thiếu mặt thì giữ CAD (cục đứng tự do). Không có → thử 2 cạnh dài. Trả về ghi chú.\"\"\"\n    if w.arrow:\n        d = mount_offset(w, segs, tol)\n        if d is not None:\n            w.mount_d = d\n        return u\"\"\n    best = None\n    for k in (0, 2):\n        trial = (w.dir[0], w.dir[1])\n        w.set_dir(rotate(trial, k * math.pi / 2.0, (0.0, 0.0)))\n        d = mount_offset(w, segs, tol)\n        if d is not None and (best is None or abs(d) < abs(best[0])):\n            best = (d, w.dir)\n        w.set_dir(trial)\n    if best is None:\n        return u\"không thấy mũi tên, không có tường quanh cục nóng – giữ theo CAD, hướng cần soát\"\n    w.mount_d = best[0]\n    w.set_dir(best[1])\n    return u\"không thấy mũi tên – lấy cạnh dài gần tường nhất làm lưng, cần soát hướng\"\n\n\ndef blows_into_wall(w, walls):\n    \"\"\"Mũi tên CAD chỉ thẳng vào mặt tường Revit trước mặt cục nóng (cách ≤ BLOW_MM).\"\"\"\n    half = w.width / 2.0\n    for sg in walls:\n        sa, da = w.local(sg.a)\n        sb, db = w.local(sg.b)\n        ln = math.hypot(sb - sa, db - da)\n        if ln < 1.0 or abs(sb - sa) / ln < PARALLEL_COS or max(sa, sb) <= -half or min(sa, sb) >= half:\n            continue\n        if 0.0 <= (da + db) / 2.0 - w.depth <= BLOW_MM:\n            return True\n    return False\n\n\ndef fit_sides(w, segs, tol):\n    \"\"\"Mặt bên: vuông góc mặt dựa, chạm dải chiều sâu cục nóng, cách cạnh CAD ≤ tol, nhô vào cục nóng nhất. Trả về ghi chú.\"\"\"\n    half = w.width / 2.0\n    best = {}\n    for sg in segs:\n        sa, da = w.local(sg.a)\n        sb, db = w.local(sg.b)\n        ln = math.hypot(sb - sa, db - da)\n        if ln < 1.0 or abs(db - da) / ln < PARALLEL_COS:\n            continue\n        if max(da, db) < w.mount_d + 1.0 or min(da, db) > w.mount_d + w.depth:\n            continue\n        s = (sa + sb) / 2.0\n        side = 1 if s > 0 else -1\n        # Mặt nhô vào cục nóng nhất trong khoảng tol: len chân tường trước mặt tường\n        if abs(abs(s) - half) <= tol and (side not in best or abs(s) < abs(best[side])):\n            best[side] = s\n    w.sides = [(best[k], k) for k in sorted(best)]\n    if not w.sides:\n        return u\"\"\n    return u\"giữa hai mặt bên\" if len(w.sides) == 2 else u\"áp mặt bên\"\n\n\ndef analyse(items, min_long, max_long, back_tol, side_tol, room_at=None, room_keys=(), stats=None, walls=(), need_arrow=False):\n    \"\"\"items: [Item] mm; room_at(pt) → (tên, [vòng], số phòng) | None; walls: [Seg] mặt tường trên level. Trả về [Condenser] đã\n    gán trạng thái.\"\"\"\n    units = find_units(items, min_long, max_long, stats, need_arrow)\n    for w in units:\n        hit = room_at(w.c) if room_at is not None else None\n        w.room = hit[0] if hit else u\"\"\n        w.number = hit[2] if hit else u\"\"\n        if room_at is not None and room_keys and not any(k in loose(w.room) for k in room_keys):\n            w.status = u\"Bỏ qua – không nằm trong phòng {} (phòng: {})\".format(\n                u\"/\".join(room_keys), w.room or u\"không có Room\")\n            continue\n        segs = [Seg(pts[i - 1], pts[i]) for pts in (hit[1] if hit else []) for i in range(len(pts))] + list(walls)\n        note = fit_back(w, segs, back_tol)\n        side_note = fit_sides(w, segs, side_tol)\n        blow = u\"mũi tên CAD thổi vào tường, cần soát hướng\" if w.arrow and blows_into_wall(w, walls) else u\"\"\n        w.note = u\"; \".join(v for v in (note, side_note, blow) if v)\n        w.status = u\"OK\"\n    units.sort(key=lambda x: (-round(x.c[1]), round(x.c[0])))\n    return units\n\n\ndef wall_faces(p0, p1, along_x):\n    \"\"\"Hai mặt bên (Seg) của tường song song trục X / Y từ khung bao (p0, p1 mm): khung bao đúng cả khi Location Line của\n    tường không ở tim.\"\"\"\n    if along_x:\n        return [Seg((p0[0], y), (p1[0], y)) for y in (p0[1], p1[1])]\n    return [Seg((x, p0[1]), (x, p1[1])) for x in (p0[0], p1[0])]\n\n\ndef body_fit(pts, w):\n    \"\"\"Căn khung khối (điểm (x, y) mm của instance) theo cục nóng đích. Trả về (dời (dx, dy), khung (s0, s1, d0, d1)).\"\"\"\n    ss = [w.local(p)[0] for p in pts]\n    ds = [w.local(p)[1] for p in pts]\n    body_w = max(ss) - min(ss)\n    m_s = w.target_s(body_w) - (min(ss) + max(ss)) / 2.0\n    m_d = w.mount_d - min(ds)\n    move = (w.u[0] * m_s + w.dir[0] * m_d, w.u[1] * m_s + w.dir[1] * m_d)\n    return move, (min(ss) + m_s, max(ss) + m_s, min(ds) + m_d, max(ds) + m_d)\n\n\ndef inside_room(w, loops):\n    \"\"\"Bốn góc khung cục nóng (thu vào ROOM_INSET_MM) nằm trong Room.\"\"\"\n    s0, s1, d0, d1 = w.final\n    k = ROOM_INSET_MM\n    return all(inside_loops(w.world(s, d), loops) for s in (s0 + k, s1 - k) for d in (d0 + k, d1 - k))\n\n\n# --- Revit ---------------------------------------------------------------------------\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return style.GraphicsStyleCategory.Name\n    return None\n\n\ndef cad_objects(cad):\n    \"\"\"Mọi đối tượng hình học của CAD, kể cả trong block lồng nhau.\"\"\"\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            else:\n                result.append(obj)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef match_layers(all_layers, filters):\n    # So khớp không phân biệt hoa thường, chuẩn hoá Unicode; không lọc = mọi layer\n    if not filters:\n        return set(all_layers)\n    return set(l for l in all_layers if any(norm(f).lower() in norm(l).lower() for f in filters))\n\n\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef pick_cad(cad_filter, filters):\n    \"\"\"Chọn bản CAD theo tên; để trống thì lấy bản CAD duy nhất (có layer khớp). Trả về (cad, tên, objects, layers).\"\"\"\n    found = []\n    for inst in FilteredElementCollector(doc).OfClass(ImportInstance).ToElements():\n        name = get_name(doc.GetElement(inst.GetTypeId()))\n        if cad_filter and cad_filter.lower() not in name.lower():\n            continue\n        objects = cad_objects(inst)\n        all_layers = sorted(set(l for l in (layer_of(o) for o in objects) if l))\n        found.append((inst, name, objects, all_layers))\n    hits = [f for f in found if f[2] and match_layers(f[3], filters)]\n    if len(hits) == 1:\n        return hits[0]\n    if not hits:\n        lines = [u\"DỪNG: không có bản CAD{} nào{} đọc được hình học (link CAD chưa load?).\".format(\n            u\" khớp '{}'\".format(cad_filter) if cad_filter else u\"\",\n            u\" có layer chứa '{}'\".format(u\"; \".join(filters)) if filters else u\"\")]\n        for inst, name, _, layers in found:\n            lines.append(u\"Layer của {}: {}\".format(name, u\", \".join(layers) or u\"(không đọc được hình học)\"))\n        raise StopReport(lines)\n    raise StopReport([u\"DỪNG: {} bản CAD – nhập tên bản CAD vào ô IN[0]: {}\".format(\n        len(hits), u\", \".join(h[1] for h in hits))])\n\n\ndef find_level(name):\n    levels = list(FilteredElementCollector(doc).OfClass(Level).ToElements())\n    for l in levels:\n        if norm(l.Name).lower() == norm(name).lower():\n            return l\n    raise StopReport([u\"DỪNG: không có level '{}'. Các level: {}\".format(\n        name, u\", \".join(l.Name for l in sorted(levels, key=lambda x: x.Elevation)))])\n\n\ndef xy(p):\n    return (to_mm(p.X), to_mm(p.Y))\n\n\ndef block_name(inst):\n    \"\"\"Tên block của GeometryInstance CAD; rỗng nếu Revit không cho biết.\"\"\"\n    try:\n        sym = doc.GetElement(inst.GetSymbolGeometryId().SymbolId)\n        if sym is not None:\n            return get_name(sym)\n    except Exception:\n        pass\n    try:\n        return get_name(inst.Symbol)\n    except Exception:\n        return u\"\"\n\n\ndef read_items(objects, layers):\n    \"\"\"Nét ngắn – ứng viên nét cục nóng (thẳng + cong); layers = None: mọi nét, kể cả nét Revit không trả tên layer.\n    Trả về (items, {loại: số}).\"\"\"\n    items, kinds, lim = [], {}, from_mm(MAX_EDGE_MM)\n    for obj in objects:\n        if layers is not None and layer_of(obj) not in layers:\n            continue\n        kind = obj.GetType().Name\n        kinds[kind] = kinds.get(kind, 0) + 1\n        if isinstance(obj, PolyLine):\n            pts = list(obj.GetCoordinates())\n            if len(pts) >= 2:\n                ext = max(max(p.X for p in pts) - min(p.X for p in pts), max(p.Y for p in pts) - min(p.Y for p in pts))\n                if ext <= lim:\n                    # PolyLine ≥ 12 đỉnh = cung Revit đã chia đoạn (Revit 2027 đổi elip / spline thành PolyLine, tool 14)\n                    items.append(Item([xy(p) for p in pts], len(pts) >= 12))\n        elif isinstance(obj, Arc) and not obj.IsBound:\n            # Vòng tròn CAD: Arc không giới hạn, tự chia theo tâm + bán kính\n            c, r = xy(obj.Center), to_mm(obj.Radius)\n            if r <= MAX_EDGE_MM:\n                items.append(Item([(c[0] + r * math.cos(k * math.pi / 12.0), c[1] + r * math.sin(k * math.pi / 12.0))\n                                   for k in range(25)], True))\n        elif isinstance(obj, Curve) and obj.IsBound:\n            if isinstance(obj, Line):\n                if obj.Length <= lim:\n                    items.append(Item([xy(obj.GetEndPoint(0)), xy(obj.GetEndPoint(1))], False))\n            elif isinstance(obj, (Arc, Ellipse, NurbSpline, HermiteSpline)) and obj.Length <= 2 * lim:\n                items.append(Item([xy(p) for p in obj.Tessellate()], True))\n    return items, kinds\n\n\ndef room_finder(level):\n    \"\"\"Hàm room_at(pt mm) → (tên Room, [vòng biên Finish mm], số Room) trên level chứa điểm, None nếu không có.\"\"\"\n    opt = SpatialElementBoundaryOptions()\n    opt.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish\n    rooms = []\n    for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms) \\\n            .WhereElementIsNotElementType().ToElements():\n        if r.LevelId != level.Id or r.Area <= 0:\n            continue\n        loops = []\n        for segs in r.GetBoundarySegments(opt) or []:\n            pts = []\n            for seg in segs:\n                pts.extend(xy(q) for q in list(seg.GetCurve().Tessellate())[:-1])\n            if len(pts) >= 3:\n                loops.append(pts)\n        if not loops:\n            continue\n        xs = [q[0] for l in loops for q in l]\n        ys = [q[1] for l in loops for q in l]\n        name = r.get_Parameter(BuiltInParameter.ROOM_NAME)\n        number = r.get_Parameter(BuiltInParameter.ROOM_NUMBER)\n        rooms.append(((min(xs), min(ys), max(xs), max(ys)), loops, name.AsString() if name is not None else u\"\",\n                      number.AsString() if number is not None else u\"\"))\n\n    def room_at(p):\n        for box, loops, name, number in rooms:\n            if box[0] <= p[0] <= box[2] and box[1] <= p[1] <= box[3] and inside_loops(p, loops):\n                return name, loops, number\n        return None\n    return room_at, len(rooms)\n\n\ndef wall_segs(level, elev):\n    \"\"\"[Seg] mặt tường thẳng song song trục toạ độ trên level, gồm lớp ốp, trát (tool 09, 12) ngang tầm cục nóng đáy ở elev mm\n    so với level: bỏ tường có đỉnh thấp hơn đáy cục (len chân tường tool 11, tường thấp) và tường có chân cao hơn đáy cục TOP_MM.\"\"\"\n    segs = []\n    bottom = level.Elevation + from_mm(elev)\n    lim = bottom + from_mm(TOP_MM)\n    for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n        loc, bb = wl.Location, wl.get_BoundingBox(None)\n        if wl.LevelId != level.Id or bb is None or bb.Min.Z > lim or bb.Max.Z < bottom:\n            continue\n        if not isinstance(loc, LocationCurve) or not isinstance(loc.Curve, Line):\n            continue\n        d = loc.Curve.Direction\n        if max(abs(d.X), abs(d.Y)) >= PARALLEL_COS:\n            segs += wall_faces(xy(bb.Min), xy(bb.Max), abs(d.X) > abs(d.Y))\n    return segs\n\n\ndef equipment_symbols():\n    return [s for s in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_MechanicalEquipment)\n            .WhereElementIsElementType().ToElements() if isinstance(s, FamilySymbol)]\n\n\ndef pick_template(value):\n    \"\"\"IN[3]: FamilyType của node Family Types (Dynamo) hoặc chuỗi \"Family : Type\" → FamilySymbol cục nóng.\"\"\"\n    symbols = equipment_symbols()\n    families = u\", \".join(sorted(set(s.FamilyName for s in symbols))) or u\"không có\"\n    if isinstance(value, str):\n        parts = [norm(p) for p in value.split(u\":\")]\n        if len(parts) != 2 or not all(parts):\n            raise StopReport([u\"DỪNG: ô IN[3] phải là type chọn từ node Family Types hoặc chuỗi 'Family : Type' \"\n                              u\"(đang là '{}').\".format(value)])\n        hits = [s for s in symbols if norm(s.FamilyName) == parts[0] and norm(get_name(s)) == parts[1]]\n        if not hits:\n            raise StopReport([u\"DỪNG: không có type cục nóng '{}'. Family Mechanical Equipment: {}\".format(value, families)])\n        return hits[0]\n    sym = UnwrapElement(value) if value is not None else None\n    if not isinstance(sym, FamilySymbol):\n        raise StopReport([u\"DỪNG: chưa chọn type cục nóng ở IN[3].\"])\n    if sym.Category is None or sym.Category.BuiltInCategory != BuiltInCategory.OST_MechanicalEquipment:\n        raise StopReport([u\"DỪNG: type '{} : {}' không thuộc Mechanical Equipment. Family Mechanical Equipment: {}\".format(\n            sym.FamilyName, get_name(sym), families)])\n    return sym\n\n\ndef body_points(fi):\n    \"\"\"Khung cục nóng trên mặt bằng (x, y mm): 4 góc khung TYPE đưa về vị trí instance (dùng được cả family 2.5D, khung cao 0, không\n    có khối đặc); không có khung thì đỉnh các khối đặc, rồi khung bao instance.\"\"\"\n    bb = fi.Symbol.get_BoundingBox(None)\n    if bb is not None and bb.Max.X - bb.Min.X > 1e-3 and bb.Max.Y - bb.Min.Y > 1e-3:\n        tf = fi.GetTransform()\n        return [xy(tf.OfPoint(XYZ(x, y, 0.0))) for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)]\n    opt = Options()\n    opt.DetailLevel = ViewDetailLevel.Fine\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            elif isinstance(obj, Solid) and obj.Volume > 1e-6:\n                pts = []\n                for e in obj.Edges:\n                    pts.extend(xy(p) for p in e.Tessellate())\n                if not pts:\n                    continue\n                xs, ys = [p[0] for p in pts], [p[1] for p in pts]\n                if max(max(xs) - min(xs), max(ys) - min(ys)) <= BODY_MAX_MM:\n                    result.extend(pts)\n\n    geo = fi.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    if result:\n        return result\n    bb = fi.get_BoundingBox(None)\n    if bb is None:\n        return []\n    x0, y0 = xy(bb.Min)\n    x1, y1 = xy(bb.Max)\n    return [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]\n\n\ndef existing_fixtures(family_name, level):\n    \"\"\"[(tâm mm, Id, có Comments của tool)] cục nóng đã đặt trên level: cùng family, hoặc do tool tạo.\"\"\"\n    result = []\n    for fi in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_MechanicalEquipment) \\\n            .WhereElementIsNotElementType().ToElements():\n        sym = getattr(fi, \"Symbol\", None)\n        if sym is None or fi.LevelId != level.Id or not isinstance(getattr(fi, \"Location\", None), LocationPoint):\n            continue\n        cm = fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n        mine = cm is not None and cm.AsString() == COMMENT_TAG\n        if norm(sym.FamilyName) != family_name and not mine:\n            continue\n        pts = body_points(fi)\n        if pts:\n            c = ((min(p[0] for p in pts) + max(p[0] for p in pts)) / 2.0,\n                 (min(p[1] for p in pts) + max(p[1] for p in pts)) / 2.0)\n        else:\n            c = xy(fi.Location.Point)\n        result.append((c, fi.Id.Value, mine))\n    return result\n\n\ndef elevation_param(fi):\n    \"\"\"Cao độ instance so với level (\"Elevation from Level\" / \"Offset from Host\").\"\"\"\n    return fi.get_Parameter(BuiltInParameter.INSTANCE_ELEVATION_PARAM) or \\\n        fi.get_Parameter(BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM)\n\n\ndef settle(fi, w, want, elev, sym):\n    \"\"\"Trong Transaction: đổi type, xoay, đặt cao độ, dời cho khung khối về đúng đích. Trả về [việc đã làm].\"\"\"\n    todo = []\n    if fi.Symbol.Id != sym.Id:\n        todo.append(u\"đổi type {} : {}\".format(fi.Symbol.FamilyName, get_name(fi.Symbol)))\n        fi.ChangeTypeId(sym.Id)\n    doc.Regenerate()\n    f = fi.FacingOrientation\n    ang = math.atan2(f.X * want[1] - f.Y * want[0], f.X * want[0] + f.Y * want[1])\n    if abs(ang) > 1e-3:\n        p = fi.Location.Point\n        ElementTransformUtils.RotateElement(doc, fi.Id, Line.CreateBound(p, XYZ(p.X, p.Y, p.Z + 1.0)), ang)\n        todo.append(u\"xoay {:.0f}°\".format(math.degrees(ang)))\n    ep = elevation_param(fi)\n    if ep is None or ep.IsReadOnly:\n        todo.append(u\"không đặt được cao độ, cần soát\")\n    elif abs(to_mm(ep.AsDouble()) - elev) > 0.5:\n        todo.append(u\"cao độ {:.0f} → {:.0f}\".format(to_mm(ep.AsDouble()), elev))\n        ep.Set(from_mm(elev))\n    doc.Regenerate()\n    pts = body_points(fi)\n    if not pts:\n        w.final = (w.target_s(w.width) - w.width / 2.0, w.target_s(w.width) + w.width / 2.0,\n                   w.mount_d, w.mount_d + w.depth)\n        return todo + [u\"không đọc được khung của family – đặt theo gốc family, cần soát\"]\n    move, w.final = body_fit(pts, w)\n    if math.hypot(*move) > 0.5:\n        ElementTransformUtils.MoveElement(doc, fi.Id, XYZ(from_mm(move[0]), from_mm(move[1]), 0.0))\n        todo.append(u\"dời {:.0f} mm\".format(math.hypot(*move)))\n    return todo\n\n\nDIAG_HEADER = [u\"Phòng\", u\"Số phòng\", u\"Loại\", u\"Layer\", u\"Xmin\", u\"Ymin\", u\"Rộng X\", u\"Rộng Y\", u\"Số điểm\", u\"Khép kín\",\n               u\"Bán kính\", u\"Thể tích (mm3)\", u\"Toạ độ (x y; …)\"]\n\n\ndef object_points(obj):\n    \"\"\"Điểm (x, y mm) của một đối tượng CAD để chẩn đoán; [] nếu không đọc được.\"\"\"\n    try:\n        if isinstance(obj, PolyLine):\n            return [xy(p) for p in obj.GetCoordinates()]\n        if isinstance(obj, Arc) and not obj.IsBound:\n            c, r = xy(obj.Center), to_mm(obj.Radius)\n            return [(c[0] - r, c[1] - r), (c[0] + r, c[1] + r)]\n        if isinstance(obj, Curve):\n            return [xy(p) for p in obj.Tessellate()]\n        if isinstance(obj, Solid):\n            return [xy(p) for e in obj.Edges for p in e.Tessellate()]\n    except Exception:\n        pass\n    return []\n\n\ndef write_diag(cad, objects, room_at, keys):\n    \"\"\"File chẩn đoán (chỉ dry-run): mọi đối tượng CAD có tâm trong Room khớp keys, kèm số lượng theo tên block.\"\"\"\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    path = os.path.join(folder, \"TaoCucNongDHTuCAD_CHANDOAN_{}.csv\".format(datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")))\n    names = {}\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n\n    def walk(geo, depth):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                k = (depth, block_name(obj))\n                names[k] = names.get(k, 0) + 1\n                walk(obj.GetInstanceGeometry(), depth + 1)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo, 0)\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        w = csv.writer(f)\n        w.writerow(DIAG_HEADER)\n        for obj in objects:\n            pts = object_points(obj)\n            if not pts:\n                continue\n            x0, x1 = min(p[0] for p in pts), max(p[0] for p in pts)\n            y0, y1 = min(p[1] for p in pts), max(p[1] for p in pts)\n            hit = room_at(((x0 + x1) / 2.0, (y0 + y1) / 2.0))\n            if hit is None or (keys and not any(k in loose(hit[0]) for k in keys)):\n                continue\n            w.writerow([hit[0], hit[2], obj.GetType().Name, layer_of(obj) or u\"(không có)\", u\"{:.1f}\".format(x0),\n                        u\"{:.1f}\".format(y0), u\"{:.1f}\".format(x1 - x0), u\"{:.1f}\".format(y1 - y0), len(pts),\n                        u\"có\" if len(pts) > 2 and same(pts[0], pts[-1]) else u\"\",\n                        u\"{:.1f}\".format(to_mm(obj.Radius)) if isinstance(obj, Arc) else u\"\",\n                        u\"{:.0f}\".format(obj.Volume * to_mm(1.0) ** 3) if isinstance(obj, Solid) else u\"\",\n                        u\"; \".join(u\"{:.1f} {:.1f}\".format(p[0], p[1]) for p in pts[:40])])\n        w.writerow([])\n        w.writerow([u\"TÊN BLOCK\", u\"Độ sâu\", u\"Số lần\"])\n        for (depth, name), n in sorted(names.items(), key=lambda kv: (kv[0][0], u\"{}\".format(kv[0][1]))):\n            w.writerow([name or u\"(không đọc được tên)\", depth, n])\n    return path\n\n\ndef preview_lines(units, z_mm):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n\n        def seg(a, e):\n            return DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(a[0], a[1], z_mm),\n                                               DSPoint.ByCoordinates(e[0], e[1], z_mm))\n        lines = []\n        for w in units:\n            lines += [seg(w.corners[i - 1], w.corners[i]) for i in range(4)]\n            if w.final is not None:\n                s0, s1, d0, d1 = w.final\n                box = [w.world(s0, d0), w.world(s1, d0), w.world(s1, d1), w.world(s0, d1)]\n                lines += [seg(box[i - 1], box[i]) for i in range(4)]\n                s = (s0 + s1) / 2.0\n                lines.append(seg(w.world(s, (d0 + d1) / 2.0), w.world(s, d1 + 200.0)))\n        return lines\n    except Exception:\n        return []\n\n\nLOG_HEADER = [u\"STT\", u\"Tâm cục nóng CAD (mm)\", u\"Phòng\", u\"Số phòng\", u\"Đo khối (rộng × sâu, mm)\", u\"Cao độ so với level (mm)\",\n              u\"Type\", u\"Kết quả\", u\"ElementId\", u\"Ghi chú\"]\n\n\ndef write_log(rows, source, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoCucNongDHTuCAD_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# File nguồn: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef main(cad_filter, layer_filters, level_name, template_in, room_keys, min_long, max_long, back_tol, side_tol, flip,\n         dry_run, elev):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    if re.search(r\"[-_]S[-_]\", doc.Title or u\"\"):\n        return [u\"DỪNG: tên file '{}' là mô hình Kết cấu (S) – cục nóng chỉ đặt trên mô hình Kiến trúc (A).\".format(\n            doc.Title)], []\n    sym = pick_template(template_in)\n    fam = norm(sym.FamilyName)\n    type_label = u\"{} : {}\".format(fam, get_name(sym))\n    if sym.Family.FamilyPlacementType != FamilyPlacementType.OneLevelBased:\n        raise StopReport([u\"DỪNG: family '{}' kiểu đặt {} – công cụ chỉ hỗ trợ family đặt theo level.\".format(\n            fam, sym.Family.FamilyPlacementType)])\n    cad, cad_name, objects, all_layers = pick_cad(cad_filter, layer_filters)\n    layers = match_layers(all_layers, layer_filters)\n    level = find_level(level_name)\n    level_z = to_mm(level.Elevation)\n    room_at, n_rooms = room_finder(level)\n    keys = [loose(k) for k in room_keys if k.strip()]\n    if keys and not n_rooms:\n        raise StopReport([u\"DỪNG: level '{}' chưa có Room – cần Room để lọc cục nóng ở logia (hoặc để trống IN[4]).\"\n                          .format(level_name)])\n\n    items, kinds = read_items(objects, layers if layer_filters else None)\n    stats = {}\n    walls = wall_segs(level, elev)\n    units = analyse(items, min_long, max_long, back_tol, side_tol, room_at, keys, stats, walls, not layer_filters)\n    existing = existing_fixtures(fam, level)\n\n    rows, jobs, fixes = [], [], []\n    for idx, w in enumerate(units, 1):\n        if w.status == u\"OK\":\n            near = sorted((math.hypot(*sub(c, w.c)), eid, mine) for c, eid, mine in existing\n                          if math.hypot(*sub(c, w.c)) <= EXIST_TOL_MM)\n            if near:\n                w.eid = near[0][1]\n                w.dups = [eid for _, eid, _ in near[1:]]\n                w.status = u\"Bỏ qua – đã có cục cùng family (Id {})\".format(w.eid)\n                if near[0][2]:\n                    fi = doc.GetElement(ElementId(w.eid))\n                    if WorksharingUtils.GetCheckoutStatus(doc, fi.Id) == CheckoutStatus.OwnedByOtherUser:\n                        w.status = u\"Bỏ qua – người khác đang mượn cục nóng (Id {})\".format(w.eid)\n                    else:\n                        fixes.append((fi, len(rows), w))\n            else:\n                jobs.append((w, len(rows)))\n        rows.append([idx, fmt(w.c), w.room or u\"—\", w.number or u\"—\", u\"—\", u\"—\", u\"—\", w.status, w.eid,\n                     u\"; \".join(v for v in [w.note] + [u\"TRÙNG Id {}\".format(d) for d in w.dups] if v)])\n\n    changed = 0\n    created = []\n    if jobs or fixes:\n        # Dry-run cũng đặt thử rồi RollBack: Báo cáo là số đo khối thật của family, không ghi vào mô hình\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            if not sym.IsActive:\n                sym.Activate()\n                doc.Regenerate()\n\n            def finish(fi, ri, w, todo, done):\n                if w.final is not None:\n                    rows[ri][4] = u\"{:.0f} × {:.0f}\".format(w.final[1] - w.final[0], w.final[3] - w.final[2])\n                    hit = room_at(w.c)\n                    if hit is not None and not inside_room(w, hit[1]):\n                        todo = todo + [u\"lòi khỏi Room theo khung type, cần soát\"]\n                rows[ri][5] = u\"{:.0f}\".format(elev)\n                rows[ri][6] = type_label\n                rows[ri][7] = done\n                rows[ri][8] = fi.Id.Value\n                rows[ri][9] = u\"; \".join(v for v in [rows[ri][9]] + todo if v)\n\n            for fi, ri, w in fixes:\n                want = w.dir if flip else (-w.dir[0], -w.dir[1])\n                todo = settle(fi, w, want, elev, sym)\n                if todo:\n                    changed += 1\n                    finish(fi, ri, w, todo, u\"Sẽ sửa\" if dry_run else u\"Đã sửa\")\n                else:\n                    finish(fi, ri, w, [], u\"Bỏ qua – đã đúng (Id {})\".format(fi.Id.Value))\n            # Family đặt theo level: Revit hiểu Z của điểm đặt là độ lệch so với level → Z = 0 rồi đặt Elevation from Level\n            # (bài học tool lavabo 2026-10-30 10:16)\n            for w, ri in jobs:\n                p = w.world(w.target_s(w.width), w.mount_d)\n                pt = XYZ(from_mm(p[0]), from_mm(p[1]), 0.0)\n                fi = doc.Create.NewFamilyInstance(pt, sym, level, StructuralType.NonStructural)\n                want = w.dir if flip else (-w.dir[0], -w.dir[1])\n                todo = settle(fi, w, want, elev, sym)\n                cm = fi.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n                if cm is not None and not cm.IsReadOnly:\n                    cm.Set(COMMENT_TAG)\n                keep = [t for t in todo if u\"cần soát\" in t]\n                finish(fi, ri, w, keep, u\"Sẽ tạo\" if dry_run else u\"Đã tạo\")\n                if dry_run:\n                    rows[ri][8] = u\"\"\n                created.append((fi, ri))\n            if dry_run:\n                tx.RollBack()\n            else:\n                status = tx.Commit()\n                if status != TransactionStatus.Committed:\n                    return [u\"LỖI: Revit không lưu được Transaction ({}), mọi thay đổi đã được hoàn tác.\".format(\n                        status)], []\n        except Exception as ex:\n            if tx.HasStarted() and not tx.HasEnded():\n                tx.RollBack()\n            return [u\"LỖI khi đặt cục nóng, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n        if not dry_run:\n            for fi, ri in created:\n                if not fi.IsValidObject:\n                    rows[ri][7] = u\"Revit đã xoá sau khi tạo\"\n\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (đã hoàn tác, không ghi vào mô hình)\" if dry_run\n                                else u\"ĐÃ THỰC HIỆN\")]\n    report.append(u\"CAD: {} – dò {} – {} nét – nhận diện {} cục nóng (hình chữ nhật chứa mũi tên)\".format(\n        cad_name, u\"layer \" + u\"; \".join(sorted(layers)) if layer_filters else u\"mọi layer ({})\".format(len(layers)),\n        len(items), len(units)))\n    report.append(u\"Cục nóng: {} – level {}, cao độ {:.0f} mm so với level – phòng chứa: {} – mặt trước family {}\".format(\n        type_label, level.Name, elev, u\"; \".join(room_keys) if keys else u\"mọi phòng\",\n        u\"+Y (đảo hướng)\" if flip else u\"−Y (Facing ngược mũi tên)\"))\n    report.append(u\"Cục nóng {}: {}\".format(u\"sẽ tạo\" if dry_run else u\"đã tạo\", len(jobs)))\n    if fixes:\n        report.append(u\"Cục của tool {}: {} / {} cục đã có\".format(u\"sẽ sửa\" if dry_run else u\"đã sửa\", changed, len(fixes)))\n    dups = [(w, d) for w in units for d in w.dups]\n    if dups:\n        report.append(u\"TRÙNG: {} cục thừa cạnh nhau – xoá tay (giữ Id trong ngoặc): {}\".format(\n            len(dups), u\", \".join(u\"{} (giữ {})\".format(d, w.eid) for w, d in dups)))\n    soat = [r for r in rows if u\"cần soát\" in u\"{}\".format(r[9])]\n    if soat:\n        report.append(u\"CẦN SOÁT: {} cục – xem cột Ghi chú\".format(len(soat)))\n    counts = {}\n    for r in rows:\n        if r[7].startswith(u\"Bỏ qua\"):\n            k = re.sub(r\"[\\d(].*\", u\"\", r[7].split(u\" – \", 1)[1]).strip()\n            counts[k] = counts.get(k, 0) + 1\n    for k in sorted(counts):\n        report.append(u\"Bỏ qua {} cục: {}\".format(counts[k], k))\n    report.append(u\"Chẩn đoán nhận diện: {} hình chữ nhật cạnh dài {:.0f}–{:.0f} mm – {} có mũi tên – {} mặt tường – \"\n                  u\"Room trên level: {}\".format(stats.get(\"rects\", 0), min_long, max_long, stats.get(\"arrows\", 0),\n                                                len(walls), n_rooms))\n    report.append(u\"Đối tượng CAD theo loại: \" + u\", \".join(u\"{} {}\".format(k, v) for k, v in sorted(kinds.items())))\n    try:\n        report.append(u\"Log: \" + write_log(rows, cad_name, dry_run))\n        if dry_run:\n            report.append(u\"Chẩn đoán nét CAD trong logia: \" + write_diag(cad, objects, room_at, keys))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Kiểm tra hình chữ nhật CAD + khung cục nóng + đoạn hướng mặt trước (nét xanh trong Dynamo) và log. Thiếu \"\n                      u\"cục → xem IN[1], IN[5], IN[6]. Đúng thì đổi Dry-run = False và Run lại. Undo bằng mục \\\"{}\\\".\"\n                      .format(TRANSACTION_NAME))\n    else:\n        report.append(u\"Soát hướng vài cục trên 3D: quay ngược → Undo mục \\\"{}\\\", IN[9] = True, Run lại.\".format(\n            TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows\n               if not r[7].startswith(u\"Bỏ qua – không nằm trong phòng\")]\n    return report, preview_lines([w for w, _ in jobs] + [f[2] for f in fixes], level_z + elev)\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\ndef num(i, default):\n    return float(IN[i]) if len(IN) > i and IN[i] is not None else default\n\n\nif DYNAMO:\n    import traceback\n    try:\n        OUT = list(main(\n            (IN[0] or u\"\").strip(),\n            [s.strip() for s in (IN[1] or u\"\").split(u\";\") if s.strip()],\n            (IN[2] or u\"TẦNG 3\"),\n            IN[3] if IN[3] is not None else u\"AV_MT_cuc nong dieu hoa loai dai1 : AV_Cuc nong DH 3\",\n            (u\"logia;lô gia\" if IN[4] is None else IN[4]).split(u\";\"),\n            num(5, 1000.0),\n            num(6, 1200.0),\n            num(7, 50.0),\n            num(8, 50.0),\n            False if IN[9] is None else bool(IN[9]),\n            True if IN[10] is None else bool(IN[10]),\n            num(11, 1500.0),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoCucNongDHTuCAD_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "9ae4f271c7ee4b758f2c8974953e1e8a",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "97fefd43893c4521b08ae3869cdd2b27",
+          "Name": "IN[0]",
+          "Description": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2737b7871baa41808c3c9b6de4ee4ee2",
+          "Name": "IN[1]",
+          "Description": "IN[1] Lọc layer cục nóng (trống = dò mọi layer)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8a6a481af2cb4a6cb4e88cb599eede49",
+          "Name": "IN[2]",
+          "Description": "IN[2] Level đặt cục nóng",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d87f40a5c9ab4459b01c65970d51d117",
+          "Name": "IN[3]",
+          "Description": "IN[3] CHỌN TYPE CỤC NÓNG",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6f701217f7ca47c8b026305b920d527b",
+          "Name": "IN[4]",
+          "Description": "IN[4] Room chứa cục nóng (cách nhau bằng ;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ee483e0e46284364a30d64f086f964b0",
+          "Name": "IN[5]",
+          "Description": "IN[5] Cạnh dài hình chữ nhật CAD tối thiểu (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b725fc75244247dabb3643909308fcad",
+          "Name": "IN[6]",
+          "Description": "IN[6] Cạnh dài hình chữ nhật CAD tối đa (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5062f4098f224611a078c436977e9b85",
+          "Name": "IN[7]",
+          "Description": "IN[7] Lưng CAD cách mặt tường tối đa để áp (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7ed72e49e6fb4c14a76e52201e418371",
+          "Name": "IN[8]",
+          "Description": "IN[8] Cạnh bên CAD cách mặt bên tối đa để áp (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d4e37b7a83a440b9af76c39b7f22cbcd",
+          "Name": "IN[9]",
+          "Description": "IN[9] Đảo hướng (True nếu cục nóng quay ngược mũi tên CAD)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9d1c50aa72944492bd2bc5754aeadb53",
+          "Name": "IN[10]",
+          "Description": "IN[10] Dry-run (True = đặt thử rồi hoàn tác)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d2f0f1f0b4f244d3a67938c99efd77ca",
+          "Name": "IN[11]",
+          "Description": "IN[11] Cao độ cục nóng so với level (mm)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "0f69a596a6804c11a45b6e1796f06c7d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "faa5c0128ad74e4baa09ec068f597972",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "6da8efc538e4403e87dcf9ca42e060da",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6032e4b356a447e190a84fb74122424c",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "93a18f95acde408eabee90ecd27bf402",
+      "End": "97fefd43893c4521b08ae3869cdd2b27",
+      "Id": "ca042607ec9040ee99b73600ac581db6",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "fedb23d1ddde444db92988f7100eb478",
+      "End": "2737b7871baa41808c3c9b6de4ee4ee2",
+      "Id": "dd320c94ca2a4eefa639ecc08a8efaa2",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9df08988c1844f809888c9fab08022a7",
+      "End": "8a6a481af2cb4a6cb4e88cb599eede49",
+      "Id": "8c47a94bb21f43e9ab0d1878ddfb64e7",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "6e5db69902bc4cdb96a082d6243cd368",
+      "End": "d87f40a5c9ab4459b01c65970d51d117",
+      "Id": "7f75dbd0833d461abd17e8ca4889594f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "48ebbd7e960d4094b002cffe91a56ec0",
+      "End": "6f701217f7ca47c8b026305b920d527b",
+      "Id": "bd7cd772a14e4951b8a52db4eca236c9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d0e77cb59fe445e4a0845eaca00edb0f",
+      "End": "ee483e0e46284364a30d64f086f964b0",
+      "Id": "ff2ecd0b190c476eb700f025b6106465",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0d421effe72e4dde9a08b9190bdc26af",
+      "End": "b725fc75244247dabb3643909308fcad",
+      "Id": "8a197e183c554f7d9ca277100490f09a",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "32b765e46dac48e59c27255b17a58ee5",
+      "End": "5062f4098f224611a078c436977e9b85",
+      "Id": "70d4a532ee6a4234bc7e93fd4c7940e0",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f7cbb660f0664c0484b6070de8bb4396",
+      "End": "7ed72e49e6fb4c14a76e52201e418371",
+      "Id": "58b495690cab46f4aeda62d1dbba2736",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a10dce37ecdc44bf832009175c857845",
+      "End": "d4e37b7a83a440b9af76c39b7f22cbcd",
+      "Id": "b887dc63725a4680a3018c20c04eade9",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "737c3f1736c1441b9b24417ddf27b357",
+      "End": "9d1c50aa72944492bd2bc5754aeadb53",
+      "Id": "1d081a8c83aa4381a74063d84067173f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0f69a596a6804c11a45b6e1796f06c7d",
+      "End": "6da8efc538e4403e87dcf9ca42e060da",
+      "Id": "1a4879289adf4e3e8e687303fe417089",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "1989639441f545c1921870693284df0e",
+      "End": "d2f0f1f0b4f244d3a67938c99efd77ca",
+      "Id": "177f081b49bb490e970d2348174b9a3b",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "4.2.1.5887",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "c5c2c269b99f429aa76a51cb541f68bb",
+        "Name": "IN[0] Tên bản CAD (để trống = bản CAD duy nhất)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "c4bd2ec9ae114bbbabc3bfb4be1b8314",
+        "Name": "IN[1] Lọc layer cục nóng (trống = dò mọi layer)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "f4640ea647674818947c63222cafe643",
+        "Name": "IN[2] Level đặt cục nóng",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "2a0ba8e792354105a6ca58c0c88caa55",
+        "Name": "IN[3] CHỌN TYPE CỤC NÓNG",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "8512c9d5a1c84b74b95b4e98ccd57e1d",
+        "Name": "IN[4] Room chứa cục nóng (cách nhau bằng ;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "6692e89cee644a859c031fb67556b7d3",
+        "Name": "IN[5] Cạnh dài hình chữ nhật CAD tối thiểu (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "eb02310b8024458582616d623c18d73a",
+        "Name": "IN[6] Cạnh dài hình chữ nhật CAD tối đa (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "21c0a1f065684b329f886bf3b613c48f",
+        "Name": "IN[7] Lưng CAD cách mặt tường tối đa để áp (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "9e9e7576e36a414483f2294f8ea3802e",
+        "Name": "IN[8] Cạnh bên CAD cách mặt bên tối đa để áp (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "be6d309c20dd42a39b0d99065f3d4989",
+        "Name": "IN[9] Đảo hướng (True nếu cục nóng quay ngược mũi tên CAD)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "3018c58cc62741df986f7f7da3d26bd3",
+        "Name": "IN[10] Dry-run (True = đặt thử rồi hoàn tác)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "cff0102831f447f5836c8db76a3900d1",
+        "Name": "IN[11] Cao độ cục nóng so với level (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1210.0
+      },
+      {
+        "Id": "9ae4f271c7ee4b758f2c8974953e1e8a",
+        "Name": "Tạo cục nóng từ CAD (Python)",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 660.0,
+        "Y": 560.0
+      },
+      {
+        "Id": "faa5c0128ad74e4baa09ec068f597972",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1060.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "e7b887489fb64c41b7ab9df9e4b6bf80",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "CHỌN TYPE CỤC NÓNG ở IN[3]; layer cục nóng ở IN[1]; level; Room logia; cỡ hình chữ nhật CAD để nhận diện; cao độ so với level ở IN[11]. Ô sai thì node Báo cáo liệt kê giá trị hợp lệ. Giữ Dry-run = True cho lần chạy đầu.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "c5c2c269b99f429aa76a51cb541f68bb",
+          "c4bd2ec9ae114bbbabc3bfb4be1b8314",
+          "f4640ea647674818947c63222cafe643",
+          "2a0ba8e792354105a6ca58c0c88caa55",
+          "8512c9d5a1c84b74b95b4e98ccd57e1d",
+          "6692e89cee644a859c031fb67556b7d3",
+          "eb02310b8024458582616d623c18d73a",
+          "21c0a1f065684b329f886bf3b613c48f",
+          "9e9e7576e36a414483f2294f8ea3802e",
+          "be6d309c20dd42a39b0d99065f3d4989",
+          "3018c58cc62741df986f7f7da3d26bd3",
+          "cff0102831f447f5836c8db76a3900d1"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 522.0,
+        "Height": 1420.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1465.0,
+        "TextblockHeight": 72.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "f706ab12361d41318e57e81bb631e882",
+        "Title": "2. Tạo cục nóng (Python)",
+        "DescriptionText": "Hình chữ nhật chứa mũi tên, trong Room logia → mũi tên cho hướng thổi → lưng theo CAD, áp mặt hoàn thiện khi sát, áp mặt bên nếu có, cao độ so với level theo IN[11]; dry-run đặt thử rồi hoàn tác; chặn file central / mô hình S; log CSV vào Documents\\ARV_Logs. TRẠNG THÁI: CHƯA DUYỆT.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "9ae4f271c7ee4b758f2c8974953e1e8a"
+        ],
+        "HasNestedGroups": false,
+        "Left": 650.0,
+        "Top": 363.0,
+        "Width": 296.0,
+        "Height": 731.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 560.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 187.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "52a1c81edef741db862683922d3c3d1a",
+        "Title": "3. Báo cáo",
+        "DescriptionText": "OUT[0] báo cáo từng cục nóng; OUT[1] hình chữ nhật CAD + khung cục nóng + hướng mặt trước xem trước.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "UserSetWidth": 0.0,
+        "UserSetHeight": 0.0,
+        "Nodes": [
+          "faa5c0128ad74e4baa09ec068f597972"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1050.0,
+        "Top": -73.0,
+        "Width": 1097.0,
+        "Height": 865.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 63.0,
+        "IsOptionalInPortsCollapsed": false,
+        "IsUnconnectedOutPortsCollapsed": false,
+        "HasToggledOptionalInPorts": false,
+        "HasToggledUnconnectedOutPorts": false,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 339.7721665439873,
+    "Y": -74.6975001225835,
+    "Zoom": 0.5585788600612013
+  }
+}

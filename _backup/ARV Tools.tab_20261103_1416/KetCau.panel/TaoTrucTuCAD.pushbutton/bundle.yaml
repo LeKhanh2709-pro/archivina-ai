@@ -1,0 +1,3 @@
+title: "Tạo trục\ntừ CAD"
+tooltip: "Tạo lưới trục (Grid) từ bản CAD đã Link/Import trong Revit. - Đường trục: lấy từ layer trục của bản CAD, gộp các đoạn thẳng hàng, bỏ đoạn ngắn hơn 1 m. - Tên trục: Revit API không đọc được chữ trong CAD, nên script gọi AutoCAD Core Console trên BẢN SAO file DWG đang link, đọc attribute / TEXT / MTEXT trên layer ký hiệu trục rồi gán cho trục gần nhất. Không có Core Console hoặc CAD dạng Import (khô Mặc định chạy thử (dry-run). Nguồn: ARV_TaoTrucTuCSV_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

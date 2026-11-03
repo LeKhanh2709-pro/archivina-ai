@@ -1,0 +1,2 @@
+title: Tạo tường từ CAD
+tooltip: Tạo tường kiến trúc từ cặp đường song song trên layer tường của DWG (link/import). Tự nối góc L/T, gộp đoạn bị ngắt, chọn wall type theo chiều dày. Mặc định chạy thử (dry-run).

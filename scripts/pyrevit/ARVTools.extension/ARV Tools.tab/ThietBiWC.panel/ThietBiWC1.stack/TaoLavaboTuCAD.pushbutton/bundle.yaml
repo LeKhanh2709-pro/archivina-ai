@@ -1,0 +1,3 @@
+title: "Lavabo từ CAD"
+tooltip: "Tạo lavabo (Plumbing Fixtures) từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG (không cần biết layer): 1. Lavabo trên CAD = MẶT BÀN CHỮ NHẬT có LÒNG CHẬU CONG bên trong (đo trên G19 2026-10-30: block động \"设计行-半挂式台盆\" layer A-Interior WC = polyline kín 900×500 + elip / cung / spline lòng chậu; lòng chậu ghép nhiều nét hở nên không nhận theo lòng chậu): - chữ nhật: polyline kín 4 đỉnh, hoặc nét th Mặc định chạy thử (dry-run). Nguồn: ARV_TaoLavaboTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

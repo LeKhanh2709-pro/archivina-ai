@@ -1,0 +1,3 @@
+title: "Thiết bị WC\ntừ CAD"
+tooltip: "Đặt thiết bị vệ sinh (bệt xí + lavabo) trong WC theo vị trí trên bản CAD đã Link: 1. Lavabo: polyline chữ nhật kín trên layer IN[1] (khung ngoài block lavabo, VD block động 半挂式台盆), cạnh dài 800–1100, cạnh ngắn 400–650 mm. Lưng lavabo = cạnh dài phía có vòi (trọng tâm các nét thiết bị trong khung lệch về phía vòi). Kích thước lấy theo khung CAD (trạng thái hiển thị của block động). 2. Bệt xí: cung  Mặc định chạy thử (dry-run). Nguồn: ARV_TaoThietBiWCTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

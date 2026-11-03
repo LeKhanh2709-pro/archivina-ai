@@ -1,9 +1,5 @@
 title: Hoàn thiện
 layout:
-  - TaoSanHoanThien
-  - TaoSanCanHoTuCAD
-  - TaoTranCanHo
-  - OpTuongWC
-  - TaoLenGo
-  - TaoLenGachLogia
-  - DanTrangCanHo
+  - HoanThien1
+  - HoanThien2
+  - HoanThien3

@@ -1,11 +1,11 @@
 ---
 name: tag-cua-revit
-description: 'Tag cửa Revit – Tự động tag cửa đi (AV_Door Tag) và cửa sổ (AV_Window Tag) trên mặt bằng Revit đang mở: bỏ đối tượng có Type Comments Louver; tag hiện đúng Type Mark (bỏ tiền tố S3. trong nhãn family); tag nằm ngang, ưu tiên ngay giữa cửa, không đè lên cửa (kể cả cánh mở), cửa sổ, tường, cột, chữ / tag khác; tag lệch khỏi giữa cửa thì có leader; nội thất thì ẩn bằng view template riêng "<template gốc> (ẩn nội thất)"; cửa có EI mà tag không hiện EI thì báo; bấm lại không tạo trùng. Nút pyRevit ARV Tools > Hồ sơ > Tag cửa (một chạm) + graph Dynamo TagCua_TuDong.dyn. Kèm nút MB định vị cửa (MatBang_DinhViCua.dyn): nhân bản mặt bằng đang mở thành mặt bằng định vị cửa, template "MẶT BẰNG ĐỊNH VỊ CỬA" (tường + sàn Halftone, ẩn nội thất). Dùng khi người dùng nhờ "tạo mặt bằng định vị cửa", hoặc khi người dùng nhờ "tag cửa", "đánh ký hiệu cửa trên mặt bằng Revit", "tag cửa sổ", "tag tự động không đè", hoặc sửa / thử nút Tag cửa.'
+description: 'Tag cửa Revit – Tự động tag cửa đi (AV_Door Tag) và cửa sổ (AV_Window Tag) trên mặt bằng Revit đang mở: bỏ đối tượng có Type Comments Louver; tag hiện đúng Type Mark (bỏ tiền tố S3. trong nhãn family); tag nằm ngang, ưu tiên ngay giữa cửa, không đè lên cửa (kể cả cánh mở), cửa sổ, tường, cột, chữ / tag khác; tag lệch khỏi giữa cửa thì có leader; nội thất thì ẩn bằng view template riêng "<template gốc> (ẩn nội thất)"; cửa có EI mà tag không hiện EI thì báo; bấm lại không tạo trùng. Nút pyRevit ARV Tools > HS TKBVTC > Định vị + tag cửa (một chạm: tạo / mở mặt bằng định vị cửa "MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>", template "MẶT BẰNG ĐỊNH VỊ CỬA" tường + sàn Halftone, ẩn nội thất / thiết bị vệ sinh / Mechanical Equipment, rồi tag trên đó) + graph Dynamo TagCua_TuDong.dyn. Dùng khi người dùng nhờ "tạo mặt bằng định vị cửa", hoặc khi người dùng nhờ "tag cửa", "đánh ký hiệu cửa trên mặt bằng Revit", "tag cửa sổ", "tag tự động không đè", hoặc sửa / thử nút Tag cửa.'
 ---
 
 # Tag cửa Revit (Archivina)
 
-Người dùng là kiến trúc sư, dùng nút **ARV Tools → Hồ sơ → Tag cửa** (pyRevit, Revit 2027) trên mặt bằng đang mở.
+Người dùng là kiến trúc sư, dùng nút **ARV Tools → HS TKBVTC → Tag cửa** (pyRevit, Revit 2027) trên mặt bằng đang mở.
 Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tmp\`, không đụng model đang mở trong Revit của người dùng.
 
 ## Quy tắc
@@ -57,7 +57,83 @@ Chốt 2026-11-02 sáng (8 câu hỏi), sửa theo góp ý của người dùng 
    - IN[14] = dời lại các tag đã có cùng family tag theo quy tắc mới. Không xoá, không tạo mới.
    - Dùng IN[14] khi view đã tag bằng bản cũ; tag người dùng đã chỉnh tay cũng bị dời, nên mặc định tắt.
 
-## Mặt bằng định vị cửa (nút `MB định vị cửa`, 2026-11-02 chiều)
+## Sửa sau lần chạy trên model thật (2026-11-03 chiều, người dùng duyệt + build)
+Người dùng chạy trên `G19_A_L3-32` (local file trên C:, link KC `G19_S_L2-32` loaded, 18 trục riêng loại
+`AV_Truc Dinh Vi-KT`): mặt bằng lệch ra ngoài giấy, tag văng xa nhiều leader, view mới không có mục riêng. Đã sửa:
+- Mặt bằng đặt GIỮA vùng vẽ; tỉ lệ `THANG_TL` bắt đầu 1:100 (không dùng 1:50 / 1:75), lấy tỉ lệ đầu tiên vừa vùng vẽ;
+  chạm ô bảng thống kê thì chỉ báo "CẦN XEM LẠI".
+- Tag `TagOrientation.Vertical` khi cửa trên tường dọc của view (như mẫu FPT). Khung 2 ô 14 × 7 mm (`KHUNG_RONG_MM`,
+  `KHUNG_O_MM`), chữ 2 mm (`CO_CHU_MM`, đặt TEXT_SIZE của kiểu nhãn + kiểu chữ 'ARV_Tag X'). Family đã có ô kích thước
+  với khung cỡ khác → xoá 5 nét khung do công cụ vẽ (nét KHÔNG gắn tham số hiện / ẩn), xếp lại nhãn, vẽ lại khung.
+- Loại view (ViewFamilyType) `MẶT BẰNG ĐỊNH VỊ CỬA` (nhân bản loại của view, DefaultTemplate = template) → Project
+  Browser nhóm theo loại view nên có mục `Floor Plans (MẶT BẰNG ĐỊNH VỊ CỬA)`.
+- Template ẩn thêm `OST_Elev`. Trục link: `RevitLinkGraphicsSettings` (2027.3) KHÔNG có chỉnh theo hạng mục → filter
+  `ARV_Ẩn trục file link` (Grids, `Type Name` ≠ mọi loại trục của file hiện tại, AND), đặt ẩn trong template; filter view
+  tác dụng lên phần tử link khi link By Host View. Link cùng tên loại trục với file hiện tại thì không ẩn được.
+- Thử bản sao G19 (`_tmp\revit_tagcua\thu3\`, `thu4\` = chỉnh family cỡ cũ). Chưa thử lại trên model thật.
+- Đọc model đang mở của người dùng bằng MCP `revit-archivina` (chỉ đọc) để xem link / trục / sheet.
+
+## Đặt mặt bằng định vị cửa lên bản vẽ (người dùng yêu cầu + DUYỆT 2026-11-03, IN[21] – IN[27])
+Mẫu người dùng: bản vẽ FPT Plaza 5 "MẶT BẰNG ĐỊNH VỊ CỬA TẦNG 5-17", 2 bảng "BẢNG THỐNG KÊ CỬA ĐI / CỬA SỔ" góc phải dưới;
+sheet nhóm theo giai đoạn (`01_TKCS` / `02_TDPCCC` / `03_TKBVTC`) → hạng mục (`01_MatBang`, …).
+- Hộp thoại khi bấm nút: `scripts\pyrevit\ARVTools.extension\lib\arv_hoi_sheet.py` (WinForms, gọi qua khoá `"hoi"` của
+  `MOT_CHAM` trong `build_from_dynamo.py`; trả về {IN: giá trị} / None = Huỷ; nhớ lựa chọn ở
+  `%APPDATA%\pyRevit\ARVTools\TagCua_sheet.json`). Thử ảnh: biến môi trường `ARV_HOI_ANH=<png>` → dựng cửa sổ ngoài màn
+  hình, trong suốt, chụp, coi như bấm Chạy.
+- Cấp nhóm sheet: `BrowserOrganization.GetCurrentBrowserOrganizationForSheets(doc).GetFolderItems(sheet)` → id tham số
+  từng cấp. 2 cấp: cấp 1 = giai đoạn, cấp 2 = hạng mục. 1 cấp (G19 mẫu): cấp đó = hạng mục, giai đoạn = tham số sheet có
+  chữ "giai đoạn" đang có giá trị trên nhiều sheet nhất (G19 có 2 tham số như vậy). Hạng mục mới = gán giá trị mới.
+- Khung tên: family / type có chữ A1 / A0, bỏ "Bìa", ưu tiên "Khung". Vùng vẽ: nét đứng / ngang dài đọc TRONG FILE
+  FAMILY khung tên (hình học khung tên trên sheet trả về rỗng) → trong khung trong, bên trái dải khung tên.
+- Bảng thống kê: nhân bản bảng cùng hạng mục có sẵn (G19 `THỐNG KÊ CỬA ĐI / SỔ`), cột Tên / Chiều rộng / Chiều cao /
+  Số lượng/Tầng, lọc Level = tầng, Type Comments ≠ Louver, gộp theo Type Mark; đã có bảng cùng tên thì dùng lại. Đặt
+  bằng `ScheduleSheetInstance.Point` (góc trên trái) + chiều cao lấy theo khung bao (khung bao đúng kích thước nhưng
+  LỆCH vị trí; TableData GetRowHeight cho chiều cao sai).
+- Tỉ lệ: 1:50 / 75 / 100 / 125 / 150 / 200 / … nhỏ nhất mà khung viewport THẬT (đặt thử trong SubTransaction rồi huỷ,
+  gồm trục, bóng trục) + 12 mm mỗi bên cho tag vừa 1 trong 2 bố cục: cạnh cột bảng / phía trên bảng. Đặt tỉ lệ TRƯỚC khi
+  tag (cỡ tag theo tỉ lệ); template `MẶT BẰNG ĐỊNH VỊ CỬA` bỏ điều khiển tỉ lệ.
+- Viewport: kiểu có nhãn tên view (G19 `AV-Title No Line`), "Title on Sheet" = tên sheet. View đã trên sheet thì không
+  đặt thêm (bấm lại không trùng).
+- Thử bản sao G19 (`_tmp\revit_tagcua\thu3\`): sheet `A.DVC.01 – MẶT BẰNG ĐỊNH VỊ CỬA TẦNG 1`, 1:125 (trục X1 của model
+  mẫu kéo dài xuống xa), bảng gọn trong khung. Ảnh `sheet_nho.png`, `hop_thoai.png`. **Người dùng duyệt + build
+  2026-11-03**; chưa bấm thử trong Revit thật (`Cần xác nhận lại`). G19 chỉ có khung A1.
+
+## Gộp vào 1 nút `Định vị + tag cửa` (người dùng yêu cầu 2026-11-03)
+- Bấm trên mặt bằng tầng: tạo / mở `MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>` rồi tag luôn trên view đó (`TagCua_TuDong.py`
+  IN[16] – IN[18], hàm `mb_dinh_vi_cua`). View gốc đã là mặt bằng định vị cửa (mang template / tên theo mẫu) thì tag luôn.
+- Template `MẶT BẰNG ĐỊNH VỊ CỬA` ẩn thêm **Mechanical Equipment** (người dùng chốt 2026-11-03, `MB_AN_THEM`); template
+  đã có trong dự án cũng được bổ sung ẩn (chỉ ẩn thêm, không đổi gì khác).
+- Nút `MB định vị cửa` riêng đã bỏ (thư mục nút chuyển vào `_backup\MBDinhViCua.pushbutton_20261103_1108_da_gop_vao_TagCua`);
+  `MatBang_DinhViCua.py/.dyn` giữ để chạy riêng bằng Dynamo, không cập nhật thêm.
+- Thử bản sao G19 (`_tmp\revit_tagcua\thu3\`) với mặc định của nút: tạo view + template (ẩn cả Mechanical Equipment),
+  94 cửa đi + 44 cửa sổ, 35 leader, không đè; bấm lần 2 không thêm. Đã build nút 2026-11-03; người dùng chưa bấm thử
+  (`Cần xác nhận lại`).
+
+## Tag khung 2 ô "mã / rộngXcao" (người dùng yêu cầu + DUYỆT 2026-11-03, IN[19] mặc định BẬT)
+Mẫu CAD người dùng: khung chữ nhật chia 2 ô bằng 1 nét ngang, ô trên `DF03`, ô dưới `1400X2195` (mm, lấy tham số
+**Width** và **Height** của cửa). Hàm `them_kich_thuoc` + `ve_khung_2_o`:
+- Khung: tắt khung bo góc cũ (tham số hiện khung của family = 0), vẽ 5 detail line (chữ nhật 17 × 8 mm giấy + nét giữa).
+  Nạp lại family với `tuy_chon_nap(True)` (lấy giá trị tham số của family, không thì dự án giữ giá trị cũ).
+- Ô dưới: nhãn Width (căn phải) + TextNote `X` + nhãn Height KHÔNG tiền tố (căn trái); nhãn gộp Width + Height có sẵn
+  trong dự án (người dùng tự sửa) được ưu tiên. Đơn vị Length của file family tag đặt mm / 0 số lẻ.
+- API 2027.3 KHÔNG tạo được nhãn, KHÔNG đổi được đơn vị / tiền tố nhãn (`AnnotationLabelParameterFormatting` không có
+  setter; `GetParameterFormatOptions(paramId)` luôn báo "default", không tin được). Phải chép nhãn có sẵn đúng định dạng:
+  - Width của `AV_Door Tag_Full` khoá theo mét ("0.740"), đổi đơn vị family không ăn → KHÔNG dùng được cho mm.
+  - Height mm không tiền tố: `AV-Tag-Window-Lomo.rfa` (thư viện người dùng, đã chép vào
+    `scripts\pyrevit\ARVTools.extension\lib\tag_cua\`); đổi tạm hạng mục family nguồn thì chép được cả sang tag cửa đi.
+  - Width mm không tiền tố: CHỈ có nhãn `B1` của family `AV-Tag-Window-Lomo` trong `D:\khanh\21.8.2025\FPT P4_A_L1-L2_…rvt`
+    (448 MB; mở bản sao bị treo khi Revit người dùng chiếm RAM, chạy được khi máy rảnh).
+  - Nguồn đóng gói (dựng bằng `_tmp\revit_tagcua\nguon\tao_nguon.py`): `scripts\pyrevit\ARVTools.extension\lib\tag_cua\`
+    `ARV_TagNguon_Door.rfa` (Door Tags) + `ARV_TagNguon_Window.rfa` (Window Tags), mỗi file có nhãn Width `B1` + Height
+    `H2` không tiền tố, hiện mm. Nút tìm thư mục theo `__file__` của core.py (IN[20] trống); Dynamo phải nhập IN[20].
+    Thứ tự nguồn: nhãn gộp trong dự án → family nguồn đóng gói → AV_*_Full.
+  - Mượn nhãn Description KHÔNG được: Description của 22 loại cửa đi / 17 loại cửa sổ G19 đang chứa mô tả vật liệu.
+- Thử bản sao G19 (`_tmp\revit_tagcua\thu3\`): `DG17 / 900X2200`, `DG29 / 1960X2400`, `35 / 2400X2500`; 94 cửa đi + 44
+  cửa sổ; 7 tag còn chạm tường / tag (tag to hơn) được liệt kê. Ảnh `anh_goc_trai.png`, `anh_giua.png`.
+  **Người dùng duyệt "Duyệt, build" 2026-11-03**, đã build nút.
+- Sửa family tag là sửa cho cả dự án: mọi tag `AV_Door Tag` / `AV_Window Tag` ở view khác cũng thành 2 ô.
+
+## Mặt bằng định vị cửa (nút `MB định vị cửa`, 2026-11-02 chiều – ĐÃ GỘP vào nút Tag cửa 2026-11-03)
 Người dùng yêu cầu tạo mặt bằng mới từ mặt bằng đã cho, template tên `MẶT BẰNG ĐỊNH VỊ CỬA`, sàn và tường như ảnh mẫu.
 Ảnh mẫu là view mang template `1.8  Mặt Bằng Chống Cháy Lan` (mọi hạng mục Halftone). Lõi
 `scripts\dynamo\MatBang_DinhViCua.py` (9 ô IN):
@@ -72,7 +148,7 @@ Người dùng yêu cầu tạo mặt bằng mới từ mặt bằng đã cho, t
    - Ẩn nội thất + thiết bị vệ sinh; hiện cửa, cửa sổ và tag của chúng.
 3. Mở view mới (`RequestViewChange`). Bấm `Tag cửa` tiếp trên view này thì Tag cửa dùng luôn template đó, vì template đã
    ẩn đủ nội thất (`gan_template` → `da_an_du`), không tạo thêm `(ẩn nội thất)`.
-- Nút `ARV Tools` → `Hồ sơ` → `MB định vị cửa`: một chạm trên mặt bằng tầng đang mở (`MOT_CHAM` từ khoá rỗng),
+- Nút `ARV Tools` → `HS TKBVTC` → `MB định vị cửa`: một chạm trên mặt bằng tầng đang mở (`MOT_CHAM` từ khoá rỗng),
   Shift+bấm = hộp thoại (Dry-run). Khảo sát chỉ đọc: `MBCua_KhaoSat.dyn`.
 - Thử bản sao G19 (`_tmp\revit_mbcua\thu3\`), view gốc `Level 1 Copy 1 Copy 2 Copy 1` (template 1.8):
   - Kết quả: tạo view + template, bấm lại không trùng, Tag cửa trên view mới cho 94 cửa đi + 44 cửa sổ, không thêm

@@ -1,4 +1,4 @@
-# TRẠNG THÁI: CHƯA DUYỆT
+# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29)
 # Mã nguồn của Python node trong ARV_TaoGoLogia_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).
 #
 # Tạo gờ bê tông mặt ngoài logia (Basic Wall), lấy tuyến từ mặt bằng DWG đã Link (KTS chốt 2026-10-21):

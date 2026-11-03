@@ -2,10 +2,15 @@
 
 21 công cụ chuyển từ bộ graph Dynamo `ARV_*_v1` (`file mau revit\dynamo\`) + nút Chống thấm, tổng 22 nút pyRevit. TRẠNG THÁI: **CHƯA DUYỆT** (như bản Dynamo).
 
+**Cập nhật 2026-11-03 từ bộ `AI REVIT` của đồng nghiệp** (repo `antt-cell/arv-bim-claude`, commit `b7381e6`): thêm 17 nút (Kiến trúc: Trát gờ logia; Hoàn thiện: Len chân tường; panel mới **Thiết bị WC**: Lavabo, Sen tắm, Bồn cầu, Vách kính tắm, Vòi xịt lô giấy; panel mới **Nội thất**: Máy giặt, Cục nóng điều hoà, Giường, Tủ đầu giường, Bàn làm việc, Tủ ti vi, Nội thất bếp, Tủ quần áo, Sofa, Bàn ăn) và thay mã 9 nút bằng bản mới hơn của đồng nghiệp (Cột vách, Lan can louver, Sàn căn hộ, Sàn hoàn thiện, Gờ logia, Ốp tường WC, Cửa đi, Cửa sổ, Len gạch logia; Cửa đi lưu input dự án HQV, Cửa sổ là bản "cửa sổ nhỏ phòng ngủ / WC" — chi tiết và trạng thái duyệt BIM Manager từng tool trong `file mau revit\dynamo\README_AI_REVIT.md`). Bản cũ: `_backup\*_20261103_1049.*`, cả tab `_backup\ARV Tools.tab_20261103_1049\`. Builder: ô bool "Tạo lại: xoá …" có chữ dry-run trong mô tả nay là ô xoá (chữ đỏ), không còn bị coi là Dry-run. Nút mới chưa thử trong Revit trên máy này (`Cần xác nhận lại`).
+- `ARV.extension\` (cạnh `ARVTools.extension`): extension pyRevit gốc của đồng nghiệp (tab **ARV**: TaoCotTuCAD, TaoCotVachTuCAD, TaoTrucTuCAD, TaoTuongTuCAD, KhoaSanVaoTuong; IronPython) – mới chép mã nguồn, CHƯA đăng ký vào pyRevit; skill `bim-qaqc` viết script QA/QC vào `ARV.extension\ARV.tab\QAQC.panel\`.
+
 Yêu cầu: **pyRevit ≥ 6.5.5** gắn vào Revit 2027. pyRevit 6.4 lỗi engine CPython trên Revit 2027 (`The input string '3.12.3' was not in a correct format` trong `CPythonEngine.GetPythonDll`) → mọi nút báo "Revit could not complete the external command". Cấu hình `cpyengine = 3123` (engine `CPY3123` đi kèm pyRevit).
 
 ## Cách hoạt động
-- Mỗi nút `ARV Tools.tab\<Panel>.panel\<Tên>.pushbutton\` gồm:
+- **Bố cục gọn** (người dùng yêu cầu 2026-11-03): panel Kết cấu, Kiến trúc, Hoàn thiện, MEP, Thiết bị WC, Nội thất xếp nút nhỏ thành chồng 2–3 nút, tiêu đề 1 dòng (`STACKS` trong builder; thư mục `<Panel>.panel\<Panel><k>.stack\<Tên>.pushbutton\`). Panel `HoSo` (tên hiện trên ribbon: **HS TKBVTC**) và Vách kính giữ nút lớn. Builder tự chuyển thư mục nút giữa nút lớn ↔ chồng, không xoá gì. Bản trước khi gọn: `_backup\ARV Tools.tab_20261103_1416\`.
+- **Icon nút** (người dùng duyệt 2026-11-03): bộ Material Design Icons (mdi, Apache 2.0, tải qua `api.iconify.design/mdi`), cùng kiểu trắng đen với K-TOOL. Nguồn ở `icons\`: `<Tên nút>.png` nét đen (giao diện sáng) + `<Tên nút>.dark.png` nét trắng (giao diện tối), 96 px; builder chép thành `icon.png` / `icon.dark.png` trong từng nút (thiếu thì in CẢNH BÁO). Nút Vách kính (viết tay) chép icon trực tiếp. Bảng tên nút → tên hình mdi: `icons\bang_icon.json`; ảnh xem trước `icons\xem_ribbon.png`, `icons\bang_icon.png`; đổi icon thì sửa `bang_icon.json`, tải lại `mdi.json`, chạy `dotnet run -- <thư mục>` với `icons\nguon\XemRibbon.csproj` (thư mục chứa 2 file json) → chép `out\*.png` vào `icons\` rồi chạy builder.
+- Mỗi nút `ARV Tools.tab\<Panel>.panel\[<Panel><k>.stack\]<Tên>.pushbutton\` gồm:
   - `core.py`: nguyên văn mã Python node của graph (chép từ `ARV_<Tên>_v1.py`), logic không đổi.
   - `inputs.json`: các ô `IN[i]` (nhãn lấy từ chú thích đầu file, giá trị mặc định lấy từ Input node trong `.dyn`).
   - `script.py`, `bundle.yaml`: vỏ pyRevit (engine CPython 3, dòng `#! python3`).
@@ -23,6 +28,11 @@ Yêu cầu: **pyRevit ≥ 6.5.5** gắn vào Revit 2027. pyRevit 6.4 lỗi engin
 3. Ô **Dry-run** luôn bật lại mỗi lần mở (chỉ báo cáo, không ghi). Tắt Dry-run để ghi vào mô hình; mọi thay đổi nằm trong 1 Transaction tên `ARV - …` (Ctrl+Z được).
 4. Ô có **xoá / làm lại** (chữ đỏ) luôn tắt lại mỗi lần mở; bật khi đã tắt Dry-run thì phải xác nhận thêm một lần.
 5. Giá trị đã nhập được nhớ riêng từng máy tại `%APPDATA%\pyRevit\ARVTools\<nút>.json`.
+
+## Cài sang máy khác
+- Đóng gói: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\pyrevit\dong_goi.ps1` → `_dist\ARVTools_<ngày>\` + `.zip` (extension bỏ `__pycache__`, `CAI_DAT.bat` / `cai_dat.ps1` / `HUONG_DAN.txt` từ `goi_cai_dat\`, kèm bộ cài pyRevit trong `_tmp\pyrevit_setup\` nếu có; `-KhongKemPyRevit` để bỏ).
+- Máy đích: giải nén vào chỗ cố định → `CAI_DAT.bat` (chưa có pyRevit thì hỏi cài; đăng ký `<gói>\ARVTools` vào Extension Search Path; có bản ARVTools.extension khác thì hỏi gỡ đăng ký, không xoá file). `CAI_DAT.bat -Go` = gỡ đăng ký.
+- 3 family vách kính (`lib\vach_kinh\*.rfa`) lưu định dạng Revit 2027 → nút Vách kính không chạy trên Revit cũ hơn.
 
 Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc level của view đang mở – chọn trước rồi bấm nút, giống khi chạy trong Dynamo.
 
@@ -50,11 +60,14 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
 | MEP | Ống thoát nước WC | `ARV_TaoOngThoatNuocWC_v1` |
 | MEP | Ống thoát nước từ CAD | `ARV_TaoOngThoatNuocTuCAD_v1` |
 | MEP | Ống gió từ CAD | `ARV_TaoOngGioTuCAD_v1` |
-| Hồ sơ | Chống thấm | `scripts\dynamo\ChongTham_VeVenChanTuong` (nét vén + hatch Filled Region trên view chống thấm; người dùng duyệt trên G19 2026-10-27) |
-| Hồ sơ | Ngăn cháy lan | `scripts\dynamo\NganChay_TrucHKT` (hatch Filled Region lưới NET 125 / 45° đỏ trong lòng trục / hộp kỹ thuật trên view chống cháy lan; 2026-10-28, người dùng đã duyệt bản bo lõi tường) |
-| Hồ sơ | Lỗ mở shaft | `scripts\dynamo\LoMo_ShaftOpening` (Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở; file gộp, xem dưới; 2026-10-28) |
-| Hồ sơ | MB định vị cửa | `scripts\dynamo\MatBang_DinhViCua` (một chạm trên mặt bằng tầng đang mở: nhân bản view → `MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>`, template `MẶT BẰNG ĐỊNH VỊ CỬA` tường + sàn Halftone; skill `tag-cua-revit`; 2026-11-02, chưa duyệt) |
-| Hồ sơ | Tag cửa | `scripts\dynamo\TagCua_TuDong` (một chạm trên mặt bằng đang mở: tag cửa đi / cửa sổ / lam không đè, view template `<gốc> (ẩn nội thất)`; quy tắc + cách thử: skill `tag-cua-revit`; 2026-11-02, chưa duyệt) |
+| Kiến trúc | Trát gờ logia | `ARV_TraGoLogia_v1` (AI REVIT, 2026-11-03) |
+| Hoàn thiện | Len chân tường | `ARV_TaoLenChanTuong_v1` (AI REVIT) |
+| Thiết bị WC | Lavabo / Sen tắm / Bồn cầu / Vách kính tắm / Vòi xịt lô giấy | `ARV_TaoLavaboTuCAD_v1`, `ARV_TaoSenTamTuCAD_v1`, `ARV_TaoBonCauTuCAD_v1`, `ARV_TaoVachKinhTamTuCAD_v1`, `ARV_TaoVoiXitLoGiayWC_v1` (AI REVIT) |
+| Nội thất | Máy giặt / Cục nóng ĐH / Giường / Tủ đầu giường / Bàn làm việc / Tủ ti vi / Nội thất bếp / Tủ quần áo / Sofa / Bàn ăn | `ARV_TaoMayGiatTuCAD_v1`, `ARV_TaoCucNongDHTuCAD_v1`, `ARV_TaoGiuongTuCAD_v1`, `ARV_TaoTuDauGiuongTuCAD_v1`, `ARV_TaoBanLamViecTuCAD_v1`, `ARV_TaoTuTiViTuCAD_v1`, `ARV_TaoNoiThatBepTuCAD_v1`, `ARV_TaoTuQuanAoTuCAD_v1`, `ARV_TaoSofaTuCAD_v1`, `ARV_TaoBanAnTuCAD_v1` (AI REVIT) |
+| HS TKBVTC | Chống thấm | `scripts\dynamo\ChongTham_VeVenChanTuong` (nét vén + hatch Filled Region trên view chống thấm; người dùng duyệt trên G19 2026-10-27) |
+| HS TKBVTC | Ngăn cháy lan | `scripts\dynamo\NganChay_TrucHKT` (hatch Filled Region lưới NET 125 / 45° đỏ trong lòng trục / hộp kỹ thuật trên view chống cháy lan; 2026-10-28, người dùng đã duyệt bản bo lõi tường) |
+| HS TKBVTC | Lỗ mở shaft | `scripts\dynamo\LoMo_ShaftOpening` (Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở; file gộp, xem dưới; 2026-10-28) |
+| HS TKBVTC | Định vị + tag cửa | `scripts\dynamo\TagCua_TuDong` (một chạm trên mặt bằng tầng đang mở: tạo / mở `MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>` (template `MẶT BẰNG ĐỊNH VỊ CỬA`: tường + sàn Halftone, ẩn nội thất / thiết bị vệ sinh / Mechanical Equipment) rồi tag cửa đi / cửa sổ không đè; gộp nút MB định vị cửa 2026-11-03; ô tag khung 2 ô mã / rộngXcao mm; bấm nút hỏi đặt lên bản vẽ (giai đoạn, hạng mục, khổ A1/A0) → sheet + 2 bảng thống kê cửa, tỉ lệ tự chọn (hộp thoại `lib\arv_hoi_sheet.py`); family nguồn nhãn ở `lib	ag_cua\`; skill `tag-cua-revit`; chưa duyệt) |
 | Vách kính | Vách kính | **Viết tay** (không từ Dynamo): `VachKinh.panel\VachKinh.pushbutton\script.py` + `lib\arv_vach_kinh*.py` + `startup.py` (updater). Xem dưới. |
 
 **Nút Vách kính** (2026-11-01, IronPython, chưa duyệt): bảng nhập → pick điểm → dựng curtain wall chia đố 65 theo quy tắc lệnh VK / MDVK; vách góc vuông pick 3 điểm (đố góc 150 x 150 + kính góc). Đổi chiều dài / chiều cao vách thì updater trong `startup.py` chia lại. Quy tắc, file, cách thử: skill `.claude\skills\vach-kinh-revit\SKILL.md`. Panel `VachKinh` nằm trong `PANEL_VIET_TAY` của `build_from_dynamo.py`: builder chỉ thêm vào layout tab, không ghi vào thư mục panel.

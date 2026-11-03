@@ -1,36 +1,45 @@
-# TRẠNG THÁI: CHƯA DUYỆT
+# TRẠNG THÁI: ĐÃ DUYỆT (BIM Manager, 2026-10-29)
 # Mã nguồn của Python node trong ARV_TaoLanCanLouverLogia_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).
 #
 # Tạo lan can + louver che cục nóng điều hòa cho logia, lấy thông tin từ mặt bằng DWG đã Link (KTS chốt 2026-10-21):
-#   1. Logia = sàn (Floor) trên level IN[9] có tên type chứa IN[2] (VD "SHT-Gach Lat Logia-300x600"), lấy hộp bao.
+#   1. Logia = sàn (Floor) trên level IN[9] có Comments "ARV-SanCanHo <căn> LOGIA" (tool 06) hoặc tên type chứa IN[2]
+#      (VD "SHT-Gach Lat Logia-300x600"), lấy hộp bao. Bỏ lớp trát gờ "ARV-TratGoLogia" (tool 12, type "…Trát gờ logia").
 #   2. Mặt ngoài logia = cặp nét song song cách nhau 150 mm (± 3) trên layer IN[1], nằm sát cạnh hộp bao logia
 #      (≤ 300 mm) và phủ ≥ 50 % cạnh đó. Tuyến lan can = đường giữa cặp nét, dài từ tường đến tường (đầu nét CAD).
 #      Nét dài hơn logia (chạy qua phòng bên cạnh) → cắt ở cạnh logia rồi bắt vào đầu tường Revit nằm trên tuyến
-#      (≤ 400 mm); không có tường → giữ mép logia, báo "KIỂM TRA ĐẦU".
-#   3. Cục nóng = cụm nét layer IN[6] nằm gọn trong khung IN[7] (dài x rộng, xoay 0/90°) có ≥ IN[8] nét.
+#      (≤ 400 mm); không có tường → giữ mép logia, báo "KIỂM TRA ĐẦU". Có gờ "ARV-GoLogia" trên tuyến → hai đầu tuyến
+#      lấy theo hai đầu gờ (mặt tường; đầu nét CAD / tim tường ăn vào trong tường 150–300 mm).
+#   3. Cục nóng = cụm nét layer IN[6] nằm gọn trong khung IN[7] (dài x rộng, xoay 0/90°) có ≥ IN[8] nét, trong hộp bao
+#      sàn logia nới 150 mm. Không thấy → ghi chú số nét layer IN[6] + các layer nhiều nét nhất trong logia để dò lại.
 #      - Logia không có cục nóng: lan can suốt chiều dài.
 #      - Logia có cục nóng: louver (family IN[4], type IN[5], rộng = Width của type) đặt sát đầu tường GẦN cục nóng
 #        hơn, lan can = tổng chiều dài − rộng louver (một đoạn).
 #      - Lan can còn lại < IN[11] (1200) → bỏ lan can, louver kéo dài hết tuyến (KTS chốt 2026-10-21). Type louver
 #        đúng bề rộng (Height như type IN[5]) có sẵn thì dùng, chưa có → nhân bản IN[5] thành "{rộng}X{cao}".
-#   4. Lan can: Railing type IN[3], chân tại level, tuyến trên đường giữa cặp nét. Louver: family không host, điểm chèn
-#      ở một đầu, phát triển theo +Hand, Facing quay ra ngoài nhà; đặt xong đo khối đặc theo phương vuông góc tuyến
-#      rồi dời cho tâm bề dày lam nằm đúng giữa cặp nét 150 (AV-Lam Thép Logia2: khối 0…80 mm về phía Facing).
+#   4. Lan can: Railing type IN[3], chân tại level, tuyến trên đường giữa cặp nét. Louver: family không host (category
+#      Generic Model hoặc Windows đều được), điểm chèn ở một đầu, phát triển theo +Hand, Facing quay ra ngoài nhà; đặt
+#      xong đo khối đặc theo phương vuông góc tuyến rồi dời cho tâm bề dày lam nằm đúng giữa cặp nét 150.
+#      Width / Height đọc theo GENERIC_WIDTH / DOOR_HEIGHT (family Windows) hoặc FAMILY_WIDTH/HEIGHT_PARAM; báo cáo
+#      ghi khối đặc của type louver theo Hand / Facing để kiểm tra khối có lòi ra ngoài đoạn [0, Width] không.
 #      Chân lan can + louver (KTS chốt 2026-10-21): logia có gờ bê tông (tường Comments "ARV-GoLogia" của
 #      ARV_TaoGoLogia_v1) trên cùng tuyến → đặt ở đỉnh gờ (VD +70 so với level); không có gờ → ở cao độ level (0).
+#   4b. Tim: tâm khối lan can và louver trùng tim gờ "ARV-GoLogia" (không có gờ → đường giữa cặp nét). Railing type
+#      có thể lệch khỏi đường dẫn (VD "900+600-thép hộp 30x60" lệch 7,75 mm) → đo hộp bao rồi chỉnh Offset from Path.
 #   5. Phần tử tạo ra có Comments "ARV-LanCanLogia". Chạy lại, trong phạm vi tuyến từng logia:
-#      - Lan can / louver có Comments đó mà đúng kế hoạch (đầu tuyến ± 20 mm, louver đúng bề rộng) → giữ;
+#      - Lan can / louver có Comments đó mà đúng kế hoạch (đầu tuyến ± 20 mm, tâm khối lệch tim ≤ 5 mm, louver đúng
+#        bề rộng) → giữ;
 #        chỉ sai chân (lệch > 2 mm so với đỉnh gờ / level) → nâng / hạ chân tại chỗ (giữ Id, báo "nâng chân").
 #      - Có Comments đó mà sai kế hoạch (VD lan can ngắn của lần chạy trước) → XOÁ rồi tạo lại (báo "thay").
 #      - Không có Comments đó (dựng tay) → không đụng; phần tương ứng bỏ qua, báo "đã có (dựng tay)".
 # INPUT
 #   IN[0]  (str)   Một phần tên bản CAD (trống = bản CAD duy nhất có layer khớp IN[1])
 #   IN[1]  (str)   Layer nét mặt ngoài logia, cách nhau ';' (khớp đúng tên) – VD "A-Line;A-line1;A-line2"
-#   IN[2]  (str)   Chuỗi con tên floor type sàn logia – VD "Logia"
-#   IN[3]  (str)   Railing type lan can – VD "Glass Panel - Bottom Fill" (sau thay "AV_Lan Can Kính Cường Lực")
-#   IN[4]  (str)   Family louver – VD "AV-Lam Thép Logia2"
-#   IN[5]  (str)   Type louver – VD "1000X2800"
-#   IN[6]  (str)   Layer nét cục nóng – VD "0" (block cục nóng vẽ trên layer 0)
+#   IN[2]  (str)   Chuỗi con tên floor type sàn logia – VD "Logia" (sàn tool 06 Comments "… LOGIA" luôn được nhận)
+#   IN[3]  (str)   Railing type lan can – VD "900+600-thép hộp 30x60-duong doc"
+#   IN[4]  (str)   Family louver – VD "AV-Lam Thép Logia1"
+#   IN[5]  (str)   Type louver – VD "1250X3150"
+#   IN[6]  (str)   Layer nét cục nóng – VD "0"; tên dài thì gõ phần đầu + '*' – VD "AUDIT_D_260526144445*"
+#                  (nét layer 0 trong block mang layer của block chèn)
 #   IN[7]  (str)   Khung cục nóng dài x rộng (mm) – VD "974x400"
 #   IN[8]  (int)   Số nét tối thiểu trong khung để nhận là cục nóng – VD 150 (G19: 213 nét / cục)
 #   IN[9]  (str)   Level – VD "Tầng 1"
@@ -67,6 +76,8 @@ TRANSACTION_NAME = u"ARV - Tạo lan can và louver logia từ CAD"
 SCRIPT_TAG = u"ARV_TaoLanCanLouverLogia_v1"
 COMMENT = u"ARV-LanCanLogia"
 CURB_COMMENT = u"ARV-GoLogia"   # Gờ bê tông của ARV_TaoGoLogia_v1
+FLOOR_COMMENT = u"ARV-SanCanHo"  # Sàn căn hộ của tool 06: "ARV-SanCanHo <căn> <loại>"
+PLASTER_COMMENT = u"ARV-TratGoLogia"   # Lớp trát gờ của tool 12 – không phải sàn logia
 PAIR_GAP_MM = 150.0       # Bề dày nét đôi mặt ngoài
 PAIR_TOL_MM = 3.0
 EDGE_MM = 300.0           # Cặp nét cách cạnh logia tối đa
@@ -78,10 +89,20 @@ SAME_END_MM = 20.0        # Đầu đoạn khớp kế hoạch
 CENTRE_TOL_MM = 5.0       # Tâm bề dày louver lệch tim cặp nét tối đa
 UNIT_TOL_MM = 3.0
 SAME_Z_MM = 2.0           # Chân khớp kế hoạch
+UNIT_MARGIN_MM = 150.0    # Cục nóng nằm trong hộp bao sàn logia nới thêm (sàn có thể lùi khỏi gờ / tường)
 
 
 def norm(s):
     return unicodedata.normalize("NFC", (s or u"")).strip()
+
+
+def layer_match(layer, pattern):
+    """IN[6]: khớp đúng tên, hoặc khớp phần đầu nếu kết thúc bằng '*' (VD "AUDIT_D_260526144445*"), không phân biệt hoa/thường."""
+    if not layer:
+        return False
+    if pattern.endswith(u"*"):
+        return layer.lower().startswith(pattern[:-1].lower())
+    return layer.lower() == pattern.lower()
 
 
 def fmt(p):
@@ -198,6 +219,21 @@ def find_unit(boxes, size, min_count):
     return best
 
 
+def unit_diagnosis(box, inside, all_boxes, unit_layer, unit_size, unit_min):
+    """Ghi chú vì sao logia không có cục nóng: số nét layer IN[6], cụm lớn nhất trong khung, layer nhiều nét nhất."""
+    x0, y0, x1, y1 = box
+    m = UNIT_MARGIN_MM
+    best = find_unit(inside, unit_size, 1) if inside else None
+    counts = {}
+    for b in all_boxes:
+        if b[0] >= x0 - m and b[2] <= x1 + m and b[1] >= y0 - m and b[3] <= y1 + m:
+            counts[b[4]] = counts.get(b[4], 0) + 1
+    top = sorted(counts.items(), key=lambda kv: -kv[1])[:4]
+    return u"KHÔNG THẤY CỤC NÓNG – layer '{}': {} nét trong logia, cụm lớn nhất trong khung {:.0f}x{:.0f}: {} nét (cần ≥ {}); "         u"layer nhiều nét trong logia: {}".format(
+            unit_layer, len(inside), unit_size[0], unit_size[1], best[4] if best else 0, unit_min,
+            u", ".join(u"{} ({})".format(k, v) for k, v in top) or u"không có nét nào")
+
+
 class Plan(object):
     def __init__(self, fid, box):
         self.fid, self.box = fid, box
@@ -210,6 +246,8 @@ class Plan(object):
         self.rail = None        # (t0, t1)
         self.base = 0.0         # chân lan can + louver so với level (mm): đỉnh gờ hoặc 0
         self.curb_id = u""      # gờ ARV-GoLogia trên tuyến
+        self.centre_off = 0.0   # tim đích (lệch ngang so với đường giữa cặp nét, mm): tim gờ nếu có
+        self.curb_span = None   # (đầu, cuối) gờ dọc tuyến – gờ chạy mặt tường → mặt tường
         self.lift_ids = []      # phần tử tool cũ đúng tuyến, sai chân → chỉnh chân
         self.notes = []
         self.status = u""
@@ -223,7 +261,7 @@ class Plan(object):
         return self.facade.point(t)
 
 
-def plan_logia(fid, box, pairs, wall_ends, unit_boxes, unit_size, unit_min, louver_w, min_rail):
+def plan_logia(fid, box, pairs, wall_ends, unit_boxes, unit_size, unit_min, louver_w, min_rail, curbs=()):
     p = Plan(fid, box)
     m = match_facade(box, pairs)
     if m is None:
@@ -233,16 +271,15 @@ def plan_logia(fid, box, pairs, wall_ends, unit_boxes, unit_size, unit_min, louv
     p.facade = f
     p.out = outward(box, f)
     p.s, p.e, p.notes = span_of(f, lo, hi, wall_ends)
+    curb_base(p, curbs)
+    clip_to_curb(p)
     if p.e - p.s <= 0:
         p.status = u"Bỏ qua – tuyến rỗng"
         return p
     p.unit = find_unit(unit_boxes, unit_size, unit_min)
     if p.unit is not None:
-        if p.e - p.s < louver_w + 50.0:
-            p.status = u"Bỏ qua – logia dài {:.0f} không đủ cho louver {:.0f}".format(p.e - p.s, louver_w)
-            return p
         uc = (p.unit[1] + p.unit[3]) / 2.0 if f.axis == 'V' else (p.unit[0] + p.unit[2]) / 2.0
-        if p.e - p.s - louver_w < min_rail:
+        if p.e - p.s - louver_w < max(min_rail, 0.0):   # logia ngắn hơn louver cũng vậy: louver hết tuyến
             p.louver, p.rail = (p.s, p.e), None
             p.notes.append(u"lan can còn {:.0f} < {:.0f} → louver hết tuyến".format(p.e - p.s - louver_w, min_rail))
         elif abs(uc - p.s) <= abs(p.e - uc):
@@ -272,14 +309,32 @@ def curb_base(p, curbs):
             continue
         ov = min(max(ta, tb), hi) - max(min(ta, tb), lo)
         if ov > 0.5 * (hi - lo) and (best is None or ov > best[0]):
-            best = (ov, eid, top)
+            best = (ov, eid, top, (da + db) / 2.0, (min(ta, tb), max(ta, tb)))
     if best is not None:
-        p.curb_id, p.base = best[1], best[2]
+        p.curb_id, p.base, p.centre_off, p.curb_span = best[1], best[2], best[3], best[4]
         p.notes.append(u"chân trên gờ Id {} ({:+.0f})".format(best[1], best[2]))
 
 
+def clip_to_curb(p):
+    """Có gờ: hai đầu tuyến = hai đầu gờ (mặt tường), thay đầu nét CAD / tim tường vốn ăn vào trong tường.
+    Đầu gờ lệch đầu tuyến > SNAP_WALL_MM thì giữ đầu tuyến, báo KIỂM TRA ĐẦU."""
+    if p.curb_span is None:
+        return
+    ends = []
+    for side, cur, want in ((u"đầu", p.s, p.curb_span[0]), (u"cuối", p.e, p.curb_span[1])):
+        if abs(want - cur) <= 0.5:
+            ends.append(cur)
+        elif abs(want - cur) <= SNAP_WALL_MM:
+            ends.append(want)
+            p.notes.append(u"{} tuyến theo đầu gờ ({:+.0f})".format(side.capitalize(), want - cur))
+        else:
+            ends.append(cur)
+            p.notes.append(u"KIỂM TRA ĐẦU – {} gờ lệch {:.0f} mm so với tuyến, giữ tuyến".format(side, want - cur))
+    p.s, p.e = ends
+
+
 def reconcile(p, rails, louvers):
-    """rails [(a, b, Id, của tool, chân)], louvers [(đầu, cuối, Id, của tool, tâm khối, chân)] (mm, điểm 2D) →
+    """rails [(a, b, Id, của tool, tâm khối, chân)], louvers [(đầu, cuối, Id, của tool, tâm khối, chân)] (mm, điểm 2D) →
     đặt p.rail_id / louver_id (giữ), need_*, delete_ids, lift_ids, ghi chú."""
     f = p.facade
     lo, hi = min(p.s, p.e), max(p.s, p.e)
@@ -310,7 +365,7 @@ def reconcile(p, rails, louvers):
             x = seg_on(a, b) if kind == u"lan can" else louver_on(a, b)
             if x is None:
                 continue
-            centred = kind == u"lan can" or (it[4] is not None and abs(along(f, it[4])[1]) <= CENTRE_TOL_MM)
+            centred = it[4] is not None and abs(along(f, it[4])[1] - p.centre_off) <= CENTRE_TOL_MM
             z = it[-1]
             if not mine:
                 keep = keep or eid
@@ -418,7 +473,7 @@ def pick_cad(cad_filter, layers):
 def find_level(name):
     levels = list(FilteredElementCollector(doc).OfClass(Level).ToElements())
     for l in levels:
-        if norm(l.Name) == norm(name):
+        if norm(l.Name).lower() == norm(name).lower():   # "Tầng 3" = "TẦNG 3"
             return l
     raise StopReport([u"DỪNG: không có level '{}'. Các level: {}".format(
         name, u", ".join(l.Name for l in sorted(levels, key=lambda x: x.Elevation)))])
@@ -445,16 +500,35 @@ def find_symbol(family_name, type_name):
         family_name, type_name, u", ".join(sorted(get_name(s) for s in syms)))])
 
 
+def type_param(s, bips, name):
+    """Tham số type theo BuiltInParameter (family Windows dùng GENERIC_WIDTH / DOOR_HEIGHT), cuối cùng theo tên."""
+    for bip in bips:
+        p = s.get_Parameter(bip)
+        if p is not None:
+            return p
+    return s.LookupParameter(name)   # Tên chuẩn "Width"/"Height" – chỉ khi family không gắn BuiltInParameter
+
+
+WIDTH_BIPS = (BuiltInParameter.FAMILY_WIDTH_PARAM, BuiltInParameter.GENERIC_WIDTH) if DYNAMO else ()
+HEIGHT_BIPS = (BuiltInParameter.FAMILY_HEIGHT_PARAM, BuiltInParameter.DOOR_HEIGHT) if DYNAMO else ()
+
+
 def symbol_width(s):
-    p = s.get_Parameter(BuiltInParameter.FAMILY_WIDTH_PARAM) or s.LookupParameter("Width")
+    p = type_param(s, WIDTH_BIPS, "Width")
     if p is None:
         raise StopReport([u"DỪNG: type louver '{}' không có tham số Width.".format(get_name(s))])
     return to_mm(p.AsDouble())
 
 
+def symbol_height(s):
+    p = type_param(s, HEIGHT_BIPS, "Height")
+    return to_mm(p.AsDouble()) if p is not None else None
+
+
 def read_cad(objects, facade_layers, unit_layer):
-    """→ (segs [(a, b, layer)] nét mặt ngoài, boxes [(x0, y0, x1, y1)] nét layer cục nóng)."""
-    segs, boxes = [], []
+    """→ (segs [(a, b, layer)] nét mặt ngoài, boxes [(x0, y0, x1, y1)] nét layer cục nóng,
+    all_boxes [(x0, y0, x1, y1, layer)] mọi nét – để chẩn đoán logia không thấy cục nóng)."""
+    segs, boxes, all_boxes = [], [], []
     for obj in objects:
         l = layer_of(obj)
         if l in facade_layers:
@@ -463,25 +537,36 @@ def read_cad(objects, facade_layers, unit_layer):
             elif isinstance(obj, PolyLine):
                 pts = [xy(p) for p in obj.GetCoordinates()]
                 segs.extend((a, b, l) for a, b in zip(pts[:-1], pts[1:]))
-        if l == unit_layer:
-            if isinstance(obj, Curve):
-                pts = [xy(p) for p in obj.Tessellate()]
-            elif isinstance(obj, PolyLine):
-                pts = [xy(p) for p in obj.GetCoordinates()]
-            else:
-                continue
-            xs = [p[0] for p in pts]
-            ys = [p[1] for p in pts]
-            boxes.append((min(xs), min(ys), max(xs), max(ys)))
-    return segs, boxes
+        if isinstance(obj, Curve):
+            pts = [xy(p) for p in obj.Tessellate()]
+        elif isinstance(obj, PolyLine):
+            pts = [xy(p) for p in obj.GetCoordinates()]
+        else:
+            continue
+        xs = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+        bx = (min(xs), min(ys), max(xs), max(ys))
+        all_boxes.append(bx + (l,))
+        if layer_match(l, unit_layer):
+            boxes.append(bx)
+    return segs, boxes, all_boxes
+
+
+def is_logia_floor(fl, type_part):
+    """Sàn tool 06 Comments "ARV-SanCanHo <căn> LOGIA", hoặc type chứa IN[2]; bỏ lớp trát gờ của tool 12."""
+    prm = fl.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)
+    words = norm(prm.AsString() if prm is not None else u"").split()
+    if words and words[0] == PLASTER_COMMENT:
+        return False
+    if len(words) >= 2 and words[0] == FLOOR_COMMENT and words[-1].upper() == u"LOGIA":
+        return True
+    return bool(type_part) and norm(type_part).lower() in norm(get_name(doc.GetElement(fl.GetTypeId()))).lower()
 
 
 def logia_floors(level, type_part):
     result = []
     for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():
-        if fl.LevelId != level.Id:
-            continue
-        if norm(type_part).lower() not in norm(get_name(doc.GetElement(fl.GetTypeId()))).lower():
+        if fl.LevelId != level.Id or not is_logia_floor(fl, type_part):
             continue
         bb = fl.get_BoundingBox(None)
         if bb is None:
@@ -528,11 +613,17 @@ def rail_base_param(r):
 
 
 def louver_base_param(fi):
-    return fi.get_Parameter(BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM)
+    """Cao độ chân louver so với level: Offset from Host / Elevation from Level (Generic Model), Sill Height (Windows)."""
+    for bip in (BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM, BuiltInParameter.INSTANCE_ELEVATION_PARAM,
+                BuiltInParameter.INSTANCE_SILL_HEIGHT_PARAM):
+        p = fi.get_Parameter(bip)
+        if p is not None and not p.IsReadOnly:
+            return p
+    return None
 
 
 def existing_rails(level):
-    """[(a, b, Id, của tool, chân)] mỗi lan can trên level: đoạn từ đầu đến cuối đường dẫn."""
+    """[(a, b, Id, của tool, tâm khối, chân)] mỗi lan can trên level: đoạn từ đầu đến cuối đường dẫn."""
     out = []
     for r in FilteredElementCollector(doc).OfClass(Railing).ToElements():
         if r.LevelId != level.Id:
@@ -540,7 +631,7 @@ def existing_rails(level):
         path = list(r.GetPath())
         if path:
             out.append((xy(path[0].GetEndPoint(0)), xy(path[-1].GetEndPoint(1)), r.Id.Value, is_mine(r),
-                        to_mm(rail_base_param(r).AsDouble())))
+                        rail_centre(r), to_mm(rail_base_param(r).AsDouble())))
     return out
 
 
@@ -566,13 +657,12 @@ def louver_symbol(template, width, planned):
     key = int(round(width))
     if key in planned:
         return planned[key]
-    th = template.get_Parameter(BuiltInParameter.FAMILY_HEIGHT_PARAM) or template.LookupParameter("Height")
-    height = to_mm(th.AsDouble()) if th else 0.0
+    height = symbol_height(template) or 0.0
     for s in FilteredElementCollector(doc).OfClass(FamilySymbol).ToElements():
         if s.Family.Id != template.Family.Id:
             continue
-        sh = s.get_Parameter(BuiltInParameter.FAMILY_HEIGHT_PARAM) or s.LookupParameter("Height")
-        if abs(symbol_width(s) - width) <= 1.0 and sh is not None and abs(to_mm(sh.AsDouble()) - height) <= 1.0:
+        sh = symbol_height(s)
+        if abs(symbol_width(s) - width) <= 1.0 and sh is not None and abs(sh - height) <= 1.0:
             planned[key] = s
             return s
     planned[key] = u"{}X{:.0f}".format(key, height)
@@ -589,12 +679,47 @@ def set_comment(el):
         prm.Set(COMMENT)
 
 
+def rail_centre(r):
+    """Tâm hộp bao khối lan can trên mặt bằng (mm) – railing type có thể lệch khỏi đường dẫn (VD thép hộp 30x60)."""
+    bb = r.get_BoundingBox(None)
+    return None if bb is None else (to_mm((bb.Min.X + bb.Max.X) / 2.0), to_mm((bb.Min.Y + bb.Max.Y) / 2.0))
+
+
+def centre_railing(r, p):
+    """Chỉnh Offset from Path để tâm khối lan can trùng tim gờ / cặp nét → độ lệch còn lại (mm) hoặc None.
+    Chiều dương của Offset from Path tuỳ chiều đường dẫn nên thử một chiều, sai thì đổi chiều."""
+    prm = r.get_Parameter(BuiltInParameter.STAIRS_RAILING_PLACEMENT_OFFSET)
+    if prm is None or prm.IsReadOnly:
+        return None
+
+    def error():
+        doc.Regenerate()
+        c = rail_centre(r)
+        return None if c is None else along(p.facade, c)[1] - p.centre_off
+
+    e0 = error()
+    if e0 is None or abs(e0) <= 0.5:
+        return e0
+    o0 = prm.AsDouble()
+    e = e0
+    for sign in (-1.0, 1.0):
+        prm.Set(o0 + from_mm(sign * e0))
+        e = error()
+        if e is not None and abs(e) <= 0.5:
+            break
+    return e
+
+
 def create_railing(p, rtype, level):
     a, b = p.pt(p.rail[0]), p.pt(p.rail[1])
     loop = CurveLoop()
     loop.Append(Line.CreateBound(XYZ(from_mm(a[0]), from_mm(a[1]), 0.0), XYZ(from_mm(b[0]), from_mm(b[1]), 0.0)))
     r = Railing.Create(doc, loop, rtype.Id, level.Id)
     rail_base_param(r).Set(from_mm(p.base))
+    e = centre_railing(r, p)
+    if e is None or abs(e) > 1.0:
+        p.notes.append(u"KIỂM TRA TIM lan can – không căn được tim gờ ({})".format(
+            u"không đo được" if e is None else u"còn lệch {:.1f} mm".format(e)))
     set_comment(r)
     return r
 
@@ -602,6 +727,8 @@ def create_railing(p, rtype, level):
 def set_base(el, base_mm):
     """Chỉnh chân lan can / louver đã có (so với level, mm)."""
     prm = rail_base_param(el) if isinstance(el, Railing) else louver_base_param(el)
+    if prm is None:
+        raise Exception(u"Id {} không có tham số cao độ chân".format(el.Id.Value))
     prm.Set(from_mm(base_mm))
 
 
@@ -618,10 +745,13 @@ def create_louver(p, symbol, level):
     doc.Regenerate()
     ext = solid_extent(fi, p.out)
     if ext is not None:
-        off = (ext[0] + ext[1]) / 2.0 - p.facade.line * (p.out[0] + p.out[1])
+        off = (ext[0] + ext[1]) / 2.0 - (p.facade.line + p.centre_off) * (p.out[0] + p.out[1])
         if abs(off) > 0.5:
             ElementTransformUtils.MoveElement(doc, fi.Id, XYZ(from_mm(-p.out[0] * off), from_mm(-p.out[1] * off), 0.0))
-    louver_base_param(fi).Set(from_mm(p.base))
+    bp = louver_base_param(fi)
+    if bp is None:
+        raise Exception(u"louver không có tham số cao độ chân (Offset / Elevation / Sill Height)")
+    bp.Set(from_mm(p.base))
     set_comment(fi)
     return fi
 
@@ -645,6 +775,31 @@ def solid_extent(fi, u):
     if geo is not None:
         walk(geo)
     return (min(vals), max(vals)) if vals else None
+
+
+def symbol_solid_box(symbol):
+    """Khối đặc của type (toạ độ family, mm): ((min, max) theo Hand = X, (min, max) theo Facing = Y) hoặc None."""
+    opt = Options()
+    opt.DetailLevel = ViewDetailLevel.Fine
+    xs, ys = [], []
+
+    def walk(geo):
+        for obj in geo:
+            if isinstance(obj, GeometryInstance):
+                walk(obj.GetSymbolGeometry())
+            elif isinstance(obj, Solid) and obj.Volume > 0:
+                for e in obj.Edges:
+                    for q in e.Tessellate():
+                        xs.append(to_mm(q.X))
+                        ys.append(to_mm(q.Y))
+
+    try:
+        geo = symbol.get_Geometry(opt)
+        if geo is not None:
+            walk(geo)
+    except Exception:
+        return None
+    return ((min(xs), max(xs)), (min(ys), max(ys))) if xs else None
 
 
 def preview_lines(plans, z0_mm):
@@ -719,7 +874,9 @@ def main(cad_filter, facade_layers, floor_part, rail_type_name, louver_family, l
     if is_central_file(doc):
         return [u"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy."], []
     cad, cad_name, objects, all_layers = pick_cad(cad_filter, facade_layers)
-    missing = sorted((facade_layers | {unit_layer}) - all_layers)
+    missing = sorted(facade_layers - all_layers)
+    if not any(layer_match(l, unit_layer) for l in all_layers):
+        missing.append(unit_layer)
     level = find_level(level_name)
     rtype = find_railing_type(rail_type_name)
     symbol = find_symbol(louver_family, louver_type)
@@ -728,7 +885,7 @@ def main(cad_filter, facade_layers, floor_part, rail_type_name, louver_family, l
     if not floors:
         raise StopReport([u"DỪNG: level '{}' không có sàn nào có type chứa '{}' (IN[2]).".format(level_name, floor_part)])
 
-    segs, unit_boxes = read_cad(objects, facade_layers, unit_layer)
+    segs, unit_boxes, all_boxes = read_cad(objects, facade_layers, unit_layer)
     pairs = facade_pairs(segs)
     wall_ends = wall_end_points(level)
     rails = existing_rails(level)
@@ -739,12 +896,14 @@ def main(cad_filter, facade_layers, floor_part, rail_type_name, louver_family, l
     plans = []
     for fid, box in floors:
         x0, y0, x1, y1 = box
-        inside = [b for b in unit_boxes if b[0] >= x0 - 5 and b[2] <= x1 + 5 and b[1] >= y0 - 5 and b[3] <= y1 + 5]
-        p = plan_logia(fid, box, pairs, wall_ends, inside, unit_size, unit_min, louver_w, min_rail)
+        m = UNIT_MARGIN_MM
+        inside = [b for b in unit_boxes if b[0] >= x0 - m and b[2] <= x1 + m and b[1] >= y0 - m and b[3] <= y1 + m]
+        p = plan_logia(fid, box, pairs, wall_ends, inside, unit_size, unit_min, louver_w, min_rail, curbs)
+        if p.status == u"OK" and p.unit is None:
+            p.notes.append(unit_diagnosis(box, inside, all_boxes, unit_layer, unit_size, unit_min))
         if p.status == u"OK":
             if p.louver:
                 p.louver_type = louver_symbol(symbol, p.louver[1] - p.louver[0], planned)
-            curb_base(p, curbs)
             reconcile(p, rails, louvers)
             if not (p.need_rail or p.need_louver or p.delete_ids or p.lift_ids):
                 p.status = u"Bỏ qua – đã đúng"
@@ -761,8 +920,7 @@ def main(cad_filter, facade_layers, floor_part, rail_type_name, louver_family, l
                 t = planned[key]
                 if isinstance(t, (str, type(u""))):
                     new_type = symbol.Duplicate(t)
-                    (new_type.get_Parameter(BuiltInParameter.FAMILY_WIDTH_PARAM)
-                     or new_type.LookupParameter("Width")).Set(from_mm(key))
+                    type_param(new_type, WIDTH_BIPS, "Width").Set(from_mm(key))
                     planned[key] = new_type
             for p in jobs:
                 for eid in p.delete_ids:
@@ -808,6 +966,15 @@ def main(cad_filter, facade_layers, floor_part, rail_type_name, louver_family, l
         cad_name, level.Name, get_name(rtype), louver_family, louver_type, louver_w, min_rail))
     if missing:
         report.append(u"LƯU Ý: bản CAD không có layer: {}".format(u"; ".join(missing)))
+    sb = symbol_solid_box(symbol)
+    if sb is None:
+        report.append(u"Khối đặc type louver: không đọc được – kiểm tra louver đầu tiên sau khi tạo.")
+    else:
+        report.append(u"Khối đặc type louver: dọc tuyến (Hand) {:.0f}…{:.0f}, bề dày (Facing) {:.0f}…{:.0f} mm".format(
+            sb[0][0], sb[0][1], sb[1][0], sb[1][1]))
+        if sb[0][0] < -5.0 or sb[0][1] > louver_w + 5.0:
+            report.append(u"LƯU Ý: khối đặc louver lòi ra ngoài đoạn 0…Width ({:.0f}) – đầu louver sẽ đâm vào tường / "
+                          u"chồng lên lan can. Kiểm tra family.".format(louver_w))
     report.append(u"Logia: {} – lan can + louver: {}, chỉ louver (hết tuyến): {}, chỉ lan can: {}".format(
         len(plans), len([p for p in ok if p.rail and p.louver]), len([p for p in ok if p.louver and not p.rail]),
         len([p for p in ok if p.rail and not p.louver])))
@@ -822,6 +989,11 @@ def main(cad_filter, facade_layers, floor_part, rail_type_name, louver_family, l
     skipped = [p for p in plans if p not in done and p.status != u"Bỏ qua – đã đúng"]
     for p in skipped:
         report.append(u"  Sàn {}: {}".format(p.fid, p.status))
+    no_unit = [p for p in plans if any(n.startswith(u"KHÔNG THẤY CỤC NÓNG") for n in p.notes)]
+    if no_unit:
+        report.append(u"Không thấy cục nóng ở {} logia → chỉ lan can, không louver. Xem cột Ghi chú: layer nhiều nét "
+                      u"trong logia – nếu cục nóng nằm layer khác thì sửa IN[6], ít nét hơn thì giảm IN[8].".format(
+                          len(no_unit)))
     checks = [p for p in plans if any(n.startswith(u"KIỂM TRA") for n in p.notes)]
     if checks:
         report.append(u"KIỂM TRA ĐẦU tuyến {} logia: {}".format(len(checks), u", ".join(str(p.fid) for p in checks)))
@@ -873,9 +1045,9 @@ if DYNAMO:
             u"{}".format(_s(0, u"")).strip(),
             split_layers(_s(1, u"A-Line;A-line1;A-line2")),
             norm(_s(2, u"Logia")),
-            norm(_s(3, u"Glass Panel - Bottom Fill")),
-            norm(_s(4, u"AV-Lam Thép Logia2")),
-            norm(_s(5, u"1000X2800")),
+            norm(_s(3, u"900+600-thép hộp 30x60-duong doc")),
+            norm(_s(4, u"AV-Lam Thép Logia1")),
+            norm(_s(5, u"1250X3150")),
             norm(u"{}".format(_s(6, u"0"))),
             parse_size(_s(7, u"974x400")),
             int(float(_s(8, 150))),

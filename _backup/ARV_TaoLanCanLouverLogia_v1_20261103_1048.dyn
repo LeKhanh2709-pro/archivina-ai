@@ -1,0 +1,844 @@
+{
+  "Uuid": "fcff7d68-d102-4811-bbae-9e5756ba9090",
+  "IsCustomNode": false,
+  "Description": "Tạo lan can + louver che cục nóng cho logia từ CAD link (CHƯA DUYỆT)",
+  "Name": "ARV_TaoLanCanLouverLogia_v1",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "c184dd95e1a541c082cc2cfcfed253ef",
+      "Name": "IN[0] Tên bản CAD (chuỗi con, trống = tự tìm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "60deee4ec9ce41c5835649bc5198bd10",
+      "Name": "IN[1] Layer nét mặt ngoài logia (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "A-Line;A-line1;A-line2",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "027cf56f97094ea180b25cfeed2ea7e0",
+      "Name": "IN[2] Chuỗi con tên floor type sàn logia",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Logia",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "9c45cb5610c34f638890f0382cb88fbf",
+      "Name": "IN[3] Railing type lan can",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Glass Panel - Bottom Fill",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "838caf008e734b1590f215f2c18971cd",
+      "Name": "IN[4] Family louver",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "AV-Lam Thép Logia2",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "299e9bcc9d4f4a789f6bb23600e6ae4b",
+      "Name": "IN[5] Type louver",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "1000X2800",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "4f9f794172344a7cbd67ba723d4d473d",
+      "Name": "IN[6] Layer nét cục nóng",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "0",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "9d8f13ae52154d9e92d3e9aa16231a5d",
+      "Name": "IN[7] Khung cục nóng dài x rộng (mm)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "974x400",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "24819997f23a4c229b6a4e710b344b94",
+      "Name": "IN[8] Số nét tối thiểu trong khung",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "150",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "a31bf405885d4955b76b2758f7e94758",
+      "Name": "IN[9] Level",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Tầng 1",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "6ea40c03b91142adab01238dc51a23ad",
+      "Name": "IN[10] Dry-run",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "efc7f0a3cc9e40218f5440ebbeb4323c",
+      "Name": "IN[11] Lan can ngắn nhất (mm) – ngắn hơn thì louver hết tuyến",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "1200",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "c184dd95e1a541c082cc2cfcfed253ef",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c17b9f57fa90492d975c075932374ac5",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": ""
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "60deee4ec9ce41c5835649bc5198bd10",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0dee421861294721a530d2fb954d187a",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "A-Line;A-line1;A-line2"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "027cf56f97094ea180b25cfeed2ea7e0",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "97dc39c3a87e4b95840f2371798d3aab",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Logia"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "9c45cb5610c34f638890f0382cb88fbf",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b7fdbf3810ce4b7c9de08354fba8403a",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Glass Panel - Bottom Fill"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "838caf008e734b1590f215f2c18971cd",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a83180c732db4eae80fe9890562a6888",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "AV-Lam Thép Logia2"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "299e9bcc9d4f4a789f6bb23600e6ae4b",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "30db49d1275345e78dc4a2ac31f6a4b4",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "1000X2800"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "4f9f794172344a7cbd67ba723d4d473d",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8c96fc1292c94ef181708587ae544a50",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "0"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "9d8f13ae52154d9e92d3e9aa16231a5d",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f4b603857b6f4594a24f7bcb3a435d90",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "974x400"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "24819997f23a4c229b6a4e710b344b94",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "dd983815749d4d3d807b7bc1c157f53a",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "150"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "a31bf405885d4955b76b2758f7e94758",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9e46560b97584474a2a5fb5768fd7383",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "Tầng 1"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "Id": "6ea40c03b91142adab01238dc51a23ad",
+      "NodeType": "BooleanInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9d379f7229df4e6ca2eff5c7504e3910",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Enables selection between True and False",
+      "InputValue": true
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "SerializedWidth": 0.0,
+      "SerializedHeight": 0.0,
+      "Id": "efc7f0a3cc9e40218f5440ebbeb4323c",
+      "NodeType": "StringInputNode",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0218c2ebc70b47f4ae7e12fa20014c11",
+          "Name": "",
+          "Description": "",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string.",
+      "InputValue": "1200"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# TRẠNG THÁI: CHƯA DUYỆT\n# Mã nguồn của Python node trong ARV_TaoLanCanLouverLogia_v1.dyn (bản để review; .dyn nhúng đúng nội dung này).\n#\n# Tạo lan can + louver che cục nóng điều hòa cho logia, lấy thông tin từ mặt bằng DWG đã Link (KTS chốt 2026-10-21):\n#   1. Logia = sàn (Floor) trên level IN[9] có tên type chứa IN[2] (VD \"SHT-Gach Lat Logia-300x600\"), lấy hộp bao.\n#   2. Mặt ngoài logia = cặp nét song song cách nhau 150 mm (± 3) trên layer IN[1], nằm sát cạnh hộp bao logia\n#      (≤ 300 mm) và phủ ≥ 50 % cạnh đó. Tuyến lan can = đường giữa cặp nét, dài từ tường đến tường (đầu nét CAD).\n#      Nét dài hơn logia (chạy qua phòng bên cạnh) → cắt ở cạnh logia rồi bắt vào đầu tường Revit nằm trên tuyến\n#      (≤ 400 mm); không có tường → giữ mép logia, báo \"KIỂM TRA ĐẦU\".\n#   3. Cục nóng = cụm nét layer IN[6] nằm gọn trong khung IN[7] (dài x rộng, xoay 0/90°) có ≥ IN[8] nét.\n#      - Logia không có cục nóng: lan can suốt chiều dài.\n#      - Logia có cục nóng: louver (family IN[4], type IN[5], rộng = Width của type) đặt sát đầu tường GẦN cục nóng\n#        hơn, lan can = tổng chiều dài − rộng louver (một đoạn).\n#      - Lan can còn lại < IN[11] (1200) → bỏ lan can, louver kéo dài hết tuyến (KTS chốt 2026-10-21). Type louver\n#        đúng bề rộng (Height như type IN[5]) có sẵn thì dùng, chưa có → nhân bản IN[5] thành \"{rộng}X{cao}\".\n#   4. Lan can: Railing type IN[3], chân tại level, tuyến trên đường giữa cặp nét. Louver: family không host, điểm chèn\n#      ở một đầu, phát triển theo +Hand, Facing quay ra ngoài nhà; đặt xong đo khối đặc theo phương vuông góc tuyến\n#      rồi dời cho tâm bề dày lam nằm đúng giữa cặp nét 150 (AV-Lam Thép Logia2: khối 0…80 mm về phía Facing).\n#      Chân lan can + louver (KTS chốt 2026-10-21): logia có gờ bê tông (tường Comments \"ARV-GoLogia\" của\n#      ARV_TaoGoLogia_v1) trên cùng tuyến → đặt ở đỉnh gờ (VD +70 so với level); không có gờ → ở cao độ level (0).\n#   5. Phần tử tạo ra có Comments \"ARV-LanCanLogia\". Chạy lại, trong phạm vi tuyến từng logia:\n#      - Lan can / louver có Comments đó mà đúng kế hoạch (đầu tuyến ± 20 mm, louver đúng bề rộng) → giữ;\n#        chỉ sai chân (lệch > 2 mm so với đỉnh gờ / level) → nâng / hạ chân tại chỗ (giữ Id, báo \"nâng chân\").\n#      - Có Comments đó mà sai kế hoạch (VD lan can ngắn của lần chạy trước) → XOÁ rồi tạo lại (báo \"thay\").\n#      - Không có Comments đó (dựng tay) → không đụng; phần tương ứng bỏ qua, báo \"đã có (dựng tay)\".\n# INPUT\n#   IN[0]  (str)   Một phần tên bản CAD (trống = bản CAD duy nhất có layer khớp IN[1])\n#   IN[1]  (str)   Layer nét mặt ngoài logia, cách nhau ';' (khớp đúng tên) – VD \"A-Line;A-line1;A-line2\"\n#   IN[2]  (str)   Chuỗi con tên floor type sàn logia – VD \"Logia\"\n#   IN[3]  (str)   Railing type lan can – VD \"Glass Panel - Bottom Fill\" (sau thay \"AV_Lan Can Kính Cường Lực\")\n#   IN[4]  (str)   Family louver – VD \"AV-Lam Thép Logia2\"\n#   IN[5]  (str)   Type louver – VD \"1000X2800\"\n#   IN[6]  (str)   Layer nét cục nóng – VD \"0\" (block cục nóng vẽ trên layer 0)\n#   IN[7]  (str)   Khung cục nóng dài x rộng (mm) – VD \"974x400\"\n#   IN[8]  (int)   Số nét tối thiểu trong khung để nhận là cục nóng – VD 150 (G19: 213 nét / cục)\n#   IN[9]  (str)   Level – VD \"Tầng 1\"\n#   IN[10] (bool)  Dry-run: True = chỉ báo cáo + xem trước, không ghi vào mô hình (mặc định True)\n#   IN[11] (float) Lan can ngắn nhất (mm); ngắn hơn → louver kéo dài hết tuyến – VD 1200\n# OUTPUT\n#   OUT[0] (list[str])  Báo cáo: tóm tắt, đường dẫn log, rồi từng logia\n#   OUT[1] (list[Line]) Xem trước: tuyến lan can, đoạn louver, vạch 600 mm chỉ ra ngoài (mm)\n\nimport os\nimport io\nimport csv\nimport math\nimport datetime\nimport unicodedata\n\nDYNAMO = \"IN\" in globals()\n\nif DYNAMO:\n    import clr\n    clr.AddReference(\"RevitAPI\")\n    from Autodesk.Revit.DB import (FilteredElementCollector, ImportInstance, Options, GeometryInstance, PolyLine,\n                                   Line, Curve, XYZ, Transaction, UnitUtils, UnitTypeId, ModelPathUtils,\n                                   BuiltInParameter, Level, Wall, Floor, LocationCurve, FamilySymbol, CurveLoop,\n                                   ElementTransformUtils, FamilyInstance, ElementId, Solid, ViewDetailLevel)\n    from Autodesk.Revit.DB.Architecture import Railing, RailingType\n    from Autodesk.Revit.DB.Structure import StructuralType\n    clr.AddReference(\"RevitServices\")\n    from RevitServices.Persistence import DocumentManager\n    from RevitServices.Transactions import TransactionManager\n    doc = DocumentManager.Instance.CurrentDBDocument\n\nTRANSACTION_NAME = u\"ARV - Tạo lan can và louver logia từ CAD\"\nSCRIPT_TAG = u\"ARV_TaoLanCanLouverLogia_v1\"\nCOMMENT = u\"ARV-LanCanLogia\"\nCURB_COMMENT = u\"ARV-GoLogia\"   # Gờ bê tông của ARV_TaoGoLogia_v1\nPAIR_GAP_MM = 150.0       # Bề dày nét đôi mặt ngoài\nPAIR_TOL_MM = 3.0\nEDGE_MM = 300.0           # Cặp nét cách cạnh logia tối đa\nCOVER = 0.5               # Cặp nét phủ tối thiểu cạnh logia\nSNAP_WALL_MM = 400.0      # Bắt đầu tường Revit khi nét dài hơn logia\nON_AXIS_MM = 50.0\nEXIST_RAIL_MM = 50.0      # Lệch ngang tuyến để coi là cùng tuyến\nSAME_END_MM = 20.0        # Đầu đoạn khớp kế hoạch\nCENTRE_TOL_MM = 5.0       # Tâm bề dày louver lệch tim cặp nét tối đa\nUNIT_TOL_MM = 3.0\nSAME_Z_MM = 2.0           # Chân khớp kế hoạch\n\n\ndef norm(s):\n    return unicodedata.normalize(\"NFC\", (s or u\"\")).strip()\n\n\ndef fmt(p):\n    return u\"({:.0f}, {:.0f})\".format(p[0], p[1])\n\n\n# --- Hình học 2D thuần (mm) – chạy được ngoài Revit để thử --------------------------\nclass Facade(object):\n    \"\"\"Cặp nét đôi song song trục: axis 'H' (chạy theo X, line = y) hoặc 'V' (chạy theo Y, line = x).\"\"\"\n    def __init__(self, axis, line, s, e, layer):\n        self.axis, self.line, self.s, self.e, self.layer = axis, line, s, e, layer\n\n    def point(self, t):\n        return (t, self.line) if self.axis == 'H' else (self.line, t)\n\n\ndef axis_segments(segs):\n    \"\"\"segs [(a, b, layer)] → [(axis, line, s, e, layer)] chỉ đoạn song song trục X/Y (lệch ≤ 1 mm).\"\"\"\n    out = []\n    for a, b, layer in segs:\n        if abs(a[1] - b[1]) <= 1.0 and abs(a[0] - b[0]) > 1.0:\n            out.append(('H', (a[1] + b[1]) / 2.0, min(a[0], b[0]), max(a[0], b[0]), layer))\n        elif abs(a[0] - b[0]) <= 1.0 and abs(a[1] - b[1]) > 1.0:\n            out.append(('V', (a[0] + b[0]) / 2.0, min(a[1], b[1]), max(a[1], b[1]), layer))\n    return out\n\n\ndef facade_pairs(segs):\n    \"\"\"Cặp nét cùng phương, cách nhau 150 ± 3, cùng hai đầu (± 3) → [Facade] trên đường giữa.\"\"\"\n    ax = axis_segments(segs)\n    pairs, used = [], set()\n    for i, p in enumerate(ax):\n        if i in used:\n            continue\n        for j in range(i + 1, len(ax)):\n            q = ax[j]\n            if j in used or p[0] != q[0]:\n                continue\n            if (abs(abs(p[1] - q[1]) - PAIR_GAP_MM) <= PAIR_TOL_MM and abs(p[2] - q[2]) <= PAIR_TOL_MM\n                    and abs(p[3] - q[3]) <= PAIR_TOL_MM):\n                pairs.append(Facade(p[0], (p[1] + q[1]) / 2.0, (p[2] + q[2]) / 2.0, (p[3] + q[3]) / 2.0, p[4]))\n                used.add(i)\n                used.add(j)\n                break\n    return pairs\n\n\ndef match_facade(box, pairs):\n    \"\"\"Cặp nét mặt ngoài của logia (hộp bao x0, y0, x1, y1) → (Facade, lo, hi) hoặc None.\"\"\"\n    x0, y0, x1, y1 = box\n    best = None\n    for f in pairs:\n        if f.axis == 'V':\n            d, lo, hi = min(abs(f.line - x0), abs(f.line - x1)), y0, y1\n        else:\n            d, lo, hi = min(abs(f.line - y0), abs(f.line - y1)), x0, x1\n        ov = min(f.e, hi) - max(f.s, lo)\n        if d <= EDGE_MM and ov >= COVER * (hi - lo) and (best is None or d < best[0]):\n            best = (d, f, lo, hi)\n    return None if best is None else best[1:]\n\n\ndef outward(box, f):\n    x0, y0, x1, y1 = box\n    if f.axis == 'V':\n        return (1.0 if f.line > (x0 + x1) / 2.0 else -1.0, 0.0)\n    return (0.0, 1.0 if f.line > (y0 + y1) / 2.0 else -1.0)\n\n\ndef span_of(f, lo, hi, wall_ends):\n    \"\"\"Đoạn tuyến (s, e) + ghi chú. wall_ends: [(x, y)] đầu tường Revit.\"\"\"\n    notes = []\n    s, e = f.s, f.e\n    for side in (0, 1):\n        val = s if side == 0 else e\n        limit = lo - EDGE_MM if side == 0 else hi + EDGE_MM\n        if (side == 0 and val >= limit) or (side == 1 and val <= limit):\n            continue\n        edge = lo if side == 0 else hi\n        cand = []\n        for p in wall_ends:\n            off = p[1] - f.line if f.axis == 'H' else p[0] - f.line\n            t = p[0] if f.axis == 'H' else p[1]\n            if abs(off) <= ON_AXIS_MM and abs(t - edge) <= SNAP_WALL_MM:\n                cand.append(t)\n        if cand:\n            val = min(cand, key=lambda t: abs(t - edge))\n            notes.append(u\"{} tuyến bắt đầu tường Revit\".format(u\"Đầu\" if side == 0 else u\"Cuối\"))\n        else:\n            val = edge\n            notes.append(u\"KIỂM TRA ĐẦU – {} tuyến lấy mép logia (nét CAD dài hơn logia, không thấy tường)\".format(\n                u\"đầu\" if side == 0 else u\"cuối\"))\n        if side == 0:\n            s = val\n        else:\n            e = val\n    return s, e, notes\n\n\ndef find_unit(boxes, size, min_count):\n    \"\"\"boxes [(x0, y0, x1, y1)] nét trong logia → khung cục nóng (x0, y0, x1, y1, số nét) hoặc None.\"\"\"\n    best = None\n    for w, h in ((size[0], size[1]), (size[1], size[0])):\n        xs = sorted(set(round(b[0]) for b in boxes))\n        ys = sorted(set(round(b[1]) for b in boxes))\n        for x in xs:\n            col = [b for b in boxes if b[0] >= x - UNIT_TOL_MM and b[2] <= x + w + UNIT_TOL_MM]\n            if len(col) < min_count:\n                continue\n            for y in ys:\n                n = sum(1 for b in col if b[1] >= y - UNIT_TOL_MM and b[3] <= y + h + UNIT_TOL_MM)\n                if n >= min_count and (best is None or n > best[4]):\n                    best = (x, y, x + w, y + h, n)\n    return best\n\n\nclass Plan(object):\n    def __init__(self, fid, box):\n        self.fid, self.box = fid, box\n        self.facade = None\n        self.s = self.e = None\n        self.out = None\n        self.unit = None\n        self.louver = None      # (t0, t1)\n        self.louver_type = None # FamilySymbol hoặc tên type sẽ nhân bản\n        self.rail = None        # (t0, t1)\n        self.base = 0.0         # chân lan can + louver so với level (mm): đỉnh gờ hoặc 0\n        self.curb_id = u\"\"      # gờ ARV-GoLogia trên tuyến\n        self.lift_ids = []      # phần tử tool cũ đúng tuyến, sai chân → chỉnh chân\n        self.notes = []\n        self.status = u\"\"\n        self.rail_id = u\"\"      # lan can giữ lại / đã tạo\n        self.louver_id = u\"\"\n        self.need_rail = False  # phải tạo\n        self.need_louver = False\n        self.delete_ids = []    # phần tử tool cũ sai kế hoạch\n\n    def pt(self, t):\n        return self.facade.point(t)\n\n\ndef plan_logia(fid, box, pairs, wall_ends, unit_boxes, unit_size, unit_min, louver_w, min_rail):\n    p = Plan(fid, box)\n    m = match_facade(box, pairs)\n    if m is None:\n        p.status = u\"Bỏ qua – không thấy cặp nét mặt ngoài dày 150\"\n        return p\n    f, lo, hi = m\n    p.facade = f\n    p.out = outward(box, f)\n    p.s, p.e, p.notes = span_of(f, lo, hi, wall_ends)\n    if p.e - p.s <= 0:\n        p.status = u\"Bỏ qua – tuyến rỗng\"\n        return p\n    p.unit = find_unit(unit_boxes, unit_size, unit_min)\n    if p.unit is not None:\n        if p.e - p.s < louver_w + 50.0:\n            p.status = u\"Bỏ qua – logia dài {:.0f} không đủ cho louver {:.0f}\".format(p.e - p.s, louver_w)\n            return p\n        uc = (p.unit[1] + p.unit[3]) / 2.0 if f.axis == 'V' else (p.unit[0] + p.unit[2]) / 2.0\n        if p.e - p.s - louver_w < min_rail:\n            p.louver, p.rail = (p.s, p.e), None\n            p.notes.append(u\"lan can còn {:.0f} < {:.0f} → louver hết tuyến\".format(p.e - p.s - louver_w, min_rail))\n        elif abs(uc - p.s) <= abs(p.e - uc):\n            p.louver, p.rail = (p.s, p.s + louver_w), (p.s + louver_w, p.e)\n        else:\n            p.louver, p.rail = (p.e - louver_w, p.e), (p.s, p.e - louver_w)\n    else:\n        p.rail = (p.s, p.e)\n    p.status = u\"OK\"\n    return p\n\n\ndef along(f, pt):\n    \"\"\"(toạ độ dọc tuyến, lệch ngang) của điểm so với tuyến f.\"\"\"\n    return (pt[0], pt[1] - f.line) if f.axis == 'H' else (pt[1], pt[0] - f.line)\n\n\ndef curb_base(p, curbs):\n    \"\"\"curbs [(a, b, Id, đỉnh)] gờ ARV-GoLogia (mm, so với level) → đặt p.base = đỉnh gờ trên cùng tuyến.\"\"\"\n    f = p.facade\n    lo, hi = min(p.s, p.e), max(p.s, p.e)\n    best = None\n    for a, b, eid, top in curbs:\n        ta, da = along(f, a)\n        tb, db = along(f, b)\n        if abs(da) > EXIST_RAIL_MM or abs(db) > EXIST_RAIL_MM:\n            continue\n        ov = min(max(ta, tb), hi) - max(min(ta, tb), lo)\n        if ov > 0.5 * (hi - lo) and (best is None or ov > best[0]):\n            best = (ov, eid, top)\n    if best is not None:\n        p.curb_id, p.base = best[1], best[2]\n        p.notes.append(u\"chân trên gờ Id {} ({:+.0f})\".format(best[1], best[2]))\n\n\ndef reconcile(p, rails, louvers):\n    \"\"\"rails [(a, b, Id, của tool, chân)], louvers [(đầu, cuối, Id, của tool, tâm khối, chân)] (mm, điểm 2D) →\n    đặt p.rail_id / louver_id (giữ), need_*, delete_ids, lift_ids, ghi chú.\"\"\"\n    f = p.facade\n    lo, hi = min(p.s, p.e), max(p.s, p.e)\n\n    def seg_on(a, b):\n        ta, da = along(f, a)\n        tb, db = along(f, b)\n        if abs(da) > EXIST_RAIL_MM or abs(db) > EXIST_RAIL_MM:\n            return None\n        s, e = min(ta, tb), max(ta, tb)\n        return (s, e) if min(e, hi) - max(s, lo) > 50.0 else None\n\n    def louver_on(a, b):\n        ta, da = along(f, a)\n        tb, db = along(f, b)\n        if abs(da) > 300.0 or abs(db) > 300.0:\n            return None\n        s, e = min(ta, tb), max(ta, tb)\n        return (s, e) if min(e, hi) - max(s, lo) > 50.0 else None\n\n    def same(x, want):\n        return want is not None and abs(x[0] - want[0]) <= SAME_END_MM and abs(x[1] - want[1]) <= SAME_END_MM\n\n    for items, want, kind in ((rails, p.rail, u\"lan can\"), (louvers, p.louver, u\"louver\")):\n        keep = None\n        for it in items:\n            a, b, eid, mine = it[:4]\n            x = seg_on(a, b) if kind == u\"lan can\" else louver_on(a, b)\n            if x is None:\n                continue\n            centred = kind == u\"lan can\" or (it[4] is not None and abs(along(f, it[4])[1]) <= CENTRE_TOL_MM)\n            z = it[-1]\n            if not mine:\n                keep = keep or eid\n                p.notes.append(u\"đã có {} dựng tay Id {}\".format(kind, eid))\n            elif same(x, want) and centred and keep is None:\n                keep = eid\n                if abs(z - p.base) > SAME_Z_MM:\n                    p.lift_ids.append(eid)\n                    p.notes.append(u\"{} chân {} Id {} ({:+.0f} → {:+.0f})\".format(\n                        kind, u\"nâng\" if p.base > z else u\"hạ\", eid, z, p.base))\n            else:\n                p.delete_ids.append(eid)\n                p.notes.append(u\"thay {} cũ Id {} ({:.0f}{})\".format(\n                    kind, eid, x[1] - x[0], u\"\" if centred else u\", lệch tim\"))\n        if kind == u\"lan can\":\n            p.rail_id = keep or u\"\"\n            p.need_rail = p.rail is not None and keep is None\n        else:\n            p.louver_id = keep or u\"\"\n            p.need_louver = p.louver is not None and keep is None\n\n\n# --- Revit ---------------------------------------------------------------------------\ndef to_mm(feet):\n    return UnitUtils.ConvertFromInternalUnits(feet, UnitTypeId.Millimeters)\n\n\ndef from_mm(mm):\n    return UnitUtils.ConvertToInternalUnits(mm, UnitTypeId.Millimeters)\n\n\ndef xy(p):\n    return (to_mm(p.X), to_mm(p.Y))\n\n\ndef get_name(element):\n    try:\n        return element.Name\n    except Exception:\n        p = element.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME)\n        return p.AsString() if p else u\"\"\n\n\ndef is_central_file(document):\n    if not document.IsWorkshared:\n        return False\n    try:\n        central = ModelPathUtils.ConvertModelPathToUserVisiblePath(document.GetWorksharingCentralModelPath())\n    except Exception:\n        return False\n    return os.path.normcase(central or \"\") == os.path.normcase(document.PathName or \"\")\n\n\nclass StopReport(Exception):\n    def __init__(self, lines):\n        Exception.__init__(self, lines[0])\n        self.lines = lines\n\n\ndef layer_of(geo_obj):\n    style = doc.GetElement(geo_obj.GraphicsStyleId)\n    if style is not None and style.GraphicsStyleCategory is not None:\n        return norm(style.GraphicsStyleCategory.Name)\n    return None\n\n\ndef cad_objects(cad):\n    opt = Options()\n    if cad.ViewSpecific:\n        opt.View = doc.GetElement(cad.OwnerViewId)\n    result = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            else:\n                result.append(obj)\n\n    geo = cad.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return result\n\n\ndef pick_cad(cad_filter, layers):\n    found = []\n    for inst in FilteredElementCollector(doc).OfClass(ImportInstance).ToElements():\n        name = get_name(doc.GetElement(inst.GetTypeId()))\n        if cad_filter and cad_filter.lower() not in name.lower():\n            continue\n        objects = cad_objects(inst)\n        all_layers = set(l for l in (layer_of(o) for o in objects) if l)\n        found.append((inst, name, objects, all_layers))\n    hits = [f for f in found if f[3] & layers]\n    if len(hits) == 1:\n        return hits[0]\n    if not hits:\n        raise StopReport([u\"DỪNG: không có bản CAD{} nào có layer '{}'.\".format(\n            u\" khớp '{}'\".format(cad_filter) if cad_filter else u\"\", u\"; \".join(sorted(layers)))])\n    raise StopReport([u\"DỪNG: {} bản CAD có layer khớp – nhập tên bản CAD vào ô IN[0]: {}\".format(\n        len(hits), u\", \".join(h[1] for h in hits))])\n\n\ndef find_level(name):\n    levels = list(FilteredElementCollector(doc).OfClass(Level).ToElements())\n    for l in levels:\n        if norm(l.Name) == norm(name):\n            return l\n    raise StopReport([u\"DỪNG: không có level '{}'. Các level: {}\".format(\n        name, u\", \".join(l.Name for l in sorted(levels, key=lambda x: x.Elevation)))])\n\n\ndef find_railing_type(name):\n    types = list(FilteredElementCollector(doc).OfClass(RailingType).ToElements())\n    for t in types:\n        if norm(get_name(t)) == norm(name):\n            return t\n    raise StopReport([u\"DỪNG: không có Railing type '{}' (IN[3]). Các type: {}\".format(\n        name, u\", \".join(sorted(get_name(t) for t in types)))])\n\n\ndef find_symbol(family_name, type_name):\n    syms = [s for s in FilteredElementCollector(doc).OfClass(FamilySymbol).ToElements()\n            if norm(s.FamilyName) == norm(family_name)]\n    if not syms:\n        raise StopReport([u\"DỪNG: không có family louver '{}' (IN[4]) – load family vào mô hình.\".format(family_name)])\n    for s in syms:\n        if norm(get_name(s)) == norm(type_name):\n            return s\n    raise StopReport([u\"DỪNG: family '{}' không có type '{}' (IN[5]). Các type: {}\".format(\n        family_name, type_name, u\", \".join(sorted(get_name(s) for s in syms)))])\n\n\ndef symbol_width(s):\n    p = s.get_Parameter(BuiltInParameter.FAMILY_WIDTH_PARAM) or s.LookupParameter(\"Width\")\n    if p is None:\n        raise StopReport([u\"DỪNG: type louver '{}' không có tham số Width.\".format(get_name(s))])\n    return to_mm(p.AsDouble())\n\n\ndef read_cad(objects, facade_layers, unit_layer):\n    \"\"\"→ (segs [(a, b, layer)] nét mặt ngoài, boxes [(x0, y0, x1, y1)] nét layer cục nóng).\"\"\"\n    segs, boxes = [], []\n    for obj in objects:\n        l = layer_of(obj)\n        if l in facade_layers:\n            if isinstance(obj, Line):\n                segs.append((xy(obj.GetEndPoint(0)), xy(obj.GetEndPoint(1)), l))\n            elif isinstance(obj, PolyLine):\n                pts = [xy(p) for p in obj.GetCoordinates()]\n                segs.extend((a, b, l) for a, b in zip(pts[:-1], pts[1:]))\n        if l == unit_layer:\n            if isinstance(obj, Curve):\n                pts = [xy(p) for p in obj.Tessellate()]\n            elif isinstance(obj, PolyLine):\n                pts = [xy(p) for p in obj.GetCoordinates()]\n            else:\n                continue\n            xs = [p[0] for p in pts]\n            ys = [p[1] for p in pts]\n            boxes.append((min(xs), min(ys), max(xs), max(ys)))\n    return segs, boxes\n\n\ndef logia_floors(level, type_part):\n    result = []\n    for fl in FilteredElementCollector(doc).OfClass(Floor).ToElements():\n        if fl.LevelId != level.Id:\n            continue\n        if norm(type_part).lower() not in norm(get_name(doc.GetElement(fl.GetTypeId()))).lower():\n            continue\n        bb = fl.get_BoundingBox(None)\n        if bb is None:\n            continue\n        result.append((fl.Id.Value, (to_mm(bb.Min.X), to_mm(bb.Min.Y), to_mm(bb.Max.X), to_mm(bb.Max.Y))))\n    return result\n\n\ndef wall_end_points(level):\n    pts = []\n    for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n        loc = wl.Location\n        prm = wl.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n        if prm is not None and norm(prm.AsString()) == CURB_COMMENT:\n            continue   # gờ nằm trên tuyến – không dùng làm đầu tường\n        if wl.LevelId == level.Id and isinstance(loc, LocationCurve):\n            pts.append(xy(loc.Curve.GetEndPoint(0)))\n            pts.append(xy(loc.Curve.GetEndPoint(1)))\n    return pts\n\n\ndef is_mine(el):\n    prm = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    return prm is not None and norm(prm.AsString()) == COMMENT\n\n\ndef existing_curbs(level):\n    \"\"\"[(đầu, cuối, Id, đỉnh)] gờ ARV-GoLogia trên level (đỉnh so với level, mm).\"\"\"\n    out = []\n    for wl in FilteredElementCollector(doc).OfClass(Wall).ToElements():\n        loc = wl.Location\n        prm = wl.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n        if (wl.LevelId != level.Id or not isinstance(loc, LocationCurve) or prm is None\n                or norm(prm.AsString()) != CURB_COMMENT):\n            continue\n        top = to_mm(wl.get_Parameter(BuiltInParameter.WALL_BASE_OFFSET).AsDouble()\n                    + wl.get_Parameter(BuiltInParameter.WALL_USER_HEIGHT_PARAM).AsDouble())\n        out.append((xy(loc.Curve.GetEndPoint(0)), xy(loc.Curve.GetEndPoint(1)), wl.Id.Value, top))\n    return out\n\n\ndef rail_base_param(r):\n    return r.get_Parameter(BuiltInParameter.STAIRS_RAILING_HEIGHT_OFFSET)\n\n\ndef louver_base_param(fi):\n    return fi.get_Parameter(BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM)\n\n\ndef existing_rails(level):\n    \"\"\"[(a, b, Id, của tool, chân)] mỗi lan can trên level: đoạn từ đầu đến cuối đường dẫn.\"\"\"\n    out = []\n    for r in FilteredElementCollector(doc).OfClass(Railing).ToElements():\n        if r.LevelId != level.Id:\n            continue\n        path = list(r.GetPath())\n        if path:\n            out.append((xy(path[0].GetEndPoint(0)), xy(path[-1].GetEndPoint(1)), r.Id.Value, is_mine(r),\n                        to_mm(rail_base_param(r).AsDouble())))\n    return out\n\n\ndef existing_louvers(symbol):\n    \"\"\"[(đầu, cuối, Id, của tool, tâm khối đặc, chân)]: đầu = điểm chèn, cuối = điểm chèn + Hand × Width.\"\"\"\n    out = []\n    for fi in FilteredElementCollector(doc).OfClass(FamilyInstance).ToElements():\n        if fi.Symbol.Family.Id != symbol.Family.Id or not hasattr(fi.Location, \"Point\"):\n            continue\n        o = xy(fi.Location.Point)\n        h = fi.HandOrientation\n        w = symbol_width(fi.Symbol)\n        ex, ey = solid_extent(fi, (1.0, 0.0)), solid_extent(fi, (0.0, 1.0))\n        c = ((ex[0] + ex[1]) / 2.0, (ey[0] + ey[1]) / 2.0) if ex and ey else None\n        bp = louver_base_param(fi)\n        out.append((o, (o[0] + h.X * w, o[1] + h.Y * w), fi.Id.Value, is_mine(fi), c,\n                    to_mm(bp.AsDouble()) if bp is not None else 0.0))\n    return out\n\n\ndef louver_symbol(template, width, planned):\n    \"\"\"Type cùng family, Width = width, Height = Height của type mẫu → FamilySymbol, hoặc tên type sẽ nhân bản.\"\"\"\n    key = int(round(width))\n    if key in planned:\n        return planned[key]\n    th = template.get_Parameter(BuiltInParameter.FAMILY_HEIGHT_PARAM) or template.LookupParameter(\"Height\")\n    height = to_mm(th.AsDouble()) if th else 0.0\n    for s in FilteredElementCollector(doc).OfClass(FamilySymbol).ToElements():\n        if s.Family.Id != template.Family.Id:\n            continue\n        sh = s.get_Parameter(BuiltInParameter.FAMILY_HEIGHT_PARAM) or s.LookupParameter(\"Height\")\n        if abs(symbol_width(s) - width) <= 1.0 and sh is not None and abs(to_mm(sh.AsDouble()) - height) <= 1.0:\n            planned[key] = s\n            return s\n    planned[key] = u\"{}X{:.0f}\".format(key, height)\n    return planned[key]\n\n\ndef type_label(t):\n    return get_name(t) if not isinstance(t, (str, type(u\"\"))) else t + u\" (mới)\"\n\n\ndef set_comment(el):\n    prm = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n    if prm is not None and not prm.IsReadOnly:\n        prm.Set(COMMENT)\n\n\ndef create_railing(p, rtype, level):\n    a, b = p.pt(p.rail[0]), p.pt(p.rail[1])\n    loop = CurveLoop()\n    loop.Append(Line.CreateBound(XYZ(from_mm(a[0]), from_mm(a[1]), 0.0), XYZ(from_mm(b[0]), from_mm(b[1]), 0.0)))\n    r = Railing.Create(doc, loop, rtype.Id, level.Id)\n    rail_base_param(r).Set(from_mm(p.base))\n    set_comment(r)\n    return r\n\n\ndef set_base(el, base_mm):\n    \"\"\"Chỉnh chân lan can / louver đã có (so với level, mm).\"\"\"\n    prm = rail_base_param(el) if isinstance(el, Railing) else louver_base_param(el)\n    prm.Set(from_mm(base_mm))\n\n\ndef create_louver(p, symbol, level):\n    \"\"\"Điểm chèn ở một đầu, Hand dọc tuyến, Facing = Z × Hand → chọn chiều Hand sao cho Facing ra ngoài.\"\"\"\n    d = (p.out[1], -p.out[0])\n    a, b = p.pt(p.louver[0]), p.pt(p.louver[1])\n    start = a if (b[0] - a[0]) * d[0] + (b[1] - a[1]) * d[1] > 0 else b\n    o = XYZ(from_mm(start[0]), from_mm(start[1]), 0.0)\n    fi = doc.Create.NewFamilyInstance(o, symbol, level, StructuralType.NonStructural)\n    ang = math.atan2(d[1], d[0])\n    if abs(ang) > 1e-9:\n        ElementTransformUtils.RotateElement(doc, fi.Id, Line.CreateBound(o, o.Add(XYZ.BasisZ)), ang)\n    doc.Regenerate()\n    ext = solid_extent(fi, p.out)\n    if ext is not None:\n        off = (ext[0] + ext[1]) / 2.0 - p.facade.line * (p.out[0] + p.out[1])\n        if abs(off) > 0.5:\n            ElementTransformUtils.MoveElement(doc, fi.Id, XYZ(from_mm(-p.out[0] * off), from_mm(-p.out[1] * off), 0.0))\n    louver_base_param(fi).Set(from_mm(p.base))\n    set_comment(fi)\n    return fi\n\n\ndef solid_extent(fi, u):\n    \"\"\"(min, max) toạ độ tuyệt đối (mm) của khối đặc theo phương trục u = (±1, 0) / (0, ±1), nhân dấu theo u.\"\"\"\n    opt = Options()\n    opt.DetailLevel = ViewDetailLevel.Fine\n    vals = []\n\n    def walk(geo):\n        for obj in geo:\n            if isinstance(obj, GeometryInstance):\n                walk(obj.GetInstanceGeometry())\n            elif isinstance(obj, Solid) and obj.Volume > 0:\n                for e in obj.Edges:\n                    for q in e.Tessellate():\n                        vals.append(to_mm(q.X * u[0] + q.Y * u[1]))\n\n    geo = fi.get_Geometry(opt)\n    if geo is not None:\n        walk(geo)\n    return (min(vals), max(vals)) if vals else None\n\n\ndef preview_lines(plans, z0_mm):\n    try:\n        clr.AddReference(\"ProtoGeometry\")\n        from Autodesk.DesignScript.Geometry import Point as DSPoint, Line as DSLine\n        out = []\n        for p in plans:\n            z_mm = z0_mm + p.base\n            segs = [(p.pt(p.rail[0]), p.pt(p.rail[1]))] if p.rail else []\n            if p.louver:\n                a, b = p.pt(p.louver[0]), p.pt(p.louver[1])\n                segs.append((a, b))\n                m = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)\n                segs.append((m, (m[0] + p.out[0] * 600.0, m[1] + p.out[1] * 600.0)))\n            for a, b in segs:\n                out.append(DSLine.ByStartPointEndPoint(DSPoint.ByCoordinates(a[0], a[1], z_mm),\n                                                       DSPoint.ByCoordinates(b[0], b[1], z_mm)))\n        return out\n    except Exception:\n        return []\n\n\nLOG_HEADER = [u\"STT\", u\"Sàn logia Id\", u\"Layer mặt ngoài\", u\"Tuyến từ\", u\"Tuyến đến\", u\"Dài (mm)\", u\"Cục nóng\",\n              u\"Louver từ\", u\"Louver đến\", u\"Type louver\", u\"Lan can (mm)\", u\"Chân (mm)\", u\"Gờ Id\", u\"Ghi chú\",\n              u\"Kết quả\", u\"Lan can Id\", u\"Louver Id\"]\n\n\ndef write_log(rows, source, dry_run):\n    folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n    if not os.path.isdir(folder):\n        os.makedirs(folder)\n    stamp = datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\")\n    path = os.path.join(folder, \"TaoLanCanLouverLogia_{}_{}.csv\".format(\"DRYRUN\" if dry_run else \"THUCHIEN\", stamp))\n    with io.open(path, \"w\", encoding=\"utf-8-sig\", newline=\"\") as f:\n        f.write(u\"# Dự án: {}\\n\".format(doc.Title))\n        f.write(u\"# File nguồn: {}\\n\".format(source))\n        f.write(u\"# Ngày xuất: {}\\n\".format(datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M\")))\n        f.write(u\"# Chế độ: {}\\n\".format(u\"Chạy thử (dry-run)\" if dry_run else u\"Thực hiện\"))\n        f.write(u\"# Đơn vị: mm\\n\")\n        w = csv.writer(f)\n        w.writerow(LOG_HEADER)\n        w.writerows(rows)\n    return path\n\n\ndef split_layers(text):\n    return set(norm(s) for s in (text or u\"\").split(u\";\") if norm(s))\n\n\ndef parse_size(text):\n    t = norm(text).lower().replace(u\"×\", u\"x\")\n    a, b = t.split(u\"x\")\n    return (float(a), float(b))\n\n\nDONE_STATUS = (u\"Sẽ tạo\", u\"Đã tạo\", u\"Sẽ thay\", u\"Đã thay\", u\"Sẽ chỉnh chân\", u\"Đã chỉnh chân\")\n\n\ndef action(p, dry_run):\n    if p.delete_ids:\n        word = u\"thay\"\n    elif p.need_rail or p.need_louver:\n        word = u\"tạo\"\n    else:\n        word = u\"chỉnh chân\"\n    return (u\"Sẽ \" if dry_run else u\"Đã \") + word\n\n\ndef main(cad_filter, facade_layers, floor_part, rail_type_name, louver_family, louver_type, unit_layer,\n         unit_size, unit_min, level_name, dry_run, min_rail):\n    if is_central_file(doc):\n        return [u\"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy.\"], []\n    cad, cad_name, objects, all_layers = pick_cad(cad_filter, facade_layers)\n    missing = sorted((facade_layers | {unit_layer}) - all_layers)\n    level = find_level(level_name)\n    rtype = find_railing_type(rail_type_name)\n    symbol = find_symbol(louver_family, louver_type)\n    louver_w = symbol_width(symbol)\n    floors = logia_floors(level, floor_part)\n    if not floors:\n        raise StopReport([u\"DỪNG: level '{}' không có sàn nào có type chứa '{}' (IN[2]).\".format(level_name, floor_part)])\n\n    segs, unit_boxes = read_cad(objects, facade_layers, unit_layer)\n    pairs = facade_pairs(segs)\n    wall_ends = wall_end_points(level)\n    rails = existing_rails(level)\n    louvers = existing_louvers(symbol)\n    curbs = existing_curbs(level)\n\n    planned = {}   # rộng louver → FamilySymbol có sẵn hoặc tên type sẽ nhân bản\n    plans = []\n    for fid, box in floors:\n        x0, y0, x1, y1 = box\n        inside = [b for b in unit_boxes if b[0] >= x0 - 5 and b[2] <= x1 + 5 and b[1] >= y0 - 5 and b[3] <= y1 + 5]\n        p = plan_logia(fid, box, pairs, wall_ends, inside, unit_size, unit_min, louver_w, min_rail)\n        if p.status == u\"OK\":\n            if p.louver:\n                p.louver_type = louver_symbol(symbol, p.louver[1] - p.louver[0], planned)\n            curb_base(p, curbs)\n            reconcile(p, rails, louvers)\n            if not (p.need_rail or p.need_louver or p.delete_ids or p.lift_ids):\n                p.status = u\"Bỏ qua – đã đúng\"\n        plans.append(p)\n    plans.sort(key=lambda q: (-round((q.box[1] + q.box[3]) / 2.0), round((q.box[0] + q.box[2]) / 2.0)))\n    jobs = [p for p in plans if p.status == u\"OK\"]\n\n    if not dry_run and jobs:\n        TransactionManager.Instance.ForceCloseTransaction()\n        tx = Transaction(doc, TRANSACTION_NAME)\n        tx.Start()\n        try:\n            for key in sorted(planned):\n                t = planned[key]\n                if isinstance(t, (str, type(u\"\"))):\n                    new_type = symbol.Duplicate(t)\n                    (new_type.get_Parameter(BuiltInParameter.FAMILY_WIDTH_PARAM)\n                     or new_type.LookupParameter(\"Width\")).Set(from_mm(key))\n                    planned[key] = new_type\n            for p in jobs:\n                for eid in p.delete_ids:\n                    doc.Delete(ElementId(eid))\n            for p in jobs:\n                for eid in p.lift_ids:\n                    set_base(doc.GetElement(ElementId(eid)), p.base)\n                if p.need_rail:\n                    p.rail_id = create_railing(p, rtype, level).Id.Value\n                if p.need_louver:\n                    sym = planned[int(round(p.louver[1] - p.louver[0]))]\n                    if not sym.IsActive:\n                        sym.Activate()\n                        doc.Regenerate()\n                    p.louver_id = create_louver(p, sym, level).Id.Value\n                p.status = action(p, False)\n            tx.Commit()\n        except Exception as ex:\n            tx.RollBack()\n            return [u\"LỖI khi tạo, mọi thay đổi đã được hoàn tác: {}\".format(ex)], []\n    elif dry_run:\n        for p in jobs:\n            p.status = action(p, True)\n\n    rows = []\n    for i, p in enumerate(plans, 1):\n        f = p.facade\n        rows.append([i, p.fid, f.layer if f else u\"—\",\n                     fmt(p.pt(p.s)) if f and p.s is not None else u\"—\",\n                     fmt(p.pt(p.e)) if f and p.e is not None else u\"—\",\n                     u\"{:.0f}\".format(p.e - p.s) if f and p.s is not None else u\"—\",\n                     fmt(((p.unit[0] + p.unit[2]) / 2.0, (p.unit[1] + p.unit[3]) / 2.0)) if p.unit else u\"không\",\n                     fmt(p.pt(p.louver[0])) if p.louver else u\"—\", fmt(p.pt(p.louver[1])) if p.louver else u\"—\",\n                     type_label(p.louver_type) if p.louver_type is not None else u\"—\",\n                     u\"{:.0f}\".format(p.rail[1] - p.rail[0]) if p.rail else u\"—\",\n                     u\"{:+.0f}\".format(p.base), p.curb_id,\n                     u\"; \".join(p.notes), p.status, p.rail_id, p.louver_id])\n\n    done = [p for p in plans if p.status in DONE_STATUS]\n    ok = [p for p in plans if p.rail or p.louver]\n    report = [u\"{} – {}\".format(TRANSACTION_NAME, u\"CHẠY THỬ (không ghi vào mô hình)\" if dry_run else u\"ĐÃ THỰC HIỆN\")]\n    report.append(u\"CAD: {} – level: {} – lan can '{}' – louver '{} : {}' rộng {:.0f} – lan can ngắn nhất {:.0f}\".format(\n        cad_name, level.Name, get_name(rtype), louver_family, louver_type, louver_w, min_rail))\n    if missing:\n        report.append(u\"LƯU Ý: bản CAD không có layer: {}\".format(u\"; \".join(missing)))\n    report.append(u\"Logia: {} – lan can + louver: {}, chỉ louver (hết tuyến): {}, chỉ lan can: {}\".format(\n        len(plans), len([p for p in ok if p.rail and p.louver]), len([p for p in ok if p.louver and not p.rail]),\n        len([p for p in ok if p.rail and not p.louver])))\n    report.append(u\"{}: {} logia (thay {}, chỉnh chân {}), đã đúng: {}\".format(\n        u\"Sẽ làm\" if dry_run else u\"Đã làm\", len(done), len([p for p in done if p.delete_ids]),\n        len([p for p in done if p.lift_ids]), len([p for p in plans if p.status == u\"Bỏ qua – đã đúng\"])))\n    report.append(u\"Chân trên gờ {}: {} logia, ở cao độ level: {}\".format(\n        CURB_COMMENT, len([p for p in ok if p.curb_id]), len([p for p in ok if not p.curb_id])))\n    new_types = sorted(set(type_label(p.louver_type) for p in done if p.louver_type is not None and p.need_louver))\n    if new_types:\n        report.append(u\"Type louver dùng: {}\".format(u\", \".join(new_types)))\n    skipped = [p for p in plans if p not in done and p.status != u\"Bỏ qua – đã đúng\"]\n    for p in skipped:\n        report.append(u\"  Sàn {}: {}\".format(p.fid, p.status))\n    checks = [p for p in plans if any(n.startswith(u\"KIỂM TRA\") for n in p.notes)]\n    if checks:\n        report.append(u\"KIỂM TRA ĐẦU tuyến {} logia: {}\".format(len(checks), u\", \".join(str(p.fid) for p in checks)))\n    try:\n        report.append(u\"Log: \" + write_log(rows, cad_name, dry_run))\n    except Exception as ex:\n        report.append(u\"Không ghi được file log: {}\".format(ex))\n    if dry_run:\n        report.append(u\"Xem trước: tuyến lan can, đoạn louver + vạch 600 mm chỉ ra ngoài. Đúng thì đổi Dry-run = False \"\n                      u\"và Run lại. Undo bằng mục \\\"{}\\\".\".format(TRANSACTION_NAME))\n    report.append(u\" | \".join(LOG_HEADER))\n    report += [u\" | \".join(u\"{}\".format(v) for v in r) for r in rows]\n    return report, preview_lines(done, to_mm(level.Elevation))\n\n\ndef force_rerun_next_time():\n    \"\"\"Đánh dấu node 'đã sửa' để lần Run sau luôn chạy lại (chỉ ở chế độ Manual).\"\"\"\n    try:\n        clr.AddReference(\"DynamoRevitDS\")\n        from Dynamo.Applications import DynamoRevit\n        ws = DynamoRevit.RevitDynamoModel.CurrentWorkspace\n        rt = ws.RunSettings.RunType\n        try:\n            clr.AddReference(\"DynamoCore\")\n            from Dynamo.Models import RunType\n            manual = rt == RunType.Manual\n        except Exception:\n            manual = False\n        if not (manual or str(rt) in (\"0\", \"Manual\", \"RunType.Manual\")):\n            return u\"Chế độ chạy không phải Manual – lần sau phải đổi một ô đầu vào thì node mới chạy lại.\"\n        for n in ws.Nodes:\n            if SCRIPT_TAG in (getattr(n, \"Script\", None) or u\"\"):\n                n.MarkNodeAsModified(True)\n                return None\n        return u\"Không tìm thấy node để đánh dấu chạy lại.\"\n    except Exception as ex:\n        return u\"Không đánh dấu được node chạy lại ({}) – lần sau đổi một ô đầu vào rồi Run.\".format(ex)\n\n\nif DYNAMO:\n    import traceback\n\n    def _s(i, default):\n        v = IN[i] if len(IN) > i else None\n        return (v if v is not None and u\"{}\".format(v).strip() else default)\n\n    try:\n        OUT = list(main(\n            u\"{}\".format(_s(0, u\"\")).strip(),\n            split_layers(_s(1, u\"A-Line;A-line1;A-line2\")),\n            norm(_s(2, u\"Logia\")),\n            norm(_s(3, u\"Glass Panel - Bottom Fill\")),\n            norm(_s(4, u\"AV-Lam Thép Logia2\")),\n            norm(_s(5, u\"1000X2800\")),\n            norm(u\"{}\".format(_s(6, u\"0\"))),\n            parse_size(_s(7, u\"974x400\")),\n            int(float(_s(8, 150))),\n            norm(_s(9, u\"Tầng 1\")),\n            True if (len(IN) <= 10 or IN[10] is None) else bool(IN[10]),\n            float(_s(11, 1200.0)),\n        ))\n    except StopReport as ex:\n        OUT = [ex.lines, []]\n    except Exception as ex:\n        OUT = [[u\"LỖI: {}\".format(ex), traceback.format_exc()], []]\n        try:\n            folder = os.path.join(os.path.expanduser(\"~\"), \"Documents\", \"ARV_Logs\")\n            if not os.path.isdir(folder):\n                os.makedirs(folder)\n            with io.open(os.path.join(folder, \"TaoLanCanLouverLogia_LOI_{}.txt\".format(\n                    datetime.datetime.now().strftime(\"%Y%m%d_%H%M%S\"))), \"w\", encoding=\"utf-8-sig\") as f:\n                f.write(u\"\\n\".join(OUT[0]))\n        except Exception:\n            pass\n    note = force_rerun_next_time()\n    if note:\n        OUT[0].append(u\"LƯU Ý: \" + note)\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "4b2360d5d9ce4baf9554f99cdc6f6662",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "10defdb3fa7c45d597009f9dfbd722df",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "66dcf71b8c684b41942fd6eb6746ceb4",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d8849094f86b45129f7aac5fca0532ba",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ef91595a03c545b8acf523dee1538c3d",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7b6dd4655ef94925bb7322102ac6d90a",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "42ab3123c0d94aea91d00b2982ef3102",
+          "Name": "IN[5]",
+          "Description": "Input #5",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ef387498b1374d689d8de20e63c2192b",
+          "Name": "IN[6]",
+          "Description": "Input #6",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2f61052512434a4bad98316f3f814baf",
+          "Name": "IN[7]",
+          "Description": "Input #7",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "766b4ce4ac1e40ffa4938867ed405de6",
+          "Name": "IN[8]",
+          "Description": "Input #8",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a064be5a05bc45088cdbe55faeb22533",
+          "Name": "IN[9]",
+          "Description": "Input #9",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "cf95279fa2024e8eb06efac8a7f9eb3d",
+          "Name": "IN[10]",
+          "Description": "Input #10",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "111eafbd02104342bd33eecd6d36d69f",
+          "Name": "IN[11]",
+          "Description": "Input #11",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4340e1c2165e4f6a90764f883d12709c",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 1000.0,
+      "WatchHeight": 700.0,
+      "Id": "4fbf1cb343de4bb2bdfe5fdeafdb3ee0",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "f78ae486609b45af9fe3d37d2f50db73",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "687c345ef48b4586a2d91116024c0c0b",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c17b9f57fa90492d975c075932374ac5",
+      "End": "10defdb3fa7c45d597009f9dfbd722df",
+      "Id": "18832d3fcf514734b4ed2ffde7463470",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0dee421861294721a530d2fb954d187a",
+      "End": "66dcf71b8c684b41942fd6eb6746ceb4",
+      "Id": "e74b232103c6460185b66b334dd0f19b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "97dc39c3a87e4b95840f2371798d3aab",
+      "End": "d8849094f86b45129f7aac5fca0532ba",
+      "Id": "cfb594ccb1f4431488ce1a5c4334ac58",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b7fdbf3810ce4b7c9de08354fba8403a",
+      "End": "ef91595a03c545b8acf523dee1538c3d",
+      "Id": "b98e53ae7ed94c12abfcfacf7e7d2fd0",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "a83180c732db4eae80fe9890562a6888",
+      "End": "7b6dd4655ef94925bb7322102ac6d90a",
+      "Id": "2dc8bffa75d84f8f99657684f57aa9c4",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "30db49d1275345e78dc4a2ac31f6a4b4",
+      "End": "42ab3123c0d94aea91d00b2982ef3102",
+      "Id": "be06b7603c7a40e0b8c4de30ea44b5c3",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8c96fc1292c94ef181708587ae544a50",
+      "End": "ef387498b1374d689d8de20e63c2192b",
+      "Id": "496079ba028b43e2aafbadc27578f848",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "f4b603857b6f4594a24f7bcb3a435d90",
+      "End": "2f61052512434a4bad98316f3f814baf",
+      "Id": "6fc1366c55874b1f8538b1aec53f9a46",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "dd983815749d4d3d807b7bc1c157f53a",
+      "End": "766b4ce4ac1e40ffa4938867ed405de6",
+      "Id": "a29aa88942844c9cb910fb5986df180f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9e46560b97584474a2a5fb5768fd7383",
+      "End": "a064be5a05bc45088cdbe55faeb22533",
+      "Id": "3430be0d26f0427980f0fa7191aa446f",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "9d379f7229df4e6ca2eff5c7504e3910",
+      "End": "cf95279fa2024e8eb06efac8a7f9eb3d",
+      "Id": "ce2e9fc91e77421782bc7f72dd24613e",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "0218c2ebc70b47f4ae7e12fa20014c11",
+      "End": "111eafbd02104342bd33eecd6d36d69f",
+      "Id": "39eec57a84374e199c8aa272614c2cfc",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "4340e1c2165e4f6a90764f883d12709c",
+      "End": "f78ae486609b45af9fe3d37d2f50db73",
+      "Id": "8ec3dbe713c2490083cae41cb03b5b39",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "3.6",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "9.1",
+      "Data": {}
+    }
+  ],
+  "Author": "Archivina BIM",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "c184dd95e1a541c082cc2cfcfed253ef",
+        "Name": "IN[0] Tên bản CAD (chuỗi con, trống = tự tìm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "60deee4ec9ce41c5835649bc5198bd10",
+        "Name": "IN[1] Layer nét mặt ngoài logia (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 110.0
+      },
+      {
+        "Id": "027cf56f97094ea180b25cfeed2ea7e0",
+        "Name": "IN[2] Chuỗi con tên floor type sàn logia",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 220.0
+      },
+      {
+        "Id": "9c45cb5610c34f638890f0382cb88fbf",
+        "Name": "IN[3] Railing type lan can",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 330.0
+      },
+      {
+        "Id": "838caf008e734b1590f215f2c18971cd",
+        "Name": "IN[4] Family louver",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 440.0
+      },
+      {
+        "Id": "299e9bcc9d4f4a789f6bb23600e6ae4b",
+        "Name": "IN[5] Type louver",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 550.0
+      },
+      {
+        "Id": "4f9f794172344a7cbd67ba723d4d473d",
+        "Name": "IN[6] Layer nét cục nóng",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 660.0
+      },
+      {
+        "Id": "9d8f13ae52154d9e92d3e9aa16231a5d",
+        "Name": "IN[7] Khung cục nóng dài x rộng (mm)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 770.0
+      },
+      {
+        "Id": "24819997f23a4c229b6a4e710b344b94",
+        "Name": "IN[8] Số nét tối thiểu trong khung",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 880.0
+      },
+      {
+        "Id": "a31bf405885d4955b76b2758f7e94758",
+        "Name": "IN[9] Level",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 990.0
+      },
+      {
+        "Id": "6ea40c03b91142adab01238dc51a23ad",
+        "Name": "IN[10] Dry-run",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1100.0
+      },
+      {
+        "Id": "efc7f0a3cc9e40218f5440ebbeb4323c",
+        "Name": "IN[11] Lan can ngắn nhất (mm) – ngắn hơn thì louver hết tuyến",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1210.0
+      },
+      {
+        "Id": "4b2360d5d9ce4baf9554f99cdc6f6662",
+        "Name": "ARV_TaoLanCanLouverLogia_v1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 650.0,
+        "Y": 300.0
+      },
+      {
+        "Id": "4fbf1cb343de4bb2bdfe5fdeafdb3ee0",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "7c0d762be7e0455fa08b43aebc616e74",
+        "Title": "1. Đầu vào",
+        "DescriptionText": "Mô hình phải có sàn logia (type chứa IN[2]) + tường; bản DWG mặt bằng Link đúng vị trí. Load sẵn family louver IN[4]. Giữ Dry-run = True cho lần chạy đầu, đọc Báo cáo rồi mới đổi False.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "c184dd95e1a541c082cc2cfcfed253ef",
+          "60deee4ec9ce41c5835649bc5198bd10",
+          "027cf56f97094ea180b25cfeed2ea7e0",
+          "9c45cb5610c34f638890f0382cb88fbf",
+          "838caf008e734b1590f215f2c18971cd",
+          "299e9bcc9d4f4a789f6bb23600e6ae4b",
+          "4f9f794172344a7cbd67ba723d4d473d",
+          "9d8f13ae52154d9e92d3e9aa16231a5d",
+          "24819997f23a4c229b6a4e710b344b94",
+          "a31bf405885d4955b76b2758f7e94758",
+          "6ea40c03b91142adab01238dc51a23ad",
+          "efc7f0a3cc9e40218f5440ebbeb4323c"
+        ],
+        "HasNestedGroups": false,
+        "Left": -10.0,
+        "Top": -82.0,
+        "Width": 565.0,
+        "Height": 1424.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0.0,
+        "InitialHeight": 1355.0,
+        "TextblockHeight": 72.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 275.01122799999996,
+    "Y": 169.82738700000004,
+    "Zoom": 0.9063352
+  }
+}

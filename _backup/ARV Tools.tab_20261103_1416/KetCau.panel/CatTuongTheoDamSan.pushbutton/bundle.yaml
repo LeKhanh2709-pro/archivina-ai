@@ -1,0 +1,3 @@
+title: "Cắt tường\ntheo dầm sàn"
+tooltip: "Cập nhật chiều cao tường kiến trúc theo dầm / sàn phía trên, bỏ phần tường đè lên dầm, sàn: 1. Lấy các tường trên level chân (IN[0]) có tên type chứa chuỗi lọc (IN[1]). 2. Với mỗi tường: tìm sàn (Floors) và dầm (Structural Framing) có khối giao với khối tường. Đáy phần giao = đáy dầm / sàn ngay trên tường. 3. Hạ đỉnh tường về đáy CAO NHẤT trong các dầm / sàn đó (thường là đáy sàn → tường kín tới s Mặc định chạy thử (dry-run). Nguồn: ARV_CatTuongTheoDamSan_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM
