@@ -1,0 +1,45 @@
+NÚT VÁCH KÍNH (tab Archivina, pyRevit) - CÀI RIÊNG SANG MÁY KHÁC
+=================================================================
+
+Gói này chỉ có nút Vách kính (Archivina → panel Vách kính). Máy đã cài tab Archivina đầy đủ (gói ARVTools_...)
+thì đã có sẵn nút này, không cần cài gói này.
+
+YÊU CẦU
+- Revit 2027 (đã thử trên Revit 2027.3). KHÔNG chạy trên Revit 2025 / 2026 vì 3 family đi kèm lưu định dạng Revit 2027.
+- pyRevit >= 6.5.5, bản cài cho user (bộ cài pyRevit_6.5.5..._signed.exe kèm trong gói nếu có).
+- Không cần Python, AutoCAD hay thư viện nào khác.
+
+CÀI
+1. Đóng Revit.
+2. Giải nén gói vào chỗ cố định, ví dụ D:\ARVVachKinh_<ngày>\  (KHÔNG để trong Downloads / Temp, cài xong không di chuyển;
+   có di chuyển thì chạy lại bước 3).
+3. Bấm đúp CAI_DAT.bat:
+   - Chưa có pyRevit: hỏi cài bằng bộ cài đi kèm (Y), cài xong tự đăng ký tiếp.
+   - Đăng ký thư mục ARVVachKinh\ của gói vào Extension Search Path của pyRevit.
+   - Máy đã có tab Archivina đầy đủ: báo và hỏi có cài thêm không (cài thêm sẽ trùng nút).
+   - Máy đã có gói Vách kính cũ: hỏi gỡ đăng ký bản cũ (chỉ gỡ đăng ký, không xoá file).
+4. Mở Revit → tab Archivina → panel Vách kính.
+
+Cập nhật bản mới: giải nén gói mới, chạy CAI_DAT.bat của gói mới, trả lời Y để gỡ đăng ký gói cũ.
+Gỡ: CAI_DAT.bat -Go   (hoặc: pyrevit extensions paths forget "<thư mục gói>\ARVVachKinh")
+
+DÙNG
+- Mở mặt bằng tầng (Floor Plan) → bấm Vách kính → bảng nhập tên, chiều dài, chiều cao, cửa sổ / cửa đi
+  (rộng tâm - tâm, cao) → Pick 2 điểm (vách góc vuông: 3 điểm: đầu cánh 1 → góc ngoài → đầu cánh 2) → Dựng.
+- Chia đố 65 theo quy tắc VK: mỗi ô < 1200 tâm - tâm, chia đều; cao độ cửa theo MDVK.
+- Đổi chiều dài / chiều cao vách sau này thì tự chia lại đố (updater nạp khi pyRevit khởi động).
+- Ctrl+Z một lần là hoàn tác.
+
+LƯU Ý KHI DÙNG Ở DỰ ÁN KHÁC
+- Gói mang theo ĐỦ mọi thứ vách kính dùng, trong ARVVachKinh\ARVVachKinh.extension\lib\vach_kinh\:
+    3 family: CuaSoVK_A_loai2 (cửa sổ), Door-Curtain-Wall-Double-Glass (cửa đi), Kinh_goc_6_trai (kính góc)
+    ARV_VachKinh_Nguon.rvt: kiểu vách "ARV_Vách kính 65" (+ 2 kiểu cánh vách góc), đố "ARV_Đố 65x150",
+      "ARV_Đố góc 150x150", panel kính "12mm", vật liệu "7.4 Khung Xingfa Ghi" / "0.1 VL Kính"
+  Mô hình chưa có thì lần bấm đầu tiên nút tự chép kiểu từ file nguồn và tự nạp family (dự án trống cũng chạy).
+  Kiểu / family cùng tên đã có trong mô hình thì dùng nguyên của mô hình, không ghi đè.
+  Không mở / sửa file nguồn ARV_VachKinh_Nguon.rvt bằng tay.
+- Giá trị đã nhập được nhớ riêng từng máy ở %APPDATA%\pyRevit\ARVTools\VachKinh.json;
+  nhật ký updater ở %APPDATA%\pyRevit\ARVTools\VachKinh_updater.log.
+- Luôn lưu / sao lưu file dự án trước khi chạy nút.
+
+TRẠNG THÁI: CHƯA DUYỆT (người dùng chưa bấm thử trong Revit thật).

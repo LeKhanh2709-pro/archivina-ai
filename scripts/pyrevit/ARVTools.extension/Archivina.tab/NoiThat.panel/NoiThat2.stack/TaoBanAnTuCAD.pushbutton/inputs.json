@@ -1,0 +1,81 @@
+{
+ "key": "TaoBanAnTuCAD",
+ "title": "Bàn ăn từ CAD",
+ "summary": "Đặt bàn ăn (Furniture 2D) trong phòng khách ăn từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool 28 sofa (Revit gộp nét block vào một GeometryInstance nên không dùng tên block). 1. Bàn trên CAD, layer A-Nội thất / A-Interior = polyline chữ nhật kín, rộng 650…950, dài 1000…1600, có nét ghế ở CẢ HAI cạnh dài (G19: 700 × 1200 ghế tựa; 800 × 1200 ghế tròn). 2. Room chứa tâm bàn phải có tên chứa một chuỗi trong IN[4] (mặc định \"phòng khách\"). Báo cáo liệt kê phòng lọc mà không có bàn. 3. Vị trí: đầu bàn áp mặt nhô ra phòng nhất trong biên Room (Finish) và mặt tường Revit (cả len chân tường tool 11), cách đầu bàn CAD ≤ IN[5]; không có tường thì áp mặt đồ Furniture đã đặt (bàn nối tủ bếp phụ CH06, CH11). Không có gì → giữ tâm CAD, báo \"cần soát\". Ngang bàn: giữa khung family trùng giữa bàn CAD. 4. Kích thước: family cố định theo type, khung gồm cả ghế (2 chỗ: 1250 × 1557). Tool không đổi cỡ theo CAD. 5. Hướng family (suy từ khung type −1250…0 × ±778,6, như sofa): gốc ở giữa đầu bàn, đầu bàn về +X. Quay ngược → IN[7] = True. 6. Cao độ: Elevation from Level = đỉnh sàn tại tâm khung − level + IN[6] (mặc định 21 mm như sofa, tủ bếp: sàn 50, bàn 71). Không có sàn → IN[6], báo \"cần soát\". 7. Khung chồng lên đồ Furniture đã đặt hoặc bàn khác ≥ 5 mm mỗi chiều → vẫn đặt, báo \"cần soát\", không tự cắt. 8. Comments = \"ARV-TaoBanAnTuCAD\". Bàn của tool đã có mà lệch / sai hướng / sai cao độ / khác type → sửa tại chỗ; bàn cùng family người dùng tự đặt → bỏ qua.",
+ "transaction": "ARV - Tạo bàn ăn từ CAD",
+ "source": "ARV_TaoBanAnTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống = bản CAD duy nhất trong mô hình / có layer khớp IN[1])",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Lọc layer, nhiều chuỗi cách ';' (khớp chuỗi con), mặc định \"A-Nội thất;A-Interior\"; trống = dò mọi layer",
+   "default": "A-Nội thất;A-Interior",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level đặt bàn, VD \"TẦNG 3\"",
+   "default": "TẦNG 3",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "FamilyType | str",
+   "label": "Type bàn ăn, \"Family : Type\"",
+   "default": "AV_FT_Ban an 2 cho : AV_FT_Ban an 2 cho",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên Room chứa bàn, nhiều chuỗi cách ';' (trống = mọi phòng)",
+   "default": "phòng khách",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "float",
+   "decl": "float",
+   "label": "Đầu bàn CAD cách mặt tường / tủ tối đa để áp vào (mm), VD 100",
+   "default": 100.0,
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "float",
+   "decl": "float",
+   "label": "Đặt cao hơn mặt sàn (mm), VD 21",
+   "default": 21.0,
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Đảo hướng 180°: True nếu bàn quay ngược (mặc định False)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = đặt thử, báo cáo rồi hoàn tác, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  }
+ ]
+}

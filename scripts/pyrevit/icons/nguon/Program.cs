@@ -1,4 +1,4 @@
-// Xem trước icon tab ARV Tools: ribbon giả lập sáng / tối + bảng icon phóng to; xuất icon PNG 96 px (đen / trắng).
+// Xem trước icon tab Archivina: ribbon giả lập sáng / tối + bảng icon phóng to; xuất icon PNG 96 px (đen / trắng).
 // Chạy: dotnet run -- <thư mục làm việc>   (đọc bang_icon.json + mdi.json, ghi out\*.png, xem_ribbon.png, bang_icon.png)
 using System; using System.Collections.Generic; using System.Globalization; using System.IO; using System.Linq;
 using System.Text.Json; using System.Text.RegularExpressions;

@@ -1,0 +1,3 @@
+title: "Tủ đầu giường"
+tooltip: "Đặt tủ đầu giường (Furniture 2D) trong phòng ngủ từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool 22 giường (Revit gộp nét block vào một GeometryInstance nên không dùng tên block). Tách từ phần tủ đầu giường của tool 21. 1. Tủ đầu giường trên CAD, layer A-Nội thất = hình vuông 400 chứa vòng tròn. Tủ sát cạnh giường (≤ STAND_GAP_MM) lấy lưng cùng hướng đầu giường. Tủ không sát giường: lưn Mặc định chạy thử (dry-run). Nguồn: ARV_TaoTuDauGiuongTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

@@ -1,11 +1,11 @@
 ---
 name: chi-tiet-cua-revit
-description: 'Chi tiết cửa Revit – Chọn 1 cửa đi / cửa sổ (family có sẵn) trên Revit, tự tạo MẶT BẰNG (callout), MẶT ĐỨNG (nhìn từ ngoài nhà; cửa trong nhà nhìn từ phía không mở cánh), MẶT CẮT (cắt qua cánh, ngoài nhà bên phải) tỉ lệ 1/25 kèm kích thước tổng, đặt vào ô trống tiếp theo của sheet "CHI TIẾT CỬA" (khung A1 chia 6 ô 2 × 3, dải trống dưới mỗi ô để người dùng tự điền ký hiệu, vật liệu, phụ kiện; hết ô thì tạo sheet mới, số sheet tăng tiếp). View template "CHI TIẾT CỬA - MẶT BẰNG / MẶT ĐỨNG / MẶT CẮT" tạo từ template 1/25 có sẵn. Mỗi type cửa chỉ làm 1 lần. Nút pyRevit ARV Tools > HS TKBVTC > Chi tiết cửa (một chạm) + graph Dynamo ChiTietCua_TuDong.dyn. Dùng khi người dùng nhờ "triển khai chi tiết cửa", "chi tiết cửa Revit", "mặt đứng / mặt cắt cửa 1/25", "sheet chi tiết cửa", hoặc sửa / thử nút Chi tiết cửa.'
+description: 'Chi tiết cửa Revit – Chọn 1 cửa đi / cửa sổ (family có sẵn) trên Revit, tự tạo MẶT BẰNG (callout), MẶT ĐỨNG (nhìn từ ngoài nhà; cửa trong nhà nhìn từ phía không mở cánh), MẶT CẮT (cắt qua cánh, ngoài nhà bên phải) tỉ lệ 1/25 kèm kích thước tổng, đặt vào ô trống tiếp theo của sheet "CHI TIẾT CỬA" (khung A1 chia 6 ô 2 × 3, dải trống dưới mỗi ô để người dùng tự điền ký hiệu, vật liệu, phụ kiện; hết ô thì tạo sheet mới, số sheet tăng tiếp). View template "CHI TIẾT CỬA - MẶT BẰNG / MẶT ĐỨNG / MẶT CẮT" tạo từ template 1/25 có sẵn. Mỗi type cửa chỉ làm 1 lần. Nút pyRevit Archivina > HS TKBVTC > Chi tiết cửa (một chạm) + graph Dynamo ChiTietCua_TuDong.dyn. Dùng khi người dùng nhờ "triển khai chi tiết cửa", "chi tiết cửa Revit", "mặt đứng / mặt cắt cửa 1/25", "sheet chi tiết cửa", hoặc sửa / thử nút Chi tiết cửa.'
 ---
 
 # Chi tiết cửa Revit (Archivina)
 
-Người dùng là kiến trúc sư, chọn 1 cửa trên Revit 2027 rồi bấm **ARV Tools → HS TKBVTC → Chi tiết cửa** (pyRevit). Mẫu cần
+Người dùng là kiến trúc sư, chọn 1 cửa trên Revit 2027 rồi bấm **Archivina → HS TKBVTC → Chi tiết cửa** (pyRevit). Mẫu cần
 đạt: tờ A1 "CHI TIẾT CỬA" (ảnh người dùng gửi 2026-11-03, ký hiệu A.CD.22.13) gồm 6 ô, mỗi ô có mặt đứng, mặt cắt,
 mặt bằng + bảng thông tin. Công cụ CHỈ dựng 3 view và chia ô; thông tin cửa người dùng tự điền.
 Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tmp\`, không đụng model đang mở trong Revit của người dùng.

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Đóng gói tab ARV Tools (pyRevit) để chép sang máy khác: <gốc>\_dist\ARVTools_<yyyyMMdd>\ + file .zip cùng tên.
+    Đóng gói tab Archivina (pyRevit) để chép sang máy khác: <gốc>\_dist\ARVTools_<yyyyMMdd>\ + file .zip cùng tên.
 
 .DESCRIPTION
     Gói gồm:

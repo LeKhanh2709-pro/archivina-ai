@@ -353,9 +353,73 @@ def _symbol(doc, fam, bao, bat_buoc=True):
     return None
 
 
-def dam_bao_kieu(doc, bao=None):
-    """Tạo / tìm mọi kiểu cần dùng. Gọi TRONG transaction. Trả dict id."""
+# ---------------------------------------------------------------- file nguồn kiểu (mang sang máy / dự án khác)
+# ARV_VachKinh_Nguon.rvt: dự án trống chỉ chứa các kiểu đố / vách / panel kính ARV (kèm vật liệu) dựng từ mẫu
+# "file vach kinh.rvt". Mô hình thiếu kiểu nào thì chép từ file này thay vì nhân bản kiểu bất kỳ của mô hình.
+NGUON_KIEU = os.path.join(THU_MUC_FAMILY, "ARV_VachKinh_Nguon.rvt")
+KIEU_NGUON = ((DB.MullionType, TEN_DO), (DB.MullionType, TEN_DO_GOC), (DB.WallType, TEN_VACH),
+              (DB.WallType, TEN_VACH_GOC_DO), (DB.WallType, TEN_VACH_GOC_KINH))
+
+
+def thieu_kieu(doc):
+    return [(c, t) for c, t in KIEU_NGUON if _tim(doc, c, t) is None]
+
+
+def mo_nguon(app, doc):
+    """Gọi NGOÀI transaction. Mô hình thiếu kiểu ARV và có file nguồn thì mở ngầm file nguồn (chỉ đọc, không lưu).
+    Trả Document hoặc None. Xong việc gọi dong_nguon."""
+    if not thieu_kieu(doc) or not os.path.isfile(NGUON_KIEU):
+        return None
+    try:
+        return app.OpenDocumentFile(NGUON_KIEU)
+    except Exception:
+        return None
+
+
+def dong_nguon(nguon):
+    if nguon is not None:
+        try:
+            nguon.Close(False)
+        except Exception:
+            pass
+
+
+try:
+    class _DungKieuDich(DB.IDuplicateTypeNamesHandler):
+        """Trùng tên kiểu khi chép: giữ kiểu của mô hình (không sửa phần người dùng đã có)."""
+        __namespace__ = "ARVVachKinh"
+
+        def OnDuplicateTypeNamesFound(self, args):
+            return DB.DuplicateTypeAction.UseDestinationTypes
+except Exception:
+    _DungKieuDich = None
+
+
+def chep_tu_nguon(doc, nguon, bao):
+    """Gọi TRONG transaction: chép từ file nguồn các kiểu ARV mô hình chưa có (vật liệu, panel kính đi theo)."""
+    if nguon is None:
+        return
+    ids = NetList[DB.ElementId]()
+    ten = []
+    for c, t in thieu_kieu(doc):
+        e = _tim(nguon, c, t)
+        if e is not None:
+            ids.Add(e.Id)
+            ten.append(t)
+    if ids.Count == 0:
+        return
+    op = DB.CopyPasteOptions()
+    if _DungKieuDich is not None:
+        op.SetDuplicateTypeNamesHandler(_DungKieuDich())
+    DB.ElementTransformUtils.CopyElements(nguon, ids, doc, DB.Transform.Identity, op)
+    bao.append("chép kiểu từ file nguồn: %s" % ", ".join(ten))
+
+
+def dam_bao_kieu(doc, bao=None, nguon=None):
+    """Tạo / tìm mọi kiểu cần dùng. Gọi TRONG transaction. Trả dict id.
+    nguon: Document mở bằng mo_nguon (None = không chép, nhân bản kiểu có sẵn của mô hình như trước)."""
     bao = bao if bao is not None else []
+    chep_tu_nguon(doc, nguon, bao)
     do = _kieu_do(doc, TEN_DO, NUA, NUA, bao)
     dg = _kieu_do(doc, TEN_DO_GOC, NUA_GOC, NUA_GOC, bao)
     k = {
@@ -580,14 +644,15 @@ def _du_lieu(cfg, canh, vai_tro, dau, kq, cao, L, H):
             "ten": canh["ten"], "doi_tac": None}
 
 
-def tao_vach(doc, level, cfg, diem, bao=None):
+def tao_vach(doc, level, cfg, diem, bao=None, nguon=None):
     """Dựng vách theo cfg (bảng nhập) và điểm pick. GỌI TRONG transaction.
     cfg: {"H", "ws", "wd", "hd", "hs", "co_ngang", "san", "bau", "lat", "goc": bool,
           "canh": [{"ten", "L", "ns", "nd", "vs", "vd"}, ...]}  (1 cánh, hoặc 2 cánh khi vách góc)
     diem: thẳng [P1, P2]; góc [P1 (đầu cánh 1), C (góc ngoài), P2 (đầu cánh 2)] – XYZ (feet).
+    nguon: Document file nguồn kiểu (mo_nguon) khi mô hình thiếu kiểu ARV.
     Trả danh sách vách đã dựng."""
     bao = bao if bao is not None else []
-    k = dam_bao_kieu(doc, bao)
+    k = dam_bao_kieu(doc, bao, nguon)
     z = level.Elevation
     pts = [DB.XYZ(p.X, p.Y, z) for p in diem]
     H = cfg["H"]

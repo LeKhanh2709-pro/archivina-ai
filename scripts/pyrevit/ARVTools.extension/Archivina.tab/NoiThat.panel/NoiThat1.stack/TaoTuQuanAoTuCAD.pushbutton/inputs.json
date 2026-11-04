@@ -1,0 +1,89 @@
+{
+ "key": "TaoTuQuanAoTuCAD",
+ "title": "Tủ quần áo",
+ "summary": "Đặt tủ quần áo (Furniture 2D) trong phòng ngủ từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool 22 giường (Revit gộp nét block vào một GeometryInstance nên không dùng tên block). Tách từ phần tủ áo của tool 21. 1. Tủ áo trên CAD, layer A-Nội thất = hình chữ nhật sâu 500…700, dài 1000…2400 (G19: sâu 600, dài 1200…2135) có thanh treo dọc gần trục giữa. 2. Room chứa tâm tủ phải có tên chứa một chuỗi trong IN[4] (mặc định \"phòng ngủ\"). Báo cáo liệt kê phòng lọc mà không có tủ. 3. Vị trí: tủ áo đối xứng theo chiều sâu nên không biết lưng từ hình: thử hai cạnh dài, cạnh gần mặt nhô ra phòng nhất trong biên Room (Finish) và mặt tường Revit (cả len chân tường tool 11), cách cạnh CAD ≤ IN[5], là lưng; không có → giữ theo CAD, báo \"cần soát\". Hai đầu cách tường bên ≤ IN[6] thì kéo chạm tường. 4. Kích thước: tham số instance L (dài, trục X family) / h (sâu, trục Y family) của mẫu người dùng. Tool dò trong SubTransaction trên cái đầu tiên (đổi +100 mm, đo khung, hoàn tác) mọi tham số Double không built-in; không thấy khung đổi mà có tên trên thì vẫn dùng tên đó. Rồi đặt dài và sâu theo tủ đã căn. Không có → giữ cỡ type, báo \"cần soát\". 5. Hướng family (suy từ khung type 0…2000 × ±300): gốc ở đầu tủ giữa chiều sâu, dài theo +X, lưng quy ước về +Y; hình đối xứng nên chỉ thấy khác khi family có chi tiết một phía. Quay ngược → IN[8] = True. 6. Cao độ: Elevation from Level = đỉnh sàn tại tâm tủ − level + IN[7] (mặc định 21 mm như mẫu người dùng đặt tay: sàn 50, tủ 71). Không có sàn → IN[7], báo \"cần soát\". 7. Tủ chồng lên đồ Furniture đã đặt hoặc tủ áo khác ≥ 5 mm mỗi chiều → vẫn đặt, báo \"cần soát\", không tự cắt. 8. Comments = \"ARV-TaoTuQuanAoTuCAD\". Tủ của tool đã có mà lệch / sai hướng / sai cao độ / sai cỡ / khác type → sửa tại chỗ; tủ cùng family người dùng tự đặt → bỏ qua.",
+ "transaction": "ARV - Tạo tủ quần áo từ CAD",
+ "source": "ARV_TaoTuQuanAoTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống = bản CAD duy nhất trong mô hình / có layer khớp IN[1])",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Lọc layer, nhiều chuỗi cách ';' (khớp chuỗi con), mặc định \"A-Nội thất\"; trống = dò mọi layer",
+   "default": "A-Nội thất",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level đặt tủ, VD \"TẦNG 3\"",
+   "default": "TẦNG 3",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "FamilyType | str",
+   "label": "Type tủ quần áo, \"Family : Type\"",
+   "default": "AV_FT_TuQuanAo1 : AV_FT_TuQuanAo",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên Room chứa tủ, nhiều chuỗi cách ';' (trống = mọi phòng)",
+   "default": "phòng ngủ",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "float",
+   "decl": "float",
+   "label": "Lưng tủ CAD cách mặt tường tối đa để áp tường (mm), VD 100",
+   "default": 100.0,
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "float",
+   "decl": "float",
+   "label": "Đầu tủ CAD cách tường bên tối đa để kéo chạm tường (mm), VD 100",
+   "default": 100.0,
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "float",
+   "decl": "float",
+   "label": "Đặt cao hơn mặt sàn (mm), VD 21",
+   "default": 21.0,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Đảo hướng 180°: True nếu tủ quay ngược (mặc định False)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = đặt thử, báo cáo rồi hoàn tác, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  }
+ ]
+}

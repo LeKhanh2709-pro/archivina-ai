@@ -1,0 +1,3 @@
+title: "Bồn cầu từ CAD"
+tooltip: "Tạo bồn cầu (Plumbing Fixtures) từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG (không cần biết layer): 1. Bồn cầu trên CAD = HÌNH CHỮ U KHÉP BẰNG CUNG (đo trên G19 TẦNG 3 2026-10-30, file chẩn đoán của tool 14: layer A-Interior WC, 32 bộ = polyline hở 519 × 380 (lưng + két nước + hai cạnh thân) + cung 181 × 380 (mũi bồn cầu) nối hai đầu polyline; tổng dài 700, rộng 380): - cung: dây cung trong  Mặc định chạy thử (dry-run). Nguồn: ARV_TaoBonCauTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

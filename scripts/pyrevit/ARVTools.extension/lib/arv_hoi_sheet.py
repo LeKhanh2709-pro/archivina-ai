@@ -6,6 +6,8 @@
 # giai đoạn, hạng mục, khổ giấy, số hiệu, tên bản vẽ) → IN[1] / IN[2] / IN[3] / IN[16] / IN[17] của ChiTietCua_TuDong.py.
 # hoi_chong_tham / hoi_ngan_chay: cùng bảng cho nút Chống thấm / Ngăn cháy lan (người dùng yêu cầu 2026-11-03 tối: tự
 # trình bày vào bản vẽ) → IN[10] – IN[16] của ChongTham_VeVenChanTuong.py / NganChay_TrucHKT.py.
+# hoi_tuong_xay: cùng bảng cho nút "Tường xây" (người dùng yêu cầu 2026-11-04: thay hộp thoại 17 ô) → IN[0] / IN[1] /
+# IN[4] / IN[5] / IN[6] / IN[15] / IN[17] của ARV_MBTuongXayTang_v1.py; chỉ khổ A1 (bố cục lõi đo theo khung A1).
 # Cấp nhóm sheet đọc từ Project Browser của dự án đang mở (giống cap_thu_muc_sheet / ts_giai_doan trong core.py: sửa
 # quy tắc ở đây thì sửa cả core.py). Lựa chọn lần trước nhớ ở %APPDATA%\pyRevit\ARVTools\TagCua_sheet.json.
 import io
@@ -145,7 +147,8 @@ def _ghi_luu(d, duong=_LUU):
 
 
 
-def _bang(doc, tieu_de, co_dat, nhan_dat, ten_mac_dinh, duong_luu, dong_dau=u"", goi_y_rieng=None):
+def _bang(doc, tieu_de, co_dat, nhan_dat, ten_mac_dinh, duong_luu, dong_dau=u"", goi_y_rieng=None,
+          ds_kho=(u"A1", u"A0")):
     """Dựng + hiện hộp thoại. Trả về dict {dat, gd, hm, kho, kt, so, ten} hoặc None nếu Huỷ.
     goi_y_rieng(gd, hm, ten) → số hiệu gợi ý riêng (None = theo số tiếp theo trong hạng mục)."""
     sheets = list(DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet))
@@ -208,7 +211,7 @@ def _bang(doc, tieu_de, co_dat, nhan_dat, ten_mac_dinh, duong_luu, dong_dau=u"",
     dong(u"Hạng mục (gõ tên mới = thêm):", cb_hm)
     cb_kho = ComboBox()
     cb_kho.DropDownStyle = ComboBoxStyle.DropDownList
-    for k in (u"A1", u"A0"):
+    for k in ds_kho:
         cb_kho.Items.Add(k)
     dong(u"Khổ giấy:", cb_kho)
     cb_kt = ComboBox()
@@ -265,7 +268,7 @@ def _bang(doc, tieu_de, co_dat, nhan_dat, ten_mac_dinh, duong_luu, dong_dau=u"",
     cb_gd.Text = luu.get("gd", ds_gd[-1] if ds_gd else u"")
     nap_hm()
     cb_hm.Text = luu.get("hm", u"")
-    cb_kho.SelectedIndex = 1 if luu.get("kho") == u"A0" else 0
+    cb_kho.SelectedIndex = list(ds_kho).index(luu.get("kho")) if luu.get("kho") in ds_kho else 0
     nap_khung()
     goi_y_so()
 
@@ -452,3 +455,53 @@ def hoi_chong_tham(doc, view):
 def hoi_ngan_chay(doc, view):
     return _hoi_mat_bang(doc, view, u"Ngăn cháy lan – đặt lên bản vẽ", u"MẶT BẰNG NGĂN CHÁY LAN", u"chay lan",
                          "NganChay_sheet.json")
+
+
+def _ten_ts(doc, pid):
+    """Tên tham số sheet theo Id (để lõi ghi bằng LookupParameter)."""
+    if pid is None:
+        return u""
+    for s in DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet):
+        prm = _ts(s, pid)
+        if prm is not None and prm.Definition is not None:
+            return prm.Definition.Name
+    return u""
+
+
+def _bao(tieu_de, noi_dung):
+    from System.Windows.Forms import MessageBox
+    if not os.environ.get("ARV_HOI_ANH"):
+        MessageBox.Show(noi_dung, tieu_de)
+
+
+def hoi_tuong_xay(doc, view):
+    """Bảng hỏi cho nút Tường xây (thay hộp thoại 17 ô): view 'MẶT BẰNG TƯỜNG XÂY - <tầng>' của tầng đang mở, đặt lên
+    bản vẽ (sheet trống có sẵn tên có chữ 'tường xây' thì gợi ý số hiệu đó = đặt vào sheet đó)."""
+    tieu_de = u"Tường xây – đặt lên bản vẽ"
+    tang = view.GenLevel.Name if view.GenLevel is not None else view.Name
+    ten_view = u"MẶT BẰNG TƯỜNG XÂY - %s" % tang
+    if any(not v.IsTemplate and v.Name == ten_view for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)):
+        _bao(tieu_de, u"Tầng %s đã có view '%s'.\n\nMuốn dựng lại: Shift+bấm nút, bật ô Làm lại." % (tang, ten_view))
+        return None
+    trong = _sheet_trong(doc, u"tuong xay")
+    dong_dau = u""
+    if trong is not None:
+        dong_dau = u"Có bản vẽ trống %s – %s: giữ số hiệu này = đặt vào bản vẽ đó." % (trong.SheetNumber, trong.Name)
+
+    def goi_y(gd, hm, ten_bv):
+        return trong.SheetNumber if trong is not None else None
+
+    kq = _bang(doc, tieu_de, True, u"Đặt mặt bằng lên bản vẽ (kèm bảng ký hiệu tường)",
+               u"MẶT BẰNG TƯỜNG XÂY %s" % tang.upper(), os.path.join(_THU_MUC_LUU, "TuongXay_sheet.json"), dong_dau,
+               goi_y, ds_kho=(u"A1",))
+    if kq is None:
+        return None
+    so = kq["so"].strip()
+    if kq["dat"] and not so:
+        _bao(tieu_de, u"Chưa có số hiệu bản vẽ: bấm lại và nhập số hiệu (hoặc bỏ tích đặt lên bản vẽ).")
+        return None
+    pid_gd, pid_hm = _gd_hm(doc)
+    nhom = u";".join(u"%s=%s" % (_ten_ts(doc, pid), gt) for pid, gt in ((pid_gd, kq["gd"]), (pid_hm, kq["hm"]))
+                     if pid is not None and gt.strip() and _ten_ts(doc, pid))
+    return {0: tang, 1: ten_view, 4: so, 5: kq["ten"].strip().upper() or u"MẶT BẰNG TƯỜNG XÂY", 6: kq["kt"],
+            15: nhom, 17: kq["dat"]}

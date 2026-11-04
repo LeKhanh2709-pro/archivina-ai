@@ -1,11 +1,11 @@
 ---
 name: vach-kinh-revit
-description: 'Vách kính Revit – Dựng vách kính (curtain wall) trên mặt bằng Revit và chia đố 65 theo đúng quy tắc lệnh VK / MDVK của AutoCAD: mỗi ô kính < 1200 tâm - tâm chia đều, cửa sổ mở CuaSoVK_A_loai2 / cửa đi 2 cánh Door-Curtain-Wall-Double-Glass theo rộng tâm - tâm và chiều cao nhập trong bảng, vách góc vuông có đố góc 150 x 150 + kính góc như mẫu, đổi chiều dài / chiều cao vách thì tự chia lại. Nút pyRevit ARV Tools > Vách kính. Dùng khi người dùng nhờ "vẽ vách kính trên Revit", "curtain wall chia đố như VK", "vách kính góc vuông Revit", "chia lại đố vách kính Revit", hoặc sửa / thử nút Vách kính.'
+description: 'Vách kính Revit – Dựng vách kính (curtain wall) trên mặt bằng Revit và chia đố 65 theo đúng quy tắc lệnh VK / MDVK của AutoCAD: mỗi ô kính < 1200 tâm - tâm chia đều, cửa sổ mở CuaSoVK_A_loai2 / cửa đi 2 cánh Door-Curtain-Wall-Double-Glass theo rộng tâm - tâm và chiều cao nhập trong bảng, vách góc vuông có đố góc 150 x 150 + kính góc như mẫu, đổi chiều dài / chiều cao vách thì tự chia lại. Nút pyRevit Archivina > Vách kính. Dùng khi người dùng nhờ "vẽ vách kính trên Revit", "curtain wall chia đố như VK", "vách kính góc vuông Revit", "chia lại đố vách kính Revit", hoặc sửa / thử nút Vách kính.'
 ---
 
 # Vách kính Revit (Archivina)
 
-Người dùng là kiến trúc sư, dùng nút **ARV Tools → Vách kính → Vách kính** (pyRevit, Revit 2027). Claude sửa công cụ và
+Người dùng là kiến trúc sư, dùng nút **Archivina → Vách kính → Vách kính** (pyRevit, Revit 2027). Claude sửa công cụ và
 tự thử trên BẢN SAO `.rvt`, không đụng model đang mở trong Revit của người dùng.
 
 ## Quy tắc (người dùng chốt 2026-11-01)
@@ -43,11 +43,20 @@ tự thử trên BẢN SAO `.rvt`, không đụng model đang mở trong Revit c
 - Lõi: `<gốc>\scripts\pyrevit\ARVTools.extension\lib\arv_vach_kinh.py` (`chia`, `tinh_cao`, `dam_bao_kieu`, `tao_vach`,
   `dung_luoi`, `cap_nhat_vach`). Chạy cả IronPython 2.7 (pyRevit) và CPython 3 (Dynamo PythonNet3).
 - Bảng: `lib\arv_vach_kinh_bang.py` + `lib\vach_kinh\BangVachKinh.xaml` + `ChuDe.xaml` (chép từ K-TOOL).
-- Nút: `ARV Tools.tab\VachKinh.panel\VachKinh.pushbutton\script.py` (IronPython, viết tay, builder không đụng; panel
+- Nút: `Archivina.tab\VachKinh.panel\VachKinh.pushbutton\script.py` (IronPython, viết tay, builder không đụng; panel
   có trong `PANEL_VIET_TAY` của `build_from_dynamo.py`). Updater: `ARVTools.extension\startup.py`.
 - Family mang theo: `lib\vach_kinh\CuaSoVK_A_loai2.rfa`, `Door-Curtain-Wall-Double-Glass.rfa`, `Kinh_goc_6_trai.rfa` –
   mô hình chưa có thì tự nạp (`.rfa` không đẩy GitHub: chép thư mục sang máy khác). Thiếu kính góc thì ô góc dùng kính
   thường và báo.
+- **File nguồn kiểu** `lib\vach_kinh\ARV_VachKinh_Nguon.rvt` (2026-11-04, người dùng yêu cầu "đóng gói tất cả family
+  của vách kính để dùng máy khác"): dự án trống chứa 5 kiểu ARV (`KIEU_NGUON`) + panel `12mm` + vật liệu
+  `7.4 Khung Xingfa Ghi` / `0.1 VL Kính`, dựng bằng `dam_bao_kieu` trên bản sao `file vach kinh.rvt` rồi
+  `CopyElements` sang `NewProjectDocument` (script `_tmp\revit_vachkinh\nguon\tao_nguon_ip.py`; sửa kiểu thì chạy
+  lại script này, không sửa tay file nguồn). Nút: `mo_nguon` (NGOÀI transaction, chỉ khi mô hình thiếu kiểu ARV) →
+  `tao_vach(..., nguon)` chép kiểu thiếu (trùng tên giữ kiểu của mô hình) → `dong_nguon`. Không có file nguồn thì
+  nhân bản kiểu bất kỳ như cũ. Mẫu chỉ dùng 3 family trên + System Panel. Thử dự án trống (`_tmp\revit_vachkinh\nguon\kq_trong\`):
+  chép đủ 5 kiểu, nạp 3 family, vách thẳng + góc đúng, file nguồn đã đóng.
+- Gói riêng nút cho máy khác: `scripts\pyrevit\dong_goi_vach_kinh.ps1` → `_dist\ARVVachKinh_<ngày>.zip`.
 
 ## Bẫy curtain grid
 - Thêm nhiều đoạn lưới ngang (`AddGridLine(..., oneSegmentOnly=True)`) ở CÙNG cao độ: Revit chỉ nhận đoạn đầu, không báo

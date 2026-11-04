@@ -1,11 +1,11 @@
 ---
 name: tag-cua-revit
-description: 'Tag cửa Revit – Tự động tag cửa đi (AV_Door Tag) và cửa sổ (AV_Window Tag) trên mặt bằng Revit đang mở: bỏ đối tượng có Type Comments Louver; tag hiện đúng Type Mark (bỏ tiền tố S3. trong nhãn family); tag nằm ngang, ưu tiên ngay giữa cửa, không đè lên cửa (kể cả cánh mở), cửa sổ, tường, cột, chữ / tag khác; tag lệch khỏi giữa cửa thì có leader; nội thất thì ẩn bằng view template riêng "<template gốc> (ẩn nội thất)"; cửa có EI mà tag không hiện EI thì báo; bấm lại không tạo trùng. Nút pyRevit ARV Tools > HS TKBVTC > Định vị + tag cửa (một chạm: tạo / mở mặt bằng định vị cửa "MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>", template "MẶT BẰNG ĐỊNH VỊ CỬA" tường + sàn Halftone, ẩn nội thất / thiết bị vệ sinh / Mechanical Equipment, rồi tag trên đó) + graph Dynamo TagCua_TuDong.dyn. Dùng khi người dùng nhờ "tạo mặt bằng định vị cửa", hoặc khi người dùng nhờ "tag cửa", "đánh ký hiệu cửa trên mặt bằng Revit", "tag cửa sổ", "tag tự động không đè", hoặc sửa / thử nút Tag cửa.'
+description: 'Tag cửa Revit – Tự động tag cửa đi (AV_Door Tag) và cửa sổ (AV_Window Tag) trên mặt bằng Revit đang mở: bỏ đối tượng có Type Comments Louver; tag hiện đúng Type Mark (bỏ tiền tố S3. trong nhãn family); tag nằm ngang, ưu tiên ngay giữa cửa, không đè lên cửa (kể cả cánh mở), cửa sổ, tường, cột, chữ / tag khác; tag lệch khỏi giữa cửa thì có leader; nội thất thì ẩn bằng view template riêng "<template gốc> (ẩn nội thất)"; cửa có EI mà tag không hiện EI thì báo; bấm lại không tạo trùng. Nút pyRevit Archivina > HS TKBVTC > Định vị + tag cửa (một chạm: tạo / mở mặt bằng định vị cửa "MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>", template "MẶT BẰNG ĐỊNH VỊ CỬA" tường + sàn Halftone, ẩn nội thất / thiết bị vệ sinh / Mechanical Equipment, rồi tag trên đó) + graph Dynamo TagCua_TuDong.dyn. Dùng khi người dùng nhờ "tạo mặt bằng định vị cửa", hoặc khi người dùng nhờ "tag cửa", "đánh ký hiệu cửa trên mặt bằng Revit", "tag cửa sổ", "tag tự động không đè", hoặc sửa / thử nút Tag cửa.'
 ---
 
 # Tag cửa Revit (Archivina)
 
-Người dùng là kiến trúc sư, dùng nút **ARV Tools → HS TKBVTC → Tag cửa** (pyRevit, Revit 2027) trên mặt bằng đang mở.
+Người dùng là kiến trúc sư, dùng nút **Archivina → HS TKBVTC → Tag cửa** (pyRevit, Revit 2027) trên mặt bằng đang mở.
 Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tmp\`, không đụng model đang mở trong Revit của người dùng.
 
 ## Quy tắc
@@ -175,7 +175,7 @@ Người dùng yêu cầu tạo mặt bằng mới từ mặt bằng đã cho, t
    - Ẩn nội thất + thiết bị vệ sinh; hiện cửa, cửa sổ và tag của chúng.
 3. Mở view mới (`RequestViewChange`). Bấm `Tag cửa` tiếp trên view này thì Tag cửa dùng luôn template đó, vì template đã
    ẩn đủ nội thất (`gan_template` → `da_an_du`), không tạo thêm `(ẩn nội thất)`.
-- Nút `ARV Tools` → `HS TKBVTC` → `MB định vị cửa`: một chạm trên mặt bằng tầng đang mở (`MOT_CHAM` từ khoá rỗng),
+- Nút `Archivina` → `HS TKBVTC` → `MB định vị cửa`: một chạm trên mặt bằng tầng đang mở (`MOT_CHAM` từ khoá rỗng),
   Shift+bấm = hộp thoại (Dry-run). Khảo sát chỉ đọc: `MBCua_KhaoSat.dyn`.
 - Thử bản sao G19 (`_tmp\revit_mbcua\thu3\`), view gốc `Level 1 Copy 1 Copy 2 Copy 1` (template 1.8):
   - Kết quả: tạo view + template, bấm lại không trùng, Tag cửa trên view mới cho 94 cửa đi + 44 cửa sổ, không thêm

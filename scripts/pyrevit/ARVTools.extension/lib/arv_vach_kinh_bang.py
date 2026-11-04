@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Bảng nhập Vách kính (WPF) cho nút ARV Tools > Vách kính. Bố cục theo bảng VK người dùng duyệt 2026-10-31
+"""Bảng nhập Vách kính (WPF) cho nút Archivina > Vách kính. Bố cục theo bảng VK người dùng duyệt 2026-10-31
 (BangVk.cs / BangVk.xaml của K-TOOL): sơ đồ mặt bằng trên cùng, nhập liệu trái, bảng các ô phải (bấm ô = tích /
 bỏ tích cửa), thêm xem trước mặt đứng như MDVK. Phần tính lấy từ arv_vach_kinh (chia, tinh_cao) nên xem trước
 khớp đúng với vách dựng ra.

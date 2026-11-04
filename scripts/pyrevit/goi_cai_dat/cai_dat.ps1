@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Cai tab ARV Tools (pyRevit) tren may nay: dang ky thu muc ARVTools\ canh file nay vao Extension Search Path cua pyRevit.
+    Cai tab Archivina (pyRevit) tren may nay: dang ky thu muc ARVTools\ canh file nay vao Extension Search Path cua pyRevit.
 
 .DESCRIPTION
     - Tim pyrevit.exe (PATH, %APPDATA%\pyRevit-Master, %ProgramData%\pyRevit-Master). Chua co thi hoi cai bang bo cai di kem.
@@ -89,5 +89,5 @@ Get-ChildItem -LiteralPath $here -Recurse -File | Unblock-File
 Write-Host ''
 & $pr attached
 Write-Host ''
-Write-Host 'Xong. Mo lai Revit (dang mo thi bam pyRevit -> Reload) se thay tab ARV Tools.'
+Write-Host 'Xong. Mo lai Revit (dang mo thi bam pyRevit -> Reload) se thay tab Archivina.'
 Write-Host 'Khong thay dong "Attachments" nao o tren: chay  pyrevit attach master default --installed'

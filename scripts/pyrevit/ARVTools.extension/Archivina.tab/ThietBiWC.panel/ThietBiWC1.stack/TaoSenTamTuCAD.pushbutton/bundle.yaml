@@ -1,0 +1,3 @@
+title: "Sen tắm từ CAD"
+tooltip: "Tạo sen tắm (Plumbing Fixtures) từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG (không cần biết layer): 1. Sen tắm trên CAD = Ô VUÔNG có NÉT ỐNG chạy ra tường (đo trên G19 TẦNG 3 2026-10-30: layer A-Interior WC, polyline kín 250×250 + 2 nét thẳng song song cách 20 mm dài 285 mm, một đầu trong ô vuông, đầu kia chạm mặt tường; 24/24 ô vuông 250 trong WC đều có nét ống): - ô vuông: vòng kín 4 góc v Mặc định chạy thử (dry-run). Nguồn: ARV_TaoSenTamTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

@@ -18,7 +18,7 @@ CÀI
    - Chưa có pyRevit: hỏi cài bằng bộ cài đi kèm (Y), cài xong tự đăng ký tiếp.
    - Đăng ký thư mục ARVTools\ của gói vào Extension Search Path của pyRevit.
    - Máy đã có bản ARVTools.extension khác (bản cũ) thì hỏi gỡ đăng ký bản cũ (chỉ gỡ đăng ký, không xoá file).
-4. Mở Revit → tab ARV Tools.
+4. Mở Revit → tab Archivina.
 
 Cập nhật bản mới: giải nén gói mới, chạy CAI_DAT.bat của gói mới, trả lời Y để gỡ đăng ký gói cũ.
 Gỡ: CAI_DAT.bat -Go   (hoặc: pyrevit extensions paths forget "<thư mục gói>\ARVTools")

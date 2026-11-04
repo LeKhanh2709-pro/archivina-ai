@@ -40,10 +40,8 @@ BUTTONS = [
     ("HoanThien", "TaoLenGachLogia", u"Len gạch\nlogia", "ARV_TaoLenGachLogia_v1"),
     ("HoanThien", "TaoLenChanTuong", u"Len chân\ntường", "ARV_TaoLenChanTuong_v1"),
     ("HoanThien", "DanTrangCanHo", u"Dàn trang\ncăn hộ", "ARV_DanTrangCanHo_v1"),
-    ("MEP", "TaoThietBiWCTuCAD", u"Thiết bị WC\ntừ CAD", "ARV_TaoThietBiWCTuCAD_v1"),
-    ("MEP", "TaoOngThoatNuocWC", u"Ống thoát\nnước WC", "ARV_TaoOngThoatNuocWC_v1"),
-    ("MEP", "TaoOngThoatNuocTuCAD", u"Ống thoát nước\ntừ CAD", "ARV_TaoOngThoatNuocTuCAD_v1"),
-    ("MEP", "TaoOngGioTuCAD", u"Ống gió\ntừ CAD", "ARV_TaoOngGioTuCAD_v1"),
+    # Panel MEP (Thiết bị WC / ống thoát nước / ống gió từ CAD) bỏ theo yêu cầu người dùng 2026-11-04,
+    # thư mục nút cũ ở _backup\MEP.panel_20261104_1140\
     # Bộ AI REVIT của đồng nghiệp (áp dụng 2026-11-03): thiết bị WC + nội thất từ DWG link
     ("ThietBiWC", "TaoLavaboTuCAD", u"Lavabo\ntừ CAD", "ARV_TaoLavaboTuCAD_v1"),
     ("ThietBiWC", "TaoSenTamTuCAD", u"Sen tắm\ntừ CAD", "ARV_TaoSenTamTuCAD_v1"),
@@ -65,6 +63,9 @@ BUTTONS = [
     ("HoSo", "LoMoShaft", u"Lỗ mở\nshaft", "../dynamo/LoMo_ShaftOpening"),
     ("HoSo", "TagCua", u"Định vị\n+ tag cửa", "../dynamo/TagCua_TuDong"),
     ("HoSo", "ChiTietCua", u"Chi tiết\ncửa", "../dynamo/ChiTietCua_TuDong"),
+    # Bộ AI REVIT (TUONG XAY) của đồng nghiệp, áp dụng 2026-11-04: mặt bằng tường xây cả tầng + dim định vị + legend +
+    # sheet; nút một chạm (MOT_CHAM), Shift+bấm = hộp thoại đầy đủ
+    ("HoSo", "TuongXay", u"Tường\nxây", "../dynamo/ARV_MBTuongXayTang_v1"),
 ]
 # Nút "một chạm" (người dùng chốt 2026-10-27 cho Chống thấm): bấm là ghi luôn vào mô hình, không hộp thoại, trên view
 # đang mở nếu là view có chữ <tu_khoa> (tên view hoặc tên view template), không thì chọn trong các view đó.
@@ -81,8 +82,12 @@ MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"
             "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},
             "TagCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng", "hoi": u"arv_hoi_sheet.hoi"},
             "ChiTietCua": {"view_in": None, "tu_khoa": u"", "ten_view": u"bất kỳ", "khong_view": True,
-                           "hoi": u"arv_hoi_sheet.hoi_chi_tiet_cua"}}
-PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện", "MEP": u"MEP",
+                           "hoi": u"arv_hoi_sheet.hoi_chi_tiet_cua"},
+            # Tường xây (người dùng yêu cầu 2026-11-04: bỏ hộp thoại 17 ô, chỉ hỏi đặt lên bản vẽ như Chống thấm):
+            # mặt bằng tầng đang mở, hoi_tuong_xay trả về level / tên view / sheet (IN[0], 1, 4, 5, 6, 15, 17)
+            "TuongXay": {"view_in": None, "tu_khoa": u"", "ten_view": u"mặt bằng tầng",
+                         "hoi": u"arv_hoi_sheet.hoi_tuong_xay"}}
+PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện",
                 "HoSo": u"HS TKBVTC", "ThietBiWC": u"Thiết bị WC", "NoiThat": u"Nội thất"}
 # Bố cục gọn (người dùng yêu cầu 2026-11-03): panel có tên ở đây xếp nút nhỏ thành chồng 2–3 nút
 # (<Panel>.panel\<Panel><k>.stack\<Tên>.pushbutton), tiêu đề 1 dòng; panel không có tên ở đây (HS TKBVTC) giữ nút lớn.
@@ -93,7 +98,6 @@ STACKS = {
                  ["TaoGoLogia", "TraGoLogia", "TaoLanCanLouverLogia"]],
     "HoanThien": [["TaoSanHoanThien", "TaoSanCanHoTuCAD", "TaoTranCanHo"],
                   ["TaoLenGo", "TaoLenGachLogia", "TaoLenChanTuong"], ["OpTuongWC", "DanTrangCanHo"]],
-    "MEP": [["TaoThietBiWCTuCAD", "TaoOngThoatNuocWC"], ["TaoOngThoatNuocTuCAD", "TaoOngGioTuCAD"]],
     "ThietBiWC": [["TaoLavaboTuCAD", "TaoSenTamTuCAD", "TaoBonCauTuCAD"], ["TaoVachKinhTamTuCAD", "TaoVoiXitLoGiayWC"]],
     "NoiThat": [["TaoGiuongTuCAD", "TaoTuDauGiuongTuCAD", "TaoTuQuanAoTuCAD"],
                 ["TaoSofaTuCAD", "TaoTuTiViTuCAD", "TaoBanAnTuCAD"],
@@ -107,7 +111,8 @@ def stack_of(panel, name):
         if name in grp:
             return u"{}{}".format(panel, k)
     return None
-TAB = "ARV Tools.tab"
+# Tab hiện trên ribbon = tên thư mục: "Archivina" (đổi từ "ARV Tools" theo yêu cầu người dùng 2026-11-04)
+TAB = "Archivina.tab"
 # Panel viết tay (không sinh từ Dynamo, builder không đụng vào thư mục): chỉ thêm vào layout của tab
 PANEL_VIET_TAY = ["VachKinh"]
 
@@ -532,9 +537,10 @@ def main():
                       u"đủ, mặc định Dry-run. {} Nguồn: {}.".format(
                           spec["summary"][:300], tool + ".dyn")
             else:
-                tip = u"Bấm: vẽ luôn trên view {} đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). " \
-                      u"Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. {} Nguồn: {}.".format(
-                          mc["ten_view"], spec["summary"][:300], tool + ".dyn")
+                dau = u"Bấm: hỏi đặt lên bản vẽ rồi vẽ luôn trên view {} đang mở (Ctrl+Z một lần là hoàn tác). " \
+                    if mc.get("hoi") else u"Bấm: vẽ luôn trên view {} đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). "
+                tip = (dau + u"Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. {} Nguồn: {}.").format(
+                    mc["ten_view"], spec["summary"][:300], tool + ".dyn")
         write(os.path.join(bdir, "script.py"), script_py)
         write(os.path.join(bdir, "bundle.yaml"),
               u"title: {}\ntooltip: {}\nauthor: Archivina BIM\n".format(json.dumps(title, ensure_ascii=False),
