@@ -71,12 +71,17 @@ BUTTONS = [
 # Shift+bấm (config.py) = hộp thoại đầy đủ như các nút khác (Dry-run bật sẵn).
 #   view_in: chỉ số IN[] nhận tên view; tu_khoa: từ khoá (không dấu) nhận view
 #   tu_khoa rỗng: làm trên mặt bằng tầng đang mở (không phải mặt bằng tầng thì báo); view_in None: không truyền tên view
+#   tao_view: chỉ số IN[] "tạo view khi chưa có" – mặt bằng tầng đang mở mà tầng đó chưa có view đích thì lõi tạo view
+#             + template từ view đang mở (Chống thấm / Ngăn cháy lan, người dùng yêu cầu 2026-11-04)
 #   khong_view: không cần view nào (vd. Chi tiết cửa: lõi tự lấy cửa đang chọn / hỏi chọn cửa trên màn hình)
-MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm"},
-            "NganChay": {"view_in": 0, "tu_khoa": u"chay lan", "ten_view": u"chống cháy lan"},
+MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm",
+                          "hoi": u"arv_hoi_sheet.hoi_chong_tham", "tao_view": 18},
+            "NganChay": {"view_in": 0, "tu_khoa": u"chay lan", "ten_view": u"chống cháy lan",
+                         "hoi": u"arv_hoi_sheet.hoi_ngan_chay", "tao_view": 18},
             "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},
             "TagCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng", "hoi": u"arv_hoi_sheet.hoi"},
-            "ChiTietCua": {"view_in": None, "tu_khoa": u"", "ten_view": u"bất kỳ", "khong_view": True}}
+            "ChiTietCua": {"view_in": None, "tu_khoa": u"", "ten_view": u"bất kỳ", "khong_view": True,
+                           "hoi": u"arv_hoi_sheet.hoi_chi_tiet_cua"}}
 PANEL_TITLES = {"KetCau": u"Kết cấu", "KienTruc": u"Kiến trúc", "HoanThien": u"Hoàn thiện", "MEP": u"MEP",
                 "HoSo": u"HS TKBVTC", "ThietBiWC": u"Thiết bị WC", "NoiThat": u"Nội thất"}
 # Bố cục gọn (người dùng yêu cầu 2026-11-03): panel có tên ở đây xếp nút nhỏ thành chồng 2–3 nút
@@ -159,6 +164,7 @@ VIEW_IN = @@VIEW_IN@@
 TU_KHOA = u"@@TU_KHOA@@"
 TIEU_DE = u"@@TITLE1@@"
 KHONG_VIEW = @@KHONG_VIEW@@
+TAO_IN = @@TAO_IN@@          # chỉ số IN[] "tạo view khi tầng chưa có" (None = không tạo, báo như cũ)
 HOI = u"@@HOI@@"           # "<module trong lib>.<hàm>(doc, view)": hộp thoại hỏi thêm trước khi chạy, trả về {IN: giá trị} / None
 
 
@@ -226,6 +232,37 @@ def hoi_chon_view(ten_views):
     return None
 
 
+def chay_tao_view(uiapp, uidoc, doc, av):
+    """Tầng của view đang mở chưa có view @@TEN_VIEW@@: lõi nhân bản view đang mở + gán template rồi vẽ (IN[TAO_IN])."""
+    truoc = set(v.Id.Value for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan))
+    ov = {"@@DRY_IN@@": False, TAO_IN: True}
+    if VIEW_IN is not None:
+        ov[VIEW_IN] = u""
+    if HOI:
+        m_, f_ = HOI.rsplit(".", 1)
+        them = getattr(__import__(m_), f_)(doc, av)
+        if them is None:
+            return
+        ov.update(them)
+    lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
+    moi = [v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
+           if not v.IsTemplate and v.Id.Value not in truoc and la_view_dich(doc, v)]
+    try:
+        from pyrevit import script
+        out = script.get_output()
+        out.set_title(TIEU_DE)
+        out.print_md(u"## {} – tạo view: {}".format(TIEU_DE, moi[0].Name if moi else u"-"))
+    except Exception:
+        pass
+    for ln in lines or []:
+        print(ln)
+    if moi:
+        try:
+            uidoc.RequestViewChange(moi[0])
+        except Exception:
+            pass
+
+
 def chay():
     uiapp = __revit__
     uidoc = uiapp.ActiveUIDocument
@@ -235,7 +272,14 @@ def chay():
     doc = uidoc.Document
     av = doc.ActiveView
     if KHONG_VIEW:             # lõi tự lấy đối tượng (vd. Chi tiết cửa: cửa đang chọn / chọn trên màn hình)
-        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={"@@DRY_IN@@": False})
+        ov = {"@@DRY_IN@@": False}
+        if HOI:                # hộp thoại hỏi thêm: (doc, view đang mở, uidoc) → {IN: giá trị} / None = Huỷ
+            m_, f_ = HOI.rsplit(".", 1)
+            them = getattr(__import__(m_), f_)(doc, av, uidoc)
+            if them is None:
+                return
+            ov.update(them)
+        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
         try:
             from pyrevit import script
             out = script.get_output()
@@ -254,6 +298,12 @@ def chay():
     else:
         ds = sorted([v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
                      if not v.IsTemplate and la_view_dich(doc, v)], key=lambda v: v.Name)
+        # Mặt bằng tầng đang mở (không phải view đích): chỉ xét view đích CÙNG TẦNG; chưa có thì lõi tạo view + template
+        # từ view đang mở (người dùng yêu cầu 2026-11-04, như mặt bằng định vị cửa)
+        if TAO_IN is not None and av is not None and av.ViewType == DB.ViewType.FloorPlan and av.GenLevel is not None                 and not la_view_dich(doc, av):
+            ds = [v for v in ds if v.GenLevel is not None and v.GenLevel.Id.Value == av.GenLevel.Id.Value]
+            if not ds:
+                return chay_tao_view(uiapp, uidoc, doc, av)
     view = None
     for v in ds:
         if av is not None and v.Id.Value == av.Id.Value:
@@ -474,10 +524,12 @@ def main():
                          .replace(u'"@@DRY_IN@@"', str(dry_in[0])).replace(u"@@TU_KHOA@@", mc["tu_khoa"])
                          .replace(u"@@TEN_VIEW@@", mc["ten_view"])
                          .replace(u"@@KHONG_VIEW@@", str(bool(mc.get("khong_view"))))
-                         .replace(u"@@HOI@@", mc.get("hoi", u"")))
+                         .replace(u"@@HOI@@", mc.get("hoi", u""))
+                         .replace(u"@@TAO_IN@@", str(mc.get("tao_view"))))
             if mc.get("khong_view"):
-                tip = u"Chọn 1 cửa đi / cửa sổ rồi bấm (hoặc bấm rồi chọn): tạo luôn, không hộp thoại, Ctrl+Z một " \
-                      u"lần là hoàn tác. Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. {} Nguồn: {}.".format(
+                tip = u"Chọn 1 hoặc nhiều cửa đi / cửa sổ / vách kính rồi bấm (hoặc bấm rồi chọn): bảng hỏi giai đoạn, hạng mục, " \
+                      u"khổ giấy, số hiệu, tên bản vẽ rồi tạo, Ctrl+Z một lần là hoàn tác. Shift+bấm: hộp thoại đầy " \
+                      u"đủ, mặc định Dry-run. {} Nguồn: {}.".format(
                           spec["summary"][:300], tool + ".dyn")
             else:
                 tip = u"Bấm: vẽ luôn trên view {} đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). " \

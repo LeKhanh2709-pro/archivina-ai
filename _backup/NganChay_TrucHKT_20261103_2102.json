@@ -1,0 +1,57 @@
+{
+  "ten": "NganChay_TrucHKT",
+  "mo_ta": "Hatch ngăn cháy lan trục / hộp kỹ thuật bằng Filled Region 2D (lưới NET 125 mm xoay 45°, màu 220,30,30, viền tím) trên view mặt bằng chống cháy lan; nhận ô theo tên room / shaft opening / ống đứng, không có thì theo hình học: quét dấu chân tường tìm ô / khe kín (cả khe hộp gen hẹp) không cửa, cửa sổ, thiết bị, sàn, ≤ 3 m2; loại thang máy / thang bộ; ẩn thiết bị vệ sinh trong view. Bấm lại không vẽ trùng, không xoá. Mặc định Dry-run.",
+  "py": "NganChay_TrucHKT.py",
+  "dau_vao": [
+    {
+      "ten": "Tên view (trống = view chống cháy lan)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Từ khoá tên room trục / HKT (;)",
+      "kieu": "string",
+      "gia_tri": "HKT;Hộp kỹ thuật;Trục kỹ thuật;Giếng kỹ thuật;Shaft"
+    },
+    {
+      "ten": "Diện tích lớn nhất ô / khe theo hình học (m2)",
+      "kieu": "number",
+      "gia_tri": 3
+    },
+    {
+      "ten": "Bề rộng lòng nhỏ nhất (mm)",
+      "kieu": "number",
+      "gia_tri": 80
+    },
+    {
+      "ten": "Dry-run (True = chỉ báo cáo)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Thư mục log + ảnh (trống = Documents, ARV_Logs)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Từ khoá loại trừ thang máy / thang bộ (;)",
+      "kieu": "string",
+      "gia_tri": "Thang máy;Elevator;Lift;Thang bộ;Stair"
+    },
+    {
+      "ten": "Ẩn thiết bị vệ sinh / nội thất trong view",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Tên kiểu Filled Region",
+      "kieu": "string",
+      "gia_tri": "AV_Hatch Ngăn Cháy Lan"
+    },
+    {
+      "ten": "Tên line style viền",
+      "kieu": "string",
+      "gia_tri": "AV.Nét ngăn cháy lan"
+    }
+  ]
+}

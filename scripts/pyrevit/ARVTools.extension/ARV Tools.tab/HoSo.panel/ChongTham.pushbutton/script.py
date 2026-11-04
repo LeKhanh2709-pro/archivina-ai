@@ -1,7 +1,7 @@
 #! python3
 # -*- coding: utf-8 -*-
 # File sinh tự động bởi scripts/pyrevit/build_from_dynamo.py – không sửa tay.
-"""Vẽ nét vén chân tường chống thấm (Detail Line) trên view mặt bằng chống thấm của Revit. Hatch chống thấm = Filled Region 2D trong view (người dùng chốt 2026-10-27: không đụng hatch / filter của sàn gạch model). - Nhận phòng ướt theo 2 nguồn: a) sàn hoàn thiện ướt trên level (tên kiểu sàn chứa từ khoá, vd. "Gach Lat WC", "Gach Lat Logia") b) bồn cầu / sen tắm / bồn tắm nằm ngoài mọi sàn ướt → WC chưa có sàn ướt (không dùng phễu thoát sàn) - Biên phòng = mép tường thô / mặt lõi tường (room có sẵn tại điểm đó, hoặc room tạm trong SubTransaction rồi rollback, không để lại gì trong model) → không bám theo khấc / lỗ của sàn. Room hở (không khép kín) hoặc tràn sang phòng lớn thì quay về biên sàn. Không bao giờ bo vào lớp trát / hoàn thiện (người dùng chốt 2026-10-28). - Mỗi vòng biên lùi vào trong phòng một khoảng (mặc định 50 mm) → nét vén, ngắt tại cửa đi - Mọi phòng ướt được hatch bằng Filled Region theo biên mặt tường: kiểu "AV_Hatch Chống Thấm WC" / "... Logia" (chưa có thì tạo, mẫu + màu lấy theo filter sàn SHT-WC / SHT-Logia của template), đưa xuống dưới nét vén - View đã có nét vén: không vẽ lại vén (không xoá gì), chỉ bổ sung hatch cho phòng chưa có hatch - Ẩn thiết bị vệ sinh trong view (Hide in View từng đối tượng, không sửa template), giữ phễu thoát sàn - Detail Line kiểu nét "AV.Nét chống thấm" gom group "ARV_ChongTham_Ven"; Filled Region gom group "ARV_ChongTham_Hatch" Dry-run (mặc định) chỉ báo cáo, không sửa mô hình. Không xoá gì: view đã có nét vén cùng kiểu thì dừng và báo."""
+"""Vẽ nét vén chân tường chống thấm (Detail Line) trên view mặt bằng chống thấm của Revit. Hatch chống thấm = Filled Region 2D trong view (người dùng chốt 2026-10-27: không đụng hatch / filter của sàn gạch model). - Nhận phòng ướt theo 2 nguồn: a) sàn hoàn thiện ướt trên level (tên kiểu sàn chứa từ khoá, vd. "Gach Lat WC", "Gach Lat Logia") b) room có sẵn tên phòng ướt (WC, vệ sinh, phòng tắm, lô gia, ban công) – model đặt tên kiểu sàn khác từ khoá c) bồn cầu / sen tắm / bồn tắm nằm ngoài mọi sàn ướt → WC chưa có sàn ướt (không dùng phễu thoát sàn) - Biên phòng = mép tường thô / mặt lõi tường (room có sẵn tại điểm đó, hoặc room tạm trong SubTransaction rồi rollback, không để lại gì trong model) → không bám theo khấc / lỗ của sàn. Room hở (không khép kín) hoặc tràn sang phòng lớn thì quay về biên sàn. Không bao giờ bo vào lớp trát / hoàn thiện (người dùng chốt 2026-10-28). - Mỗi vòng biên lùi vào trong phòng một khoảng (mặc định 50 mm) → nét vén, ngắt tại cửa đi - Mọi phòng ướt (WC + lô gia CHUNG 1 kiểu, người dùng chốt 2026-11-04) được hatch bằng Filled Region theo biên mặt tường: kiểu "AV_Hatch Chống Thấm WC" (chưa có thì tạo, mẫu + màu lấy theo filter sàn SHT-WC của template), đưa xuống dưới nét vén - View đã có nét vén: không vẽ lại vén (không xoá gì), chỉ bổ sung hatch cho phòng chưa có hatch - Ẩn thiết bị vệ sinh trong view (Hide in View từng đối tượng, không sửa template), giữ phễu thoát sàn - Detail Line kiểu nét "AV.Nét chống thấm" gom group "ARV_ChongTham_Ven"; Filled Region gom group "ARV_ChongTham_Hatch" - Đặt lên bản vẽ (IN[10], không chạy khi Dry-run): sheet mới hoặc sheet trống có sẵn, mặt bằng giữa khổ giấy + chú thích Dry-run (mặc định) chỉ báo cáo, không sửa mô hình. Không xoá gì: view đã có nét vén cùng kiểu thì dừng và báo."""
 __title__ = "Chống\nthấm"
 # Bấm: ghi luôn vào mô hình (không hộp thoại, không Dry-run) trên view chống thấm – Ctrl+Z một lần là hoàn tác.
 #   View đang mở là view chống thấm (tên view / view template có chữ "chống thấm") thì vẽ vào đó;
@@ -29,6 +29,8 @@ VIEW_IN = 0
 TU_KHOA = u"chong tham"
 TIEU_DE = u"Chống thấm"
 KHONG_VIEW = False
+TAO_IN = 18          # chỉ số IN[] "tạo view khi tầng chưa có" (None = không tạo, báo như cũ)
+HOI = u"arv_hoi_sheet.hoi_chong_tham"           # "<module trong lib>.<hàm>(doc, view)": hộp thoại hỏi thêm trước khi chạy, trả về {IN: giá trị} / None
 
 
 def khong_dau(s):
@@ -95,6 +97,37 @@ def hoi_chon_view(ten_views):
     return None
 
 
+def chay_tao_view(uiapp, uidoc, doc, av):
+    """Tầng của view đang mở chưa có view chống thấm: lõi nhân bản view đang mở + gán template rồi vẽ (IN[TAO_IN])."""
+    truoc = set(v.Id.Value for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan))
+    ov = {4: False, TAO_IN: True}
+    if VIEW_IN is not None:
+        ov[VIEW_IN] = u""
+    if HOI:
+        m_, f_ = HOI.rsplit(".", 1)
+        them = getattr(__import__(m_), f_)(doc, av)
+        if them is None:
+            return
+        ov.update(them)
+    lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
+    moi = [v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
+           if not v.IsTemplate and v.Id.Value not in truoc and la_view_dich(doc, v)]
+    try:
+        from pyrevit import script
+        out = script.get_output()
+        out.set_title(TIEU_DE)
+        out.print_md(u"## {} – tạo view: {}".format(TIEU_DE, moi[0].Name if moi else u"-"))
+    except Exception:
+        pass
+    for ln in lines or []:
+        print(ln)
+    if moi:
+        try:
+            uidoc.RequestViewChange(moi[0])
+        except Exception:
+            pass
+
+
 def chay():
     uiapp = __revit__
     uidoc = uiapp.ActiveUIDocument
@@ -104,7 +137,14 @@ def chay():
     doc = uidoc.Document
     av = doc.ActiveView
     if KHONG_VIEW:             # lõi tự lấy đối tượng (vd. Chi tiết cửa: cửa đang chọn / chọn trên màn hình)
-        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={4: False})
+        ov = {4: False}
+        if HOI:                # hộp thoại hỏi thêm: (doc, view đang mở, uidoc) → {IN: giá trị} / None = Huỷ
+            m_, f_ = HOI.rsplit(".", 1)
+            them = getattr(__import__(m_), f_)(doc, av, uidoc)
+            if them is None:
+                return
+            ov.update(them)
+        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
         try:
             from pyrevit import script
             out = script.get_output()
@@ -123,6 +163,12 @@ def chay():
     else:
         ds = sorted([v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
                      if not v.IsTemplate and la_view_dich(doc, v)], key=lambda v: v.Name)
+        # Mặt bằng tầng đang mở (không phải view đích): chỉ xét view đích CÙNG TẦNG; chưa có thì lõi tạo view + template
+        # từ view đang mở (người dùng yêu cầu 2026-11-04, như mặt bằng định vị cửa)
+        if TAO_IN is not None and av is not None and av.ViewType == DB.ViewType.FloorPlan and av.GenLevel is not None                 and not la_view_dich(doc, av):
+            ds = [v for v in ds if v.GenLevel is not None and v.GenLevel.Id.Value == av.GenLevel.Id.Value]
+            if not ds:
+                return chay_tao_view(uiapp, uidoc, doc, av)
     view = None
     for v in ds:
         if av is not None and v.Id.Value == av.Id.Value:
@@ -142,6 +188,12 @@ def chay():
     ov = {4: False}
     if VIEW_IN is not None:
         ov[VIEW_IN] = view.Name
+    if HOI:
+        m_, f_ = HOI.rsplit(".", 1)
+        them = getattr(__import__(m_), f_)(doc, view)
+        if them is None:
+            return
+        ov.update(them)
     lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
     try:
         from pyrevit import script

@@ -1,6 +1,6 @@
 {
   "ten": "NganChay_TrucHKT",
-  "mo_ta": "Hatch ngăn cháy lan trục / hộp kỹ thuật bằng Filled Region 2D (lưới NET 125 mm xoay 45°, màu 220,30,30, viền tím) trên view mặt bằng chống cháy lan; nhận ô theo tên room / shaft opening / ống đứng, không có thì theo hình học: quét dấu chân tường tìm ô / khe kín (cả khe hộp gen hẹp) không cửa, cửa sổ, thiết bị, sàn, ≤ 3 m2; loại thang máy / thang bộ; ẩn thiết bị vệ sinh trong view. Bấm lại không vẽ trùng, không xoá. Mặc định Dry-run.",
+  "mo_ta": "Hatch ngăn cháy lan trục / hộp kỹ thuật bằng Filled Region 2D (lưới NET 125 mm xoay 45°, màu 220,30,30, viền tím) trên view mặt bằng chống cháy lan; nhận ô theo tên room / shaft opening / ống đứng, không có thì theo hình học: quét dấu chân tường tìm ô / khe kín (cả khe hộp gen hẹp) không cửa, cửa sổ, thiết bị, sàn, ≤ 3 m2; loại thang máy / thang bộ; ẩn thiết bị vệ sinh trong view. Bấm lại không vẽ trùng, không xoá. Mặc định Dry-run. Đặt lên bản vẽ (sheet mới hoặc sheet trống có sẵn) kèm chú thích khi bật.",
   "py": "NganChay_TrucHKT.py",
   "dau_vao": [
     {
@@ -52,6 +52,51 @@
       "ten": "Tên line style viền",
       "kieu": "string",
       "gia_tri": "AV.Nét ngăn cháy lan"
+    },
+    {
+      "ten": "Đặt mặt bằng lên bản vẽ (sheet)",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Giai đoạn",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Hạng mục",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Khổ giấy (A1 / A0)",
+      "kieu": "string",
+      "gia_tri": "A1"
+    },
+    {
+      "ten": "Khung tên Family : Type (trống = theo khổ)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Số hiệu sheet (trống = tiếp theo; trùng sheet trống = đặt vào đó)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tên sheet (trống = tự đặt theo tầng)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Thêm chú thích góc phải dưới",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Tầng chưa có view thì tạo view + template",
+      "kieu": "bool",
+      "gia_tri": true
     }
   ]
 }

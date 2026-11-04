@@ -105,7 +105,14 @@ def chay():
     doc = uidoc.Document
     av = doc.ActiveView
     if KHONG_VIEW:             # lõi tự lấy đối tượng (vd. Chi tiết cửa: cửa đang chọn / chọn trên màn hình)
-        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={5: False})
+        ov = {5: False}
+        if HOI:                # hộp thoại hỏi thêm: (doc, view đang mở, uidoc) → {IN: giá trị} / None = Huỷ
+            m_, f_ = HOI.rsplit(".", 1)
+            them = getattr(__import__(m_), f_)(doc, av, uidoc)
+            if them is None:
+                return
+            ov.update(them)
+        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
         try:
             from pyrevit import script
             out = script.get_output()

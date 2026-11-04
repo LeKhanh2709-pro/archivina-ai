@@ -1,0 +1,377 @@
+# ==== PHẦN CHUNG ĐẶT SHEET (nguồn: DatSheet_chung.py, chép vào file công cụ bằng gop_dat_sheet.py – sửa ở nguồn) ====
+# Đặt mặt bằng vừa vẽ lên bản vẽ (người dùng yêu cầu 2026-11-03 cho Chống thấm + Ngăn cháy lan, cùng cách nút Tag cửa):
+#   - Tạo sheet: khung tên theo khổ (A1 / A0), số hiệu (trống = tiếp theo trong hạng mục), tên, gán giai đoạn / hạng mục
+#     theo cách nhóm sheet trong Project Browser của dự án (giống cap_thu_muc_sheet / ts_giai_doan của TagCua_TuDong.py).
+#   - Mặt bằng đặt GIỮA vùng vẽ, giữ nguyên tỉ lệ của view (không sửa view template), "Title on Sheet" = tên sheet nếu
+#     đang trống. View đã nằm trên sheet thì không đặt thêm.
+#   - Chú thích (ô mẫu hatch / nét + chữ) vẽ trong drafting view "CHÚ THÍCH - <tên sheet>" cùng tỉ lệ mặt bằng (mẫu
+#     hatch theo model co giãn đúng như trên mặt bằng), đặt sát góc phải dưới vùng vẽ. Chữ chỉ là tên vùng, không ghi
+#     vật liệu / chiều cao vén (chưa có số liệu).
+# Hàm, hằng ở khối này có tiền tố sh_ / SH_ để không trùng tên với file công cụ.
+SH_BIEN_MM = 8.0             # lề trong vùng vẽ của khung tên (mm giấy)
+SH_TIEU_DE_MM = 15.0         # chỗ tên view dưới viewport
+SH_O_MAU_MM = (16.0, 7.0)    # ô mẫu chú thích (rộng, cao) mm giấy
+SH_DONG_MM = 11.0            # khoảng cách dòng chú thích
+SH_KHE_CHU_MM = 4.0          # khe giữa ô mẫu và chữ
+
+
+def sh_ft(v):
+    return UnitUtils.ConvertToInternalUnits(v, UnitTypeId.Millimeters)
+
+
+def sh_mm(v):
+    return UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters)
+
+
+def sh_kd(s):
+    s = unicodedata.normalize("NFD", u"%s" % (s or u"")).replace(u"đ", u"d").replace(u"Đ", u"D")
+    return u"".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+
+
+def sh_ten(e):
+    try:
+        return Element.Name.GetValue(e)
+    except Exception:
+        pass
+    try:
+        return e.Name
+    except Exception:
+        return u"?"
+
+
+def sh_ts(e, pid):
+    for prm in e.Parameters:
+        if prm.Id.Value == pid.Value:
+            return prm
+    return None
+
+
+def sh_gt(prm):
+    try:
+        return (prm.AsString() or u"") if prm.StorageType == StorageType.String else (prm.AsValueString() or u"")
+    except Exception:
+        return u""
+
+
+def sh_cap_thu_muc(doc):
+    """Id tham số các cấp nhóm sheet trong Project Browser (vd. giai đoạn → hạng mục), đọc từ sheet đầu tiên có thư mục."""
+    try:
+        bo = BrowserOrganization.GetCurrentBrowserOrganizationForSheets(doc)
+    except Exception:
+        return []
+    for s in FilteredElementCollector(doc).OfClass(ViewSheet):
+        try:
+            items = list(bo.GetFolderItems(s.Id))
+        except Exception:
+            continue
+        if items:
+            return [it.ElementId for it in items]
+    return []
+
+
+def sh_gd_hm(doc, cap):
+    """(id tham số giai đoạn, id tham số hạng mục). Browser 2 cấp: cấp 1 = giai đoạn, cấp 2 = hạng mục. 1 cấp: cấp đó là
+    hạng mục, giai đoạn = tham số sheet có chữ "giai đoạn" dùng nhiều nhất."""
+    if len(cap) >= 2:
+        return cap[0], cap[1]
+    hm = cap[0] if cap else None
+    dem = {}
+    for s in FilteredElementCollector(doc).OfClass(ViewSheet):
+        for prm in s.Parameters:
+            if prm.Definition is not None and prm.StorageType == StorageType.String and \
+                    u"giai doan" in sh_kd(prm.Definition.Name) and (hm is None or prm.Id.Value != hm.Value):
+                k = prm.Id.Value
+                dem.setdefault(k, [prm.Id, 0])
+                if prm.AsString():
+                    dem[k][1] += 1
+    gd = max(dem.values(), key=lambda x: x[1])[0] if dem else None
+    return gd, hm
+
+
+def sh_so_tiep(doc, pid_gd, gd, pid_hm, hm, mac_dinh):
+    """Số hiệu tiếp theo trong cùng hạng mục (tăng phần số cuối, giữ số chữ số); hạng mục chưa có sheet thì mac_dinh."""
+    import re
+    dung = set(s.SheetNumber for s in FilteredElementCollector(doc).OfClass(ViewSheet))
+    cung = []
+    for s in FilteredElementCollector(doc).OfClass(ViewSheet):
+        if pid_hm is not None and hm:
+            p_ = sh_ts(s, pid_hm)
+            if p_ is None or sh_gt(p_) != hm:
+                continue
+            if pid_gd is not None and gd:
+                q_ = sh_ts(s, pid_gd)
+                if q_ is not None and sh_gt(q_) and sh_gt(q_) != gd:
+                    continue
+            cung.append(s.SheetNumber)
+    goc = None
+    for so in sorted(cung):
+        if re.search(r"\d+$", so):
+            goc = so
+    if goc is None:
+        goc = mac_dinh
+    m = re.search(r"(\d+)$", goc)
+    dau, n, w = (goc[:m.start()], int(m.group(1)), len(m.group(1))) if m else (goc + u".", 0, 2)
+    while True:
+        n += 1
+        ung = u"%s%0*d" % (dau, w, n)
+        if ung not in dung:
+            return ung
+
+
+def sh_khung_ten(doc, kho, khung):
+    ds = list(FilteredElementCollector(doc).OfClass(FamilySymbol).OfCategory(BuiltInCategory.OST_TitleBlocks))
+    if khung:
+        for s in ds:
+            if khung in (u"%s : %s" % (s.FamilyName, sh_ten(s)), sh_ten(s), s.FamilyName):
+                return s
+    k = sh_kd(kho or u"A1").replace(u" ", u"")
+    ung = [s for s in ds if k in sh_kd(s.FamilyName + u" " + sh_ten(s)).replace(u" ", u"")
+           and u"bia" not in sh_kd(s.FamilyName + u" " + sh_ten(s))]
+    ung.sort(key=lambda s: (0 if u"khung" in sh_kd(s.FamilyName) else 1, s.FamilyName))
+    return ung[0] if ung else None
+
+
+def sh_net_khung(doc, tb_sym):
+    """Nét đứng [(x, dài)] / ngang [(y, dài)] của family khung tên (toạ độ family), đọc trong file family (đóng không lưu)
+    vì hình học khung tên trên sheet trả về rỗng. Gọi NGOÀI transaction."""
+    dung, ngang = [], []
+    fd = None
+    try:
+        TransactionManager.Instance.ForceCloseTransaction()
+        fd = doc.EditFamily(tb_sym.Family)
+        for c in FilteredElementCollector(fd).OfClass(CurveElement):
+            try:
+                g = c.GeometryCurve
+                if g is None or not g.IsBound or g.GetType().Name != "Line":
+                    continue
+                a, b_ = g.GetEndPoint(0), g.GetEndPoint(1)
+                if abs(a.X - b_.X) < 1e-6:
+                    dung.append((a.X, abs(a.Y - b_.Y)))
+                elif abs(a.Y - b_.Y) < 1e-6:
+                    ngang.append((a.Y, abs(a.X - b_.X)))
+            except Exception:
+                pass
+    except Exception:
+        pass
+    finally:
+        if fd is not None:
+            try:
+                fd.Close(False)
+            except Exception:
+                pass
+    return dung, ngang
+
+
+def sh_vung_ve(sheet, tb_inst, net):
+    """Vùng vẽ (x0, y0, x1, y1) trên sheet: trong khung trong, bên trái dải khung tên phải (đo từ nét dài của family
+    khung tên; không đo được thì khung bao trừ lề 25 / 15 mm và 1/6 bên phải)."""
+    tf = tb_inst.GetTotalTransform()
+    dung = [(tf.OfPoint(XYZ(x, 0, 0)).X, l) for x, l in net[0]]
+    ngang = [(tf.OfPoint(XYZ(0, y, 0)).Y, l) for y, l in net[1]]
+    bb = tb_inst.get_BoundingBox(sheet)
+    X0, Y0, X1, Y1 = bb.Min.X, bb.Min.Y, bb.Max.X, bb.Max.Y
+    W, H = X1 - X0, Y1 - Y0
+    d40 = sh_ft(40.0)
+    dai_d = [x for x, l in dung if l > 0.6 * H]
+    dai_n = [y for y, l in ngang if l > 0.6 * W]
+    x0 = max([x for x in dai_d if x < X0 + d40] or [X0 + sh_ft(25.0)])
+    x1 = max([x for x in dai_d if X0 + d40 < x < X1 - d40] or [X1 - W / 6.0])
+    y0 = max([y for y in dai_n if y < Y0 + d40] or [Y0 + sh_ft(15.0)])
+    y1 = min([y for y in dai_n if y > Y1 - d40] or [Y1 - sh_ft(15.0)])
+    return x0, y0, x1, y1
+
+
+def sh_kieu_viewport(doc, co_tieu_de):
+    """Kiểu viewport: co_tieu_de = có nhãn tên view (ưu tiên kiểu không phải 'no scale' / 'detail'); không thì kiểu tắt
+    tên (Show Title = No). Không có kiểu phù hợp → None (giữ mặc định)."""
+    kieu = []
+    for et in FilteredElementCollector(doc).OfClass(ElementType):
+        try:
+            if et.FamilyName != "Viewport":
+                continue
+            hien = et.get_Parameter(BuiltInParameter.VIEWPORT_ATTR_SHOW_LABEL)
+            nhan = et.get_Parameter(BuiltInParameter.VIEWPORT_ATTR_LABEL_TAG)
+            n = sh_kd(sh_ten(et))
+            if co_tieu_de:
+                if nhan is None or nhan.AsElementId() == ElementId.InvalidElementId or (hien is not None and hien.AsInteger() == 0):
+                    continue
+                kieu.append((0 if u"no scale" not in n and u"detail" not in n else 1, sh_ten(et), et))
+            elif hien is not None and hien.AsInteger() == 0:
+                kieu.append((0 if u"no title" in n else 1, sh_ten(et), et))
+        except Exception:
+            pass
+    kieu.sort(key=lambda k: (k[0], k[1]))
+    return kieu[0][2] if kieu else None
+
+
+def sh_kieu_chu(doc):
+    """Kiểu chữ chú thích: Arial cao 2–3 mm (gần 2.5 nhất), không có thì kiểu mặc định của dự án."""
+    ung = []
+    for t in FilteredElementCollector(doc).OfClass(TextNoteType):
+        try:
+            cao = sh_mm(t.get_Parameter(BuiltInParameter.TEXT_SIZE).AsDouble())
+            font = sh_kd(t.get_Parameter(BuiltInParameter.TEXT_FONT).AsString())
+            if u"arial" in font and 1.9 <= cao <= 3.1:
+                ung.append((abs(cao - 2.5), sh_ten(t), t.Id))
+        except Exception:
+            pass
+    ung.sort(key=lambda k: (k[0], k[1]))
+    return ung[0][2] if ung else doc.GetDefaultElementTypeId(ElementTypeGroup.TextNoteType)
+
+
+def sh_chu_thich(doc, ten_view, ti_le, muc):
+    """Drafting view chú thích. muc: [{"vung": id kiểu Filled Region, "vien": id line style | None, "chu": u"..."} |
+    {"net": GraphicsStyle, "chu": u"..."}]. Trả về (view, báo cáo). Gọi TRONG transaction."""
+    for v in FilteredElementCollector(doc).OfClass(ViewDrafting):
+        if not v.IsTemplate and v.Name == ten_view:
+            sh_ = v.get_Parameter(BuiltInParameter.VIEWER_SHEET_NUMBER)
+            if sh_ is not None and sh_.AsString() and sh_.AsString() not in (u"---", u"-"):
+                return None, u"Chú thích '%s' đã nằm trên sheet %s – không đặt thêm." % (ten_view, sh_.AsString())
+            return v, u"dùng lại view chú thích '%s'" % ten_view
+    vft = [t for t in FilteredElementCollector(doc).OfClass(ViewFamilyType) if t.ViewFamily == ViewFamily.Drafting]
+    if not vft:
+        return None, u"Dự án không có kiểu Drafting View – không vẽ chú thích."
+    v = ViewDrafting.Create(doc, vft[0].Id)
+    v.Name = ten_view
+    v.Scale = ti_le
+    s = float(ti_le)
+    w, h = sh_ft(SH_O_MAU_MM[0] * s), sh_ft(SH_O_MAU_MM[1] * s)
+    dong, khe = sh_ft(SH_DONG_MM * s), sh_ft(SH_KHE_CHU_MM * s)
+    kc = sh_kieu_chu(doc)
+    opt = TextNoteOptions(kc)
+    opt.HorizontalAlignment = HorizontalTextAlignment.Left
+    opt.VerticalAlignment = VerticalTextAlignment.Middle
+    TextNote.Create(doc, v.Id, XYZ(0, 0, 0), u"CHÚ THÍCH:", opt)
+    y = -dong
+    for m in muc:
+        yc = y
+        if "vung" in m:
+            cl = CurveLoop()
+            p = [XYZ(0, yc - h / 2, 0), XYZ(w, yc - h / 2, 0), XYZ(w, yc + h / 2, 0), XYZ(0, yc + h / 2, 0)]
+            for i in range(4):
+                cl.Append(Line.CreateBound(p[i], p[(i + 1) % 4]))
+            ds = NetList[CurveLoop]()
+            ds.Add(cl)
+            fr = FilledRegion.Create(doc, m["vung"], v.Id, ds)
+            if m.get("vien") is not None:
+                fr.SetLineStyleId(m["vien"])
+        else:
+            dc = doc.Create.NewDetailCurve(v, Line.CreateBound(XYZ(0, yc, 0), XYZ(w, yc, 0)))
+            dc.LineStyle = m["net"]
+        TextNote.Create(doc, v.Id, XYZ(w + khe, yc, 0), m["chu"], opt)
+        y -= dong
+    return v, u"tạo view chú thích '%s' (%d mục)" % (ten_view, len(muc))
+
+
+def dat_mat_bang_len_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, so_mac_dinh, muc_chu_thich):
+    """Tạo sheet + đặt mặt bằng giữa vùng vẽ + chú thích góc phải dưới. Trả về [báo cáo]."""
+    bao = []
+    try:
+        dang = view.get_Parameter(BuiltInParameter.VIEWER_SHEET_NUMBER)
+        if dang is not None and dang.AsString() and dang.AsString() not in (u"---", u"-"):
+            return [u"View '%s' đã nằm trên sheet %s – không đặt thêm." % (view.Name, dang.AsString())]
+    except Exception:
+        pass
+    cap = sh_cap_thu_muc(doc)
+    pid_gd, pid_hm = sh_gd_hm(doc, cap)
+    so = (so_hieu or u"").strip() or sh_so_tiep(doc, pid_gd, gd, pid_hm, hm, so_mac_dinh)
+    # Số hiệu trùng sheet TRỐNG có sẵn (vd. G19 dựng sẵn A.4-201 MẶT BẰNG CHỐNG THẤM) → đặt vào sheet đó, giữ nguyên
+    # tên / khung tên / tham số người dùng đã đặt
+    trong = [s for s in FilteredElementCollector(doc).OfClass(ViewSheet)
+             if s.SheetNumber == so and not s.IsPlaceholder and s.GetAllPlacedViews().Count == 0
+             and not any(True for _ in FilteredElementCollector(doc, s.Id).OfClass(ScheduleSheetInstance)
+                         if not _.IsTitleblockRevisionSchedule)]
+    if trong:
+        tbs = [t for t in FilteredElementCollector(doc, trong[0].Id).OfCategory(BuiltInCategory.OST_TitleBlocks)
+               .WhereElementIsNotElementType()]
+        if tbs:
+            return sh_dat_vao(doc, view, trong[0], tbs[0], doc.GetElement(tbs[0].GetTypeId()), muc_chu_thich,
+                              [u"Dùng sheet trống có sẵn %s – %s (giữ tên, khung tên, tham số)." % (
+                                  so, trong[0].Name)], ten_sheet, cap, None)
+    tb = sh_khung_ten(doc, kho, khung)
+    if tb is None:
+        return [u"Không có family khung tên khổ %s trong dự án (tên family / type có chữ '%s') – chưa đặt lên sheet. "
+                u"Load khung tên rồi bấm lại." % (kho, kho)]
+    dung = set(s.SheetNumber for s in FilteredElementCollector(doc).OfClass(ViewSheet))
+    if so in dung:
+        import re
+        cu = so
+        m = re.search(r"(\d+)$", so)
+        dau, n, w = (so[:m.start()], int(m.group(1)), len(m.group(1))) if m else (so + u"-", 0, 1)
+        while so in dung:
+            n += 1
+            so = u"%s%0*d" % (dau, w, n)
+        bao.append(u"Số hiệu '%s' đã có – dùng '%s'." % (cu, so))
+    TransactionManager.Instance.EnsureInTransaction(doc)
+    sh = ViewSheet.Create(doc, tb.Id)
+    sh.SheetNumber = so
+    sh.Name = ten_sheet
+    for pid, gt_, nhan in ((pid_gd, gd, u"giai đoạn"), (pid_hm, hm, u"hạng mục")):
+        if pid is None or not gt_:
+            continue
+        prm = sh_ts(sh, pid)
+        if prm is not None and not prm.IsReadOnly:
+            prm.Set(gt_)
+        else:
+            bao.append(u"Không gán được %s '%s' (tham số không ghi được)." % (nhan, gt_))
+    doc.Regenerate()
+    tb_inst = [t for t in FilteredElementCollector(doc, sh.Id).OfCategory(BuiltInCategory.OST_TitleBlocks)
+               .WhereElementIsNotElementType()][0]
+    TransactionManager.Instance.TransactionTaskDone()
+    return sh_dat_vao(doc, view, sh, tb_inst, tb, muc_chu_thich, bao, ten_sheet, cap, kho)
+
+
+def sh_dat_vao(doc, view, sh, tb_inst, tb, muc_chu_thich, bao, ten_sheet, cap, kho):
+    """Đặt chú thích (góc phải dưới vùng vẽ) + mặt bằng (giữa vùng vẽ, giữ tỉ lệ view) lên sheet sh. Trả về [báo cáo]."""
+    net = sh_net_khung(doc, tb)          # mở family khung tên: phải ngoài transaction
+    TransactionManager.Instance.EnsureInTransaction(doc)
+    x0, y0, x1, y1 = sh_vung_ve(sh, tb_inst, net)
+    b = sh_ft(SH_BIEN_MM)
+    o_ct = None
+    if muc_chu_thich:
+        try:
+            vct, msg = sh_chu_thich(doc, u"CHÚ THÍCH - %s" % ten_sheet, view.Scale, muc_chu_thich)
+            bao.append(u"Chú thích: %s." % msg)
+            if vct is not None:
+                doc.Regenerate()
+                vp_ct = Viewport.Create(doc, sh.Id, vct.Id, XYZ(x1, y0, 0))
+                k_ = sh_kieu_viewport(doc, False)
+                if k_ is not None:
+                    vp_ct.ChangeTypeId(k_.Id)
+                doc.Regenerate()
+                o_ = vp_ct.GetBoxOutline()
+                wc, hc = o_.MaximumPoint.X - o_.MinimumPoint.X, o_.MaximumPoint.Y - o_.MinimumPoint.Y
+                vp_ct.SetBoxCenter(XYZ(x1 - b - wc / 2.0, y0 + b + hc / 2.0, 0))
+                o_ct = (x1 - b - wc, y0 + b, x1 - b, y0 + b + hc)
+        except Exception as ex:
+            bao.append(u"Không vẽ được chú thích: %s" % (u"%s" % ex).splitlines()[0][:150])
+    try:
+        prm = view.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION)
+        if prm is not None and not prm.IsReadOnly and not (prm.AsString() or u"").strip():
+            prm.Set(ten_sheet)
+    except Exception:
+        pass
+    vx0, vy0, vx1, vy1 = x0 + b, y0 + b + sh_ft(SH_TIEU_DE_MM), x1 - b, y1 - b
+    vp = Viewport.Create(doc, sh.Id, view.Id, XYZ((vx0 + vx1) / 2.0, (vy0 + vy1) / 2.0, 0))
+    k_ = sh_kieu_viewport(doc, True)
+    if k_ is not None:
+        vp.ChangeTypeId(k_.Id)
+    doc.Regenerate()
+    o = vp.GetBoxOutline()
+    w, h = o.MaximumPoint.X - o.MinimumPoint.X, o.MaximumPoint.Y - o.MinimumPoint.Y
+    cx = (vx0 + vx1) / 2.0 if w <= vx1 - vx0 else vx0 + w / 2.0
+    cy = (vy0 + vy1) / 2.0 if h <= vy1 - vy0 else vy1 - h / 2.0
+    vp.SetBoxCenter(XYZ(cx, cy, 0))
+    TransactionManager.Instance.TransactionTaskDone()
+    if w > vx1 - vx0 + 1e-6 or h > vy1 - vy0 + 1e-6:
+        bao.append(u"CẦN XEM LẠI: mặt bằng 1:%d (kể cả trục, chú thích) %d x %d mm lớn hơn vùng vẽ %d x %d mm – chọn khổ "
+                   u"lớn hơn hoặc thu crop view." % (view.Scale, sh_mm(w), sh_mm(h), sh_mm(vx1 - vx0), sh_mm(vy1 - vy0)))
+    elif o_ct is not None and cx + w / 2.0 > o_ct[0] and cy - h / 2.0 < o_ct[3]:
+        bao.append(u"CẦN XEM LẠI: khung mặt bằng có thể chạm chú thích góc phải dưới – dời tay nếu cần.")
+    bao.append(u"ĐÃ ĐẶT lên sheet %s – %s (khung %s : %s%s), mặt bằng 1:%d giữa vùng vẽ, kiểu viewport '%s'." % (
+        sh.SheetNumber, sh.Name, tb.FamilyName, sh_ten(tb), u", khổ %s" % kho if kho else u"", view.Scale,
+        sh_ten(k_) if k_ is not None else u"mặc định"))
+    if not cap:
+        bao.append(u"Project Browser không nhóm sheet theo tham số – không gán giai đoạn / hạng mục.")
+    return bao
+# ==== HẾT PHẦN CHUNG ĐẶT SHEET ====

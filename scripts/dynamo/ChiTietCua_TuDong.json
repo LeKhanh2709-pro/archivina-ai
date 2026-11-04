@@ -1,12 +1,12 @@
 {
   "ten": "ChiTietCua_TuDong",
-  "mo_ta": "Chọn 1 cửa đi / cửa sổ có sẵn family → tạo mặt bằng (callout), mặt đứng (nhìn từ ngoài nhà), mặt cắt tỉ lệ 1/25 kèm kích thước tổng, đặt vào ô trống tiếp theo của sheet 'CHI TIẾT CỬA' (khung A1 chia 6 ô, hết ô thì tạo sheet mới). View template 'CHI TIẾT CỬA - ...' chưa có thì tạo từ template 1/25 có sẵn. Mỗi type chỉ làm 1 lần. Không xoá, không sửa cửa / tường / template đã có. Mặc định Dry-run.",
+  "mo_ta": "Chọn 1 hoặc nhiều cửa đi / cửa sổ có sẵn family hoặc vách kính (curtain wall) → tạo mặt bằng (callout), mặt đứng (nhìn từ ngoài nhà), mặt cắt tỉ lệ 1/25 kèm kích thước tổng, đặt vào ô trống tiếp theo của sheet 'CHI TIẾT CỬA' (khung A1 chia 6 ô, hết ô thì tạo sheet mới). View template 'CHI TIẾT CỬA - ...' chưa có thì tạo từ template 1/25 có sẵn. Mỗi type chỉ làm 1 lần (vách kính: mỗi Mark; giữ 1/25, vách dài chiếm khối 2 / 3 / 4 / 6 ô trên sheet mới). Không xoá, không sửa cửa / tường / template đã có. Mặc định Dry-run.",
   "py": "ChiTietCua_TuDong.py",
   "dau_vao": [
-    {"ten": "ID cửa (trống = cửa đang chọn / chọn trên màn hình)", "kieu": "string", "gia_tri": ""},
+    {"ten": "ID cửa / vách kính, nhiều id cách nhau bằng ; (trống = đang chọn / chọn trên màn hình)", "kieu": "string", "gia_tri": ""},
     {"ten": "Khung tên cho sheet mới", "kieu": "string", "gia_tri": "AV-Khung A1(841x594)-Kien Truc"},
-    {"ten": "Tên sheet", "kieu": "string", "gia_tri": "CHI TIẾT CỬA"},
-    {"ten": "Số sheet đầu tiên (khi chưa có sheet tên đó)", "kieu": "string", "gia_tri": "A.CD.01"},
+    {"ten": "Tên bản vẽ (tên sheet)", "kieu": "string", "gia_tri": "CHI TIẾT CỬA"},
+    {"ten": "Số hiệu sheet (trống = tiếp theo)", "kieu": "string", "gia_tri": ""},
     {"ten": "Tỉ lệ (25 = 1/25)", "kieu": "number", "gia_tri": 25},
     {"ten": "Lề khung nhìn quanh cửa (mm)", "kieu": "number", "gia_tri": 300},
     {"ten": "Template mặt bằng", "kieu": "string", "gia_tri": "CHI TIẾT CỬA - MẶT BẰNG"},
@@ -18,6 +18,8 @@
     {"ten": "Đặt kích thước tổng", "kieu": "bool", "gia_tri": true},
     {"ten": "Ẩn khung callout trên mặt bằng gốc", "kieu": "bool", "gia_tri": true},
     {"ten": "Dry-run (True = chỉ báo cáo)", "kieu": "bool", "gia_tri": true},
-    {"ten": "Mở sheet sau khi tạo", "kieu": "bool", "gia_tri": true}
+    {"ten": "Mở sheet sau khi tạo", "kieu": "bool", "gia_tri": true},
+    {"ten": "Giai đoạn (thư mục cấp 1 Project Browser)", "kieu": "string", "gia_tri": ""},
+    {"ten": "Hạng mục (thư mục cấp 2 Project Browser)", "kieu": "string", "gia_tri": ""}
   ]
 }

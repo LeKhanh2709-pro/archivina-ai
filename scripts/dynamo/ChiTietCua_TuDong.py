@@ -5,7 +5,9 @@
 #     XOAY theo mặt đứng (người dùng yêu cầu 2026-11-03): phía phải mặt bằng = phía phải mặt đứng, ngoài nhà ở dưới;
 #     khung callout trên mặt bằng gốc ẩn bằng Hide in View (IN[13]).
 #   - Mặt đứng CHỈ CÓ CỬA (tường, sàn, phần tử khác Hide in View); level ẩn trên mặt đứng + mặt cắt, thay bằng nét
-#     đứt cốt sàn + chữ "CỐT SÀN HOÀN THIỆN <tên phòng>" có mũi tên trên mặt cắt (như mẫu người dùng gửi 2026-11-03).
+#     đứt cốt sàn + chữ "CỐT SÀN HOÀN THIỆN" có mũi tên trên mặt cắt (như mẫu người dùng gửi 2026-11-03).
+#   - Mặt bằng chỉ hiện cửa + tường (sàn, cửa khác, đồ đạc Hide in View), khung nhìn trùm hết cung mở cánh.
+#   - Kiểu view riêng: Floor Plan "CT CỬA", Section "MẶT CẮT CỬA" (mặt đứng + mặt cắt); viewport "AV-Title No Line".
 #   - Mặt đứng: section đặt trước mặt tường, không cắt cửa, nhìn từ NGOÀI NHÀ. Phía ngoài nhà: một bên không có room
 #     → bên đó; cả 2 bên có room thì bên có tên lô gia / ban công / sân; không rõ → phía KHÔNG mở cánh (theo cung mở
 #     trên mặt bằng); cửa không có cung mở → mặt ngoài family (Facing). IN[11] ép phía nhìn.
@@ -22,13 +24,21 @@
 #     sheet tên IN[2] + 1 (chưa có sheet nào tên đó thì IN[3]). Lưới ô: Detail Line trên sheet (2 nét đứng, 1 nét ngang
 #     chia vùng vẽ của khung tên + 1 nét ngăn dải thông tin dưới mỗi ô).
 #   - Mỗi type cửa chỉ làm 1 lần: đã có view "CT CỬA <Type Mark> - MẶT ĐỨNG" thì báo và mở sheet chứa view đó.
+#   - Nhiều cửa (người dùng yêu cầu 2026-11-03): chọn nhiều cửa rồi bấm → làm lần lượt, xếp tiếp các ô; nút pyRevit hỏi
+#     giai đoạn / hạng mục / khổ giấy (khung tên) / số hiệu / tên bản vẽ trước khi chạy (lib\arv_hoi_sheet.py).
+#   - Vách kính (curtain wall, người dùng yêu cầu 2026-11-03): chọn vách (hoặc tấm kính / đố / cửa của vách) → cùng 3
+#     view, tên "CT VÁCH KÍNH <Mark> - ...", mỗi Mark 1 lần (không có Mark thì "VK <dài>x<cao>"). Mặt đứng giữ vách +
+#     tấm + đố; dim chuỗi theo lưới đố + tổng (ngang, đứng); mặt cắt qua giữa ô cửa sổ (không có thì ô cửa đi, ô kính
+#     gần giữa). Giữ tỉ lệ 1:IN[4] (người dùng chốt 2026-11-04); không lọt 1 ô thì chiếm khối 2 / 3 / 4 / 6 ô liền nhau
+#     trên sheet mới, lưới bỏ nét chia trong khối, 1 dải thông tin dưới khối; ô còn lại của sheet dùng tiếp.
 #   - Không xoá, không sửa cửa / tường / view gốc / template đã có.
-# Giới hạn: cửa trong file link không chọn được.
+# Giới hạn: cửa trong file link không chọn được; vách kính cong chưa làm.
 # INPUT
-#   IN[0]  (str)   ID cửa (trống = cửa đang chọn; chưa chọn thì chọn trên màn hình)
+#   IN[0]  (str)   ID cửa, nhiều id cách nhau bằng ; (trống = các cửa đang chọn; chưa chọn thì chọn trên màn hình)
 #   IN[1]  (str)   Khung tên cho sheet mới (tên type title block)
-#   IN[2]  (str)   Tên sheet chi tiết cửa
-#   IN[3]  (str)   Số sheet đầu tiên (khi dự án chưa có sheet nào tên IN[2])
+#   IN[2]  (str)   Tên bản vẽ (tên sheet) chi tiết cửa
+#   IN[3]  (str)   Số hiệu sheet: có thì xếp vào sheet đó (của công cụ, còn ô) rồi các sheet số lớn hơn, hết thì tạo
+#                  sheet số đó / số tiếp theo; trống = số lớn nhất của các sheet tên IN[2] + 1 (chưa có thì A.CD.01)
 #   IN[4]  (float) Tỉ lệ (25 = 1/25)
 #   IN[5]  (float) Lề khung nhìn quanh cửa (mm)
 #   IN[6]  (str)   Tên view template mặt bằng
@@ -41,6 +51,8 @@
 #   IN[13] (bool)  Ẩn khung callout trên mặt bằng gốc
 #   IN[14] (bool)  Dry-run (True = chỉ báo cáo)
 #   IN[15] (bool)  Mở sheet sau khi tạo
+#   IN[16] (str)   Giai đoạn (thư mục cấp 1 của Project Browser) gán cho sheet mới; chỉ dùng sheet cùng giai đoạn
+#   IN[17] (str)   Hạng mục (thư mục cấp 2) gán cho sheet mới; chỉ dùng sheet cùng hạng mục
 # OUTPUT
 #   OUT (list[str])  Báo cáo
 import math
@@ -65,8 +77,13 @@ MAC_DINH = ["", u"AV-Khung A1(841x594)-Kien Truc", u"CHI TIẾT CỬA", u"A.CD.0
             u"CHI TIẾT CỬA - MẶT BẰNG", u"CHI TIẾT CỬA - MẶT ĐỨNG", u"CHI TIẾT CỬA - MẶT CẮT",
             u"chi tiet mat bang;chi tiet mat dung;mat cat chi tiet",
             "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures;OST_Grids",
-            u"", True, True, True, True]
+            u"", True, True, True, True, u"", u""]
 NHOM_LUOI = u"ARV_ChiTietCua_Luoi"
+KIEU_VIEWPORT = u"AV-Title No Line"           # kiểu viewport đặt lên sheet (người dùng chốt 2026-11-03)
+KIEU_MB = u"CT CỬA"                           # kiểu view riêng: Floor Plan (CT CỬA), Section (MẶT CẮT CỬA)
+KIEU_MC = u"MẶT CẮT CỬA"
+TIEN_TO = (u"CT CỬA", u"CT VÁCH KÍNH")       # tiền tố tên view chi tiết cửa / vách kính
+KHOI_VK = ((1, 1), (2, 1), (3, 1), (2, 2), (3, 2))   # khối ô (cột × hàng) cho vách kính, ít ô trước
 TEN_NGOAI = (u"logia", u"lo gia", u"ban cong", u"balcony", u"san phoi", u"san thuong", u"terrace", u"ngoai nha")
 SO_COT, SO_HANG = 3, 2
 TI_LE_DAI_TT = 0.22          # dải thông tin dưới mỗi ô (tỉ lệ chiều cao ô)
@@ -287,6 +304,37 @@ def o_luoi(vung, k):
     return x0, y1 - h, x0 + w, y1
 
 
+def o_trong(doc, sheet, vung, vps):
+    """Các ô còn trống của sheet công cụ (thứ tự ô): ô có nét dải thông tin RIÊNG trong group lưới (ô thuộc khối ghép
+    của vách kính không có) và không viewport nào lấn vào ô quá 10 mm (hộp viewport mặt đứng tính cả hộp bao ký hiệu
+    mặt cắt, vượt phần thấy ~8 mm)."""
+    nets = []
+    for g in FilteredElementCollector(doc, sheet.Id).OfClass(Group):
+        if not ten(g.GroupType).startswith(NHOM_LUOI):
+            continue
+        for i in g.GetMemberIds():
+            try:
+                c = doc.GetElement(i).GeometryCurve
+            except Exception:
+                c = None
+            if c is not None and c.GetType().Name == "Line":
+                nets.append((c.GetEndPoint(0), c.GetEndPoint(1)))
+    hops = [vp.GetBoxOutline() for vp in vps]
+    tl = ft(1)
+    kq = []
+    for k in range(SO_COT * SO_HANG):
+        x0, y0, x1, y1 = o_luoi(vung, k)
+        y = y0 + (y1 - y0) * TI_LE_DAI_TT
+        if not any(abs(a.Y - y) < tl and abs(b.Y - y) < tl and abs(min(a.X, b.X) - x0) < tl
+                   and abs(max(a.X, b.X) - x1) < tl for a, b in nets):
+            continue
+        if any(min(o.MaximumPoint.X, x1) - max(o.MinimumPoint.X, x0) > ft(10)
+               and min(o.MaximumPoint.Y, y1) - max(o.MinimumPoint.Y, y0) > ft(10) for o in hops):
+            continue
+        kq.append(k)
+    return kq
+
+
 def tang_so(s):
     m = re.search(u"(\\d+)(\\D*)$", s)
     if not m:
@@ -297,6 +345,83 @@ def tang_so(s):
 
 def khoa_so(s):
     return [int(t) if t.isdigit() else t for t in re.split(u"(\\d+)", s)]
+
+
+def tach_so(s):
+    """(phần chữ đầu, số cuối) của số hiệu sheet; không có số cuối thì (s, None)."""
+    m = re.search(u"(\\d+)(\\D*)$", s or u"")
+    return (s[:m.start(1)], int(m.group(1))) if m else (s, None)
+
+
+def doc_tho(i):
+    """Đầu vào dạng chuỗi, trống thì trả chuỗi trống (không thay bằng mặc định)."""
+    try:
+        v = IN[i]
+    except Exception:
+        v = None
+    return (u"%s" % v).strip() if v is not None else u""
+
+
+def tim_khung(doc, tb_ten):
+    """Type khung tên theo tên "Family : Type" / tên type / tên family; không có thì khung có chữ A1."""
+    tbs = list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_TitleBlocks).WhereElementIsElementType())
+    for t in tbs:
+        if tb_ten and tb_ten in (ten(t), u"%s : %s" % (t.FamilyName, ten(t)), t.FamilyName):
+            return t, True
+    a1 = [t for t in tbs if u"a1" in khong_dau(t.FamilyName + ten(t))]
+    return ((a1 or tbs)[0] if tbs else None), False
+
+
+# Nhóm sheet theo Project Browser: chép từ TagCua_TuDong.py (cap_thu_muc_sheet / ts_giai_doan) và
+# lib\arv_hoi_sheet.py – sửa quy tắc ở một chỗ thì sửa cả các chỗ kia.
+def cap_thu_muc_sheet(doc):
+    """Id tham số các cấp nhóm sheet trong Project Browser (vd. giai đoạn → hạng mục), đọc từ sheet đầu tiên có thư mục."""
+    try:
+        bo = BrowserOrganization.GetCurrentBrowserOrganizationForSheets(doc)
+    except Exception:
+        return []
+    for s in FilteredElementCollector(doc).OfClass(ViewSheet):
+        try:
+            items = list(bo.GetFolderItems(s.Id))
+        except Exception:
+            continue
+        if items:
+            return [it.ElementId for it in items]
+    return []
+
+
+def ts_theo_id(e, pid):
+    for prm in e.Parameters:
+        if prm.Id.Value == pid.Value:
+            return prm
+    return None
+
+
+def gia_tri_chuoi(prm):
+    try:
+        return (prm.AsString() or u"") if prm.StorageType == StorageType.String else (prm.AsValueString() or u"")
+    except Exception:
+        return u""
+
+
+def ts_giai_doan(doc):
+    """(id tham số giai đoạn, id tham số hạng mục). Browser 2 cấp: cấp 1 = giai đoạn, cấp 2 = hạng mục. 1 cấp: cấp đó là
+    hạng mục, giai đoạn = tham số sheet có chữ "giai đoạn" dùng nhiều nhất."""
+    cap = cap_thu_muc_sheet(doc)
+    if len(cap) >= 2:
+        return cap[0], cap[1]
+    hm = cap[0] if cap else None
+    dem = {}
+    for s in FilteredElementCollector(doc).OfClass(ViewSheet):
+        for prm in s.Parameters:
+            if prm.Definition is not None and prm.StorageType == StorageType.String and \
+                    u"giai doan" in khong_dau(prm.Definition.Name) and (hm is None or prm.Id.Value != hm.Value):
+                k = prm.Id.Value
+                dem.setdefault(k, [prm.Id, 0])
+                if prm.AsString():
+                    dem[k][1] += 1
+    gd = max(dem.values(), key=lambda x: x[1])[0] if dem else None
+    return gd, hm
 
 
 # ---------------------------------------------------------------- template
@@ -360,7 +485,8 @@ def lay_template(doc, view, ten_tpl, tu_khoa, ti_le, an_cat, p, ghi):
                 an.append(ten_cat(doc, c))
         except Exception:
             pass
-    for bic in (BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows, BuiltInCategory.OST_Walls):
+    for bic in (BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows, BuiltInCategory.OST_Walls,
+                BuiltInCategory.OST_CurtainWallPanels, BuiltInCategory.OST_CurtainWallMullions):
         try:
             if tpl.GetCategoryHidden(ElementId(bic)):
                 tpl.SetCategoryHidden(ElementId(bic), False)
@@ -371,10 +497,20 @@ def lay_template(doc, view, ten_tpl, tu_khoa, ti_le, an_cat, p, ghi):
     return tpl
 
 
-def an_ky_hieu(doc, view, ten_views):
-    """Hide in View các ký hiệu view (section / callout) có tên trong ten_views. Trả về số đã ẩn."""
+def an_ky_hieu(doc, view, ten_views, crop_ids=()):
+    """Hide in View các ký hiệu view (section / callout) có tên trong ten_views và khung callout (phần tử crop hạng mục
+    "Views") có id trong crop_ids. Trả về số đã ẩn."""
     ds = List[ElementId]()
-    for e in FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Viewers).WhereElementIsNotElementType():
+    for e in FilteredElementCollector(doc, view.Id).WhereElementIsNotElementType():
+        if e.Id.Value in crop_ids:
+            try:
+                if e.CanBeHidden(view):
+                    ds.Add(e.Id)
+            except Exception:
+                pass
+            continue
+        if e.Category is None or e.Category.Id.Value != int(BuiltInCategory.OST_Viewers):
+            continue
         n = ten(e)
         try:
             pn = e.get_Parameter(BuiltInParameter.VIEW_NAME)
@@ -439,13 +575,17 @@ def chieu_cao_chu(doc, loai):
         return ft(2.5)
 
 
-def mat_hinh_cua(doc, fi):
+def mat_hinh_cua(doc, fi, view=None):
     """Mặt phẳng trong hình family của cửa: [(pháp tuyến, tâm mặt, reference)] theo toạ độ dự án. Reference của hình
     symbol đổi sang reference của instance qua chuỗi ổn định '<UniqueId>:0:INSTANCE:<ref symbol>' để dim trên view
-    (mặt đứng ẩn tường nên không dim vào mặt lỗ tường được)."""
+    (mặt đứng ẩn tường nên không dim vào mặt lỗ tường được). view: lấy hình theo view (view cắt qua phần tử: reference
+    hình 3D không dùng được, Revit xoá dim)."""
     opt = Options()
     opt.ComputeReferences = True
-    opt.DetailLevel = ViewDetailLevel.Fine
+    if view is not None:
+        opt.View = view
+    else:
+        opt.DetailLevel = ViewDetailLevel.Fine
     ds = []
 
     def them(solid, tr, doi):
@@ -489,9 +629,109 @@ def tao_dim(doc, view, p0, p1, refs):
 
 
 # ---------------------------------------------------------------- chính
-def _chinh():
+LOAI_CUA = (int(BuiltInCategory.OST_Doors), int(BuiltInCategory.OST_Windows))
+SHEET_CUOI = [None]          # sheet chứa chi tiết vừa làm / đã có (để mở sau khi chạy hết các cửa)
+
+
+LOAI_TAM = LOAI_CUA + (int(BuiltInCategory.OST_CurtainWallPanels), int(BuiltInCategory.OST_CurtainWallMullions),
+                       int(BuiltInCategory.OST_Walls))
+
+
+def la_cua(e):
+    return e is not None and e.Category is not None and e.Category.Id.Value in LOAI_CUA
+
+
+def la_vach(e):
+    """Vách kính = tường có lưới curtain (curtain wall)."""
+    try:
+        return e is not None and e.GetType().Name == "Wall" and e.CurtainGrid is not None
+    except Exception:
+        return False
+
+
+def phan_vach(doc, w):
+    """Tấm (kính, cửa đi / cửa sổ làm tấm, tấm tường) + đố của vách kính."""
+    cg = w.CurtainGrid
+    ds = []
+    for i in list(cg.GetPanelIds()) + list(cg.GetMullionIds()):
+        e = doc.GetElement(i)
+        if e is not None:
+            ds.append(e)
+    return ds
+
+
+def vach_chua(doc, e, bang):
+    """Vách kính chứa e (tấm / đố / cửa làm tấm curtain); không thuộc vách nào thì None. bang dựng 1 lần mỗi lượt."""
+    if not bang:
+        bang[-1] = None
+        for w in FilteredElementCollector(doc).OfClass(Wall):
+            if la_vach(w):
+                cg = w.CurtainGrid
+                for i in list(cg.GetPanelIds()) + list(cg.GetMullionIds()):
+                    bang[i.Value] = w
+    return bang.get(e.Id.Value)
+
+
+def lay_cua(doc, uidoc):
+    """Danh sách cửa / vách kính cần làm: IN[0] (nhiều id cách nhau bằng ; hoặc ,) → các đối tượng đang chọn → chọn
+    trên màn hình (chọn được nhiều, Finish để xong). Tấm kính / đố / cửa làm tấm của vách kính → lấy vách kính chứa nó.
+    Trả về (danh sách, [báo cáo])."""
+    sid = (u"%s" % (doc_in(0) or u"")).strip()
+    bang = {}
+    bc = []
+
+    def chuan(e):
+        if e is None or la_vach(e):
+            return e
+        if e.Category is not None and e.Category.Id.Value in LOAI_TAM:
+            w = vach_chua(doc, e, bang)
+            if w is not None:
+                return w
+        return e if la_cua(e) else None
+
+    def gom(els):
+        ds, da = [], set()
+        for e in els:
+            c = chuan(e)
+            if c is not None and c.Id.Value not in da:
+                da.add(c.Id.Value)
+                ds.append(c)
+        return ds
+
+    if sid:
+        els = []
+        for t in re.split(u"[;,\\s]+", sid):
+            if not t:
+                continue
+            try:
+                e = doc.GetElement(ElementId(int(float(t))))
+            except Exception:
+                e = None
+            if chuan(e) is None:
+                bc.append(u"ID '%s' không phải cửa đi / cửa sổ / vách kính → bỏ qua." % t)
+            else:
+                els.append(e)
+        return gom(els), bc
+    sel = [doc.GetElement(i) for i in uidoc.Selection.GetElementIds()] if uidoc is not None else []
+    if sel:
+        bo = sum(1 for e in sel if chuan(e) is None)
+        if bo:
+            bc.append(u"Bỏ qua %d đối tượng đang chọn không phải cửa đi / cửa sổ / vách kính." % bo)
+        return gom(sel), bc
+    ds = []
+    if uidoc is not None:
+        try:
+            refs = uidoc.Selection.PickObjects(ObjectType.Element, u"Chọn các cửa đi / cửa sổ / vách kính cần triển "
+                                                                   u"khai chi tiết rồi bấm Finish")
+            ds = gom(doc.GetElement(r.ElementId) for r in refs)
+        except Exception:
+            bc.append(u"Đã huỷ chọn cửa.")
+    return ds, bc
+
+
+def _chinh(fi):
+    """Làm chi tiết cho 1 cửa. Trả về báo cáo."""
     doc = DocumentManager.Instance.CurrentDBDocument
-    uidoc = DocumentManager.Instance.CurrentUIDocument
     bao_cao = []
 
     def p(s):
@@ -500,44 +740,38 @@ def _chinh():
     dry = bool(doc_in(14))
     ti_le = int(round(float(doc_in(4) or 25)))
     le = ft(float(doc_in(5) or 300))
-
-    # ---------- Cửa ----------
-    fi = None
-    sid = (u"%s" % (doc_in(0) or u"")).strip()
-    if sid:
-        try:
-            fi = doc.GetElement(ElementId(int(float(sid))))
-        except Exception:
-            return [u"ID cửa '%s' không hợp lệ." % sid]
-    else:
-        sel = list(uidoc.Selection.GetElementIds()) if uidoc is not None else []
-        if sel:
-            fi = doc.GetElement(sel[0])
-        elif uidoc is not None:
-            try:
-                r = uidoc.Selection.PickObject(ObjectType.Element, u"Chọn cửa đi / cửa sổ cần triển khai chi tiết")
-                fi = doc.GetElement(r.ElementId)
-            except Exception:
-                return [u"Đã huỷ chọn cửa."]
-    if fi is None or fi.Category is None or fi.Category.Id.Value not in (int(BuiltInCategory.OST_Doors),
-                                                                         int(BuiltInCategory.OST_Windows)):
-        return [u"Đối tượng đã chọn không phải cửa đi / cửa sổ. Chọn 1 cửa rồi bấm lại."]
     sym = doc.GetElement(fi.GetTypeId())
+    vk = la_vach(fi)
     mk = u""
-    for bip in (BuiltInParameter.WINDOW_TYPE_ID, BuiltInParameter.ALL_MODEL_TYPE_MARK):
+    if vk:      # vách kính: mỗi vách một kích thước → nhận theo Mark của vách (type dùng chung nhiều vách)
+        cv = fi.Location.Curve
+        if cv.GetType().Name != "Line":
+            return [u"Vách kính id %d là vách cong → chưa làm được chi tiết." % fi.Id.Value]
         try:
-            pm = sym.get_Parameter(bip)
-            if pm is not None and pm.AsString():
-                mk = pm.AsString().strip()
-                break
+            mk = (fi.get_Parameter(BuiltInParameter.ALL_MODEL_MARK).AsString() or u"").strip()
         except Exception:
-            pass
-    ky_hieu = ten_view_hop_le(mk or ten(sym))
+            mk = u""
+        bbw = fi.get_BoundingBox(None)
+        ky_hieu = ten_view_hop_le(mk or u"VK %.0fx%.0f" % (mm(cv.Length), mm(bbw.Max.Z - bbw.Min.Z)))
+    else:
+        for bip in (BuiltInParameter.WINDOW_TYPE_ID, BuiltInParameter.ALL_MODEL_TYPE_MARK):
+            try:
+                pm = sym.get_Parameter(bip)
+                if pm is not None and pm.AsString():
+                    mk = pm.AsString().strip()
+                    break
+            except Exception:
+                pass
+        ky_hieu = ten_view_hop_le(mk or ten(sym))
     la_cua_so = fi.Category.Id.Value == int(BuiltInCategory.OST_Windows)
-    ten_v = {k: ten_view_hop_le(u"CT CỬA %s - %s" % (ky_hieu, t)) for k, t in
+    ten_v = {k: ten_view_hop_le(u"%s %s - %s" % (TIEN_TO[1] if vk else TIEN_TO[0], ky_hieu, t)) for k, t in
              (("mb", u"MẶT BẰNG"), ("md", u"MẶT ĐỨNG"), ("mc", u"MẶT CẮT"))}
-    p(u"Cửa: id %d | %s : %s | Type Mark '%s'%s" % (fi.Id.Value, sym.FamilyName, ten(sym), mk or u"(trống → dùng tên type)",
+    if vk:
+        p(u"Vách kính: id %d | %s | Mark '%s'%s" % (fi.Id.Value, ten(sym), mk or u"(trống → %s)" % ky_hieu,
                                                    u" – DRY-RUN, không sửa mô hình" if dry else u""))
+    else:
+        p(u"Cửa: id %d | %s : %s | Type Mark '%s'%s" % (fi.Id.Value, sym.FamilyName, ten(sym), mk or u"(trống → dùng tên type)",
+                                                       u" – DRY-RUN, không sửa mô hình" if dry else u""))
 
     views = [v for v in FilteredElementCollector(doc).OfClass(View) if not v.IsTemplate]
     trung = [v for v in views if v.Name in ten_v.values()]
@@ -547,11 +781,7 @@ def _chinh():
             if any(vp.ViewId.Value == v.Id.Value for v in trung):
                 sh = doc.GetElement(vp.SheetId)
                 p(u"Nằm trên sheet %s - %s." % (sh.SheetNumber, sh.Name))
-                if bool(doc_in(15)) and not dry:
-                    try:
-                        uidoc.RequestViewChange(sh)
-                    except Exception:
-                        pass
+                SHEET_CUOI[0] = sh
                 break
         return bao_cao
 
@@ -559,13 +789,25 @@ def _chinh():
     lv = doc.GetElement(fi.LevelId)
     if lv is None:
         return [u"Cửa không có level → không làm được."]
-    P = fi.Location.Point
-    H = XYZ(fi.HandOrientation.X, fi.HandOrientation.Y, 0).Normalize()
+    if vk:
+        P0, P1 = cv.GetEndPoint(0), cv.GetEndPoint(1)
+        P = (P0 + P1) * 0.5
+        H = XYZ(P1.X - P0.X, P1.Y - P0.Y, 0).Normalize()
+        parts = phan_vach(doc, fi)
+    else:
+        P = fi.Location.Point
+        H = XYZ(fi.HandOrientation.X, fi.HandOrientation.Y, 0).Normalize()
+        parts = []
+    nguon = [fi] + parts                         # các phần tử tạo nên hình cửa / vách kính
     N = UP.CrossProduct(H).Normalize()          # pháp tuyến tường (một trong hai phía)
     pts = []
     opt = Options()
     opt.DetailLevel = ViewDetailLevel.Fine
-    diem_hinh(fi.get_Geometry(opt), pts)
+    for e in nguon:
+        try:
+            diem_hinh(e.get_Geometry(opt), pts)
+        except Exception:
+            pass
     if not pts:
         bb = fi.get_BoundingBox(None)
         pts = [bb.Min, bb.Max, XYZ(bb.Min.X, bb.Max.Y, bb.Min.Z), XYZ(bb.Max.X, bb.Min.Y, bb.Max.Z)]
@@ -575,7 +817,7 @@ def _chinh():
     hmin, hmax, zmin, zmax = min(hs), max(hs), min(zs), max(zs)
     rong = hmax - hmin
     hc = (hmin + hmax) / 2.0
-    wall = fi.Host
+    wall = None if vk else fi.Host
     mats = []
     if wall is not None and wall.Category is not None and wall.Category.Id.Value == int(BuiltInCategory.OST_Walls):
         mats = mat_tuong(wall)
@@ -594,20 +836,22 @@ def _chinh():
         goc_mb = av
     else:
         ung = [v for v in views if v.ViewType == ViewType.FloorPlan and v.GenLevel is not None
-               and v.GenLevel.Id.Value == lv.Id.Value and not v.Name.startswith(u"CT CỬA")
+               and v.GenLevel.Id.Value == lv.Id.Value and not v.Name.startswith(TIEN_TO)
                and v.GetPrimaryViewId().Value < 0]
         ung.sort(key=lambda v: (0 if v.Name == lv.Name else 1, 0 if v.Scale == 100 else 1,
                                 0 if v.ViewTemplateId.Value > 0 else 1, v.Name))
         goc_mb = ung[0] if ung else None
     if goc_mb is None:
         return bao_cao + [u"Không có mặt bằng tầng '%s' để tạo callout." % lv.Name]
-    p(u"   Kích thước theo hình family: rộng %.0f, cao %.0f (z %.0f → %.0f so với level %s), dày %.0f"
-      % (mm(rong), mm(zmax - zmin), mm(zmin - z_lv), mm(zmax - z_lv), lv.Name, mm(smax - smin)))
+    p(u"   Kích thước theo hình %s: rộng %.0f, cao %.0f (z %.0f → %.0f so với level %s), dày %.0f"
+      % (u"vách (%d tấm + đố)" % len(parts) if vk else u"family", mm(rong), mm(zmax - zmin), mm(zmin - z_lv),
+         mm(zmax - z_lv), lv.Name, mm(smax - smin)))
 
     # ---------- Phía nhìn mặt đứng (ngoài nhà) ----------
     ep = u"%s" % (doc_in(11) or u"")
     ep = khong_dau(ep)
-    F = XYZ(fi.FacingOrientation.X, fi.FacingOrientation.Y, 0).Normalize()
+    F = fi.Orientation if vk else fi.FacingOrientation        # vách: Orientation = mặt ngoài tường
+    F = XYZ(F.X, F.Y, 0).Normalize()
     S, ly_do = None, u""
     if ep == u"facing":
         S, ly_do = F, u"ép theo mặt ngoài family (Facing)"
@@ -637,7 +881,8 @@ def _chinh():
             try:
                 o2 = Options()
                 o2.View = goc_mb
-                cung_mo(fi.get_Geometry(o2), arcs)
+                for e in nguon:
+                    cung_mo(e.get_Geometry(o2), arcs)
             except Exception:
                 arcs = []
             if arcs:
@@ -655,20 +900,42 @@ def _chinh():
         smin, smax = min(ss), max(ss)
     # từ đây N = S (phía người nhìn mặt đứng), smax = mép phía ngoài
     p(u"   Mặt đứng: %s." % ly_do)
+    # khung nhìn mặt bằng trùm hết hình mặt bằng của cửa (kể cả cung mở cánh – nét 2D chỉ có trong hình theo view)
+    pts_mb = []
+    o3 = Options()
+    o3.View = goc_mb
+    for e in nguon:
+        try:
+            diem_hinh(e.get_Geometry(o3), pts_mb)
+        except Exception:
+            pass
+    hs_mb = [hmin, hmax] + [(q - P).DotProduct(H) for q in pts_mb]
+    ss_mb = [smin, smax] + [(q - P).DotProduct(N) for q in pts_mb]
+    hmin_mb, hmax_mb, smin_mb, smax_mb = min(hs_mb), max(hs_mb), min(ss_mb), max(ss_mb)
 
     # ---------- Kế hoạch view ----------
     z_lo = min(zmin, z_lv) - le
-    z_hi = zmax + le
     X_d = UP.CrossProduct(N)                     # phía phải của người đứng ngoài nhìn vào (= phía phải mặt bằng)
     goc_xoay = math.atan2(X_d.Y, X_d.X)          # xoay mặt bằng để phía phải trùng mặt đứng, ngoài nhà ở dưới
     p(u"   Mặt bằng: callout trên '%s', xoay %.1f° cho trùng chiều mặt đứng (ngoài nhà ở dưới)."
       % (goc_mb.Name, math.degrees(goc_xoay)))
-    for k in ("mb", "md", "mc"):
-        p(u"   %s '%s' tỉ lệ 1:%d" % (u"Sẽ tạo" if dry else u"Tạo", ten_v[k], ti_le))
 
     # ---------- Sheet ----------
     ten_sh = (doc_in(2) or MAC_DINH[2]).strip()
-    sheets = [s for s in FilteredElementCollector(doc).OfClass(ViewSheet) if not s.IsPlaceholder and s.Name == ten_sh]
+    so_dau = doc_tho(3)
+    gd, hm = doc_tho(16), doc_tho(17)
+    pid_gd, pid_hm = ts_giai_doan(doc) if (gd or hm) else (None, None)
+
+    def dung_nhom(s):
+        """Sheet cùng giai đoạn / hạng mục đã chọn (tham số không có thì coi như cùng)."""
+        for pid, gt_ in ((pid_gd, gd), (pid_hm, hm)):
+            if pid is not None and gt_:
+                prm = ts_theo_id(s, pid)
+                if prm is not None and gia_tri_chuoi(prm) != gt_:
+                    return False
+        return True
+    sheets = [s for s in FilteredElementCollector(doc).OfClass(ViewSheet)
+              if not s.IsPlaceholder and s.Name == ten_sh and dung_nhom(s)]
     cua_minh = []
     for s in sheets:
         for g in FilteredElementCollector(doc, s.Id).OfClass(Group):
@@ -676,44 +943,85 @@ def _chinh():
                 cua_minh.append(s)
                 break
     cua_minh.sort(key=lambda s: khoa_so(s.SheetNumber))
+    if so_dau:          # số hiệu chọn trong bảng hỏi: chỉ xếp vào sheet đó và các sheet số lớn hơn cùng tiền tố
+        dau, n_dau = tach_so(so_dau)
+        cua_minh = [s for s in cua_minh if s.SheetNumber == so_dau or (
+            n_dau is not None and tach_so(s.SheetNumber)[0] == dau and (tach_so(s.SheetNumber)[1] or -1) >= n_dau)]
     tb_ten = (doc_in(1) or u"").strip()
-    tbs = list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_TitleBlocks).WhereElementIsElementType())
-    tb_type = None
-    for t in tbs:
-        if ten(t) == tb_ten or (u"%s : %s" % (t.FamilyName, ten(t))) == tb_ten or t.FamilyName == tb_ten:
-            tb_type = t
-            break
-    if tb_type is None and tbs:
-        a1 = [t for t in tbs if u"a1" in khong_dau(t.FamilyName + ten(t))]
-        tb_type = (a1 or tbs)[0]
+    tb_type, dung_ten = tim_khung(doc, tb_ten)
+    if tb_type is not None and not dung_ten:
         p(u"   Không có khung tên '%s' → dùng '%s'." % (tb_ten, tb_type.FamilyName))
     vp_all = list(FilteredElementCollector(doc).OfClass(Viewport))
-    chon_sh, chon_o, vung = None, None, None
+    vung_sh = {}
     for s in cua_minh:
         tb = list(FilteredElementCollector(doc, s.Id).OfCategory(BuiltInCategory.OST_TitleBlocks).WhereElementIsNotElementType())
-        if not tb:
-            continue
-        doc_net_khung(doc, doc.GetElement(tb[0].GetTypeId()), p)
-        vg = vung_ve(doc, s, tb[0], p)
-        tams = [vp.GetBoxCenter() for vp in vp_all if vp.SheetId.Value == s.Id.Value]
-        for k in range(SO_COT * SO_HANG):
-            x0, y0, x1, y1 = o_luoi(vg, k)
-            if not any(x0 <= c.X <= x1 and y0 <= c.Y <= y1 for c in tams):
-                chon_sh, chon_o, vung = s, k, vg
+        if tb:
+            doc_net_khung(doc, doc.GetElement(tb[0].GetTypeId()), p)
+            vung_sh[s.Id.Value] = vung_ve(doc, s, tb[0], p)
+    vung_mau = vung_sh[cua_minh[0].Id.Value] if cua_minh and cua_minh[0].Id.Value in vung_sh else None
+
+    # ---------- Khối ô: cửa 1 ô; vách kính GIỮ tỉ lệ 1:IN[4] (người dùng chốt 2026-11-04), không lọt 1 ô thì chiếm khối
+    # 2 / 3 / 4 / 6 ô liền nhau trên sheet mới (lưới bỏ nét chia trong khối, 1 dải thông tin dưới khối) ----------
+    loai_chu = doc.GetElement(doc.GetDefaultElementTypeId(ElementTypeGroup.TextNoteType))
+    # lề phải mặt đứng (dim đứng): vách kính dim chuỗi + tổng
+    le_d = max(le, ft(20) * ti_le) if vk else le
+    le_c = max(le, ft(13) * ti_le) if vk else le     # lề phải mặt cắt (vách kính: 1 dim chuỗi)
+    z_hi = zmax + le_d
+    khoi = (1, 1)
+    if vk:
+        if vung_mau is not None:
+            o_w, o_h = (vung_mau[2] - vung_mau[0]) / SO_COT, (vung_mau[3] - vung_mau[1]) / SO_HANG
+        else:
+            o_w, o_h = ft(232.7), ft(280)        # ô của khung A1 mặc định (vùng vẽ 698 × 560)
+        t_chu = chieu_cao_chu(doc, loai_chu)
+        s_ = ti_le
+        wd = (hmax - hmin + le + le_d) / s_ + ft(6)
+        # khung mặt đứng chỉnh theo ký hiệu mặt cắt: trên ~14 mm (3 + đầu ký hiệu ~10 + 1), dưới ~28 mm (3 + đầu ký
+        # hiệu + 2 dim ngang + 1,5), cộng lề chú thích 6 mm
+        hd = (zmax - min(zmin, z_lv)) / s_ + ft(48)
+        wc = (smax - smin + le + le_c) / s_ + t_chu * (len(u"CỐT SÀN HOÀN THIỆN") * 0.75 + 2.5) + ft(6)
+        wb = (hmax_mb - hmin_mb + le) / s_ + ft(6)
+        hb = (smax_mb - smin_mb + le * 0.5 + max(le * 0.5, ft(15) * s_)) / s_ + ft(6)
+        cw, ch = max(wd, wb) + ft(12) + wc + ft(2), hd + ft(14) + hb + ft(14) + ft(2)   # khớp cụm thật ± 1 %
+        vuot_kh = True
+        for w_, h_ in KHOI_VK:
+            if cw <= w_ * o_w and ch <= h_ * o_h - o_h * TI_LE_DAI_TT:
+                khoi, vuot_kh = (w_, h_), False
                 break
-        if chon_sh is not None:
-            break
+        if vuot_kh:
+            khoi = KHOI_VK[-1]
+        p(u"   Vách kính 1:%d: cụm ước lượng %.0f × %.0f mm → khối %d × %d ô%s." % (
+            ti_le, mm(cw), mm(ch), khoi[0], khoi[1],
+            u" – VẪN VƯỢT KHỔ (vách quá dài cho 1 tờ ở 1:%d), cần chia đoạn / xếp tay" % ti_le if vuot_kh else u""))
+    chon_sh, chon_o, vung = None, None, None
+    if khoi == (1, 1):
+        for s in cua_minh:
+            vg = vung_sh.get(s.Id.Value)
+            if vg is None:
+                continue
+            trong = o_trong(doc, s, vg, [vp for vp in vp_all if vp.SheetId.Value == s.Id.Value])
+            if trong:
+                chon_sh, chon_o, vung = s, trong[0], vg
+                break
+    o_khoi = [(chon_o or 0) + r * SO_COT + c for r in range(khoi[1]) for c in range(khoi[0])]
+    ten_o = u"ô %d" % (o_khoi[0] + 1) if len(o_khoi) == 1 else u"ô %s (khối %d × %d)" % (
+        u", ".join(str(k + 1) for k in o_khoi), khoi[0], khoi[1])
     so_moi = None
     if chon_sh is None:
         so = sorted([s.SheetNumber for s in sheets], key=khoa_so)
-        so_moi = tang_so(so[-1]) if so else (doc_in(3) or MAC_DINH[3]).strip()
+        so_moi = so_dau or (tang_so(so[-1]) if so else MAC_DINH[3])
         co_so = set(s.SheetNumber for s in FilteredElementCollector(doc).OfClass(ViewSheet))
         while so_moi in co_so:
             so_moi = tang_so(so_moi)
-        p(u"   %s sheet mới %s - %s (khung '%s'), ô 1/6." % (u"Sẽ tạo" if dry else u"Tạo", so_moi, ten_sh,
-                                                         tb_type.FamilyName if tb_type is not None else u"không có"))
+        p(u"   %s sheet mới %s - %s (khung '%s'), %s." % (u"Sẽ tạo" if dry else u"Tạo", so_moi, ten_sh,
+                                                     tb_type.FamilyName if tb_type is not None else u"không có", ten_o))
     else:
-        p(u"   Đặt vào sheet %s - %s, ô %d/6." % (chon_sh.SheetNumber, chon_sh.Name, chon_o + 1))
+        p(u"   Đặt vào sheet %s - %s, %s/6." % (chon_sh.SheetNumber, chon_sh.Name, ten_o))
+    for k in ("mb", "md", "mc"):
+        p(u"   %s '%s' tỉ lệ 1:%d" % (u"Sẽ tạo" if dry else u"Tạo", ten_v[k], ti_le))
+
+    def ten_tpl_i(i):
+        return (doc_in(i) or u"").strip()
 
     tk = tach(doc_in(9))
     tk += [u""] * (3 - len(tk))
@@ -721,7 +1029,7 @@ def _chinh():
     if dry:
         co_tpl = set(t.Name for t in FilteredElementCollector(doc).OfClass(View) if t.IsTemplate)
         for j, i in enumerate((6, 7, 8)):
-            ten_tpl = (doc_in(i) or u"").strip()
+            ten_tpl = ten_tpl_i(i)
             if ten_tpl in co_tpl:
                 p(u"   Template '%s' đã có → dùng nguyên." % ten_tpl)
             else:
@@ -737,6 +1045,47 @@ def _chinh():
         if t.ViewFamily == ViewFamily.Section:
             if ten_sec is None or (t.DefaultTemplateId.Value < 0 and ten_sec.DefaultTemplateId.Value >= 0):
                 ten_sec = t
+
+    def kieu_rieng(goc_t, ten_moi, ho):
+        """Kiểu view riêng cho chi tiết cửa (Project Browser gom thành mục riêng); chưa có thì chép từ goc_t."""
+        for t in FilteredElementCollector(doc).OfClass(ViewFamilyType):
+            if t.ViewFamily == ho and ten(t) == ten_moi:
+                return t
+        t = goc_t.Duplicate(ten_moi)
+        p(u"   Tạo kiểu view '%s' (chép từ '%s')." % (ten_moi, ten(goc_t)))
+        return t
+    kieu_mc = kieu_rieng(ten_sec, KIEU_MC, ViewFamily.Section)
+    # Ký hiệu mặt cắt trên mặt đứng là vết cắt → kiểu MẶT CẮT CỬA (kiểu riêng của công cụ) phải dùng section tag có đầu
+    # (G19: "Wall Section" dùng tag Head / Tail = none → chỉ có đường, không có đầu). Ưu tiên tag của kiểu mặt cắt "chi
+    # tiết" (G19: AV_Section Detail), rồi tag bất kỳ có đầu.
+    try:
+        def co_dau(tag_id):
+            t = doc.GetElement(tag_id)
+            if t is None:
+                return False
+            for prm in t.Parameters:
+                if prm.StorageType == StorageType.ElementId and khong_dau(prm.Definition.Name) in (u"section head",):
+                    return prm.AsElementId().Value > 0
+            return False
+        p_tag = kieu_mc.get_Parameter(BuiltInParameter.SECTION_TAG)
+        if p_tag is not None and not co_dau(p_tag.AsElementId()):
+            ung_tag = []
+            for t in FilteredElementCollector(doc).OfClass(ViewFamilyType):
+                if t.ViewFamily != ViewFamily.Section or t.Id.Value == kieu_mc.Id.Value:
+                    continue
+                pt = t.get_Parameter(BuiltInParameter.SECTION_TAG)
+                if pt is not None and co_dau(pt.AsElementId()):
+                    ung_tag.append((0 if u"chi tiet" in khong_dau(ten(t)) else 1, pt.AsElementId()))
+            if ung_tag:
+                ung_tag.sort(key=lambda u_: u_[0])
+                p_tag.Set(ung_tag[0][1])
+                p(u"   Kiểu '%s': đổi section tag sang '%s' (tag cũ không có đầu ký hiệu)." % (
+                    KIEU_MC, ten(doc.GetElement(ung_tag[0][1]))))
+            else:
+                p(u"   CẢNH BÁO: dự án không có section tag nào có đầu ký hiệu → vết cắt chỉ có đường.")
+    except Exception as ex:
+        p(u"   Không kiểm được section tag của kiểu '%s' (%s)." % (KIEU_MC, ex))
+    kieu_mb = kieu_rieng(doc.GetElement(goc_mb.GetTypeId()), KIEU_MB, ViewFamily.FloorPlan)
     tam = P + H * hc
 
     def hop(O, nhin, R, xlo, xhi, ylo, yhi, sau):
@@ -759,52 +1108,79 @@ def _chinh():
         return min(xs), max(xs)
 
     # Cốt sàn hoàn thiện (thay level, level ẩn trên mặt đứng / mặt cắt): mặt trên sàn trong nhà, không có thì ngoài nhà
-    z_do_san = zmin + ft(5) if not la_cua_so else z_lv + ft(300)
+    z_do_san = zmin + ft(5) if not (la_cua_so or vk) else max(zmin, z_lv) + ft(300)
     phia_san = -1
     z_s = mat_san(doc, P - N * (-smin + ft(150)), z_do_san)[1]
     if z_s is None:
         phia_san = 1
         z_s = mat_san(doc, P + N * (smax + ft(150)), z_do_san)[1]
     z_cot = z_s if z_s is not None else z_lv
-    room_san = None
-    try:
-        q = P + N * (phia_san * ((smax if phia_san > 0 else -smin) + ft(400)))
-        room_san = doc.GetRoomAtPoint(XYZ(q.X, q.Y, z_lv + ft(1000)))
-    except Exception:
-        pass
-    chu_cot = u"CỐT SÀN HOÀN THIỆN" + (u" " + ten(room_san).upper() if room_san is not None else u"")
-    loai_chu = doc.GetElement(doc.GetDefaultElementTypeId(ElementTypeGroup.TextNoteType))
-    h_chu = chieu_cao_chu(doc, loai_chu) * ti_le                 # chiều cao chữ theo toạ độ model
+    chu_cot = u"CỐT SÀN HOÀN THIỆN"
+    h_chu =chieu_cao_chu(doc, loai_chu) * ti_le                 # chiều cao chữ theo toạ độ model
     dai_chu = len(chu_cot) * h_chu * 0.75                         # ước lượng chiều dài chữ (Arial chữ hoa)
 
     # Mặt đứng: mặt cắt đặt trước mặt ngoài tường (không cắt cửa), nhìn vào tường từ phía ngoài nhà (N)
     O_d = XYZ(tam.X, tam.Y, zmin) + N * (smax + ft(200))
     a, b = khung(O_d, X_d)
-    v_md = ViewSection.CreateSection(doc, ten_sec.Id,
-                                     hop(O_d, N.Negate(), X_d, a - le, b + le, z_lo - zmin, z_hi - zmin,
+    v_md = ViewSection.CreateSection(doc, kieu_mc.Id,
+                                     hop(O_d, N.Negate(), X_d, a - le, b + le_d, z_lo - zmin, z_hi - zmin,
                                          smax - smin + ft(400)))
     # Mặt cắt: cắt qua cánh, cách tâm 1/4 bề rộng về phía người nhìn; ngoài nhà (N) nằm bên phải
     X_c = N
     V_c = N.CrossProduct(UP)                     # phía người nhìn (UP × V_c = N)
     O_c = XYZ(tam.X, tam.Y, zmin) + V_c * (rong / 4.0)
+    sau_mc = rong * 0.75 + ft(50)
+    if vk:
+        # vách kính: cắt qua giữa ô cửa sổ, không có thì ô cửa đi (lệch 1/4 như cửa), rồi ô kính gần giữa vách; nhìn
+        # sâu tới đố cạnh ô (không thấy cả dãy đố phía sau)
+        hang_tam = {int(BuiltInCategory.OST_Windows): 0, int(BuiltInCategory.OST_Doors): 1,
+                    int(BuiltInCategory.OST_CurtainWallPanels): 2}
+        ung = []
+        for e in parts:
+            c = e.Category
+            if c is None or c.Id.Value not in hang_tam:
+                continue
+            bb = e.get_BoundingBox(None)
+            if bb is None:
+                continue
+            hx = [(XYZ(x, y, 0) - XYZ(P.X, P.Y, 0)).DotProduct(V_c) for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)]
+            w_t = max(hx) - min(hx)
+            if w_t < ft(100):
+                continue
+            hang = hang_tam[c.Id.Value] + (1 if khong_dau(ten(e)) in (u"empty", u"wall") else 0)
+            x_t = (max(hx) + min(hx)) / 2.0 + (w_t / 4.0 if hang == 1 else 0)
+            ung.append((hang, abs(x_t - (hc if V_c.DotProduct(H) > 0 else -hc)), x_t, w_t, ten(e)))
+        if ung:
+            ung.sort(key=lambda u_: (u_[0], u_[1]))
+            _, _, x_t, w_t, ten_t = ung[0]
+            O_c = XYZ(P.X, P.Y, zmin) + V_c * x_t
+            sau_mc = w_t / 2.0 + ft(150)
+            p(u"   Mặt cắt vách kính qua ô '%s' (rộng %.0f)." % (ten_t, mm(w_t)))
     a2, b2 = khung(O_c, X_c)
     a2 = min(a2, smin)
     b2 = max(b2, smax)
-    # chữ cốt sàn bên trái (trong nhà) như mẫu: mũi tên chỉ xuống nét sàn, chữ bên phải mũi tên, cách tường 100
-    x_mui = a2 - ft(100) - dai_chu - h_chu
-    trai_mc = min(a2 - le, x_mui - 1.5 * h_chu)
-    v_mc = ViewSection.CreateSection(doc, ten_sec.Id,
-                                     hop(O_c, V_c.Negate(), X_c, trai_mc, b2 + le, z_lo - zmin, z_hi - zmin,
-                                         rong * 0.75 + ft(50)))
+    # chữ cốt sàn bên trái (trong nhà) như mẫu, nằm NGOÀI khung cắt (vùng annotation crop nới rộng) để không đè
+    # tường / sàn phía trong: mũi tên chỉ xuống nét sàn, chữ bên phải mũi tên
+    trai_mc = a2 - le
+    x_mui = trai_mc - dai_chu - 2.5 * h_chu
+    # khung mặt cắt sát chiều cao (cốt sàn / chân cửa → đỉnh cửa ± 3 mm giấy): ký hiệu section của nó hiện trên mặt đứng
+    # làm vết cắt, đường cắt dài đúng bằng khung này, 2 đầu ký hiệu nằm ngay ngoài (người dùng yêu cầu 2026-11-04)
+    z_lo_c = min(zmin, z_cot) - ft(3) * ti_le
+    z_hi_c = zmax + ft(3) * ti_le
+    v_mc = ViewSection.CreateSection(doc, kieu_mc.Id,
+                                     hop(O_c, V_c.Negate(), X_c, trai_mc, b2 + le_c, z_lo_c - zmin, z_hi_c - zmin,
+                                         sau_mc))
     for nhan, v, vd, r in ((u"mặt đứng", v_md, N, X_d), (u"mặt cắt", v_mc, V_c, X_c)):
         if v.ViewDirection.DotProduct(vd) < 0.99 or v.RightDirection.DotProduct(r) < 0.99:
             p(u"   CẢNH BÁO: hướng %s khác dự kiến (ViewDirection %s, Right %s) – Revit đổi quy ước CreateSection?"
               % (nhan, v.ViewDirection, v.RightDirection))
     # Mặt bằng: callout chữ nhật rộng theo X, sâu theo Y quanh tâm cửa, rồi xoay khung crop để phía phải = X_d
-    # (cùng chiều mặt đứng), phía ngoài nhà ở dưới
-    C = P + H * hc + N * ((smin + smax) / 2.0)
-    nw, nd = rong / 2.0 + le, (smax - smin) / 2.0 + le
-    v_mb = ViewSection.CreateCallout(doc, goc_mb.Id, goc_mb.GetTypeId(),
+    # (cùng chiều mặt đứng), phía ngoài nhà ở dưới; khung trùm hết hình mặt bằng (pts_mb)
+    # lề nửa: cung mở đã to; vách kính: phía ngoài nhà chừa chỗ dim rộng (9 mm giấy, ở 1/100 lề 150 mm không đủ)
+    le_mb = max(le * 0.5, ft(15) * ti_le) if vk else le * 0.5
+    C = P + H * ((hmin_mb + hmax_mb) / 2.0) + N * ((smin_mb - le * 0.5 + smax_mb + le_mb) / 2.0)
+    nw, nd = (hmax_mb - hmin_mb) / 2.0 + le * 0.5, (smax_mb + le_mb - smin_mb + le * 0.5) / 2.0
+    v_mb = ViewSection.CreateCallout(doc, goc_mb.Id, kieu_mb.Id,
                                      XYZ(C.X - nw, C.Y - nd, z_lv), XYZ(C.X + nw, C.Y + nd, z_lv))
     v_mb = doc.GetElement(v_mb.Id)
     if abs(goc_xoay) > 1e-4:
@@ -819,7 +1195,7 @@ def _chinh():
             p(u"   CẢNH BÁO: không xoay được mặt bằng (%s) → mặt bằng theo trục dự án." % ex)
     if v_mb.RightDirection.DotProduct(X_d) < 0.99:
         p(u"   CẢNH BÁO: mặt bằng chưa cùng chiều mặt đứng (Right %s, cần %s)." % (v_mb.RightDirection, X_d))
-    tieu_de = {"mb": u"MẶT BẰNG", "md": u"MẶT ĐỨNG", "mc": u"MẶT CẮT"}
+    tieu_de = {"mb": u"MẶT BẰNG", "md": u"MẶT ĐỨNG", "mc": u"MẶT CẮT"}     # mặt cắt: thêm "n-n" khi đặt lên sheet
     vs = {"mb": v_mb, "md": v_md, "mc": v_mc}
     for k, v in vs.items():
         v.Name = ten_v[k]
@@ -832,7 +1208,8 @@ def _chinh():
         except Exception:
             pass
     for k, i in (("mb", 6), ("md", 7), ("mc", 8)):
-        tpl = lay_template(doc, vs[k], (doc_in(i) or u"").strip(), tk[["mb", "md", "mc"].index(k)], ti_le, an_cat, p, True)
+        tpl = lay_template(doc, vs[k], ten_tpl_i(i), tk[["mb", "md", "mc"].index(k)], ti_le,
+                           an_cat + ([] if k == "mb" else ["OST_Levels"]), p, True)
         if tpl is not None and vs[k].ViewTemplateId.Value != tpl.Id.Value:
             vs[k].ViewTemplateId = tpl.Id
     for k, v in vs.items():
@@ -853,6 +1230,10 @@ def _chinh():
                 setattr(sm, thuoc_tinh, ft(3))
         except Exception:
             pass
+    try:            # annotation crop trái của mặt cắt chứa chữ cốt sàn (offset đo trên giấy)
+        v_mc.GetCropRegionShapeManager().LeftAnnotationCropOffset = (trai_mc - x_mui) / ti_le + ft(4)
+    except Exception as ex:
+        p(u"   Không nới được vùng chú thích trái của mặt cắt (%s) – chữ cốt sàn có thể bị cắt." % ex)
     for v in (v_md, v_mc):
         try:
             v.get_Parameter(BuiltInParameter.VIEWER_BOUND_FAR_CLIPPING).Set(2)     # cắt xa, không vẽ nét
@@ -863,8 +1244,24 @@ def _chinh():
         except Exception:
             pass
     doc.Regenerate()
-    so_an = an_ky_hieu(doc, v_md, [v_mc.Name, v_mb.Name]) + an_ky_hieu(doc, v_mc, [v_md.Name, v_mb.Name]) \
-        + an_ky_hieu(doc, v_mb, [v_md.Name, v_mc.Name])
+    # Ký hiệu / khung callout của MỌI view chi tiết cửa ẩn trong nhau (cửa gần nhau: khung callout cửa làm sau hiện
+    # trên mặt bằng chi tiết cửa làm trước) – cả view đã có từ lần bấm trước
+    ct = [v for v in FilteredElementCollector(doc).OfClass(View) if not v.IsTemplate and v.Name.startswith(TIEN_TO)]
+    ten_ct = set(v.Name for v in ct)
+    crop_ct = {}
+    for v in ct:
+        if v.ViewType == ViewType.FloorPlan:
+            c = phan_tu_crop(doc, v)
+            if c is not None:
+                crop_ct[v.Id.Value] = c.Id.Value
+    so_an = 0
+    for v in ct:
+        moi = v.Id.Value in (v_mb.Id.Value, v_md.Id.Value, v_mc.Id.Value)
+        ten_an = (ten_ct - set([v.Name])) if moi else set([v_mb.Name, v_md.Name, v_mc.Name])
+        if v.Id.Value == v_md.Id.Value:
+            ten_an.discard(v_mc.Name)            # ký hiệu mặt cắt giữ trên mặt đứng = vết cắt
+        crop_an = set(i for k, i in crop_ct.items() if k != v.Id.Value and (moi or k == v_mb.Id.Value))
+        so_an += an_ky_hieu(doc, v, ten_an, crop_an)
     if bool(doc_in(13)):
         so_an += an_ky_hieu(doc, goc_mb, [v_mb.Name])
     p(u"   Đã tạo 3 view (id %d, %d, %d); ẩn %d ký hiệu view không cần thấy." % (v_mb.Id.Value, v_md.Id.Value,
@@ -872,13 +1269,19 @@ def _chinh():
 
     # ---------- Cốt sàn: nét đứt trên mặt đứng + mặt cắt, chữ "CỐT SÀN HOÀN THIỆN ..." có mũi tên trên mặt cắt ----------
     gs_dut = kieu_net_dut(doc)
+    gs_an = None
+    try:
+        gs_an = Category.GetCategory(doc, BuiltInCategory.OST_InvisibleLines).GetGraphicsStyle(GraphicsStyleType.Projection)
+    except Exception:
+        pass
     net_san = {}
-    for k, v, O, X, x_a, x_b in (("md", v_md, O_d, X_d, a - le, b + le), ("mc", v_mc, O_c, X_c, trai_mc, b2 + le)):
+    for k, v, O, X, x_a, x_b in (("md", v_md, O_d, X_d, a - le, b + le), ("mc", v_mc, O_c, X_c, x_mui - h_chu, b2 + le)):
         g0 = XYZ(O.X, O.Y, z_cot)
         net_san[k] = doc.Create.NewDetailCurve(v, Line.CreateBound(g0 + X * x_a, g0 + X * x_b))
-        if gs_dut is not None:
+        gs = gs_an if gs_an is not None else gs_dut      # nét hiện là nét suốt ô trên sheet; nét này để dim bám
+        if gs is not None:
             try:
-                net_san[k].LineStyle = gs_dut
+                net_san[k].LineStyle = gs
             except Exception:
                 pass
     g0 = XYZ(O_c.X, O_c.Y, z_cot)
@@ -893,8 +1296,219 @@ def _chinh():
         u"mặt sàn trong nhà" if z_s is not None and phia_san < 0 else u"mặt sàn ngoài nhà" if z_s is not None else u"level",
         mm(z_cot - z_lv), ten(gs_dut) if gs_dut is not None else u"mặc định", chu_cot, ten(loai_chu)))
 
+    # ---------- Vết cắt = ký hiệu section của mặt cắt trên mặt đứng (người dùng yêu cầu 2026-11-04 "vết cắt thể hiện bằng
+    # section"; thay vạch + mũi tên vẽ tay). Khung mặt đứng: trên = đầu ký hiệu, dưới = đầu ký hiệu + dim ngang (dim ngang
+    # xuống CHÂN mặt đứng, người dùng yêu cầu 2026-11-04) ----------
+    try:
+        if v_md.GetCategoryHidden(ElementId(BuiltInCategory.OST_Sections)):
+            v_md.SetCategoryHidden(ElementId(BuiltInCategory.OST_Sections), False)
+    except Exception:
+        pass
+    doc.Regenerate()
+    ky_mc = None
+    for e in FilteredElementCollector(doc, v_md.Id).OfCategory(BuiltInCategory.OST_Viewers).WhereElementIsNotElementType():
+        try:
+            pn = e.get_Parameter(BuiltInParameter.VIEW_NAME)
+            if pn is not None and pn.AsString() == v_mc.Name:
+                ky_mc = e
+                break
+        except Exception:
+            pass
+    bb_k = ky_mc.get_BoundingBox(v_md) if ky_mc is not None else None
+    # hộp bao ký hiệu rộng hơn ký hiệu thật (G19: ±24 mm giấy) → trên (đầu ký hiệu tròn + mũi tên) chừa 12 mm giấy, dưới
+    # (đuôi) chừa theo tham số Height của family đuôi + 1 mm
+    duoi_k = ft(12)
+    try:
+        tag_k = doc.GetElement(kieu_mc.get_Parameter(BuiltInParameter.SECTION_TAG).AsElementId())
+        for prm in tag_k.Parameters:
+            if prm.StorageType == StorageType.ElementId and khong_dau(prm.Definition.Name) == u"section tail":
+                sym_d = doc.GetElement(prm.AsElementId())
+                duoi_k = ft(1)
+                if sym_d is not None:
+                    for q_ in sym_d.Parameters:
+                        if khong_dau(q_.Definition.Name) == u"height" and q_.StorageType == StorageType.Double:
+                            duoi_k = q_.AsDouble() + ft(1)
+    except Exception:
+        pass
+    if bb_k is not None:
+        z_ky_lo = max(min(bb_k.Min.Z, z_lo_c), z_lo_c - duoi_k * ti_le)
+        z_ky_hi = min(max(bb_k.Max.Z, z_hi_c), z_hi_c + ft(12) * ti_le)
+    else:
+        z_ky_lo, z_ky_hi = z_lo_c - ft(10) * ti_le, z_hi_c + ft(10) * ti_le
+        p(u"   CẢNH BÁO: ký hiệu mặt cắt không hiện trên mặt đứng (template ẩn Sections?) → vết cắt thiếu.")
+    # dim ngang dưới chân: chuỗi cách đuôi ký hiệu 5 mm giấy, tổng 12 mm (chữ dim nằm phía trên đường dim)
+    z_dim1, z_dim2 = z_ky_lo - ft(5) * ti_le, z_ky_lo - ft(12) * ti_le
+    z_day_md = (z_dim2 if vk else z_dim1) - ft(1) * ti_le
+    try:
+        cb = v_md.CropBox
+        tr_inv = cb.Transform.Inverse
+        y_lo = tr_inv.OfPoint(XYZ(O_d.X, O_d.Y, z_day_md)).Y
+        y_hi = tr_inv.OfPoint(XYZ(O_d.X, O_d.Y, z_ky_hi + ft(1) * ti_le)).Y
+        cb.Min = XYZ(cb.Min.X, y_lo, cb.Min.Z)
+        cb.Max = XYZ(cb.Max.X, y_hi, cb.Max.Z)
+        v_md.CropBox = cb
+    except Exception as ex:
+        p(u"   Không chỉnh được khung mặt đứng theo ký hiệu mặt cắt (%s)." % ex)
+    p(u"   Vết cắt: ký hiệu section của mặt cắt (chừa %+.0f / %+.0f mm so với cốt sàn / đỉnh; hộp bao %s)." % (
+        mm(z_ky_lo - z_cot), mm(z_ky_hi - zmax),
+        u"%+.0f / %+.0f" % (mm(bb_k.Min.Z - z_cot), mm(bb_k.Max.Z - zmax)) if bb_k is not None else u"-"))
+
+    # ---------- Kích thước vách kính: mép = mặt ngoài đố biên (không có đố thì mặt tấm); chuỗi theo lưới đố + tổng ----------
+    luoi_ids = []
+    dim_vk = []          # dim vách kính đã tạo: kiểm lại sau khi ẩn phần tử (mất thì dựng lại vào nét ẩn)
+    if vk:
+        try:
+            luoi_ids = list(fi.CurtainGrid.GetUGridLineIds()) + list(fi.CurtainGrid.GetVGridLineIds())
+        except Exception:
+            luoi_ids = []
+    if bool(doc_in(12)) and vk:
+        dim_kq = []
+        m_cat = int(BuiltInCategory.OST_CurtainWallMullions)
+        p0h = P.DotProduct(H)
+        dos = [e for e in parts if e.Category is not None and e.Category.Id.Value == m_cat]
+        nguon_m = u"đố" if dos else u"tấm"
+        if not dos:
+            dos = [e for e in parts if e.GetType().Name != "Wall"]
+
+        def mep(view, loc=None):
+            """(trái, phải, (z chân, ref chân), ref đỉnh) theo mặt đố biên (không có đố thì mặt tấm) trên view."""
+            mh = []
+            for e in dos:
+                if loc is None or loc(e):
+                    mh += mat_hinh_cua(doc, e, view)
+            mh_h = [(q.DotProduct(H) - p0h, r) for n, q, r in mh if abs(n.DotProduct(H)) > 0.99]
+            mh_z = [(q.Z, r) for n, q, r in mh if abs(n.Z) > 0.99]
+            return (min(mh_h, key=lambda m: m[0]) if mh_h else None, max(mh_h, key=lambda m: m[0]) if mh_h else None,
+                    min(mh_z, key=lambda m: m[0]) if mh_z else None, max(mh_z, key=lambda m: m[0]) if mh_z else None)
+        m_tr, m_ph, z_bot, m_tren = mep(None)
+        r_trai, r_phai = (m_tr[1] if m_tr else None), (m_ph[1] if m_ph else None)
+        r_tren = m_tren[1] if m_tren else None
+        chan_cao = z_bot is not None and z_bot[0] - z_cot > ft(5)       # chân vách cao hơn cốt sàn
+        r_duoi = z_bot[1] if chan_cao else None
+        h_trai = m_tr[0] if m_tr else hmin
+        h_phai = m_ph[0] if m_ph else hmax
+        z_day = z_bot[0] if z_bot else zmin
+        z_dinh = m_tren[0] if m_tren else zmax
+        # mặt cắt cắt qua đố: reference lấy theo hình của chính view đó
+        x_cat_c = O_c.DotProduct(V_c)
+
+        def qua_cat(e):
+            bb = e.get_BoundingBox(None)
+            if bb is None:
+                return False
+            xs = [XYZ(x, y, 0).DotProduct(V_c) for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)]
+            return min(xs) - ft(1) <= x_cat_c <= max(xs) + ft(1)
+        _, _, mc_bot, mc_tren = mep(v_mc, qua_cat)
+        gs_an_d = None
+        try:
+            gs_an_d = Category.GetCategory(doc, BuiltInCategory.OST_InvisibleLines).GetGraphicsStyle(GraphicsStyleType.Projection)
+        except Exception:
+            pass
+
+        def net_an(view, q0, q1):
+            """Nét ẩn trên view làm chỗ bám dim (khi Revit xoá dim vào mặt đố)."""
+            c = doc.Create.NewDetailCurve(view, Line.CreateBound(q0, q1))
+            if gs_an_d is not None:
+                c.LineStyle = gs_an_d
+            return c.GeometryCurve.Reference
+
+        def ref_luoi(gl, view):
+            """Reference đường lưới curtain (trục đố) trên view."""
+            o = Options()
+            o.ComputeReferences = True
+            o.IncludeNonVisibleObjects = True
+            o.View = view
+            try:
+                for g in gl.get_Geometry(o):
+                    if g.GetType().Name == "Line" and g.Reference is not None:
+                        return g.Reference
+            except Exception:
+                pass
+            try:
+                return Reference(gl)
+            except Exception:
+                return None
+        luoi_dung, luoi_ngang = [], []           # (vị trí theo H / cao độ, đường lưới)
+        for i in luoi_ids:
+            gl = doc.GetElement(i)
+            try:
+                c = gl.FullCurve
+                d = (c.GetEndPoint(1) - c.GetEndPoint(0)).Normalize()
+                q = c.Evaluate(0.5, True)
+            except Exception:
+                continue
+            if abs(d.Z) > 0.99:
+                luoi_dung.append((q.DotProduct(H) - p0h, gl))
+            elif abs(d.Z) < 0.01:
+                luoi_ngang.append((q.Z, gl))
+        luoi_dung.sort(key=lambda m: m[0])
+        luoi_ngang.sort(key=lambda m: m[0])
+
+        def thu(nhan, view, p0, p1, refs, du_phong=None):
+            """Tạo dim; Revit xoá dim (reference không dùng được trên view) thì dựng lại bằng refs du_phong() (nét ẩn)."""
+            refs = [r for r in refs if r is not None]
+            loi = u"thiếu reference"
+            if len(refs) >= 2:
+                try:
+                    d = tao_dim(doc, view, p0, p1, refs)
+                    doc.Regenerate()
+                    if d.IsValidObject:
+                        dim_kq.append(u"%s: OK (%d đoạn)" % (nhan, len(refs) - 1))
+                        dim_vk.append((d, nhan, view, p0, p1, du_phong))
+                        return True
+                    loi = u"Revit xoá dim"
+                except Exception as ex:
+                    loi = u"lỗi (%s)" % ex
+            if du_phong is not None:
+                try:
+                    tao_dim(doc, view, p0, p1, du_phong())
+                    dim_kq.append(u"%s: OK theo nét ẩn (%s)" % (nhan, loi))
+                    return True
+                except Exception as ex:
+                    loi += u"; nét ẩn lỗi (%s)" % ex
+            dim_kq.append(u"%s: %s" % (nhan, loi))
+            return False
+        d1, d2 = ft(9) * ti_le, ft(16) * ti_le      # chuỗi / tổng cách mép vách (đo trên giấy 9 / 16 mm)
+        # mặt bằng phía ngoài nhà: chuỗi khoảng cách đố (người dùng yêu cầu 2026-11-04; trục đố = lưới đứng, trên mặt bằng
+        # lưới chỉ là điểm nên bám nét ẩn tại trục) cách mép 6 mm giấy, tổng 13 mm
+        g_mb = XYZ(P.X, P.Y, z_lv)
+
+        def ne_mb(hs):
+            return [net_an(v_mb, g_mb + H * h + N * smin, g_mb + H * h + N * smax) for h in hs]
+        for nhan, dn, chuoi in ((u"MB chuỗi đố", ft(6) * ti_le, True), (u"MB rộng", ft(13) * ti_le, False)):
+            if chuoi and not luoi_dung:
+                continue
+            q = P + N * (smax_mb + dn)
+            giua = [h for h, _ in luoi_dung] if chuoi else []
+            # bám nét ẩn tại mép + trục đố (reference mặt đố biên theo view mặt bằng không ổn định: VK.11 mất đoạn cuối)
+            thu(nhan, v_mb, XYZ(q.X, q.Y, z_lv) + H * (hmin - le), XYZ(q.X, q.Y, z_lv) + H * (hmax + le),
+                ne_mb([h_trai] + giua + [h_phai]))
+        # mặt đứng: chuỗi đố + tổng dưới CHÂN (dưới đầu ký hiệu mặt cắt), chuỗi đứng + tổng bên phải
+        for nhan, z_d, chuoi in ((u"MĐ ngang chuỗi", z_dim1, True), (u"MĐ ngang tổng", z_dim2, False)):
+            if chuoi and not luoi_dung:
+                continue
+            q = XYZ(O_d.X, O_d.Y, z_d)
+            refs = [r_trai] + ([ref_luoi(gl, v_md) for _, gl in luoi_dung] if chuoi else []) + [r_phai]
+            thu(nhan, v_md, q + X_d * (a - le), q + X_d * (b + le), refs)
+        r_san_md = net_san["md"].GeometryCurve.Reference
+        for nhan, dx, chuoi in ((u"MĐ đứng chuỗi", d1, True), (u"MĐ đứng tổng", d2, False)):
+            if chuoi and not (luoi_ngang or r_duoi is not None):
+                continue
+            q = O_d + X_d * (b + dx)
+            refs = [r_san_md, r_duoi] + ([ref_luoi(gl, v_md) for _, gl in luoi_ngang] if chuoi else []) + [r_tren]
+            thu(nhan, v_md, XYZ(q.X, q.Y, z_lo), XYZ(q.X, q.Y, z_hi), refs)
+        q = O_c + X_c * (b2 + d1)
+        r_san_mc = net_san["mc"].GeometryCurve.Reference
+        g_mc = XYZ(O_c.X, O_c.Y, 0)
+        thu(u"MC cao", v_mc, XYZ(q.X, q.Y, z_lo), XYZ(q.X, q.Y, z_hi),
+            [r_san_mc, mc_bot[1] if (chan_cao and mc_bot) else None, mc_tren[1] if mc_tren else None],
+            lambda: [r_san_mc] + [net_an(v_mc, g_mc + X_c * smin + UP * z, g_mc + X_c * smax + UP * z)
+                                  for z in ([z_day] if chan_cao else []) + [z_dinh]])
+        p(u"   Kích thước (mép theo %s, %d lưới đứng / %d lưới ngang): %s." % (
+            nguon_m, len(luoi_dung), len(luoi_ngang), u"; ".join(dim_kq)))
+
     # ---------- Kích thước tổng ----------
-    if bool(doc_in(12)):
+    if bool(doc_in(12)) and not vk:
         dim_kq = []
         r_trai, r_phai = ref_family(fi, "Left"), ref_family(fi, "Right")
         r_tren, r_duoi = ref_family(fi, "Top"), ref_family(fi, "Bottom")
@@ -954,10 +1568,10 @@ def _chinh():
                 dim_kq.append(u"%s: lỗi (%s)" % (nhan, u"%s" % ex))
         wr = [r for r in (r_trai, r_phai) if r is not None]
         # mặt bằng: dim rộng phía ngoài nhà
-        q = P + N * (smax + le * 0.5)
+        q = P + N * (smax_mb + le * 0.25)
         thu(u"MB rộng (%s)" % nguon_w, v_mb, XYZ(q.X, q.Y, z_lv) + H * (hmin - le), XYZ(q.X, q.Y, z_lv) + H * (hmax + le), wr)
-        # mặt đứng: rộng phía trên cửa, cao bên phải
-        q = O_d + UP * (zmax - zmin + le * 0.5)
+        # mặt đứng: rộng dưới CHÂN (dưới đầu ký hiệu mặt cắt), cao bên phải
+        q = XYZ(O_d.X, O_d.Y, z_dim1)
         thu(u"MĐ rộng", v_md, q - X_d * (rong + le), q + X_d * (rong + le),
             [r for r in (r_md["trai"], r_md["phai"]) if r is not None])
         x_ph = max(a, b) + le * 0.5
@@ -968,38 +1582,87 @@ def _chinh():
         p(u"   Kích thước: %s." % u"; ".join(dim_kq))
 
     # ---------- Ẩn level (mặt đứng, mặt cắt); mặt đứng chỉ còn cửa: Hide in View mọi phần tử model khác ----------
-    giu = set([fi.Id.Value])
-    try:
-        giu.update(i.Value for i in fi.GetSubComponentIds())
-    except Exception:
-        pass
+    giu = set([fi.Id.Value] + [e.Id.Value for e in parts] + [i.Value for i in luoi_ids])   # vách kính: tấm, đố, lưới
+    for e in nguon:
+        try:
+            giu.update(i.Value for i in e.GetSubComponentIds())
+        except Exception:
+            pass
     try:
         if fi.SuperComponent is not None:
             giu.add(fi.SuperComponent.Id.Value)
     except Exception:
         pass
     lv_cat = int(BuiltInCategory.OST_Levels)
-    for v, chi_cua in ((v_md, True), (v_mc, False)):
+    vw_cat = int(BuiltInCategory.OST_Viewers)          # ký hiệu mặt cắt (vết cắt) trên mặt đứng: giữ
+    # mốc khác (mặt phẳng tham chiếu, scope box, lưới trục) ẩn ở cả 3 view: chúng kéo viewport to ra, vượt ô
+    moc = set(int(b) for b in (BuiltInCategory.OST_CLines, BuiltInCategory.OST_VolumeOfInterest, BuiltInCategory.OST_Grids))
+    for v in (v_mb, v_md, v_mc):
         ds = List[ElementId]()
-        so_lv = 0
         for e in FilteredElementCollector(doc, v.Id).WhereElementIsNotElementType():
-            c = e.Category
-            if c is None or e.Id.Value in giu or e.ViewSpecific:      # nét cốt sàn, dim, chữ của view: giữ
-                continue
-            la_lv = c.Id.Value == lv_cat
-            if not la_lv and not (chi_cua and c.CategoryType == CategoryType.Model):
-                continue
             try:
-                if e.CanBeHidden(v):
+                if e.Category is not None and e.Category.Id.Value in moc and e.CanBeHidden(v):
                     ds.Add(e.Id)
-                    so_lv += 1 if la_lv else 0
             except Exception:
                 pass
         if ds.Count:
             v.HideElements(ds)
-        p(u"   %s: ẩn %d level%s." % (u"Mặt đứng" if chi_cua else u"Mặt cắt", so_lv,
-                                    u" + %d phần tử khác (chỉ giữ cửa)" % (ds.Count - so_lv) if chi_cua else u""))
+            p(u"   %s: ẩn %d mặt phẳng tham chiếu / scope box / lưới trục." % (v.Name, ds.Count))
+    # level: lấy từ toàn dự án (collector theo view không trả level) → ẩn trên mặt đứng + mặt cắt
+    levels = list(FilteredElementCollector(doc).OfClass(Level))
+    tuong = int(BuiltInCategory.OST_Walls)
+    # mặt đứng: chỉ giữ cửa; mặt bằng: giữ cửa + tường (ẩn sàn, cửa khác, đồ đạc...); mặt cắt: chỉ ẩn level
+    for v, nhan, giu_cat in ((v_md, u"Mặt đứng", ()), (v_mb, u"Mặt bằng", (tuong,)), (v_mc, u"Mặt cắt", None)):
+        ds = List[ElementId]()
+        so_lv = 0
+        if v is not v_mb:
+            try:        # tắt cả hạng mục Levels của view (bắt cả level của file link); template điều khiển thì bỏ qua
+                if not v.GetCategoryHidden(ElementId(BuiltInCategory.OST_Levels)):
+                    v.SetCategoryHidden(ElementId(BuiltInCategory.OST_Levels), True)
+            except Exception:
+                pass
+            for l in levels:
+                try:
+                    if l.CanBeHidden(v) and not l.IsHidden(v):
+                        ds.Add(l.Id)
+                        so_lv += 1
+                except Exception:
+                    pass
+        if giu_cat is not None:
+            for e in FilteredElementCollector(doc, v.Id).WhereElementIsNotElementType():
+                c = e.Category
+                if c is None or e.Id.Value in giu or e.ViewSpecific:      # nét cốt sàn, dim, chữ của view: giữ
+                    continue
+                if c.CategoryType != CategoryType.Model or c.Id.Value in giu_cat or c.Id.Value in (lv_cat, vw_cat):
+                    continue
+                try:
+                    if e.CanBeHidden(v):
+                        ds.Add(e.Id)
+                except Exception:
+                    pass
+        if ds.Count:
+            v.HideElements(ds)
+        p(u"   %s: ẩn %d level%s." % (nhan, so_lv, u" + %d phần tử khác (giữ cửa%s)" % (
+            ds.Count - so_lv, u" + tường" if giu_cat else u"") if giu_cat is not None else u""))
     doc.Regenerate()
+    dung_lai = []
+    for d, nhan, view, p0, p1, du_phong in dim_vk:
+        if du_phong is None:
+            continue
+        # dim bám phần tử vừa Hide in View: Revit ẩn theo (vẫn IsValidObject) hoặc xoá → kiểm bằng collector của view
+        if d.IsValidObject and any(x.Id.Value == d.Id.Value for x in
+                                   FilteredElementCollector(doc, view.Id).OfClass(Dimension)):
+            continue
+        try:
+            if d.IsValidObject:
+                doc.Delete(d.Id)            # dim công cụ vừa tạo trong lượt này, đã không hiện → thay bằng dim nét ẩn
+            tao_dim(doc, view, p0, p1, du_phong())
+            dung_lai.append(nhan)
+        except Exception as ex:
+            p(u"   %s: mất sau khi ẩn phần tử, dựng lại theo nét ẩn lỗi (%s)." % (nhan, ex))
+    if dung_lai:
+        p(u"   Dim mất sau khi ẩn phần tử → dựng lại theo nét ẩn: %s." % u", ".join(dung_lai))
+        doc.Regenerate()
     so_dim = {v.Name: sum(1 for _ in FilteredElementCollector(doc, v.Id).OfClass(Dimension)) for v in (v_mb, v_md, v_mc)}
     p(u"   Kích thước còn trong view sau khi ẩn: %s." % u", ".join(u"%s %d" % (k, n) for k, n in so_dim.items()))
 
@@ -1013,20 +1676,42 @@ def _chinh():
         chon_sh = ViewSheet.Create(doc, tb_type.Id)
         chon_sh.SheetNumber = so_moi
         chon_sh.Name = ten_sh
+        for pid, gt_, nhan in ((pid_gd, gd, u"giai đoạn"), (pid_hm, hm, u"hạng mục")):
+            if pid is None or not gt_:
+                continue
+            prm = ts_theo_id(chon_sh, pid)
+            if prm is not None and not prm.IsReadOnly:
+                prm.Set(gt_)
+            else:
+                p(u"   Không gán được %s '%s' cho sheet (tham số không ghi được)." % (nhan, gt_))
         doc.Regenerate()
         tb = list(FilteredElementCollector(doc, chon_sh.Id).OfCategory(BuiltInCategory.OST_TitleBlocks).WhereElementIsNotElementType())[0]
         vung = vung_ve(doc, chon_sh, tb, p)
         chon_o = 0
         trai, duoi, phai, tren = vung
+        trong_khoi = set(o_khoi)                 # khối ghép của vách kính: không vẽ nét chia bên trong
         nets = []
-        for c in range(1, SO_COT):
-            x = trai + (phai - trai) * c / SO_COT
-            nets.append((XYZ(x, duoi, 0), XYZ(x, tren, 0)))
-        for r in range(1, SO_HANG):
-            y = duoi + (tren - duoi) * r / SO_HANG
-            nets.append((XYZ(trai, y, 0), XYZ(phai, y, 0)))
-        for k in range(SO_COT * SO_HANG):
+        for c in range(1, SO_COT):               # nét đứng chia cột, từng hàng
+            for r in range(SO_HANG):
+                if r * SO_COT + c - 1 in trong_khoi and r * SO_COT + c in trong_khoi:
+                    continue
+                _, y0, x0, y1 = o_luoi(vung, r * SO_COT + c - 1)
+                nets.append((XYZ(x0, y0, 0), XYZ(x0, y1, 0)))
+        for r in range(1, SO_HANG):              # nét ngang chia hàng, từng cột
+            for c in range(SO_COT):
+                if (r - 1) * SO_COT + c in trong_khoi and r * SO_COT + c in trong_khoi:
+                    continue
+                x0, y0, x1, _ = o_luoi(vung, r * SO_COT + c - SO_COT)
+                nets.append((XYZ(x0, y0, 0), XYZ(x1, y0, 0)))
+        for k in range(SO_COT * SO_HANG):        # dải thông tin: mỗi ô 1 nét; khối ghép 1 nét dưới hàng cuối khối
+            if k in trong_khoi and len(o_khoi) > 1:
+                continue
             x0, y0, x1, y1 = o_luoi(vung, k)
+            y = y0 + (y1 - y0) * TI_LE_DAI_TT
+            nets.append((XYZ(x0, y, 0), XYZ(x1, y, 0)))
+        if len(o_khoi) > 1:
+            x0, y0, _, y1 = o_luoi(vung, o_khoi[-1] - (khoi[0] - 1))
+            x1 = o_luoi(vung, o_khoi[-1])[2]
             y = y0 + (y1 - y0) * TI_LE_DAI_TT
             nets.append((XYZ(x0, y, 0), XYZ(x1, y, 0)))
         ids = List[ElementId]()
@@ -1039,8 +1724,9 @@ def _chinh():
             pass
         p(u"   Sheet %s: vùng vẽ %.0f × %.0f mm, lưới 6 ô (group '%s %s')." % (
             so_moi, mm(phai - trai), mm(tren - duoi), NHOM_LUOI, so_moi))
-    x0, y0, x1, y1 = o_luoi(vung, chon_o)
-    y0v = y0 + (y1 - y0) * TI_LE_DAI_TT          # vùng đặt view (trên dải thông tin)
+    x0, _, _, y1 = o_luoi(vung, chon_o)          # khối ô: góc trên trái = ô đầu, góc dưới phải = ô cuối
+    _, y0, x1, y1d = o_luoi(vung, chon_o + (khoi[1] - 1) * SO_COT + khoi[0] - 1)
+    y0v = y0 + (y1d - y0) * TI_LE_DAI_TT         # vùng đặt view (trên dải thông tin của hàng cuối khối)
     cx, cy = (x0 + x1) / 2.0, (y0v + y1) / 2.0
     vps = {}
     for k in ("md", "mc", "mb"):
@@ -1048,29 +1734,68 @@ def _chinh():
             p(u"   Không đặt được view '%s' lên sheet." % vs[k].Name)
             continue
         vps[k] = Viewport.Create(doc, chon_sh.Id, vs[k].Id, XYZ(cx, cy, 0))
+    kieu_vp = None
+    for vp in vps.values():
+        kieu_vp = next((t for t in vp.GetValidTypes() if ten(doc.GetElement(t)) == KIEU_VIEWPORT), None)
+        break
+    if kieu_vp is not None:
+        for vp in vps.values():
+            if vp.GetTypeId().Value != kieu_vp.Value:
+                vp.ChangeTypeId(kieu_vp)
+    elif vps:
+        p(u"   Không có kiểu viewport '%s' → giữ kiểu mặc định." % KIEU_VIEWPORT)
+    if "mc" in vps:     # đầu ký hiệu section trên mặt đứng hiện số chi tiết của mặt cắt → tên "MẶT CẮT n-n" cho khớp
+        try:
+            dn = vps["mc"].get_Parameter(BuiltInParameter.VIEWPORT_DETAIL_NUMBER).AsString()
+            if dn:
+                v_mc.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION).Set(u"MẶT CẮT %s-%s" % (dn, dn))
+        except Exception as ex:
+            p(u"   Không đặt được tên mặt cắt theo số chi tiết (%s)." % ex)
     doc.Regenerate()
 
-    def kt(vp):
-        o = vp.GetBoxOutline()
-        return o.MaximumPoint.X - o.MinimumPoint.X, o.MaximumPoint.Y - o.MinimumPoint.Y
+    def len_sheet(vp, view, q):
+        tr = list(view.GetModelToProjectionTransforms())[0].GetModelToProjectionTransform()
+        return vp.GetProjectionToSheetTransform().OfPoint(tr.OfPoint(q))
+
+    def hop_ht(k):
+        """(x0, y0, x1, y1) phần THẤY ĐƯỢC của viewport trên sheet. Mặt đứng: khung crop + 3 mm chú thích – hộp viewport
+        Revit tính cả hộp bao ký hiệu mặt cắt (vết cắt), vượt khung ~8 mm giấy mỗi đầu mà không in ra (thử 2026-11-04)."""
+        o = vps[k].GetBoxOutline()
+        hop_vp = (o.MinimumPoint.X, o.MinimumPoint.Y, o.MaximumPoint.X, o.MaximumPoint.Y)
+        if k != "md":
+            return hop_vp
+        try:
+            cb = v_md.CropBox
+            g_ = [len_sheet(vps[k], v_md, cb.Transform.OfPoint(XYZ(xx, yy, cb.Min.Z)))
+                  for xx in (cb.Min.X, cb.Max.X) for yy in (cb.Min.Y, cb.Max.Y)]
+            return (max(min(q.X for q in g_) - ft(3), hop_vp[0]), max(min(q.Y for q in g_) - ft(3), hop_vp[1]),
+                    min(max(q.X for q in g_) + ft(3), hop_vp[2]), min(max(q.Y for q in g_) + ft(3), hop_vp[3]))
+        except Exception:
+            return hop_vp
+
+    def dat_tam(k, cx_, cy_):
+        """Đặt viewport sao cho TÂM phần thấy được nằm ở (cx_, cy_)."""
+        h_ = hop_ht(k)
+        vps[k].SetBoxCenter(vps[k].GetBoxCenter() + XYZ(cx_ - (h_[0] + h_[2]) / 2.0, cy_ - (h_[1] + h_[3]) / 2.0, 0))
+
+    def kt(k):
+        h_ = hop_ht(k)
+        return h_[2] - h_[0], h_[3] - h_[1]
 
     if len(vps) == 3:
-        gap, gap_td = ft(12), ft(16)            # khoảng hở giữa view / chỗ tên view dưới mỗi view
-        (wd, hd), (wc, hc2), (wb, hb) = kt(vps["md"]), kt(vps["mc"]), kt(vps["mb"])
+        gap, gap_td = ft(12), ft(14)            # khoảng hở giữa view / chỗ tên view dưới mỗi view
+        (wd, hd), (wc, hc2), (wb, hb) = kt("md"), kt("mc"), kt("mb")
         cot_a = max(wd, wb)
         tong_w = cot_a + gap + wc
         tong_h = hd + gap_td + hb + gap_td
         xl = x0 + max((x1 - x0 - tong_w) / 2.0, ft(5))
         yt = y1 - max((y1 - y0v - tong_h) / 2.0, ft(5))
-        vps["md"].SetBoxCenter(XYZ(xl + cot_a / 2.0, yt - hd / 2.0, 0))
-        vps["mc"].SetBoxCenter(XYZ(xl + cot_a + gap + wc / 2.0, yt - hc2 / 2.0, 0))
-        vps["mb"].SetBoxCenter(XYZ(xl + cot_a / 2.0, yt - hd - gap_td - hb / 2.0, 0))
+        dat_tam("md", xl + cot_a / 2.0, yt - hd / 2.0)
+        dat_tam("mc", xl + cot_a + gap + wc / 2.0, yt - hc2 / 2.0)
+        dat_tam("mb", xl + cot_a / 2.0, yt - hd - gap_td - hb / 2.0)
         doc.Regenerate()
         # Gióng: sàn mặt cắt ngang sàn mặt đứng; tâm cửa mặt bằng thẳng tâm cửa mặt đứng
         try:
-            def len_sheet(vp, view, q):
-                tr = list(view.GetModelToProjectionTransforms())[0].GetModelToProjectionTransform()
-                return vp.GetProjectionToSheetTransform().OfPoint(tr.OfPoint(q))
             yd = len_sheet(vps["md"], v_md, XYZ(tam.X, tam.Y, z_lv)).Y
             yc = len_sheet(vps["mc"], v_mc, XYZ(tam.X, tam.Y, z_lv)).Y
             vps["mc"].SetBoxCenter(vps["mc"].GetBoxCenter() + XYZ(0, yd - yc, 0))
@@ -1081,21 +1806,86 @@ def _chinh():
         except Exception as ex:
             p(u"   Không gióng được view theo sàn / tâm cửa (%s)." % ex)
         doc.Regenerate()
-        vuot = tong_w > x1 - x0 or tong_h > y1 - y0v
-        p(u"   Đặt 3 view vào ô %d: cụm %.0f × %.0f mm, vùng đặt view %.0f × %.0f mm%s." % (
-            chon_o + 1, mm(tong_w), mm(tong_h), mm(x1 - x0), mm(y1 - y0v), u" – VƯỢT Ô, cần xếp lại tay" if vuot else u""))
-    TransactionManager.Instance.TransactionTaskDone()
-    p(u"Xong: sheet %s - %s, ô %d. Phần trống dưới ô để điền ký hiệu, kích thước, vật liệu, phụ kiện." % (
-        chon_sh.SheetNumber, chon_sh.Name, chon_o + 1))
-    if bool(doc_in(15)):
+        # tên view đặt theo đáy hộp viewport → mặt đứng (hộp to hơn phần thấy) dời tên lên sát phần thấy
+        for k in vps:
+            try:
+                h_ = hop_ht(k)
+                o = vps[k].GetBoxOutline()
+                dx_, dy_ = h_[0] - o.MinimumPoint.X, h_[1] - o.MinimumPoint.Y
+                if dx_ > ft(0.5) or dy_ > ft(0.5):
+                    vps[k].LabelOffset = vps[k].LabelOffset + XYZ(dx_, dy_, 0)
+            except Exception as ex:
+                p(u"   Không dời được tên view %s (%s)." % (vs[k].Name, ex))
+        doc.Regenerate()
+        # Nét đứt cốt sàn hoàn thiện chạy suốt bề rộng ô (như mẫu), vẽ trên sheet tại cao độ sàn của mặt đứng
+        # (mặt cắt đã gióng cùng cao độ); nét sàn trong từng view chỉ để dim bám vào (nét ẩn)
         try:
-            uidoc.RequestViewChange(chon_sh)
-        except Exception:
-            pass
+            tr_d = list(v_md.GetModelToProjectionTransforms())[0].GetModelToProjectionTransform()
+            y_san = vps["md"].GetProjectionToSheetTransform().OfPoint(tr_d.OfPoint(XYZ(tam.X, tam.Y, z_cot))).Y
+            net = doc.Create.NewDetailCurve(chon_sh, Line.CreateBound(XYZ(x0, y_san, 0), XYZ(x1, y_san, 0)))
+            if gs_dut is not None:
+                net.LineStyle = gs_dut
+        except Exception as ex:
+            p(u"   Không vẽ được nét cốt sàn trên sheet (%s)." % ex)
+        vuot =tong_w > x1 - x0 or tong_h > y1 - y0v
+        p(u"   Đặt 3 view vào %s: cụm %.0f × %.0f mm, vùng đặt view %.0f × %.0f mm%s." % (
+            ten_o, mm(tong_w), mm(tong_h), mm(x1 - x0), mm(y1 - y0v), u" – VƯỢT Ô, cần xếp lại tay" if vuot else u""))
+    TransactionManager.Instance.TransactionTaskDone()
+    p(u"Xong: sheet %s - %s, %s. Phần trống dưới ô để điền ký hiệu, kích thước, vật liệu, phụ kiện." % (
+        chon_sh.SheetNumber, chon_sh.Name, ten_o))
+    SHEET_CUOI[0] = chon_sh
     return bao_cao
 
 
+def _chay():
+    """Làm lần lượt mọi cửa đã chọn (người dùng yêu cầu 2026-11-03: chọn nhiều cửa trước rồi bấm nút). Ở nút pyRevit cả
+    lượt gom trong 1 TransactionGroup → Ctrl+Z một lần là hoàn tác hết."""
+    doc = DocumentManager.Instance.CurrentDBDocument
+    uidoc = DocumentManager.Instance.CurrentUIDocument
+    ds, kq = lay_cua(doc, uidoc)
+    if not ds:
+        return kq + [u"Chưa chọn cửa đi / cửa sổ / vách kính nào. Chọn các đối tượng cần làm chi tiết rồi bấm lại."]
+    # Đọc sẵn nét khung tên (mở family) trước khi có transaction / transaction group
+    tb_type, _ = tim_khung(doc, (doc_in(1) or u"").strip())
+    if tb_type is not None:
+        doc_net_khung(doc, tb_type, kq.append)
+    for s in FilteredElementCollector(doc).OfClass(ViewSheet):
+        if any(ten(g.GroupType).startswith(NHOM_LUOI) for g in FilteredElementCollector(doc, s.Id).OfClass(Group)):
+            for tb in FilteredElementCollector(doc, s.Id).OfCategory(BuiltInCategory.OST_TitleBlocks) \
+                    .WhereElementIsNotElementType():
+                doc_net_khung(doc, doc.GetElement(tb.GetTypeId()), kq.append)
+    kq.append(u"Số cửa / vách kính đã chọn: %d." % len(ds))
+    nhom = None
+    if not bool(doc_in(14)) and hasattr(TransactionManager.Instance, "rollback_open"):     # chạy trong nút pyRevit
+        nhom = TransactionGroup(doc, TRANSACTION_NAME)
+        nhom.Start()
+    try:
+        for i, fi in enumerate(ds, 1):
+            kq.append(u"===== %d/%d" % (i, len(ds)))
+            kq.extend(_chinh(fi))
+            TransactionManager.Instance.ForceCloseTransaction()
+    except Exception:
+        if nhom is not None:
+            try:
+                TransactionManager.Instance.rollback_open()
+            except Exception:
+                pass
+            nhom.RollBack()
+            nhom = None
+            kq.append(u"Có lỗi → đã hoàn tác toàn bộ lượt này.")
+        raise
+    finally:
+        if nhom is not None and nhom.GetStatus() == TransactionStatus.Started:
+            nhom.Assimilate()
+    if bool(doc_in(15)) and not bool(doc_in(14)) and SHEET_CUOI[0] is not None and uidoc is not None:
+        try:
+            uidoc.RequestViewChange(SHEET_CUOI[0])
+        except Exception:
+            pass
+    return kq
+
+
 try:
-    OUT = _chinh()
+    OUT = _chay()
 except Exception:
     OUT = [u"LỖI:", traceback.format_exc()]

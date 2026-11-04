@@ -81,7 +81,7 @@ os.makedirs(THU_MUC, exist_ok=True)
 
 # hằng số nhận trục (chép nguyên từ NganChay_TrucHKT.py khi gộp)
 O_LON_MM = 1400.0         # ô lớn hơn 1400 x 1400 mm: vẫn hatch, liệt kê để xem lại
-DT_NHO_NHAT_M2 = 0.03     # ô nhỏ hơn coi là khe giữa 2 lớp tường
+DT_NHO_NHAT_M2 = 0.01     # ô nhỏ hơn coi là khe giữa 2 lớp tường (0,03 làm sót hộp ống 150 x 150 lõi–lõi: G19_A_L3-32 2026-11-04)
 O_LUOI_MM = 20.0          # cạnh ô lưới quét dấu chân tường
 LOI_MONG_MM = 30.0        # tường có lõi mỏng hơn (gạch ốp, lớp gỗ…) là lớp hoàn thiện → không coi là vách
 NOI_HO_MM = 400.0         # đầu tường hở cách tường khác tới mức này thì nối (như Revit khép room)

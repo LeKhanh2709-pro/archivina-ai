@@ -72,13 +72,23 @@ MAC_DINH = ["", "AV_Door Tag", "AV_Window Tag", "AV_Louver Tag", "Lam;Louver", T
             True, u"MẶT BẰNG ĐỊNH VỊ CỬA", u"MẶT BẰNG ĐỊNH VỊ CỬA - {tang}", True, "",
             False, "", "", "A1", "", "", ""]
 HAU_TO_TEMPLATE = u" (ẩn nội thất)"
-MB_HALFTONE = ("OST_Walls", "OST_Floors")          # mặt bằng định vị cửa: tường, sàn xám như ảnh mẫu người dùng
+MB_HALFTONE = ("OST_Floors",)                      # mặt bằng định vị cửa: sàn xám như ảnh mẫu người dùng
 MB_DAM = ("OST_Doors", "OST_Windows")              # cửa nét đậm để định vị
-MB_AN_THEM = ("OST_MechanicalEquipment", "OST_Elev")   # người dùng chốt 2026-11-03: ẩn cả thiết bị cơ điện, ký hiệu mặt đứng
+MB_AN_THEM = ("OST_MechanicalEquipment", "OST_Elev", "OST_Sections")   # người dùng chốt 2026-11-03: ẩn cả thiết bị cơ
+#                                                    điện, ký hiệu mặt đứng, mặt cắt
 TEN_FILTER_TRUC_LINK = u"ARV_Ẩn trục file link"       # filter Grids: loại trục khác loại trục của file hiện tại → ẩn
+# Tường / cột / vách như mẫu FPT (người dùng chốt 2026-11-03 tối): tường xây chỉ nét xám, không tô; cột + vách BTCT tô đặc
+# xám đậm viền đen. Vách BTCT = tường có Structural Usage khác Non-bearing (link kết cấu) hoặc tên loại chứa một từ khoá
+# dưới (lọc không phân biệt hoa thường; WS_ = tường kết cấu theo cách đặt tên của model G19).
+TEN_FILTER_BTCT = u"ARV_Vách BTCT"
+TEN_FILTER_XAY = u"ARV_Tường xây"
+TEN_FILTER_COT = u"ARV_Cột BTCT"
+TU_KHOA_BTCT = (u"BTCT", u"VBT", u"WS_", u"Concrete", u"Bê tông")
+MAU_TO_BTCT = (100, 100, 100)
+COT_BTCT = ("OST_StructuralColumns", "OST_Columns")
 PHAT_PHIA_MM_GIAY = 8.0     # phạt khi đặt tag ở phía không ưu tiên (mm trên giấy, cộng vào khoảng cách)
 HE_SO_LECH = 4.0            # mỗi mm dịch dọc tường khỏi giữa cửa tính bằng 4 mm lùi xa: ưu tiên tag ngay giữa cửa
-TAM_XA_MM_GIAY = 15.0       # tag đặt xa nhất cách mép tường / cánh cửa (mm trên giấy)
+TAM_XA_MM_GIAY = 8.0        # tag đặt xa nhất cách mép tường / cánh cửa (mm trên giấy) – gần cửa (người dùng 2026-11-03)
 
 
 def doc_in(i):
@@ -505,7 +515,14 @@ def _chinh():
             buoc_h = max(e_h * 0.5, ft(50))
             buoc_f = max(e_f * 0.5, ft(50))
             tam_h = (h0 + h1) / 2.0
-            gioi_han_h = (h1 - h0) / 2.0 + e_h * 3.0
+            gioi_han_h = (h1 - h0) / 2.0 + e_h * 2.0
+            # Gần cửa, KHÔNG đè hình (người dùng 2026-11-03 tối: "để gần cửa tránh vào hình"; bỏ cách đặt tag trên ô cửa):
+            # (1) sát mặt tường phía ưu tiên, ngay giữa cửa; (2) sát mặt tường phía kia; rồi lưới gần (dịch dọc tường ≤ 2
+            # bề dài tag, lùi ≤ TAM_XA_MM_GIAY) xếp theo độ gần. Hết chỗ trống thì lấy chỗ đè ít nhất NGAY GẦN cửa.
+            dau_tien = []
+            for s_ in (uu_tien, -uu_tien):
+                dau_tien.append((0.0, goc + h * tam_h + f * (s_ * (mat_tuong[s_] + khe + e_f)),
+                                 u"sát tường phía %s" % (u"ưu tiên" if s_ == uu_tien else u"kia"), True, False))
             ung_vien = []
             for s_ in (1, -1):
                 d0 = mat_tuong[s_] + khe + e_f
@@ -517,15 +534,16 @@ def _chinh():
                     while j * buoc_h <= gioi_han_h:
                         dh = j * buoc_h
                         diem = (d - d0) + abs(dh) * HE_SO_LECH + (0.0 if s_ == uu_tien else phat)
-                        # ngay giữa cửa, cách mặt tường không quá 1 bề cao tag → không cần leader
-                        sat_giua = (j == 0 and d - d0 <= 2 * e_f + 1e-9)
+                        # còn kề cửa (trong bề rộng cửa, cách mặt tường ≤ 1 bề cao tag) → không cần leader
+                        sat_giua = (abs(dh) <= (h1 - h0) / 2.0 + 1e-9 and d - d0 <= 2 * e_f + 1e-9)
                         ung_vien.append((diem, goc + h * (tam_h + dh) + f * (s_ * d),
                                          u"phía %s cách tường %d dịch %d" % (u"ưu tiên" if s_ == uu_tien else u"kia",
                                                                             round(mm(d - d0)), round(mm(dh))),
-                                         sat_giua))
+                                         sat_giua, False))
                         j += 1
                     i += 1
             ung_vien.sort(key=lambda x: x[0])
+            ung_vien = dau_tien + ung_vien
             # Vật cản ở gần (lọc trước theo khung bao cho nhanh)
             r_gan = gioi_han_h + ft(TAM_XA_MM_GIAY * tl) + max(f1, -f0) + 2 * (e_f + e_h)
             gu, gv = uv(goc)
@@ -534,7 +552,7 @@ def _chinh():
                    and bb[0] <= gu + r_gan and bb[2] >= gu - r_gan and bb[1] <= gv + r_gan and bb[3] >= gv - r_gan]
             tot = None
             loai_bo = []          # lý do bỏ các ứng viên trước chỗ được chọn (ghi log để soát)
-            for _, c, nhan, sat_giua in ung_vien:
+            for _, c, nhan, sat_giua, chi_tag in ung_vien:
                 cu0, cv0 = uv(c)
                 hop = [(cu0 - a - khe, cv0 - b - khe), (cu0 + a + khe, cv0 - b - khe),
                        (cu0 + a + khe, cv0 + b + khe), (cu0 - a - khe, cv0 + b + khe)]
@@ -543,7 +561,8 @@ def _chinh():
                     loai_bo.append(u"%s: ngoài crop" % nhan)
                     continue
                 de = [(pl, mt) for pl, mt, bb in gan
-                      if bb[0] < hop[2][0] and bb[2] > hop[0][0] and bb[1] < hop[2][1] and bb[3] > hop[0][1]
+                      if (not chi_tag or mt.startswith(u"chữ / tag") or mt.startswith(u"tag mới"))
+                      and bb[0] < hop[2][0] and bb[2] > hop[0][0] and bb[1] < hop[2][1] and bb[3] > hop[0][1]
                       and da_giac_giao(hop, pl)]
                 if de:
                     loai_bo.append(u"%s: đè %s" % (nhan, ", ".join(sorted(set(m for _, m in de))[:3])))
@@ -809,7 +828,8 @@ KHE_X_MM = 0.8              # nửa bề rộng chữ "X" giữa Width và Heigh
 
 
 def dat_co_chu(fd, mk):
-    """Cỡ chữ nhãn tag + chữ "X" = CO_CHU_MM (kiểu nhãn của nhãn Type Mark, kiểu chữ 'ARV_Tag X')."""
+    """Cỡ chữ nhãn tag + chữ "X" = CO_CHU_MM (kiểu nhãn của nhãn Type Mark, kiểu chữ 'ARV_Tag X'); nền chữ Opaque để
+    che nét tường khi tag nằm trên ô cửa (như mẫu FPT)."""
     for el in [fd.GetElement(mk.GetTypeId())] + [t_ for t_ in FilteredElementCollector(fd).OfClass(TextNoteType)
                                                 if ten(t_) == u"ARV_Tag X"]:
         try:
@@ -818,6 +838,20 @@ def dat_co_chu(fd, mk):
                 p_.Set(ft(CO_CHU_MM))
         except Exception:
             pass
+        try:
+            p_ = el.get_Parameter(BuiltInParameter.TEXT_BACKGROUND)
+            if p_ is not None and not p_.IsReadOnly and p_.AsInteger() != 0:
+                p_.Set(0)             # 0 = Opaque
+        except Exception:
+            pass
+
+
+def nen_chu_dung(fd, mk):
+    try:
+        p_ = fd.GetElement(mk.GetTypeId()).get_Parameter(BuiltInParameter.TEXT_BACKGROUND)
+        return p_ is None or p_.AsInteger() == 0
+    except Exception:
+        return True
 
 
 def khung_cua_tool(fd):
@@ -862,7 +896,7 @@ def ve_khung_2_o(fd, view, mk, cx, cy):
                 pass
 
 
-THANG_TL = (100, 125, 150, 200, 250, 300, 400, 500)   # tỉ lệ (1:n): ưu tiên 1:100 (người dùng chốt 2026-11-03), không vừa mới lùi
+THANG_TL = (100,)   # tỉ lệ mặt bằng định vị cửa LUÔN 1:100 (người dùng chốt 2026-11-03 tối); không vừa khổ thì chỉ báo
 BIEN_MM = 8.0           # lề trong vùng vẽ của khung tên (mm giấy)
 TIEU_DE_MM = 15.0       # chỗ tên view dưới viewport
 KHE_BANG_MM = 6.0       # khe giữa 2 bảng thống kê / giữa bảng và mặt bằng
@@ -1200,21 +1234,23 @@ def chuan_bi_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, loai_tru_t
         bb_ = si.get_BoundingBox(sh)
         return bb_.Max.X - bb_.Min.X, bb_.Max.Y - bb_.Min.Y
 
+    # Bảng sát GÓC khung bản vẽ như mẫu FPT (người dùng 2026-11-03 chiều): đáy bảng cửa sổ trên nét khung dưới, mép phải
+    # trên nét dải khung tên; bảng cửa đi ngay trên
     rong_bang = cao_bang = 0.0
-    y = y0 + b
+    y = y0
     for si, vs, cach in reversed(bang):
         w, h = co_bang(si, vs)
         rong_bang = max(rong_bang, w)
-        si.Point = XYZ(x1 - b - w, y + h, 0)       # Point = góc trên trái của bảng
+        si.Point = XYZ(x1 - w, y + h, 0)           # Point = góc trên trái của bảng
         y += h + khe
-        cao_bang = y - (y0 + b)
+        cao_bang = y - y0
     doc.Regenerate()
     for si, vs, cach in bang:
         bao.append(u"Bảng '%s' (%s)." % (vs.Name, cach))
     # Bố cục (người dùng chốt 2026-11-03): mặt bằng NGAY GIỮA vùng vẽ của khổ giấy, bảng ở góc phải dưới, không đè nhau
     tieu_de = ft(TIEU_DE_MM)
     vung = (x0 + b, y0 + b + tieu_de, x1 - b, y1 - b)
-    o_bang = (x1 - b - rong_bang - khe, y0, x1, y0 + b + cao_bang + khe) if bang else None
+    o_bang = (x1 - rong_bang - khe, y0, x1, y0 + cao_bang + khe) if bang else None
     tpl = doc.GetElement(view.ViewTemplateId) if view.ViewTemplateId != ElementId.InvalidElementId else None
     if tpl is not None:
         try:
@@ -1264,7 +1300,8 @@ def chuan_bi_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, loai_tru_t
         break
     if tl is None:
         tl = THANG_TL[-1]
-        bao.append(u"CẦN XEM LẠI: mặt bằng không vừa khổ %s kể cả 1:%d." % (kho, tl))
+        bao.append(u"CẦN XEM LẠI: mặt bằng 1:%d (kể cả trục, chừa chỗ tag) lớn hơn vùng vẽ khổ %s – chọn khổ lớn hơn hoặc "
+                   u"thu crop view." % (tl, kho))
     if view.Scale != tl:
         view.Scale = tl
     doc.Regenerate()
@@ -1362,6 +1399,20 @@ def them_kich_thuoc(doc, fams, dry, thu_muc_nguon=u""):
                 pass
         return kq
 
+    def gop_dung(lb, fd):
+        """Nhãn gộp đúng mẫu "830X2200": Width trước, Height sau, giữa có chữ X (tiền tố Height / hậu tố Width).
+        Model G19_A_L3-32 có family AV-Tag-Window-Lomo (hạng mục Door Tags) nhãn gộp "Height Width" → hiện "2200 830",
+        SAI (người dùng báo 2026-11-04) → không dùng làm nguồn."""
+        f = []
+        for fm in lb.GetParameterFormatting():
+            try:
+                f.append((str(fm.GetParameterDefinition(fd).BuiltInParameter), fm.Prefix or u"", fm.Suffix or u""))
+            except Exception:
+                pass
+        if len(f) != 2 or f[0][0] not in BIP_RONG or f[1][0] not in BIP_CAO:
+            return False
+        return u"X" in (f[0][2] + f[1][1]).upper()
+
     def nhan_theo(fd, ds):
         for lb in FilteredElementCollector(fd).OfClass(lop_nhan):
             if any(b in ds for b, _ in fmts(lb, fd)):
@@ -1379,7 +1430,7 @@ def them_kich_thuoc(doc, fams, dry, thu_muc_nguon=u""):
         r = [t_ for b, t_ in f if b in BIP_RONG]
         c = [t_ for b, t_ in f if b in BIP_CAO]
         if r and c:
-            return "gop"
+            return "gop" if gop_dung(lb, fd) else None
         if r and len(f) == 1 and not r[0]:
             return "rong"
         if c and len(f) == 1:
@@ -1482,6 +1533,36 @@ def them_kich_thuoc(doc, fams, dry, thu_muc_nguon=u""):
                     continue
                 fd = doc.EditFamily(fam)
                 da_mo.append(fd)
+                sai = [lb for lb in FilteredElementCollector(fd).OfClass(lop_nhan)
+                       if any(b in BIP_RONG for b, _ in fmts(lb, fd)) and any(b in BIP_CAO for b, _ in fmts(lb, fd))
+                       and not gop_dung(lb, fd)]
+                net = khung_cua_tool(fd)
+                mk = nhan_theo(fd, ("ALL_MODEL_TYPE_MARK",))
+                if sai and len(net) >= 5 and mk is not None:
+                    # Ô kích thước do công cụ chép SAI thứ tự ("2200 830") → bỏ nhãn đó + khung 2 ô của công cụ, đưa nhãn
+                    # mã về giữa khung rồi thêm lại theo cách Width "X" Height bên dưới
+                    if dry:
+                        ket_qua.append(u"'%s': sẽ sửa ô kích thước sai thứ tự (cao rộng) thành rộng X cao" % ten_f)
+                        continue
+                    t = Transaction(fd, u"Bỏ ô kích thước sai thứ tự")
+                    t.Start()
+                    try:
+                        from System.Collections.Generic import List
+                        ys_ = []
+                        for c in net:
+                            ys_ += [c.GeometryCurve.GetEndPoint(0).Y, c.GeometryCurve.GetEndPoint(1).Y]
+                        ids = List[ElementId]()
+                        for e_ in list(net) + sai:
+                            ids.Add(e_.Id)
+                        fd.Delete(ids)
+                        mk.VerticalAlignment = getattr(type(mk.VerticalAlignment), "Middle")
+                        mk.Coord = XYZ(mk.Coord.X, (max(ys_) + min(ys_)) / 2.0, mk.Coord.Z)
+                        t.Commit()
+                    except Exception:
+                        if t.HasStarted() and not t.HasEnded():
+                            t.RollBack()
+                        raise
+                    ket_qua.append(u"'%s': bỏ ô kích thước sai thứ tự (cao rộng)" % ten_f)
                 if nhan_theo(fd, BIP_RONG) is not None:
                     # Đã thêm ô kích thước trước đó → chỉ chỉnh lại cỡ khung / chữ theo hằng số hiện hành (vd. bản 17 × 8 mm
                     # chạy trên model người dùng 2026-11-03 → bản gọn 14 × 7 mm, chữ 2 mm)
@@ -1497,7 +1578,8 @@ def them_kich_thuoc(doc, fams, dry, thu_muc_nguon=u""):
                     co_cu = lt.get_Parameter(BuiltInParameter.TEXT_SIZE).AsDouble() if lt is not None and \
                         lt.get_Parameter(BuiltInParameter.TEXT_SIZE) is not None else 0.0
                     if abs((max(xs_) - min(xs_)) - ft(KHUNG_RONG_MM)) < ft(0.05) and \
-                            abs((max(ys_) - min(ys_)) - 2 * ft(KHUNG_O_MM)) < ft(0.05) and abs(co_cu - ft(CO_CHU_MM)) < ft(0.01):
+                            abs((max(ys_) - min(ys_)) - 2 * ft(KHUNG_O_MM)) < ft(0.05) and abs(co_cu - ft(CO_CHU_MM)) < ft(0.01) \
+                            and nen_chu_dung(fd, mk):
                         continue
                     if dry:
                         ket_qua.append(u"'%s': sẽ chỉnh khung tag về %g × %g mm, chữ %g mm" % (
@@ -1660,6 +1742,47 @@ def tuy_chon_nap(ghi_de_tham_so=False):
     return _Nap()
 
 
+TRUC_DU_MM_GIAY = 20.0      # đầu trục cách mép nhà (mm giấy) khi thu trục
+
+
+def thu_truc(doc, view):
+    """Thu trục về sát quanh nhà như mẫu người dùng (2026-11-03): đầu trục của file hiện tại trong view chuyển sang
+    ViewSpecific và cắt theo khung bao tường của nhà + TRUC_DU_MM_GIAY × tỉ lệ. Không đổi trục 3D / view khác. Trục
+    của link không sửa được (đã ẩn bằng filter)."""
+    xs, ys = [], []
+    for w in FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType():
+        bb = w.get_BoundingBox(view)
+        if bb is not None:
+            xs += [bb.Min.X, bb.Max.X]
+            ys += [bb.Min.Y, bb.Max.Y]
+    if not xs:
+        return u"Không có tường trong view – không thu trục."
+    goc_bb = [XYZ(x, y, 0) for x in (min(xs), max(xs)) for y in (min(ys), max(ys))]
+    du = ft(TRUC_DU_MM_GIAY * view.Scale)
+    n = 0
+    for g in FilteredElementCollector(doc, view.Id).OfClass(Grid):
+        try:
+            if g.IsCurved:
+                continue
+            ds = g.GetCurvesInView(DatumExtentType.ViewSpecific, view)
+            if ds is None or ds.Count != 1:
+                continue
+            cv = ds[0]
+            p0, p1 = cv.GetEndPoint(0), cv.GetEndPoint(1)
+            d = (p1 - p0).Normalize()
+            ts = [(q.X - p0.X) * d.X + (q.Y - p0.Y) * d.Y for q in goc_bb]
+            a, b = p0 + d * (min(ts) - du), p0 + d * (max(ts) + du)
+            a, b = XYZ(a.X, a.Y, p0.Z), XYZ(b.X, b.Y, p1.Z)
+            for dau in (DatumEnds.End0, DatumEnds.End1):
+                if g.GetDatumExtentTypeInView(dau, view) != DatumExtentType.ViewSpecific:
+                    g.SetDatumExtentType(dau, view, DatumExtentType.ViewSpecific)
+            g.SetCurveInView(DatumExtentType.ViewSpecific, view, Line.CreateBound(a, b))
+            n += 1
+        except Exception:
+            pass
+    return u"Thu trục: %d trục cắt sát nhà (cách mép tường %g mm giấy)." % (n, TRUC_DU_MM_GIAY)
+
+
 def an_truc_link(doc, tpl):
     """Ẩn trục của file link, giữ trục file hiện tại (người dùng yêu cầu 2026-11-03). API 2027.3 không tắt riêng hạng mục
     Grids của link theo view (RevitLinkGraphicsSettings không có chỉnh theo hạng mục) → filter Grids "Type Name khác mọi
@@ -1707,6 +1830,100 @@ def an_truc_link(doc, tpl):
         tpl.AddFilter(f_.Id)
     tpl.SetFilterVisibility(f_.Id, False)
     return u"Ẩn trục file link: filter '%s' (Grids, loại trục khác %s)." % (TEN_FILTER_TRUC_LINK, u", ".join(loai_truc))
+
+
+def to_dac_id(doc):
+    for fp in FilteredElementCollector(doc).OfClass(FillPatternElement):
+        try:
+            p_ = fp.GetFillPattern()
+            if p_.IsSolidFill and p_.Target == FillPatternTarget.Drafting:
+                return fp.Id
+        except Exception:
+            pass
+    return None
+
+
+def ghi_de_btct(dac):
+    o = OverrideGraphicSettings()
+    o.SetCutLineColor(Color(0, 0, 0))
+    o.SetProjectionLineColor(Color(0, 0, 0))
+    if dac is not None:
+        o.SetCutForegroundPatternId(dac)
+        o.SetCutForegroundPatternColor(Color(*MAU_TO_BTCT))
+        o.SetCutForegroundPatternVisible(True)
+    return o
+
+
+def trinh_bay_btct(doc, tpl):
+    """Tường xây chỉ nét xám không tô, cột + vách BTCT tô đặc xám đậm viền đen (như mẫu FPT, người dùng chốt 2026-11-03).
+    Revit 2027.3 BỎ QUA màu nét ghi đè theo hạng mục Walls (đã thử: chỉ ăn ghi đè từng phần tử hoặc filter) → dùng 2 filter:
+    TEN_FILTER_BTCT (Structural Usage khác Non-bearing hoặc tên loại chứa TU_KHOA_BTCT) và TEN_FILTER_XAY (phần còn lại,
+    Halftone). Hạng mục Walls chỉ tắt mẫu tô mặt cắt. "Structural" (Yes / No) của tường không lọc được bằng filter.
+    Chỉ làm một lần cho mỗi template: template đã có filter TEN_FILTER_BTCT thì giữ nguyên (người dùng có thể đã chỉnh tay).
+    Filter của view tác dụng cả lên phần tử link kết cấu khi link hiển thị By Host View."""
+    from System.Collections.Generic import List
+    fs = {}
+    for x in FilteredElementCollector(doc).OfClass(ParameterFilterElement):
+        if x.Name in (TEN_FILTER_BTCT, TEN_FILTER_XAY, TEN_FILTER_COT):
+            fs[x.Name] = x
+    f_ = fs.get(TEN_FILTER_BTCT)
+    if f_ is not None and any(i.Value == f_.Id.Value for i in tpl.GetFilters()):
+        return u"Tường / cột / vách: template đã có filter '%s', giữ nguyên." % TEN_FILTER_BTCT
+    dac = to_dac_id(doc)
+    o = OverrideGraphicSettings()
+    o.SetCutForegroundPatternVisible(False)
+    o.SetCutBackgroundPatternVisible(False)
+    tpl.SetCategoryOverrides(ElementId(BuiltInCategory.OST_Walls), o)
+    cats = List[ElementId]()
+    cats.Add(ElementId(BuiltInCategory.OST_Walls))
+    loc_duoc = [p_.Value for p_ in ParameterFilterUtilities.GetFilterableParametersInCommon(doc, cats)]
+    co, khong = [], []      # luật nhận BTCT / luật phủ định (tường xây = không khớp luật nào)
+    b_kc = BuiltInParameter.WALL_STRUCTURAL_USAGE_PARAM
+    if int(b_kc) in loc_duoc:
+        co.append(ElementParameterFilter(ParameterFilterRuleFactory.CreateNotEqualsRule(ElementId(b_kc), 0)))
+        khong.append(ElementParameterFilter(ParameterFilterRuleFactory.CreateNotEqualsRule(ElementId(b_kc), 0), True))
+    b_ten = None
+    for b_ in (BuiltInParameter.ALL_MODEL_TYPE_NAME, BuiltInParameter.SYMBOL_NAME_PARAM):
+        if int(b_) in loc_duoc:
+            b_ten = b_
+            break
+    for k in (TU_KHOA_BTCT if b_ten is not None else ()):
+        r_ = ParameterFilterRuleFactory.CreateContainsRule(ElementId(b_ten), k)
+        co.append(ElementParameterFilter(r_))
+        khong.append(ElementParameterFilter(r_, True))
+    if not co:
+        return u"Không có tham số lọc được để nhận vách BTCT – chỉnh tay trong V/G."
+
+    def gop(ds_, lop):
+        if len(ds_) == 1:
+            return ds_[0]
+        net = List[ElementFilter]()
+        for x in ds_:
+            net.Add(x)
+        return lop(net)
+
+    def dat(ten_f, cats_, bo, ghi_de):
+        f = fs.get(ten_f)
+        if f is None:
+            f = (ParameterFilterElement.Create(doc, ten_f, cats_, bo) if bo is not None
+                 else ParameterFilterElement.Create(doc, ten_f, cats_))
+        elif bo is not None:
+            f.SetElementFilter(bo)
+        if not any(i.Value == f.Id.Value for i in tpl.GetFilters()):
+            tpl.AddFilter(f.Id)
+        tpl.SetFilterOverrides(f.Id, ghi_de)
+
+    dat(TEN_FILTER_BTCT, cats, gop(co, LogicalOrFilter), ghi_de_btct(dac))
+    o = OverrideGraphicSettings()
+    o.SetHalftone(True)
+    dat(TEN_FILTER_XAY, cats, gop(khong, LogicalAndFilter), o)
+    cats_cot = List[ElementId]()
+    for n in COT_BTCT:
+        cats_cot.Add(ElementId(getattr(BuiltInCategory, n)))
+    dat(TEN_FILTER_COT, cats_cot, None, ghi_de_btct(dac))
+    return (u"Tường xây Halftone, không tô (filter '%s'); vách BTCT (filter '%s': Structural Usage khác Non-bearing hoặc "
+            u"tên loại chứa %s) + cột (filter '%s') tô đặc xám %s viền đen."
+            % (TEN_FILTER_XAY, TEN_FILTER_BTCT, u" / ".join(TU_KHOA_BTCT), TEN_FILTER_COT, MAU_TO_BTCT))
 
 
 def mb_dinh_vi_cua(doc, goc, dry, ten_tpl, mau_ten, ten_bic_an):
@@ -1786,7 +2003,7 @@ def mb_dinh_vi_cua(doc, goc, dry, ten_tpl, mau_ten, ten_bic_an):
                     tpl.SetCategoryHidden(c, False)
             except Exception:
                 pass
-        bao.append(u"Tạo view template '%s' từ '%s': tường + sàn Halftone, cửa đi / cửa sổ nét đậm."
+        bao.append(u"Tạo view template '%s' từ '%s': sàn Halftone, cửa đi / cửa sổ nét đậm."
                    % (ten_tpl, tpl_goc.Name if tpl_goc is not None else u"view gốc"))
     an = []
     for c in cats_an:
@@ -1807,6 +2024,10 @@ def mb_dinh_vi_cua(doc, goc, dry, ten_tpl, mau_ten, ten_bic_an):
         bao.append(an_truc_link(doc, tpl))
     except Exception as ex:
         bao.append(u"Không tạo được filter ẩn trục file link: %s" % (u"%s" % ex).splitlines()[0][:150])
+    try:
+        bao.append(trinh_bay_btct(doc, tpl))
+    except Exception as ex:
+        bao.append(u"Không chỉnh được tường / cột / vách: %s" % (u"%s" % ex).splitlines()[0][:150])
     # Loại view riêng → Project Browser có mục "Floor Plans (MẶT BẰNG ĐỊNH VỊ CỬA)" (người dùng yêu cầu 2026-11-03)
     try:
         vft = None
@@ -1828,6 +2049,10 @@ def mb_dinh_vi_cua(doc, goc, dry, ten_tpl, mau_ten, ten_bic_an):
     if moi.ViewTemplateId.Value != tpl.Id.Value:
         moi.ViewTemplateId = tpl.Id
     doc.Regenerate()
+    try:
+        bao.append(thu_truc(doc, moi))
+    except Exception as ex:
+        bao.append(u"Không thu được trục: %s" % (u"%s" % ex).splitlines()[0][:150])
     TransactionManager.Instance.TransactionTaskDone()
     bao.append(u"View template '%s' gán cho '%s', ẩn: %s." % (tpl.Name, moi.Name, u", ".join(an) or u"-"))
     if moi.Id.Value != goc.Id.Value:

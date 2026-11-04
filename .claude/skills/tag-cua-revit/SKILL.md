@@ -57,6 +57,33 @@ Chốt 2026-11-02 sáng (8 câu hỏi), sửa theo góp ý của người dùng 
    - IN[14] = dời lại các tag đã có cùng family tag theo quy tắc mới. Không xoá, không tạo mới.
    - Dùng IN[14] khi view đã tag bằng bản cũ; tag người dùng đã chỉnh tay cũng bị dời, nên mặc định tắt.
 
+## Lần 3 (2026-11-03 tối, người dùng "có vẻ OK rồi", build) – quy tắc hiện hành
+- Tỉ lệ mặt bằng định vị cửa CỐ ĐỊNH 1:100 (`THANG_TL = (100,)`); không vừa khổ thì chỉ báo "CẦN XEM LẠI".
+- Tag gần cửa, KHÔNG đè hình (tường, cửa, cánh mở, cột, tag / chữ): (1) sát mặt tường phía ưu tiên ngay giữa cửa,
+  (2) phía kia, (3) lưới gần: dịch dọc tường ≤ ½ cửa + 2 bề dài tag, lùi ≤ `TAM_XA_MM_GIAY` = 8 mm giấy, xếp theo độ
+  gần. Hết chỗ trống → chỗ đè ít nhất ngay gần cửa + liệt kê. Leader khi tag ra ngoài bề rộng cửa hoặc lùi > 1 bề cao
+  tag. ĐÃ THỬ và BỎ: đặt tag nằm trên ô cửa (người dùng: "để gần cửa tránh vào hình").
+- Thu trục (`thu_truc`): trục của file hiện tại trong view → 2 đầu ViewSpecific, cắt theo khung bao tường + 20 mm giấy.
+- Bảng thống kê sát góc khung: đáy bảng cửa sổ chạm nét khung dưới, mép phải chạm nét dải khung tên.
+- Nền chữ nhãn tag Opaque (TEXT_BACKGROUND = 0).
+- Hộp thoại `arv_hoi_sheet.py` dùng chung với nút Chi tiết cửa (phiên khác sửa 2026-11-03: thân bảng `_bang`, `hoi` giữ
+  nguyên, `hoi_chi_tiet_cua` riêng) – sửa file này thì phối hợp, đừng xoá `hoi`.
+- Thử bản sao G19: 1:125 cũ / 64 leader ngắn, 12 chỗ cần xem; bản build cố định 1:100 chưa chạy thử riêng.
+
+## Tường / cột / vách như mẫu FPT (2026-11-03 tối, người dùng duyệt ảnh + build)
+- Tường xây: Halftone, không tô (filter `ARV_Tường xây`); vách BTCT + cột: tô đặc `<Solid fill>` xám 100,100,100, viền
+  đen (filter `ARV_Vách BTCT`, `ARV_Cột BTCT`); hạng mục Walls chỉ tắt mẫu tô mặt cắt. Template ẩn thêm Sections.
+- Vách BTCT = Structural Usage khác Non-bearing (link kết cấu) HOẶC Type Name chứa `BTCT` / `VBT` / `WS_` / `Concrete` /
+  `Bê tông` (`TU_KHOA_BTCT`). Không dùng "RC" (khớp nhầm "Circ", "Arch"…).
+- Làm MỘT lần cho mỗi template (`trinh_bay_btct`): template đã có filter `ARV_Vách BTCT` thì giữ nguyên → template cũ
+  của người dùng được bổ sung ở lần bấm tới, chỉnh tay sau đó không bị ghi đè.
+- BẪY Revit 2027.3 (thử 2026-11-03): màu nét ghi đè theo HẠNG MỤC Walls (template hoặc view) KHÔNG hiện; ghi đè từng phần
+  tử và ghi đè FILTER thì hiện (Halftone theo hạng mục vẫn ăn). "Structural" (Yes / No) của tường KHÔNG lọc được bằng
+  filter; `ALL_MODEL_TYPE_NAME` không lọc được cho Walls → dùng `SYMBOL_NAME_PARAM`. Filter Contains không phân biệt hoa
+  thường.
+- Thử bản sao G19 (`_tmp\revit_tagcua\thu3\`, thí nghiệm `_tmp\revit_tagcua\thu5\`): tường xám đúng; G19 không có vách /
+  cột ở cao độ cắt (VBT-150 là gờ dưới mặt cắt) nên tô BTCT chỉ thử bằng loại tường gán tạm; chưa thử với link KC thật.
+
 ## Sửa sau lần chạy trên model thật (2026-11-03 chiều, người dùng duyệt + build)
 Người dùng chạy trên `G19_A_L3-32` (local file trên C:, link KC `G19_S_L2-32` loaded, 18 trục riêng loại
 `AV_Truc Dinh Vi-KT`): mặt bằng lệch ra ngoài giấy, tag văng xa nhiều leader, view mới không có mục riêng. Đã sửa:

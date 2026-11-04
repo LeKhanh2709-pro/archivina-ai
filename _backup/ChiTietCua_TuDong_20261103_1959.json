@@ -1,0 +1,23 @@
+{
+  "ten": "ChiTietCua_TuDong",
+  "mo_ta": "Chọn 1 cửa đi / cửa sổ có sẵn family → tạo mặt bằng (callout), mặt đứng (nhìn từ ngoài nhà), mặt cắt tỉ lệ 1/25 kèm kích thước tổng, đặt vào ô trống tiếp theo của sheet 'CHI TIẾT CỬA' (khung A1 chia 6 ô, hết ô thì tạo sheet mới). View template 'CHI TIẾT CỬA - ...' chưa có thì tạo từ template 1/25 có sẵn. Mỗi type chỉ làm 1 lần. Không xoá, không sửa cửa / tường / template đã có. Mặc định Dry-run.",
+  "py": "ChiTietCua_TuDong.py",
+  "dau_vao": [
+    {"ten": "ID cửa (trống = cửa đang chọn / chọn trên màn hình)", "kieu": "string", "gia_tri": ""},
+    {"ten": "Khung tên cho sheet mới", "kieu": "string", "gia_tri": "AV-Khung A1(841x594)-Kien Truc"},
+    {"ten": "Tên sheet", "kieu": "string", "gia_tri": "CHI TIẾT CỬA"},
+    {"ten": "Số sheet đầu tiên (khi chưa có sheet tên đó)", "kieu": "string", "gia_tri": "A.CD.01"},
+    {"ten": "Tỉ lệ (25 = 1/25)", "kieu": "number", "gia_tri": 25},
+    {"ten": "Lề khung nhìn quanh cửa (mm)", "kieu": "number", "gia_tri": 300},
+    {"ten": "Template mặt bằng", "kieu": "string", "gia_tri": "CHI TIẾT CỬA - MẶT BẰNG"},
+    {"ten": "Template mặt đứng", "kieu": "string", "gia_tri": "CHI TIẾT CỬA - MẶT ĐỨNG"},
+    {"ten": "Template mặt cắt", "kieu": "string", "gia_tri": "CHI TIẾT CỬA - MẶT CẮT"},
+    {"ten": "Từ khoá template nền (mặt bằng;mặt đứng;mặt cắt)", "kieu": "string", "gia_tri": "chi tiet mat bang;chi tiet mat dung;mat cat chi tiet"},
+    {"ten": "Hạng mục ẩn trong template mới (BuiltInCategory, ;)", "kieu": "string", "gia_tri": "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures;OST_Grids"},
+    {"ten": "Phía nhìn mặt đứng (trống = tự động; facing; nguoc)", "kieu": "string", "gia_tri": ""},
+    {"ten": "Đặt kích thước tổng", "kieu": "bool", "gia_tri": true},
+    {"ten": "Ẩn khung callout trên mặt bằng gốc", "kieu": "bool", "gia_tri": true},
+    {"ten": "Dry-run (True = chỉ báo cáo)", "kieu": "bool", "gia_tri": true},
+    {"ten": "Mở sheet sau khi tạo", "kieu": "bool", "gia_tri": true}
+  ]
+}

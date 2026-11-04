@@ -1,0 +1,259 @@
+{
+  "Uuid": "7aff0bb7-ffbb-4982-ac9e-ddc5c7d0538f",
+  "IsCustomNode": false,
+  "Description": "Khao sat ngan chay",
+  "Name": "ks_nc",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "ca9b6887f09a4d4f957130ec85646d81",
+      "Name": "Ghi chu",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "ks",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "ks",
+      "Id": "ca9b6887f09a4d4f957130ec85646d81",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e80be900b40541de83e260f09db6f5e3",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Khảo sát ngăn cháy lan trên bản sao G19_A_L3-32 (TẦNG 3): chạy công cụ (vẽ thật trên bản sao, không đặt sheet),\n# rồi xuất toàn bộ hình học quanh đó ra JSON (mm) để vẽ ảnh đối chiếu các trục bị sót.\nimport os, sys, json, traceback\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\nTM = r\"D:\\AI\\_tmp\\revit_nganchay_L3\"\nNGUON = r\"D:AI_tmp\nevit_nganchay_L3\nc_thu.py\"\nkq = []\nmmv = lambda v: UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ten(e):\n    try:\n        return e.Name\n    except Exception:\n        return \"?\"\n\n\ndef p2(p):\n    return [round(mmv(p.X)), round(mmv(p.Y))]\n\n\ntry:\n    doc = DocumentManager.Instance.CurrentDBDocument\n    av = doc.ActiveView\n    kq.append(\"View đang mở: %s\" % av.Name)\n    IN = [None] * 19\n    IN[0] = \"\"\n    IN[4] = False\n    IN[5] = TM\n    IN[10] = False\n    IN[18] = True\n    g = {\"IN\": IN}\n    exec(open(NGUON, encoding=\"utf-8\").read(), g)\n    kq.extend(g[\"OUT\"])\n    TransactionManager.Instance.ForceCloseTransaction()\n    lv = av.GenLevel\n    z = lv.Elevation\n    zc = z + UnitUtils.ConvertToInternalUnits(1000, UnitTypeId.Millimeters)\n    D = {\"tuong\": [], \"khac\": [], \"room\": [], \"cua\": [], \"link\": []}\n    opt = Options()\n    opt.DetailLevel = ViewDetailLevel.Fine\n    for cat in (BuiltInCategory.OST_Walls, BuiltInCategory.OST_Columns, BuiltInCategory.OST_StructuralColumns):\n        for e in FilteredElementCollector(doc, av.Id).OfCategory(cat).WhereElementIsNotElementType():\n            bb = e.get_BoundingBox(None)\n            if bb is None or not (bb.Min.Z - 0.05 <= zc <= bb.Max.Z + 0.05):\n                continue\n            try:\n                vong = [[p2(XYZ(x, y, 0)) for x, y in v] for f in g[\"mat_day\"](e, opt) for v in f]\n            except Exception:\n                vong = []\n            loi = None\n            try:\n                t = g[\"loi_tuong\"](e) if cat == BuiltInCategory.OST_Walls else None\n                if t:\n                    loi = [p2(XYZ(t[0][0], t[0][1], 0)), p2(XYZ(t[1][0], t[1][1], 0)), round(mmv(t[2])), round(mmv(t[3]))]\n            except Exception:\n                pass\n            D[\"tuong\"].append({\"id\": e.Id.Value, \"cat\": str(cat), \"kieu\": ten(doc.GetElement(e.GetTypeId())),\n                               \"vong\": vong, \"loi\": loi})\n    for cat in (BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows):\n        for e in FilteredElementCollector(doc).OfCategory(cat).WhereElementIsNotElementType():\n            if e.LevelId == lv.Id:\n                try:\n                    D[\"cua\"].append({\"cat\": str(cat), \"p\": p2(e.Location.Point), \"kieu\": ten(e.Symbol) + \" | \" + e.Symbol.FamilyName,\n                                     \"pts\": [p2(XYZ(x, y, 0)) for x, y in g[\"diem_hai_ben\"](e)]})\n                except Exception:\n                    pass\n    for e in FilteredElementCollector(doc, av.Id).WhereElementIsNotElementType():\n        c = e.Category\n        if c is None:\n            continue\n        if c.Id.Value in (int(BuiltInCategory.OST_Walls), int(BuiltInCategory.OST_Doors), int(BuiltInCategory.OST_Windows)):\n            continue\n        bb = e.get_BoundingBox(av)\n        if bb is None:\n            continue\n        try:\n            fam = e.Symbol.FamilyName\n        except Exception:\n            fam = \"\"\n        D[\"khac\"].append({\"id\": e.Id.Value, \"cat\": c.Name, \"fam\": fam, \"kieu\": ten(doc.GetElement(e.GetTypeId())),\n                          \"ten\": ten(e), \"min\": p2(bb.Min), \"max\": p2(bb.Max)})\n    o = SpatialElementBoundaryOptions()\n    o.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.CoreBoundary\n    for r in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Rooms).WhereElementIsNotElementType():\n        if r.LevelId != lv.Id or r.Location is None:\n            continue\n        D[\"room\"].append({\"ten\": r.get_Parameter(BuiltInParameter.ROOM_NAME).AsString(), \"p\": p2(r.Location.Point),\n                          \"m2\": round(UnitUtils.ConvertFromInternalUnits(r.Area, UnitTypeId.SquareMeters), 2),\n                          \"vong\": [[p2(s.GetCurve().GetEndPoint(0)) for s in segs] for segs in (r.GetBoundarySegments(o) or [])]})\n    for li in FilteredElementCollector(doc).OfClass(RevitLinkInstance):\n        ld = li.GetLinkDocument()\n        info = {\"ten\": ten(li), \"co_doc\": ld is not None, \"tuong\": []}\n        if ld is not None:\n            tf = li.GetTotalTransform()\n            for cat in (BuiltInCategory.OST_Walls, BuiltInCategory.OST_StructuralColumns, BuiltInCategory.OST_Columns):\n                for e in FilteredElementCollector(ld).OfCategory(cat).WhereElementIsNotElementType():\n                    bb = e.get_BoundingBox(None)\n                    if bb is None:\n                        continue\n                    a, b = tf.OfPoint(bb.Min), tf.OfPoint(bb.Max)\n                    if not (min(a.Z, b.Z) - 0.05 <= zc <= max(a.Z, b.Z) + 0.05):\n                        continue\n                    try:\n                        vong = []\n                        for f in g[\"mat_day\"](e, opt):\n                            for v in f:\n                                vong.append([p2(tf.OfPoint(XYZ(x, y, 0))) for x, y in v])\n                    except Exception:\n                        vong = []\n                    info[\"tuong\"].append({\"id\": e.Id.Value, \"cat\": str(cat), \"kieu\": ten(ld.GetElement(e.GetTypeId())), \"vong\": vong})\n        D[\"link\"].append(info)\n    with open(os.path.join(TM, \"hinh_hoc.json\"), \"w\", encoding=\"utf-8\") as f:\n        json.dump(D, f, ensure_ascii=False)\n    kq.append(\"Tường %d, cửa %d, khác %d, room %d, link %s\" % (len(D[\"tuong\"]), len(D[\"cua\"]), len(D[\"khac\"]), len(D[\"room\"]),\n                                                              [(l[\"ten\"], len(l[\"tuong\"])) for l in D[\"link\"]]))\nexcept Exception:\n    kq.append(traceback.format_exc())\nwith open(os.path.join(TM, \"ket_qua_ks.txt\"), \"w\", encoding=\"utf-8\") as f:\n    f.write(\"\\n\".join(kq))\nOUT = kq\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "d45e96dcfd554ddb8f2b02417dc60c16",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "5a025ad87259491e8d0759e5795789d0",
+          "Name": "IN[0]",
+          "Description": "Ghi chu",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "129cac926fab41229361cc5f1b0ed1dc",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "0604aa6a0b0f41b4bde987486e3f30a1",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "7ec63bf7be1e43eb8606e7dba5892f1f",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a49d93c39d674ebaabc1ad615beb525a",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "e80be900b40541de83e260f09db6f5e3",
+      "End": "5a025ad87259491e8d0759e5795789d0",
+      "Id": "02b4407ce46e4a219b8e7115f98f8389",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "129cac926fab41229361cc5f1b0ed1dc",
+      "End": "7ec63bf7be1e43eb8606e7dba5892f1f",
+      "Id": "02d06f619342464ebd6ef1e2ee00487b",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "ca9b6887f09a4d4f957130ec85646d81",
+        "Name": "Ghi chu",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "d45e96dcfd554ddb8f2b02417dc60c16",
+        "Name": "ks_nc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "0604aa6a0b0f41b4bde987486e3f30a1",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "ded5c6b282314a6f8b3eaccac8424431",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "ca9b6887f09a4d4f957130ec85646d81"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 170.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 170.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "4abc5bd59ef54cb5863879e0f5b30fa4",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "d45e96dcfd554ddb8f2b02417dc60c16"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "8ca6e025ac5f4b81acb826d8b8752748",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "0604aa6a0b0f41b4bde987486e3f30a1"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

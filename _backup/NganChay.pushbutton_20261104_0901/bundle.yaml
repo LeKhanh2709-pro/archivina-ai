@@ -1,0 +1,3 @@
+title: "Ngăn\ncháy lan"
+tooltip: "Bấm: vẽ luôn trên view chống cháy lan đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. Hatch ngăn cháy lan trục / hộp kỹ thuật (Filled Region 2D) trên view mặt bằng chống cháy lan của Revit. Thể hiện theo skill CAD ngan-chay-truc-hkt: lưới NET 125 mm xoay 45° màu 220,30,30, viền tím (màu 6), chỉ hatch trong lòng ô. - Vùng = khoảng trống khép kín giữa tường / cột trên level của view: q Nguồn: NganChay_TrucHKT.dyn."
+author: Archivina BIM

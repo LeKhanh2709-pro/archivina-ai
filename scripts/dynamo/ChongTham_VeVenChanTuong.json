@@ -1,6 +1,6 @@
 {
   "ten": "ChongTham_VeVenChanTuong",
-  "mo_ta": "Vẽ nét vén chân tường chống thấm (Detail Line 'AV.Nét chống thấm') bám mép tường thô (mặt lõi tường, không bo vào lớp trát / hoàn thiện) của phòng ướt (nhận theo sàn WC / lô gia và theo bồn cầu), lùi 50 mm, ngắt tại cửa đi; hatch chống thấm bằng Filled Region 2D cho mọi phòng ướt (không sửa sàn / filter model); ẩn thiết bị vệ sinh trong view. View đã có vén thì chỉ bổ sung hatch, không xoá. Mặc định Dry-run.",
+  "mo_ta": "Vẽ nét vén chân tường chống thấm (Detail Line 'AV.Nét chống thấm') bám mép tường thô (mặt lõi tường, không bo vào lớp trát / hoàn thiện) của phòng ướt (nhận theo sàn WC / lô gia và theo bồn cầu), lùi 50 mm, ngắt tại cửa đi; hatch chống thấm bằng Filled Region 2D cho mọi phòng ướt (không sửa sàn / filter model); ẩn thiết bị vệ sinh trong view. View đã có vén thì chỉ bổ sung hatch, không xoá. Mặc định Dry-run. Đặt lên bản vẽ (sheet mới hoặc sheet trống có sẵn) kèm chú thích khi bật.",
   "py": "ChongTham_VeVenChanTuong.py",
   "dau_vao": [
     {
@@ -50,6 +50,51 @@
     },
     {
       "ten": "Hatch chống thấm bằng Filled Region",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Đặt mặt bằng lên bản vẽ (sheet)",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Giai đoạn",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Hạng mục",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Khổ giấy (A1 / A0)",
+      "kieu": "string",
+      "gia_tri": "A1"
+    },
+    {
+      "ten": "Khung tên Family : Type (trống = theo khổ)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Số hiệu sheet (trống = tiếp theo; trùng sheet trống = đặt vào đó)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tên sheet (trống = tự đặt theo tầng)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Thêm chú thích góc phải dưới",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Tầng chưa có view thì tạo view + template",
       "kieu": "bool",
       "gia_tri": true
     }

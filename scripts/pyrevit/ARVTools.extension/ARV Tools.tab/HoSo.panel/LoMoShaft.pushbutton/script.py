@@ -29,6 +29,8 @@ VIEW_IN = 0
 TU_KHOA = u""
 TIEU_DE = u"Lỗ mở shaft"
 KHONG_VIEW = False
+TAO_IN = None          # chỉ số IN[] "tạo view khi tầng chưa có" (None = không tạo, báo như cũ)
+HOI = u""           # "<module trong lib>.<hàm>(doc, view)": hộp thoại hỏi thêm trước khi chạy, trả về {IN: giá trị} / None
 
 
 def khong_dau(s):
@@ -95,6 +97,37 @@ def hoi_chon_view(ten_views):
     return None
 
 
+def chay_tao_view(uiapp, uidoc, doc, av):
+    """Tầng của view đang mở chưa có view mặt bằng tầng: lõi nhân bản view đang mở + gán template rồi vẽ (IN[TAO_IN])."""
+    truoc = set(v.Id.Value for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan))
+    ov = {4: False, TAO_IN: True}
+    if VIEW_IN is not None:
+        ov[VIEW_IN] = u""
+    if HOI:
+        m_, f_ = HOI.rsplit(".", 1)
+        them = getattr(__import__(m_), f_)(doc, av)
+        if them is None:
+            return
+        ov.update(them)
+    lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
+    moi = [v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
+           if not v.IsTemplate and v.Id.Value not in truoc and la_view_dich(doc, v)]
+    try:
+        from pyrevit import script
+        out = script.get_output()
+        out.set_title(TIEU_DE)
+        out.print_md(u"## {} – tạo view: {}".format(TIEU_DE, moi[0].Name if moi else u"-"))
+    except Exception:
+        pass
+    for ln in lines or []:
+        print(ln)
+    if moi:
+        try:
+            uidoc.RequestViewChange(moi[0])
+        except Exception:
+            pass
+
+
 def chay():
     uiapp = __revit__
     uidoc = uiapp.ActiveUIDocument
@@ -104,7 +137,14 @@ def chay():
     doc = uidoc.Document
     av = doc.ActiveView
     if KHONG_VIEW:             # lõi tự lấy đối tượng (vd. Chi tiết cửa: cửa đang chọn / chọn trên màn hình)
-        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides={4: False})
+        ov = {4: False}
+        if HOI:                # hộp thoại hỏi thêm: (doc, view đang mở, uidoc) → {IN: giá trị} / None = Huỷ
+            m_, f_ = HOI.rsplit(".", 1)
+            them = getattr(__import__(m_), f_)(doc, av, uidoc)
+            if them is None:
+                return
+            ov.update(them)
+        lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
         try:
             from pyrevit import script
             out = script.get_output()
@@ -123,6 +163,12 @@ def chay():
     else:
         ds = sorted([v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
                      if not v.IsTemplate and la_view_dich(doc, v)], key=lambda v: v.Name)
+        # Mặt bằng tầng đang mở (không phải view đích): chỉ xét view đích CÙNG TẦNG; chưa có thì lõi tạo view + template
+        # từ view đang mở (người dùng yêu cầu 2026-11-04, như mặt bằng định vị cửa)
+        if TAO_IN is not None and av is not None and av.ViewType == DB.ViewType.FloorPlan and av.GenLevel is not None                 and not la_view_dich(doc, av):
+            ds = [v for v in ds if v.GenLevel is not None and v.GenLevel.Id.Value == av.GenLevel.Id.Value]
+            if not ds:
+                return chay_tao_view(uiapp, uidoc, doc, av)
     view = None
     for v in ds:
         if av is not None and v.Id.Value == av.Id.Value:
@@ -142,6 +188,12 @@ def chay():
     ov = {4: False}
     if VIEW_IN is not None:
         ov[VIEW_IN] = view.Name
+    if HOI:
+        m_, f_ = HOI.rsplit(".", 1)
+        them = getattr(__import__(m_), f_)(doc, view)
+        if them is None:
+            return
+        ov.update(them)
     lines = arv_dynamo_host.run_button(_here, uiapp, ask=False, overrides=ov)
     try:
         from pyrevit import script
