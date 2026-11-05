@@ -106,6 +106,29 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     `AV_Hatch Chống Thấm WC` (`HATCH_CHUNG`), chú thích 1 mục "CHỐNG THẤM SÀN WC, LÔ GIA" + nét vén; kiểu `... Logia`
     chỉ còn để nhận hatch cũ (không vẽ trùng) và chú thích view cũ đã có. Thử bản sao TẦNG 3: 59 hatch cùng kiểu, chú
     thích 2 mục, bấm lại không trùng. Nút sinh lại 09:20; G19 thật (đã vẽ 2 kiểu từ trước) không sửa lại.
+- **Hỏi View template + Tỉ lệ, KHÔNG tự tạo template** (người dùng yêu cầu 2026-11-05, áp cho 5 nút Chống thấm, Ngăn cháy
+  lan, Định vị + tag cửa, Định vị lan can louver, Tường xây):
+  - Hộp thoại `arv_hoi_sheet._bang(tpl_view=...)` thêm 2 ô ngay sau ô "Đặt lên bản vẽ": View template (template mặt bằng
+    của dự án + `<Không dùng view template>`) và Tỉ lệ. Chọn template thì ô Tỉ lệ lấy tỉ lệ của template; template khoá
+    tỉ lệ thì ô bị khoá ("theo template"), không sửa template (người dùng chốt).
+  - Mặc định: view đích cùng tầng đã có → template / tỉ lệ của view đó; không thì lựa chọn lần trước; không thì template
+    có chữ khoá. View đã nằm trên sheet → ô bản vẽ bị khoá, chỉ chọn template / tỉ lệ.
+  - Lõi: chống thấm / ngăn cháy IN[19] / IN[20], lan can IN[25] / IN[26], tag cửa IN[28] / IN[29] (+ IN[6] = False: không
+    tạo template "(ẩn nội thất)"; tỉ lệ chọn thay tỉ lệ cố định 1:100, không bỏ quyền điều khiển tỉ lệ của template),
+    tường xây IN[2] / IN[3] (1 tỉ lệ). `sh_ap_tpl_tl` / `sh_tao_view(..., ten_tpl, ti_le)` trong `DatSheet_chung.py`;
+    `ap_tpl_tl` trong `TagCua_TuDong.py`. Không còn tạo template `MẶT BẰNG CHỐNG THẤM / NGĂN CHÁY LAN / ĐỊNH VỊ CỬA /
+    ĐỊNH VỊ LAN CAN, LOUVER`, không bổ sung filter `ARV_*` vào template (`sh_chuan_template` không làm gì). View mới vẫn
+    tạo loại view riêng + crop theo tường + thu trục. Template người dùng chọn ẩn tag cửa thì lõi chỉ báo.
+  - Bẫy: `.dyn` thêm ô nhập bằng `_tmp\tpl_tl\them_in_dyn.py` (giá trị ô IN vượt số ô của inputs.json làm
+    `run_button` lỗi chỉ số → phải có chú thích `# IN[n]` đầu file .py rồi sinh lại nút). Bỏ template khỏi view đích mà
+    tên view không có chữ khoá thì lần bấm sau không nhận ra view đó (tạo view mới).
+  - Thử nút thật qua journal (nút `ARVTestTL`, `_tmp\tpl_tl\`, hộp thoại vẽ ra PNG ở `kq\` / `kq2\`): G19 chống thấm
+    gán `Floor Plan` + 1:150 đặt A.4-201; ngăn cháy chọn template khoá `0.1 Mặt Bằng Tổng Thể` → ô khoá, view 1:200;
+    tag cửa tạo view mới `Floor Plan` 1:100, tag 94 + 44 (template này hiện ký hiệu mặt đứng nên khung tràn khổ, lõi
+    báo); lan can tạo view không template 1:125; L3-32 ngăn cháy TẦNG 3 tạo view mới + template chọn 1:150, 59 ô; tường
+    xây `TC.04.MatBangTuongXay` (khoá 1:150) → view 1/150, A.TX.01 (10 chữ dim còn chồng). Số template trước = sau
+    (G19 57, L3-32 52). Tường xây trên G19 dừng vì thiếu dim type (có từ trước). Nút sinh lại 2026-11-05 14:15, Revit
+    phải Reload pyRevit; người dùng chưa bấm thử (`Cần xác nhận lại`).
 - `LoMo_ShaftOpening.dyn` (2026-10-28): tạo **Shaft Opening** cho mọi trục / hộp kỹ thuật trên **mặt bằng tầng đang mở**, nhận trục giống hệt Ngăn cháy lan (hàm `tim_truc` trong khối `PHẦN CHUNG` của `NganChay_TrucHKT.py`), biên = mép tường thô; Base Constraint = Top Constraint = level mặt bằng, Base Offset -100, Top Offset 1500 mm (người dùng chốt); bấm lại không tạo trùng. `LoMo_ShaftOpening.py` là FILE GỘP bằng `scripts\dynamo\gop_lomo_shaft.py` từ `LoMo_ShaftOpening_nguon.py` + phần chung, không sửa tay. Nút một chạm `Archivina` → `HS TKBVTC` → `Lỗ mở shaft` (`MOT_CHAM` từ khoá rỗng = mặt bằng tầng đang mở). Thử bản sao G19 Tầng 1: 38 lỗ mở, đọc lại đúng ràng buộc / offset; bản lưu `_tmp\pyrevit_lomo\G19_lo_mo_ngan_chay_thu.rvt`. **Đã tạo lên G19 thật 2026-10-28 10:04** (Tầng 1, 38 lỗ mở, đọc lại đúng Base Tầng 1 / -100, Top Tầng 1 / 1500; bản trước `_backup\G19_20261028_1003.rvt`, graph `_tmp\revit_g19_goc\chay_g19_lomo.dyn`). Người dùng chưa duyệt trong Revit (`Cần xác nhận lại`).
 - **Dấu X lỗ mở** (người dùng chốt 2026-10-28): mỗi shaft opening có 2 Symbolic Line chéo. API KHÔNG tạo được Symbolic Line trong file dự án (`NewModelCurve` trong sketch luôn là nét biên; Symbolic Line = `ModelLine` trong sketch mang line style khác `<Sketch>`) → chép 2 nét X từ một shaft MẪU vẽ tay (`SketchEditScope` + `CopyElements` + `SetGeometryCurve`), phải `ForceCloseTransaction` trước `SketchEditScope.Start`. G19 thật 2026-10-28 10:28: gắn X cho 38 lỗ, mẫu = shaft 1063635 người dùng vẽ tay tại khe (7000, 29950), trùng chỗ shaft 1063177 của công cụ → người dùng yêu cầu xoá 1063177, đã xoá 10:30 (còn 38 shaft, bản trước `_backup\G19_20261028_1030.rvt`; shaft mẫu 1063635 Base Offset -150 → người dùng yêu cầu đặt -100, đã sửa 10:33, bản trước `_backup\G19_20261028_1032.rvt`); bản trước `_backup\G19_20261028_1024.rvt`.
 - **1 shaft cho cả tầng** (người dùng chốt 2026-10-28 11:00, mẫu tự vẽ: "1 lệnh shaft openings để dễ kiểm soát"): nút Lỗ mở shaft gộp mọi trục của tầng thành các vòng biên trong MỘT Shaft Opening (tầng đã có shaft Base = Top = level đó thì thêm vòng vào shaft nhiều vòng nhất), dấu X mỗi vòng. Người dùng đã tự xoá 38 shaft lẻ và vẽ shaft 1064060 (2 vòng + X). G19 thật 11:04: thêm 36 vòng + 36 X vào 1064060 → 38 vòng, 76 nét X, -100 / 1500; bản trước `_backup\G19_20261028_1102.rvt`.
@@ -214,6 +237,16 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     Bấm nút thật qua journal trên bản sao L3-32 OK (`_tmp\pyrevit_lancan\kq2\`): nạp 2 family, 34 tag đúng chữ, bảng vào
     sheet đã có, bấm lại không trùng; cảnh báo duplicate Mark 0 → 8. Người dùng chưa bấm trong Revit của mình
     (`Cần xác nhận lại`).
+- **Rà 9 nút HS TKBVTC trên model HQV tháp B L5-L15** (2026-11-05, người dùng báo "không dùng được"; bản sao
+  `_tmp\hs_tkbvtc_hqv\`, bấm thử bằng nút `ARVTestHS` qua journal, tầng `Tầng 5BA`, toạ độ ~2,4 km xa gốc). Lỗi đã sửa:
+  (1) Chống thấm văng `CurveLoop ... discontinuous` (biên room có khe) → `lam_lien` dựng lại vòng liền; nay 79 phòng /
+  697 nét / 79 hatch; (2) Tag cửa không tag cái nào vì model không có `AV_Door Tag` / `AV_Window Tag` → tự nạp bản đóng
+  gói `lib\tag_cua\AV_Door Tag.rfa` / `AV_Window Tag.rfa` (chép từ G19), nay 188 cửa đi + 7 cửa sổ; template mới đổi
+  Shaded → Hidden Line; (3) Tường xây dừng vì thiếu template `TC.04.MatBangTuongXay` → dùng template tên có "tường xây"
+  của dự án (HQV: `ACD.08_MatBangTuongXay`, `Cần xác nhận lại`), ô số hiệu trống thì gợi ý `A.TX.nn`. Không lỗi: Thống
+  kê cửa, Ngăn cháy lan, Lỗ mở shaft. Tầng 5BA không có lan can / louver trong model (Thống kê lan can chỉ báo). Chi tiết
+  cửa chạy nhưng báo cụm 3 view 3690 × 8323 mm vượt ô (chưa sửa). Người dùng chưa Reload pyRevit / bấm lại
+  (`Cần xác nhận lại`).
 - `ARV_MBTuongXayTang_v1.dyn` (bộ AI REVIT `AI REVIT\TUONG XAY\` của đồng nghiệp, người dùng yêu cầu áp dụng 2026-11-04;
   bản gốc giữ nguyên, bản dùng ở `scripts\dynamo\`):
   - Chức năng: mặt bằng TƯỜNG XÂY (định vị tường) cả tầng theo mẫu FPT P5 A.CD.04.07: view mới chép thông số template

@@ -161,6 +161,8 @@ Mẫu CAD người dùng: khung chữ nhật chia 2 ô bằng 1 nét ngang, ô t
 - Sửa family tag là sửa cho cả dự án: mọi tag `AV_Door Tag` / `AV_Window Tag` ở view khác cũng thành 2 ô.
 
 ## Mặt bằng định vị cửa (nút `MB định vị cửa`, 2026-11-02 chiều – ĐÃ GỘP vào nút Tag cửa 2026-11-03)
+> **ĐỔI 2026-11-05 (người dùng yêu cầu):** nút KHÔNG tự tạo / sửa view template nữa. Hộp thoại hỏi thêm **View template** (template mặt bằng có sẵn hoặc `<Không dùng view template>`) và **Tỉ lệ** (lấy theo template; template khoá tỉ lệ thì ô khoá). Lõi chỉ gán template + tỉ lệ đã chọn (IN[28] / IN[29]; IN[6] = False nên không tạo `(ẩn nội thất)`; tỉ lệ chọn thay 1:100 cố định). Phần tạo template mô tả dưới đây là cách cũ.
+
 Người dùng yêu cầu tạo mặt bằng mới từ mặt bằng đã cho, template tên `MẶT BẰNG ĐỊNH VỊ CỬA`, sàn và tường như ảnh mẫu.
 Ảnh mẫu là view mang template `1.8  Mặt Bằng Chống Cháy Lan` (mọi hạng mục Halftone). Lõi
 `scripts\dynamo\MatBang_DinhViCua.py` (9 ô IN):

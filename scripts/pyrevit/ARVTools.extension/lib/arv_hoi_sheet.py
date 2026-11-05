@@ -8,6 +8,9 @@
 # trình bày vào bản vẽ) → IN[10] – IN[16] của ChongTham_VeVenChanTuong.py / NganChay_TrucHKT.py.
 # hoi_tuong_xay: cùng bảng cho nút "Tường xây" (người dùng yêu cầu 2026-11-04: thay hộp thoại 17 ô) → IN[0] / IN[1] /
 # IN[4] / IN[5] / IN[6] / IN[15] / IN[17] của ARV_MBTuongXayTang_v1.py; chỉ khổ A1 (bố cục lõi đo theo khung A1).
+# 2026-11-05 (người dùng yêu cầu): Chống thấm, Ngăn cháy lan, Định vị + tag cửa, Định vị lan can louver, Tường xây hỏi
+# thêm View template + Tỉ lệ (tỉ lệ lấy theo template đã chọn; template khoá tỉ lệ thì ô khoá); lõi chỉ gán template đã
+# chọn, không tự tạo / sửa view template.
 # Cấp nhóm sheet đọc từ Project Browser của dự án đang mở (giống cap_thu_muc_sheet / ts_giai_doan trong core.py: sửa
 # quy tắc ở đây thì sửa cả core.py). Lựa chọn lần trước nhớ ở %APPDATA%\pyRevit\ARVTools\TagCua_sheet.json.
 import io
@@ -147,10 +150,80 @@ def _ghi_luu(d, duong=_LUU):
 
 
 
+# ---- Ô View template + Tỉ lệ (người dùng yêu cầu 2026-11-05: 5 nút Chống thấm, Ngăn cháy lan, Định vị + tag cửa, Định
+# vị lan can louver, Tường xây hỏi thêm view template + tỉ lệ; các nút KHÔNG tự tạo view template nữa). Chọn template thì
+# ô Tỉ lệ lấy tỉ lệ của template; template khoá tỉ lệ (View Scale do template điều khiển) thì ô bị khoá, không sửa
+# template (người dùng chốt 2026-11-05).
+KHONG_TPL = u"<Không dùng view template>"
+DS_TL = (50, 75, 100, 125, 150, 200, 250, 300, 500)
+
+
+def _kd_gon(s):
+    return re.sub(u"[^a-z0-9]", u"", _khong_dau(s))
+
+
+def _templates(doc):
+    """View template mặt bằng (Floor Plan) của dự án, theo tên."""
+    ds = [v for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan)
+          if v.IsTemplate and v.ViewType == DB.ViewType.FloorPlan]
+    ds.sort(key=lambda v: _khong_dau(_ten(v)))
+    return ds
+
+
+def _tpl_khoa_tl(tpl):
+    """Template điều khiển tỉ lệ (View Scale có trong template và đang được điều khiển)."""
+    try:
+        co = set(i.Value for i in tpl.GetTemplateParameterIds())
+        nc = set(i.Value for i in tpl.GetNonControlledTemplateParameterIds())
+    except Exception:
+        return False
+    for b in (DB.BuiltInParameter.VIEW_SCALE_PULLDOWN_METRIC, DB.BuiltInParameter.VIEW_SCALE):
+        v = DB.ElementId(b).Value
+        if v in co and v not in nc:
+            return True
+    return False
+
+
+def _mac_dinh_tpl(doc, view, tu_khoa, luu):
+    """(tên template, tỉ lệ) mặc định cho hộp thoại: view đích cùng tầng đã có → template / tỉ lệ của view đó; không thì
+    lựa chọn lần trước; không thì template có chữ khoá trong tên; không thì template / tỉ lệ của view đang mở."""
+    k = _kd_gon(tu_khoa)
+    ds = _templates(doc)
+    ten_ds = [_ten(t) for t in ds]
+
+    def cua_view(v):
+        t = doc.GetElement(v.ViewTemplateId) if v.ViewTemplateId != DB.ElementId.InvalidElementId else None
+        return (_ten(t) if t is not None else KHONG_TPL), (t.Scale if t is not None and _tpl_khoa_tl(t) else v.Scale)
+
+    lv = view.GenLevel.Id.Value if view is not None and view.GenLevel is not None else None
+    if k and lv is not None:
+        for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan):
+            if v.IsTemplate or v.GenLevel is None or v.GenLevel.Id.Value != lv:
+                continue
+            t = doc.GetElement(v.ViewTemplateId) if v.ViewTemplateId != DB.ElementId.InvalidElementId else None
+            if k in _kd_gon(v.Name) or (t is not None and k in _kd_gon(_ten(t))):
+                return cua_view(v)
+    if luu.get("tpl") in ten_ds + [KHONG_TPL]:
+        return luu["tpl"], int(luu.get("tl") or 100)
+    for t, n in zip(ds, ten_ds):
+        if k and k in _kd_gon(n):
+            return n, t.Scale
+    if view is not None:
+        return cua_view(view)
+    return KHONG_TPL, 100
+
+
+def _doc_tl(s):
+    m = re.search(r"(\d+)\s*$", u"%s" % (s or u""))
+    return int(m.group(1)) if m and int(m.group(1)) > 0 else None
+
+
 def _bang(doc, tieu_de, co_dat, nhan_dat, ten_mac_dinh, duong_luu, dong_dau=u"", goi_y_rieng=None,
-          ds_kho=(u"A1", u"A0")):
-    """Dựng + hiện hộp thoại. Trả về dict {dat, gd, hm, kho, kt, so, ten} hoặc None nếu Huỷ.
-    goi_y_rieng(gd, hm, ten) → số hiệu gợi ý riêng (None = theo số tiếp theo trong hạng mục)."""
+          ds_kho=(u"A1", u"A0"), tpl_view=None, tpl_tu_khoa=u"", chi_view=False):
+    """Dựng + hiện hộp thoại. Trả về dict {dat, gd, hm, kho, kt, so, ten[, tpl, tl]} hoặc None nếu Huỷ.
+    goi_y_rieng(gd, hm, ten) → số hiệu gợi ý riêng (None = theo số tiếp theo trong hạng mục).
+    tpl_view: view để lấy template / tỉ lệ mặc định → hiện thêm ô View template + Tỉ lệ (kq["tpl"] = tên template hoặc
+    KHONG_TPL, kq["tl"] = mẫu số tỉ lệ). chi_view: view đã nằm trên bản vẽ → khoá các ô bản vẽ, chỉ chọn template / tỉ lệ."""
     sheets = list(DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet))
     pid_gd, pid_hm = _gd_hm(doc)
     cap_hm = {}                     # giai đoạn → [hạng mục]
@@ -200,6 +273,37 @@ def _bang(doc, tieu_de, co_dat, nhan_dat, ten_mac_dinh, duong_luu, dong_dau=u"",
         chk.Checked = bool(luu.get("dat", True))
         f.Controls.Add(chk)
         y[0] += 34
+    co_tpl = tpl_view is not None
+    ds_tpl = _templates(doc) if co_tpl else []
+    cb_tpl = ComboBox()
+    cb_tl = ComboBox()
+    lb_tl = [None]
+    if co_tpl:
+        cb_tpl.DropDownStyle = ComboBoxStyle.DropDownList
+        cb_tpl.Items.Add(KHONG_TPL)
+        for t in ds_tpl:
+            cb_tpl.Items.Add(_ten(t))
+        dong(u"View template:", cb_tpl)
+        cb_tl.DropDownStyle = ComboBoxStyle.DropDown
+        for n in DS_TL:
+            cb_tl.Items.Add(u"1 : %d" % n)
+        dong(u"Tỉ lệ:", cb_tl)
+        lb_tl[0] = f.Controls[f.Controls.Count - 2]
+
+        def doi_tpl(*a):
+            ten_t = u"%s" % (cb_tpl.SelectedItem or u"")
+            t = [x for x in ds_tpl if _ten(x) == ten_t]
+            if t:
+                cb_tl.Text = u"1 : %d" % t[0].Scale
+            khoa = bool(t) and _tpl_khoa_tl(t[0])
+            cb_tl.Enabled = not khoa
+            lb_tl[0].Text = u"Tỉ lệ (theo template):" if khoa else u"Tỉ lệ:"
+
+        cb_tpl.SelectedIndexChanged += doi_tpl
+        tpl0, tl0 = _mac_dinh_tpl(doc, tpl_view, tpl_tu_khoa, _doc_luu(duong_luu))
+        cb_tpl.SelectedIndex = [u"%s" % x for x in cb_tpl.Items].index(tpl0) if tpl0 in [u"%s" % x for x in cb_tpl.Items] else 0
+        doi_tpl()
+        cb_tl.Text = u"1 : %d" % tl0 if cb_tl.Enabled else cb_tl.Text
     cb_gd = ComboBox()
     cb_gd.DropDownStyle = ComboBoxStyle.DropDown
     for g in ds_gd:
@@ -271,6 +375,9 @@ def _bang(doc, tieu_de, co_dat, nhan_dat, ten_mac_dinh, duong_luu, dong_dau=u"",
     cb_kho.SelectedIndex = list(ds_kho).index(luu.get("kho")) if luu.get("kho") in ds_kho else 0
     nap_khung()
     goi_y_so()
+    if chi_view:
+        for c_ in (chk, cb_gd, cb_hm, cb_kho, cb_kt, tb_so, tb_ten):
+            c_.Enabled = False
 
     f.ClientSize = Size(610, y[0] + 56)
     ok = Button()
@@ -306,6 +413,13 @@ def _bang(doc, tieu_de, co_dat, nhan_dat, ten_mac_dinh, duong_luu, dong_dau=u"",
     kq = {"dat": bool(chk.Checked) if co_dat else True, "gd": u"%s" % (cb_gd.Text or u""),
           "hm": u"%s" % (cb_hm.Text or u""), "kho": u"%s" % cb_kho.SelectedItem,
           "kt": u"%s" % (cb_kt.SelectedItem or u""), "so": u"%s" % (tb_so.Text or u""), "ten": u"%s" % (tb_ten.Text or u"")}
+    if co_tpl:
+        kq["tpl"] = u"%s" % (cb_tpl.SelectedItem or KHONG_TPL)
+        kq["tl"] = _doc_tl(cb_tl.Text) or 100
+        luu.update({"tpl": kq["tpl"], "tl": kq["tl"]})
+    if chi_view:
+        _ghi_luu(luu, duong_luu)
+        return kq
     luu.update({"gd": kq["gd"], "hm": kq["hm"], "kho": kq["kho"]})
     if co_dat:
         luu["dat"] = kq["dat"]
@@ -318,10 +432,12 @@ def hoi(doc, view):
     tang = view.GenLevel.Name if view.GenLevel is not None else view.Name
     kq = _bang(doc, u"Định vị + tag cửa – đặt lên bản vẽ", True,
                u"Đặt mặt bằng định vị cửa lên bản vẽ (kèm bảng thống kê cửa đi / cửa sổ)",
-               u"MẶT BẰNG ĐỊNH VỊ CỬA %s" % tang.upper(), _LUU)
+               u"MẶT BẰNG ĐỊNH VỊ CỬA %s" % tang.upper(), _LUU, tpl_view=view, tpl_tu_khoa=u"dinh vi cua")
     if kq is None:
         return None
-    return {21: kq["dat"], 22: kq["gd"], 23: kq["hm"], 24: kq["kho"], 25: kq["kt"], 26: kq["so"], 27: kq["ten"]}
+    # IN[6] False: không tạo template "(ẩn nội thất)" (2026-11-05: các nút không tự tạo view template nữa)
+    return {6: False, 21: kq["dat"], 22: kq["gd"], 23: kq["hm"], 24: kq["kho"], 25: kq["kt"], 26: kq["so"],
+            27: kq["ten"], 28: kq["tpl"], 29: float(kq["tl"])}
 
 
 def _o_da_dung(doc, s):
@@ -419,53 +535,68 @@ def _sheet_trong(doc, tu_khoa):
 
 
 def _hoi_mat_bang(doc, view, tieu_de, ten_goc, tu_khoa, ten_luu, nhan_dat=u"Đặt mặt bằng lên bản vẽ (kèm chú thích)"):
-    """Bảng hỏi đặt view vừa vẽ lên bản vẽ (Chống thấm / Ngăn cháy lan) → IN[10] – IN[16]. View đã nằm trên sheet thì
-    không hỏi (lõi báo 'đã nằm trên sheet'). Có sheet trống sẵn mang tên đúng loại (vd. G19 A.4-201 MẶT BẰNG CHỐNG
+    """Bảng hỏi đặt view vừa vẽ lên bản vẽ (Chống thấm / Ngăn cháy lan) → IN[10] – IN[16] + "tpl" / "tl" (view
+    template, tỉ lệ; hàm gọi đổi sang chỉ số IN của công cụ). View đã nằm trên sheet thì khoá các ô bản vẽ, chỉ chọn
+    template / tỉ lệ (lõi báo 'đã nằm trên sheet'). Có sheet trống sẵn mang tên đúng loại (vd. G19 A.4-201 MẶT BẰNG CHỐNG
     THẤM) thì gợi ý số hiệu đó = đặt vào sheet đó; xoá / đổi số hiệu để tạo sheet mới."""
     tpl = doc.GetElement(view.ViewTemplateId) if view.ViewTemplateId != DB.ElementId.InvalidElementId else None
     la_dich = tu_khoa in _khong_dau(view.Name) or (tpl is not None and tu_khoa in _khong_dau(_ten(tpl)))
-    try:        # view truyền vào không phải view đích = lõi sẽ tạo view mới từ view này → luôn hỏi
+    tren_sheet = u""
+    try:        # view truyền vào không phải view đích = lõi sẽ tạo view mới từ view này → hỏi đủ
         dang = view.get_Parameter(DB.BuiltInParameter.VIEWER_SHEET_NUMBER)
         if la_dich and dang is not None and dang.AsString() and dang.AsString() not in (u"---", u"-"):
-            return {10: True}
+            tren_sheet = dang.AsString()
     except Exception:
         pass
     tang = view.GenLevel.Name if view.GenLevel is not None else view.Name
-    trong = _sheet_trong(doc, tu_khoa)
+    trong = None if tren_sheet else _sheet_trong(doc, tu_khoa)
     dong_dau = u""
-    if trong is not None:
+    if tren_sheet:
+        dong_dau = u"View '%s' đã nằm trên bản vẽ %s: chỉ chọn view template / tỉ lệ." % (view.Name, tren_sheet)
+    elif trong is not None:
         dong_dau = u"Có bản vẽ trống %s – %s: giữ số hiệu này = đặt vào bản vẽ đó." % (trong.SheetNumber, trong.Name)
 
     def goi_y(gd, hm, ten_bv):
         return trong.SheetNumber if trong is not None else None
 
     kq = _bang(doc, tieu_de, True, nhan_dat, u"%s %s" % (ten_goc, tang.upper()),
-               os.path.join(_THU_MUC_LUU, ten_luu), dong_dau, goi_y)
+               os.path.join(_THU_MUC_LUU, ten_luu), dong_dau, goi_y, tpl_view=view, tpl_tu_khoa=tu_khoa,
+               chi_view=bool(tren_sheet))
     if kq is None:
         return None
+    if tren_sheet:
+        return {10: True, "tpl": kq["tpl"], "tl": kq["tl"]}
     return {10: kq["dat"], 11: kq["gd"], 12: kq["hm"], 13: kq["kho"], 14: kq["kt"], 15: kq["so"].strip(),
-            16: kq["ten"].strip().upper()}
+            16: kq["ten"].strip().upper(), "tpl": kq["tpl"], "tl": kq["tl"]}
+
+
+def _doi_in(kq, dich, in_tpl, in_tl):
+    """Đổi khoá của _hoi_mat_bang sang chỉ số IN của công cụ: IN[10 + i] → IN[10 + i + dich], "tpl" / "tl" →
+    IN[in_tpl] / IN[in_tl]."""
+    if kq is None:
+        return None
+    ra = dict((k + dich, v) for k, v in kq.items() if not isinstance(k, str))
+    ra[in_tpl] = kq["tpl"]
+    ra[in_tl] = float(kq["tl"])
+    return ra
 
 
 def hoi_chong_tham(doc, view):
-    return _hoi_mat_bang(doc, view, u"Chống thấm – đặt lên bản vẽ", u"MẶT BẰNG CHỐNG THẤM", u"chong tham",
-                         "ChongTham_sheet.json")
+    return _doi_in(_hoi_mat_bang(doc, view, u"Chống thấm – đặt lên bản vẽ", u"MẶT BẰNG CHỐNG THẤM", u"chong tham",
+                                 "ChongTham_sheet.json"), 0, 19, 20)
 
 
 def hoi_ngan_chay(doc, view):
-    return _hoi_mat_bang(doc, view, u"Ngăn cháy lan – đặt lên bản vẽ", u"MẶT BẰNG NGĂN CHÁY LAN", u"chay lan",
-                         "NganChay_sheet.json")
+    return _doi_in(_hoi_mat_bang(doc, view, u"Ngăn cháy lan – đặt lên bản vẽ", u"MẶT BẰNG NGĂN CHÁY LAN", u"chay lan",
+                                 "NganChay_sheet.json"), 0, 19, 20)
 
 
 def hoi_lan_can_louver(doc, view):
     """Nút "Định vị lan can, louver" (2026-11-05): cùng bảng như Chống thấm, trả về IN[17] – IN[23] của
-    LanCanLouver_TuDong.py (= IN[10] – IN[16] của _hoi_mat_bang dời 7)."""
-    kq = _hoi_mat_bang(doc, view, u"Định vị lan can, louver – đặt lên bản vẽ", u"MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER",
-                       u"dinh vi lan can", "LanCanLouver_sheet.json",
-                       u"Đặt mặt bằng lên bản vẽ (kèm bảng thống kê lan can / louver)")
-    if kq is None:
-        return None
-    return dict((k + 7, v) for k, v in kq.items())
+    LanCanLouver_TuDong.py (= IN[10] – IN[16] của _hoi_mat_bang dời 7) + IN[25] / IN[26] template / tỉ lệ."""
+    return _doi_in(_hoi_mat_bang(doc, view, u"Định vị lan can, louver – đặt lên bản vẽ",
+                                 u"MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER", u"dinh vi lan can", "LanCanLouver_sheet.json",
+                                 u"Đặt mặt bằng lên bản vẽ (kèm bảng thống kê lan can / louver)"), 7, 25, 26)
 
 
 def _ten_ts(doc, pid):
@@ -499,12 +630,26 @@ def hoi_tuong_xay(doc, view):
     if trong is not None:
         dong_dau = u"Có bản vẽ trống %s – %s: giữ số hiệu này = đặt vào bản vẽ đó." % (trong.SheetNumber, trong.Name)
 
+    sheets = list(DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet))
+    pid_gd_, pid_hm_ = _gd_hm(doc)
+
     def goi_y(gd, hm, ten_bv):
-        return trong.SheetNumber if trong is not None else None
+        if trong is not None:
+            return trong.SheetNumber
+        # Hạng mục trống / chưa có bản vẽ nào (vd. model HQV 2026-11-05) → ô số hiệu trống, bấm Chạy chỉ báo lỗi:
+        # gợi ý số trống đầu tiên A.TX.nn
+        so = _so_tiep(sheets, pid_gd_, gd, pid_hm_, hm)
+        if so:
+            return so
+        dung = set(s.SheetNumber for s in sheets)
+        n = 1
+        while u"A.TX.%02d" % n in dung:
+            n += 1
+        return u"A.TX.%02d" % n
 
     kq = _bang(doc, tieu_de, True, u"Đặt mặt bằng lên bản vẽ (kèm bảng ký hiệu tường)",
                u"MẶT BẰNG TƯỜNG XÂY %s" % tang.upper(), os.path.join(_THU_MUC_LUU, "TuongXay_sheet.json"), dong_dau,
-               goi_y, ds_kho=(u"A1",))
+               goi_y, ds_kho=(u"A1",), tpl_view=view, tpl_tu_khoa=u"tuong xay")
     if kq is None:
         return None
     so = kq["so"].strip()
@@ -514,5 +659,6 @@ def hoi_tuong_xay(doc, view):
     pid_gd, pid_hm = _gd_hm(doc)
     nhom = u";".join(u"%s=%s" % (_ten_ts(doc, pid), gt) for pid, gt in ((pid_gd, kq["gd"]), (pid_hm, kq["hm"]))
                      if pid is not None and gt.strip() and _ten_ts(doc, pid))
-    return {0: tang, 1: ten_view, 4: so, 5: kq["ten"].strip().upper() or u"MẶT BẰNG TƯỜNG XÂY", 6: kq["kt"],
-            15: nhom, 17: kq["dat"]}
+    # IN[2] = template chép thông số (trống = không dùng template), IN[3] = đúng 1 tỉ lệ đã chọn (2026-11-05)
+    return {0: tang, 1: ten_view, 2: u"" if kq["tpl"] == KHONG_TPL else kq["tpl"], 3: u"%d" % kq["tl"], 4: so,
+            5: kq["ten"].strip().upper() or u"MẶT BẰNG TƯỜNG XÂY", 6: kq["kt"], 15: nhom, 17: kq["dat"]}

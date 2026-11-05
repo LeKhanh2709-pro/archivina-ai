@@ -80,7 +80,8 @@ BUTTONS = [
 #   view_in: chỉ số IN[] nhận tên view; tu_khoa: từ khoá (không dấu) nhận view
 #   tu_khoa rỗng: làm trên mặt bằng tầng đang mở (không phải mặt bằng tầng thì báo); view_in None: không truyền tên view
 #   tao_view: chỉ số IN[] "tạo view khi chưa có" – mặt bằng tầng đang mở mà tầng đó chưa có view đích thì lõi tạo view
-#             + template từ view đang mở (Chống thấm / Ngăn cháy lan, người dùng yêu cầu 2026-11-04)
+#             + template từ view đang mở (Chống thấm / Ngăn cháy lan, người dùng yêu cầu 2026-11-04). Từ 2026-11-05 lõi
+#             KHÔNG tạo / sửa view template: hộp thoại (arv_hoi_sheet) hỏi View template + Tỉ lệ, lõi chỉ gán template đó
 #   khong_view: không cần view nào (vd. Chi tiết cửa: lõi tự lấy cửa đang chọn / hỏi chọn cửa trên màn hình)
 MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"chống thấm",
                           "hoi": u"arv_hoi_sheet.hoi_chong_tham", "tao_view": 18},

@@ -228,6 +228,22 @@
    "label": "Tên sheet (trống = \"MẶT BẰNG ĐỊNH VỊ CỬA <TẦNG>\")",
    "default": "",
    "kind": "normal"
+  },
+  {
+   "index": 28,
+   "type": "str",
+   "decl": "str",
+   "label": "View template gán cho mặt bằng định vị cửa (trống = template tên IN[17] nếu có, không thì giữ template view gốc; \"<Không dùng view template>\" = bỏ template). 2026-11-05: KHÔNG tạo / sửa view template nữa",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 29,
+   "type": "float",
+   "decl": "float",
+   "label": "Tỉ lệ mặt bằng, mẫu số (0 = tự chọn như cũ 1:100; template khoá tỉ lệ thì theo template)",
+   "default": 0.0,
+   "kind": "normal"
   }
  ]
 }

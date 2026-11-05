@@ -204,6 +204,22 @@
    "label": "Chỉ tag đối tượng có Mark đúng tiền tố IN[4] / IN[6] (False = tag mọi lan can / louver có Mark)",
    "default": true,
    "kind": "normal"
+  },
+  {
+   "index": 25,
+   "type": "str",
+   "decl": "str",
+   "label": "View template gán cho mặt bằng định vị (trống = giữ; \"<Không dùng view template>\" = bỏ template; nút hỏi trong hộp thoại, 2026-11-05). Công cụ KHÔNG tạo / sửa view template nữa.",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 26,
+   "type": "float",
+   "decl": "float",
+   "label": "Tỉ lệ view, mẫu số (0 = giữ; template khoá tỉ lệ thì theo template)",
+   "default": 0.0,
+   "kind": "normal"
   }
  ]
 }

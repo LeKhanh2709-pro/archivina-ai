@@ -19,6 +19,8 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
   công cụ không dùng).
 
 ## Quy tắc (lõi `scripts\dynamo\LanCanLouver_TuDong.py`)
+> **ĐỔI 2026-11-05 (người dùng yêu cầu):** nút KHÔNG tự tạo / sửa view template nữa. Hộp thoại hỏi thêm **View template** (template mặt bằng có sẵn hoặc `<Không dùng view template>`) và **Tỉ lệ** (lấy theo template; template khoá tỉ lệ thì ô khoá). Lõi chỉ gán template + tỉ lệ đã chọn (IN[25] / IN[26], `sh_ap_tpl_tl` của `DatSheet_chung.py`). Phần tạo template mô tả dưới đây là cách cũ.
+
 1. **View**: như nút Định vị + tag cửa / Chống thấm. Mặt bằng tầng đang mở → tầng đã có view tên / template chứa
    "định vị lan can" thì dùng; chưa có thì `sh_tao_view` (khối chung `DatSheet_chung.py`) nhân bản view đang mở (không
    kèm chú thích) thành `MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>`, loại view riêng, template cùng tên (tạo từ template

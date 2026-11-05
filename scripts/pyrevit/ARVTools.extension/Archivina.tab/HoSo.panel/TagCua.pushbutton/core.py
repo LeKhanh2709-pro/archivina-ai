@@ -49,6 +49,9 @@
 #   IN[25] (str)  Khung tên "Family : Type" (trống = tự tìm theo khổ)
 #   IN[26] (str)  Số hiệu sheet (trống = tiếp theo trong hạng mục)
 #   IN[27] (str)  Tên sheet (trống = "MẶT BẰNG ĐỊNH VỊ CỬA <TẦNG>")
+#   IN[28] (str)  View template gán cho mặt bằng định vị cửa (trống = template tên IN[17] nếu có, không thì giữ template
+#                 view gốc; "<Không dùng view template>" = bỏ template). 2026-11-05: KHÔNG tạo / sửa view template nữa
+#   IN[29] (float) Tỉ lệ mặt bằng, mẫu số (0 = tự chọn như cũ 1:100; template khoá tỉ lệ thì theo template)
 # OUTPUT
 #   OUT (list[str])  Báo cáo
 import math
@@ -70,7 +73,7 @@ MAC_DINH = ["", "AV_Door Tag", "AV_Window Tag", "AV_Louver Tag", "Lam;Louver", T
             "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures",
             "Fire Rating;EI;Giới hạn chịu lửa", 1.0, "", "Louver", True, False, False, False,
             True, u"MẶT BẰNG ĐỊNH VỊ CỬA", u"MẶT BẰNG ĐỊNH VỊ CỬA - {tang}", True, "",
-            False, "", "", "A1", "", "", ""]
+            False, "", "", "A1", "", "", "", "", 0.0]
 HAU_TO_TEMPLATE = u" (ẩn nội thất)"
 MB_HALFTONE = ("OST_Floors",)                      # mặt bằng định vị cửa: sàn xám như ảnh mẫu người dùng
 MB_DAM = ("OST_Doors", "OST_Windows")              # cửa nét đậm để định vị
@@ -181,7 +184,8 @@ def _chinh():
         return [u"View '%s' không phải mặt bằng. Mở mặt bằng cần tag rồi chạy lại." % (ten(view) if view else "-")]
     dry = bool(doc_in(5))
     if doc_in(16):
-        view, mb_msg = mb_dinh_vi_cua(doc, view, dry, doc_in(17), doc_in(18), tach(doc_in(7)))
+        view, mb_msg = mb_dinh_vi_cua(doc, view, dry, doc_in(17), doc_in(18), tach(doc_in(7)), doc_in(28),
+                                      doc_in(29))
         for s_ in mb_msg:
             p(s_)
     # Đặt lên sheet: tạo sheet + bảng thống kê + chọn tỉ lệ TRƯỚC khi tag (cỡ tag theo tỉ lệ); viewport đặt sau khi tag
@@ -265,12 +269,38 @@ def _chinh():
                 return s
         return None
 
+    def nap_tag_dong_goi(ten_fam, bic):
+        """Dự án chưa có family tag (vd. model HQV tháp B, người dùng báo 2026-11-05) → nạp bản đóng gói
+        <extension>\\lib\\tag_cua\\<tên>.rfa (chép từ G19). Ngoài transaction của phần ghi."""
+        duong = os.path.join(thu_muc_nhan(), ten_fam + u".rfa") if ten_fam else u""
+        if not duong or not os.path.isfile(duong):
+            return None, u"không thấy file đóng gói '%s'" % (duong or u"-")
+        if dry:
+            return None, u"sẽ nạp từ %s" % duong
+        TransactionManager.Instance.EnsureInTransaction(doc)
+        try:
+            doc.LoadFamily(duong, tuy_chon_nap())
+        except Exception as ex:
+            return None, u"không nạp được %s: %s" % (duong, (u"%s" % ex).splitlines()[0][:200])
+        finally:
+            TransactionManager.Instance.TransactionTaskDone()
+        s = tim_kieu_tag(ten_fam, bic)
+        return s, (u"đã nạp từ %s" % duong) if s is not None else u"nạp xong mà không thấy kiểu tag"
+
     kieu_cua = tim_kieu_tag(doc_in(1), BuiltInCategory.OST_DoorTags)
     kieu_cs = tim_kieu_tag(doc_in(2), BuiltInCategory.OST_WindowTags)
+    for i_in, bic in ((1, BuiltInCategory.OST_DoorTags), (2, BuiltInCategory.OST_WindowTags)):
+        if tim_kieu_tag(doc_in(i_in), bic) is None:
+            s_, msg_ = nap_tag_dong_goi(doc_in(i_in), bic)
+            p(u"Family tag '%s': %s." % (doc_in(i_in), msg_))
+            if i_in == 1:
+                kieu_cua = s_
+            else:
+                kieu_cs = s_
     kieu_lam = tim_kieu_tag(doc_in(3), BuiltInCategory.OST_WindowTags) or kieu_cs
     tk_lam = [khong_dau(x) for x in tach(doc_in(4))]
     for ten_fam, k in ((doc_in(1), kieu_cua), (doc_in(2), kieu_cs)):
-        if k is None:
+        if k is None and not dry:
             p(u"CHƯA CÓ family tag '%s' trong dự án → bỏ qua hạng mục này (Load family rồi chạy lại)." % ten_fam)
 
     # ---------- Đối tượng cần tag ----------
@@ -1252,7 +1282,18 @@ def chuan_bi_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, loai_tru_t
     vung = (x0 + b, y0 + b + tieu_de, x1 - b, y1 - b)
     o_bang = (x1 - rong_bang - khe, y0, x1, y0 + cao_bang + khe) if bang else None
     tpl = doc.GetElement(view.ViewTemplateId) if view.ViewTemplateId != ElementId.InvalidElementId else None
-    if tpl is not None:
+    # Tỉ lệ chọn trong hộp thoại (IN[29], 2026-11-05) hoặc template khoá tỉ lệ → dùng đúng tỉ lệ đó, KHÔNG sửa template
+    # (trước đây bỏ quyền điều khiển tỉ lệ của template)
+    try:
+        tl_chon = int(round(float(doc_in(29) or 0)))
+    except Exception:
+        tl_chon = 0
+    thang_tl = THANG_TL
+    if tpl is not None and tpl_khoa_tl(tpl):
+        thang_tl = (tpl.Scale,)
+    elif tl_chon > 0:
+        thang_tl = (tl_chon,)
+    if tpl is not None and thang_tl is THANG_TL:
         try:
             ids_tl = [int(BuiltInParameter.VIEW_SCALE_PULLDOWN_METRIC), int(BuiltInParameter.VIEW_SCALE),
                       int(BuiltInParameter.VIEW_SCALE_PULLDOWN_IMPERIAL)]
@@ -1275,7 +1316,8 @@ def chuan_bi_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, loai_tru_t
         st = SubTransaction(doc)
         st.Start()
         try:
-            view.Scale = n
+            if view.Scale != n:
+                view.Scale = n
             vp_ = Viewport.Create(doc, sh.Id, view.Id, XYZ(0, 0, 0))
             doc.Regenerate()
             o_ = vp_.GetBoxOutline()
@@ -1288,7 +1330,7 @@ def chuan_bi_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, loai_tru_t
 
     # Tỉ lệ ưu tiên 1:100 (người dùng chốt): lấy tỉ lệ đầu tiên vừa vùng vẽ; chạm ô bảng thì chỉ báo, không lùi tỉ lệ
     tl = None
-    for n in THANG_TL:
+    for n in thang_tl:
         w_, h_ = do_khung(n)
         if w_ > vung[2] - vung[0] or h_ > vung[3] - vung[1]:
             continue
@@ -1299,7 +1341,7 @@ def chuan_bi_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, loai_tru_t
                        u"dưới – xem lại, dời bảng tay nếu cần." % n)
         break
     if tl is None:
-        tl = THANG_TL[-1]
+        tl = thang_tl[-1]
         bao.append(u"CẦN XEM LẠI: mặt bằng 1:%d (kể cả trục, chừa chỗ tag) lớn hơn vùng vẽ khổ %s – chọn khổ lớn hơn hoặc "
                    u"thu crop view." % (tl, kho))
     if view.Scale != tl:
@@ -1926,135 +1968,131 @@ def trinh_bay_btct(doc, tpl):
             % (TEN_FILTER_XAY, TEN_FILTER_BTCT, u" / ".join(TU_KHOA_BTCT), TEN_FILTER_COT, MAU_TO_BTCT))
 
 
-def mb_dinh_vi_cua(doc, goc, dry, ten_tpl, mau_ten, ten_bic_an):
-    """Trả về (view để tag, [dòng báo cáo]). Xem khối chú thích đầu file (IN[16] – IN[18])."""
+KHONG_TPL = u"<Không dùng view template>"     # ô View template của hộp thoại = bỏ template
+
+
+def tpl_khoa_tl(tpl):
+    """Template điều khiển tỉ lệ (View Scale có trong template và đang được điều khiển)."""
+    try:
+        co = set(i.Value for i in tpl.GetTemplateParameterIds())
+        nc = set(i.Value for i in tpl.GetNonControlledTemplateParameterIds())
+    except Exception:
+        return False
+    for b in (BuiltInParameter.VIEW_SCALE_PULLDOWN_METRIC, BuiltInParameter.VIEW_SCALE):
+        v = ElementId(b).Value
+        if v in co and v not in nc:
+            return True
+    return False
+
+
+def ap_tpl_tl(doc, view, ten_tpl, ti_le):
+    """Gán view template + tỉ lệ chọn trong hộp thoại (2026-11-05), như sh_ap_tpl_tl của DatSheet_chung.py. Gọi TRONG
+    transaction. Không tạo / sửa template."""
+    bao = []
+    ten_tpl = (ten_tpl or u"").strip()
+    if ten_tpl == KHONG_TPL:
+        if view.ViewTemplateId != ElementId.InvalidElementId:
+            view.ViewTemplateId = ElementId.InvalidElementId
+            bao.append(u"Bỏ view template của '%s'." % view.Name)
+    elif ten_tpl:
+        ds = [v for v in FilteredElementCollector(doc).OfClass(ViewPlan) if v.IsTemplate]
+        tpl = ([v for v in ds if v.Name == ten_tpl] or [v for v in ds if khong_dau(v.Name) == khong_dau(ten_tpl)] or
+               [None])[0]
+        if tpl is None:
+            bao.append(u"CẦN XEM LẠI: không có view template '%s' – giữ template đang có của '%s'." % (ten_tpl, view.Name))
+        elif view.ViewTemplateId.Value != tpl.Id.Value:
+            view.ViewTemplateId = tpl.Id
+            bao.append(u"Gán view template '%s' cho '%s'." % (tpl.Name, view.Name))
+    try:
+        ti_le = int(round(float(ti_le or 0)))
+    except Exception:
+        ti_le = 0
+    if ti_le > 0:
+        tpl = doc.GetElement(view.ViewTemplateId) if view.ViewTemplateId != ElementId.InvalidElementId else None
+        if tpl is not None and tpl_khoa_tl(tpl):
+            if tpl.Scale != ti_le:
+                bao.append(u"Template '%s' khoá tỉ lệ 1:%d → giữ 1:%d (không sửa template), không dùng 1:%d." % (
+                    tpl.Name, tpl.Scale, tpl.Scale, ti_le))
+        elif view.Scale != ti_le:
+            view.Scale = ti_le
+            bao.append(u"Tỉ lệ '%s': 1:%d." % (view.Name, ti_le))
+    doc.Regenerate()
+    return bao
+
+
+def mb_dinh_vi_cua(doc, goc, dry, ten_tpl, mau_ten, ten_bic_an, tpl_chon=u"", ti_le=0):
+    """Trả về (view để tag, [dòng báo cáo]). Xem khối chú thích đầu file (IN[16] – IN[18], IN[28] – IN[29]).
+    2026-11-05 (người dùng yêu cầu): KHÔNG tạo / sửa view template (bỏ tạo template 'MẶT BẰNG ĐỊNH VỊ CỬA', ẩn hạng mục,
+    filter trục link / tường / vách trong template). View gán template tpl_chon (chọn trong hộp thoại); trống thì view
+    mới dùng template tên ten_tpl nếu có, không thì giữ template của view gốc."""
     bao = []
     ten_tpl = (ten_tpl or MAC_DINH[17]).strip()
     mau_ten = (mau_ten or MAC_DINH[18]).strip()
+    tpl_chon = (tpl_chon or u"").strip()
     tpl_goc = doc.GetElement(goc.ViewTemplateId) if goc.ViewTemplateId != ElementId.InvalidElementId else None
     tien_to = mau_ten.split(u"{")[0].strip(u" -")
     if (tpl_goc is not None and tpl_goc.Name == ten_tpl) or (tien_to and goc.Name.startswith(tien_to)):
-        moi, tpl = goc, tpl_goc
+        moi = goc
     else:
-        moi, tpl = None, None
+        moi = None
     if goc.GenLevel is None or goc.ViewType != ViewType.FloorPlan:
         bao.append(u"View '%s' không phải mặt bằng tầng → tag ngay trên view này, không tạo mặt bằng định vị cửa." % goc.Name)
         return goc, bao
     ten_moi = mau_ten.replace(u"{tang}", goc.GenLevel.Name).replace(u"{view}", goc.Name).strip()
+    co_ten_tpl = False
     for v in FilteredElementCollector(doc).OfClass(View):
         if v.IsTemplate and v.Name == ten_tpl:
-            tpl = v
+            co_ten_tpl = True
         elif moi is None and not v.IsTemplate and v.ViewType == ViewType.FloorPlan and v.Name == ten_moi:
             moi = v
-    cats_an = []
-    for n in list(ten_bic_an) + list(MB_AN_THEM):
-        try:
-            c = ElementId(getattr(BuiltInCategory, n))
-            if all(c.Value != x.Value for x in cats_an):
-                cats_an.append(c)
-        except Exception:
-            pass
+    if not tpl_chon and moi is None and co_ten_tpl:
+        tpl_chon = ten_tpl
     if dry:
         if moi is None:
             bao.append(u"Sẽ tạo mặt bằng định vị cửa '%s' (nhân bản '%s') rồi tag trên đó – Dry-run thử tag trên "
                        u"view gốc." % (ten_moi, goc.Name))
         else:
             bao.append(u"Mặt bằng định vị cửa: '%s'." % moi.Name)
-        bao.append(u"View template '%s': %s." % (ten_tpl, u"đã có, dùng nguyên (chỉ bổ sung hạng mục ẩn)" if tpl
-                                                 else u"sẽ tạo từ template của view gốc"))
+        bao.append(u"View template: %s, tỉ lệ: %s (không tạo / sửa template)." % (
+            tpl_chon or u"giữ như hiện có", u"1:%d" % int(float(ti_le)) if ti_le else u"giữ"))
         return (moi or goc), bao
     TransactionManager.Instance.EnsureInTransaction(doc)
     if moi is None:
         moi = doc.GetElement(goc.Duplicate(ViewDuplicateOption.Duplicate))
         moi.Name = ten_moi
         bao.append(u"Tạo mặt bằng định vị cửa '%s' (nhân bản '%s', không kèm chú thích)." % (ten_moi, goc.Name))
+        # Loại view riêng → Project Browser có mục "Floor Plans (MẶT BẰNG ĐỊNH VỊ CỬA)" (người dùng yêu cầu 2026-11-03)
+        try:
+            vft = None
+            for t_ in FilteredElementCollector(doc).OfClass(ViewFamilyType):
+                if t_.ViewFamily == ViewFamily.FloorPlan and ten(t_) == ten_tpl:
+                    vft = t_
+            if vft is None:
+                vft = doc.GetElement(moi.GetTypeId()).Duplicate(ten_tpl)
+                bao.append(u"Tạo loại view '%s' (mục riêng trong Project Browser)." % ten_tpl)
+            if moi.GetTypeId().Value != vft.Id.Value:
+                moi.ChangeTypeId(vft.Id)
+        except Exception as ex:
+            bao.append(u"Không gán được loại view '%s': %s" % (ten_tpl, (u"%s" % ex).splitlines()[0][:150]))
     else:
         bao.append(u"Mặt bằng định vị cửa: '%s'." % moi.Name)
-    if tpl is None:
-        # Template không nhân bản được qua API → gán template nền, Regenerate (template chỉ áp khi regenerate) rồi
-        # CreateViewTemplate. KHÔNG dùng ApplyViewTemplateParameters: Revit 2027.3 lỗi nặng khi vẽ lại tường.
-        if tpl_goc is not None and moi.ViewTemplateId.Value != tpl_goc.Id.Value:
-            moi.ViewTemplateId = tpl_goc.Id
-        doc.Regenerate()
-        tpl = moi.CreateViewTemplate()
-        tpl.Name = ten_tpl
-        try:
-            pid = ElementId(BuiltInParameter.VIS_GRAPHICS_MODEL)
-            nc = list(tpl.GetNonControlledTemplateParameterIds())
-            if any(i.Value == pid.Value for i in nc):
-                from System.Collections.Generic import List
-                ds = List[ElementId]()
-                for i in nc:
-                    if i.Value != pid.Value:
-                        ds.Add(i)
-                tpl.SetNonControlledTemplateParameterIds(ds)
-        except Exception:
-            pass
-        for n, xam in [(n, True) for n in MB_HALFTONE] + [(n, False) for n in MB_DAM]:
-            try:
-                c = ElementId(getattr(BuiltInCategory, n))
-                o = tpl.GetCategoryOverrides(c)
-                o.SetHalftone(xam)
-                if n == "OST_Floors":
-                    o.SetSurfaceForegroundPatternVisible(False)
-                    o.SetSurfaceBackgroundPatternVisible(False)
-                tpl.SetCategoryOverrides(c, o)
-                if tpl.GetCategoryHidden(c):
-                    tpl.SetCategoryHidden(c, False)
-            except Exception:
-                pass
-        bao.append(u"Tạo view template '%s' từ '%s': sàn Halftone, cửa đi / cửa sổ nét đậm."
-                   % (ten_tpl, tpl_goc.Name if tpl_goc is not None else u"view gốc"))
-    an = []
-    for c in cats_an:
-        try:
-            if tpl.CanCategoryBeHidden(c):
-                if not tpl.GetCategoryHidden(c):
-                    tpl.SetCategoryHidden(c, True)
-                an.append(Category.GetCategory(doc, c).Name)
-        except Exception:
-            pass
+    bao.extend(ap_tpl_tl(doc, moi, tpl_chon, ti_le))
+    tpl = doc.GetElement(moi.ViewTemplateId) if moi.ViewTemplateId != ElementId.InvalidElementId else None
     for bic in (BuiltInCategory.OST_DoorTags, BuiltInCategory.OST_WindowTags):
         try:
-            if tpl.GetCategoryHidden(ElementId(bic)):
-                tpl.SetCategoryHidden(ElementId(bic), False)
+            c = ElementId(bic)
+            if (tpl if tpl is not None else moi).GetCategoryHidden(c):
+                bao.append(u"CẦN XEM LẠI: %s đang ẩn %s – tag sẽ không hiện (công cụ không sửa template)." % (
+                    u"template '%s'" % tpl.Name if tpl is not None else u"view", Category.GetCategory(doc, c).Name))
         except Exception:
             pass
-    try:
-        bao.append(an_truc_link(doc, tpl))
-    except Exception as ex:
-        bao.append(u"Không tạo được filter ẩn trục file link: %s" % (u"%s" % ex).splitlines()[0][:150])
-    try:
-        bao.append(trinh_bay_btct(doc, tpl))
-    except Exception as ex:
-        bao.append(u"Không chỉnh được tường / cột / vách: %s" % (u"%s" % ex).splitlines()[0][:150])
-    # Loại view riêng → Project Browser có mục "Floor Plans (MẶT BẰNG ĐỊNH VỊ CỬA)" (người dùng yêu cầu 2026-11-03)
-    try:
-        vft = None
-        for t_ in FilteredElementCollector(doc).OfClass(ViewFamilyType):
-            if t_.ViewFamily == ViewFamily.FloorPlan and ten(t_) == ten_tpl:
-                vft = t_
-        if vft is None:
-            vft = doc.GetElement(moi.GetTypeId()).Duplicate(ten_tpl)
-            bao.append(u"Tạo loại view '%s' (mục riêng trong Project Browser)." % ten_tpl)
-        try:
-            if vft.DefaultTemplateId.Value != tpl.Id.Value:
-                vft.DefaultTemplateId = tpl.Id
-        except Exception:
-            pass
-        if moi.GetTypeId().Value != vft.Id.Value:
-            moi.ChangeTypeId(vft.Id)
-    except Exception as ex:
-        bao.append(u"Không gán được loại view '%s': %s" % (ten_tpl, (u"%s" % ex).splitlines()[0][:150]))
-    if moi.ViewTemplateId.Value != tpl.Id.Value:
-        moi.ViewTemplateId = tpl.Id
-    doc.Regenerate()
     try:
         bao.append(thu_truc(doc, moi))
     except Exception as ex:
         bao.append(u"Không thu được trục: %s" % (u"%s" % ex).splitlines()[0][:150])
     TransactionManager.Instance.TransactionTaskDone()
-    bao.append(u"View template '%s' gán cho '%s', ẩn: %s." % (tpl.Name, moi.Name, u", ".join(an) or u"-"))
+    bao.append(u"View '%s': template %s, tỉ lệ 1:%d." % (moi.Name, u"'%s'" % tpl.Name if tpl is not None else u"(không)",
+                                                         moi.Scale))
     if moi.Id.Value != goc.Id.Value:
         try:
             DocumentManager.Instance.CurrentUIDocument.RequestViewChange(moi)

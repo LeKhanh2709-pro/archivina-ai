@@ -1396,6 +1396,7 @@ def log_folder():
     raise IOError(u"Không tạo được thư mục log")
 
 
+TMPL_NOTE = []      # ghi chú template thay thế (D:\AI 2026-11-05)
 LOG_HEADER = [u"Phương", u"Tim tuyến (mm)", u"Phạm vi (mm)", u"Phía đặt", u"Số mốc", u"Kết quả"]
 
 
@@ -1437,7 +1438,21 @@ def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_na
         template = next((v for v in FilteredElementCollector(doc).OfClass(View).ToElements()
                          if v.IsTemplate and norm(get_name(v)) == norm(tmpl_name)), None)
         if template is None:
-            raise StopReport([u"DỪNG: không có view template '{}'.".format(tmpl_name)])
+            # D:\AI 2026-11-05: model HQV tháp B không có 'TC.04.MatBangTuongXay' mà có 'ACD.08_MatBangTuongXay' →
+            # dùng template mặt bằng tường xây có sẵn (tên chứa "MatBangTuongXay" / "tường xây", bỏ loại căn hộ / WC)
+            def _kd(s):
+                s = unicodedata.normalize("NFD", s or u"").replace(u"đ", u"d").replace(u"Đ", u"D")
+                return u"".join(c for c in s if unicodedata.category(c) != "Mn" and c.isalnum()).lower()
+            tpls = sorted((v for v in FilteredElementCollector(doc).OfClass(View).ToElements()
+                           if v.IsTemplate and v.ViewType == ViewType.FloorPlan and u"tuongxay" in _kd(get_name(v))
+                           and not any(k in _kd(get_name(v)) for k in (u"canho", u"wc", u"baove", u"phongkythuat"))),
+                          key=lambda v: (u"matbangtuongxay" not in _kd(get_name(v)), get_name(v)))
+            if not tpls:
+                raise StopReport([u"DỪNG: không có view template '{}' (cũng không có template mặt bằng tường xây "
+                                  u"nào khác).".format(tmpl_name)])
+            template = tpls[0]
+            TMPL_NOTE.append(u"Không có view template '{}' → dùng '{}' của dự án (Cần xác nhận lại).".format(
+                tmpl_name, get_name(template)))
     # Sheet (D:\AI 2026-11-04): IN[17] False → không đụng sheet; số hiệu là sheet trống có sẵn → đặt vào đó
     old_sheets = [s for s in FilteredElementCollector(doc).OfClass(ViewSheet).ToElements()
                   if place and norm(s.SheetNumber) == norm(number)]
@@ -1471,7 +1486,7 @@ def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_na
         raise StopReport([u"DỪNG: không xóa được {} (đang mở trong Revit?) – đóng tab rồi chạy lại.".format(
             u", ".join(locked))])
 
-    warns, failed, log = [], [], []
+    warns, failed, log = list(TMPL_NOTE), [], []
     z = level.Elevation + from_mm(CUT_Z)
     if TransactionManager is not None:
         TransactionManager.Instance.ForceCloseTransaction()

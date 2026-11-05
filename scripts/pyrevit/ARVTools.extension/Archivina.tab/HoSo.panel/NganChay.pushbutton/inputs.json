@@ -9,7 +9,7 @@
    "index": 0,
    "type": "str",
    "decl": "",
-   "label": "trống và view đang mở là mặt bằng tầng)",
+   "label": "trống và view đang mở là mặt bằng tầng) 2026-11-05: KHÔNG tạo / sửa view template nữa, view mới gán template IN[19] (trống = template có chữ khoá nếu có, không thì giữ template của view gốc)",
    "default": "",
    "kind": "normal"
   },
@@ -155,6 +155,22 @@
    "decl": "bool",
    "label": "Tầng của mặt bằng đang mở chưa có view ngăn cháy lan thì tạo view + template (người dùng yêu cầu 2026-11-04;",
    "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 19,
+   "type": "str",
+   "decl": "str",
+   "label": "View template gán cho view (trống = giữ; \"<Không dùng view template>\" = bỏ template; nút hỏi trong hộp thoại, người dùng yêu cầu 2026-11-05)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 20,
+   "type": "float",
+   "decl": "float",
+   "label": "Tỉ lệ view, mẫu số (0 = giữ; template khoá tỉ lệ thì theo template)",
+   "default": 0.0,
    "kind": "normal"
   }
  ]
