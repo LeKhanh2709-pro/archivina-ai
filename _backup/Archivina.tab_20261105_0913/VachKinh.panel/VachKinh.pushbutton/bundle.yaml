@@ -1,0 +1,3 @@
+title: "Vách\nkính"
+tooltip: "Dựng vách kính (curtain wall) trên mặt bằng đang mở: bảng nhập tên, chiều dài, chiều cao, cửa sổ / cửa đi (rộng tâm - tâm, cao), pick 2 điểm (vách góc vuông: 3 điểm). Chia đố 65 theo quy tắc VK: mỗi ô < 1200, chia đều; cao độ cửa theo MDVK. Đổi chiều dài / chiều cao vách sau này thì tự chia lại. Ctrl+Z một lần là hoàn tác. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

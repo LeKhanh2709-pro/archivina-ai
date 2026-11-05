@@ -1,0 +1,3 @@
+title: "Lỗ mở\nshaft"
+tooltip: "Bấm: vẽ luôn trên view mặt bằng tầng đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. Tạo lỗ mở bằng MỘT Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở của Revit (mỗi ô là một vòng biên trong sketch, như mẫu người dùng vẽ 2026-10-28: 1 lệnh shaft để dễ kiểm soát). Nhận trục / hộp đúng theo quy tắc của công cụ Ngăn cháy lan (dùng chung hàm tim_truc): tên room HKT Nguồn: LoMo_ShaftOpening.dyn."
+author: Archivina BIM

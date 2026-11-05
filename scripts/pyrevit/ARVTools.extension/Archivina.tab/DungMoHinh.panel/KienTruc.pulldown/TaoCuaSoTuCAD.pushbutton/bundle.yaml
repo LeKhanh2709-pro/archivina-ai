@@ -1,0 +1,3 @@
+title: "Cửa sổ từ CAD"
+tooltip: "Tạo cửa sổ nhỏ cho phòng ngủ và WC, gắn vào tường Revit có sẵn, từ mặt bằng DWG đã Link: 1. Nét thẳng / polyline trên layer cửa sổ IN[1] (mặc định \"A-Window\") nằm trong dải bề dày một tường Revit (tường thẳng trên level IN[2], dày ≥ 50 mm) → chiếu lên trục tường, gộp các đoạn chồng / cách ≤ 20 mm thành một ô cửa sổ. Ưu tiên tường song song với nét. Tường Revit đứt tại ô cửa sổ (dựng theo nét tường Mặc định chạy thử (dry-run). Nguồn: ARV_TaoCuaSoTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

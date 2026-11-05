@@ -1,0 +1,81 @@
+{
+ "key": "TaoTuDauGiuongTuCAD",
+ "title": "Tủ đầu giường",
+ "summary": "Đặt tủ đầu giường (Furniture 2D) trong phòng ngủ từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool 22 giường (Revit gộp nét block vào một GeometryInstance nên không dùng tên block). Tách từ phần tủ đầu giường của tool 21. 1. Tủ đầu giường trên CAD, layer A-Nội thất = hình vuông 400 chứa vòng tròn. Tủ sát cạnh giường (≤ STAND_GAP_MM) lấy lưng cùng hướng đầu giường. Tủ không sát giường: lưng = cạnh gần tường hơn, báo \"cần soát\". 2. Room chứa tâm tủ phải có tên chứa một chuỗi trong IN[4] (mặc định \"phòng ngủ\"). Báo cáo liệt kê phòng lọc mà không có tủ. 3. TỦ ĐÈ LÊN BÀN LÀM VIỆC THÌ BỎ (người dùng yêu cầu 2026-10-31): vị trí đó để phiên sau chạy tool bàn. Bàn = hình chữ nhật sâu 450…650, dài 800…1700 có ghế sát cạnh dài. Chồng ≥ DROP_MM mỗi chiều mới gọi là đè. Tool này không đặt bàn. 4. Vị trí: lưng tủ áp mặt nhô ra phòng nhất trong biên Room (Finish) và mặt tường Revit (cả len chân tường tool 11), cách lưng CAD ≤ IN[5]; không có → giữ theo CAD, báo \"cần soát\". Dọc tường giữ tâm CAD. 5. Hướng family (suy từ khung type −400…0 × ±200, cần xem trên mặt bằng): gốc giữa lưng tủ, lưng về +X. Quay ngược → IN[7] = True. 6. Cao độ: Elevation from Level = đỉnh sàn tại tâm tủ − level + IN[6] (mặc định 1 mm như mẫu người dùng đặt tay: family 2D nằm trên mặt sàn mới thấy trên mặt bằng). Không có sàn → IN[6], báo \"cần soát\". 7. Comments = \"ARV-TaoTuDauGiuongTuCAD\". Tủ của tool đã có mà lệch / sai hướng / sai cao độ / khác type → sửa tại chỗ; tủ cùng family người dùng tự đặt → bỏ qua. Tủ đã có ở vị trí đè bàn → báo để xoá tay, tool không tự xoá.",
+ "transaction": "ARV - Tạo tủ đầu giường từ CAD",
+ "source": "ARV_TaoTuDauGiuongTuCAD_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Một phần tên bản CAD (để trống = bản CAD duy nhất trong mô hình / có layer khớp IN[1])",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Lọc layer, nhiều chuỗi cách ';' (khớp chuỗi con), mặc định \"A-Nội thất\"; trống = dò mọi layer",
+   "default": "A-Nội thất",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên level đặt tủ, VD \"TẦNG 3\"",
+   "default": "TẦNG 3",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "FamilyType | str",
+   "label": "Type tủ đầu giường, \"Family : Type\"",
+   "default": "AV_FT_TuDauGiuong : AV_FT_TuDauGiuong",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên Room chứa tủ, nhiều chuỗi cách ';' (trống = mọi phòng)",
+   "default": "phòng ngủ",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "float",
+   "decl": "float",
+   "label": "Lưng tủ CAD cách mặt tường tối đa để áp tường (mm), VD 100",
+   "default": 100.0,
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "float",
+   "decl": "float",
+   "label": "Đặt cao hơn mặt sàn (mm), VD 1",
+   "default": 1.0,
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Đảo hướng: True nếu tủ quay lưng ra phòng (mặc định False)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = đặt thử, báo cáo rồi hoàn tác, không ghi vào mô hình (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  }
+ ]
+}

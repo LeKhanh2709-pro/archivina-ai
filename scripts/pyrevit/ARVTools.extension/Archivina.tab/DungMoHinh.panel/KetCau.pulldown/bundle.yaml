@@ -1,0 +1,9 @@
+title: "Kết\ncấu"
+tooltip: "Các nút dựng kết cấu (bấm để xổ danh sách). Mặc định chạy thử (dry-run), CHƯA DUYỆT."
+layout:
+  - TaoTrucTuCAD
+  - TaoCotVachTuCAD
+  - TaoDamTuCAD
+  - "---"
+  - VeBaoSanTuCAD
+  - CatTuongTheoDamSan

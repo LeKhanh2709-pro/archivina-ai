@@ -1,0 +1,13 @@
+title: "Hoàn\nthiện"
+tooltip: "Các nút dựng hoàn thiện (bấm để xổ danh sách). Mặc định chạy thử (dry-run), CHƯA DUYỆT."
+layout:
+  - TaoSanHoanThien
+  - TaoSanCanHoTuCAD
+  - TaoTranCanHo
+  - "---"
+  - TaoLenGo
+  - TaoLenGachLogia
+  - TaoLenChanTuong
+  - "---"
+  - OpTuongWC
+  - DanTrangCanHo

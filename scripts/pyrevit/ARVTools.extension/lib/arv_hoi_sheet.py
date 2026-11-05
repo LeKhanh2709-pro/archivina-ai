@@ -418,7 +418,7 @@ def _sheet_trong(doc, tu_khoa):
     return ds[0] if ds else None
 
 
-def _hoi_mat_bang(doc, view, tieu_de, ten_goc, tu_khoa, ten_luu):
+def _hoi_mat_bang(doc, view, tieu_de, ten_goc, tu_khoa, ten_luu, nhan_dat=u"Đặt mặt bằng lên bản vẽ (kèm chú thích)"):
     """Bảng hỏi đặt view vừa vẽ lên bản vẽ (Chống thấm / Ngăn cháy lan) → IN[10] – IN[16]. View đã nằm trên sheet thì
     không hỏi (lõi báo 'đã nằm trên sheet'). Có sheet trống sẵn mang tên đúng loại (vd. G19 A.4-201 MẶT BẰNG CHỐNG
     THẤM) thì gợi ý số hiệu đó = đặt vào sheet đó; xoá / đổi số hiệu để tạo sheet mới."""
@@ -439,7 +439,7 @@ def _hoi_mat_bang(doc, view, tieu_de, ten_goc, tu_khoa, ten_luu):
     def goi_y(gd, hm, ten_bv):
         return trong.SheetNumber if trong is not None else None
 
-    kq = _bang(doc, tieu_de, True, u"Đặt mặt bằng lên bản vẽ (kèm chú thích)", u"%s %s" % (ten_goc, tang.upper()),
+    kq = _bang(doc, tieu_de, True, nhan_dat, u"%s %s" % (ten_goc, tang.upper()),
                os.path.join(_THU_MUC_LUU, ten_luu), dong_dau, goi_y)
     if kq is None:
         return None
@@ -455,6 +455,17 @@ def hoi_chong_tham(doc, view):
 def hoi_ngan_chay(doc, view):
     return _hoi_mat_bang(doc, view, u"Ngăn cháy lan – đặt lên bản vẽ", u"MẶT BẰNG NGĂN CHÁY LAN", u"chay lan",
                          "NganChay_sheet.json")
+
+
+def hoi_lan_can_louver(doc, view):
+    """Nút "Định vị lan can, louver" (2026-11-05): cùng bảng như Chống thấm, trả về IN[17] – IN[23] của
+    LanCanLouver_TuDong.py (= IN[10] – IN[16] của _hoi_mat_bang dời 7)."""
+    kq = _hoi_mat_bang(doc, view, u"Định vị lan can, louver – đặt lên bản vẽ", u"MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER",
+                       u"dinh vi lan can", "LanCanLouver_sheet.json",
+                       u"Đặt mặt bằng lên bản vẽ (kèm bảng thống kê lan can / louver)")
+    if kq is None:
+        return None
+    return dict((k + 7, v) for k, v in kq.items())
 
 
 def _ten_ts(doc, pid):

@@ -1,0 +1,15 @@
+#! python3
+# -*- coding: utf-8 -*-
+# File sinh tự động bởi scripts/pyrevit/build_from_dynamo.py – không sửa tay.
+"""Đặt nội thất khu bếp trong phòng khách ăn từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool 22–25 (Revit gộp nét block vào một GeometryInstance nên không dùng tên block). Một tool cho cả khu bếp (người dùng chọn 2026-11-02) vì đá mặt tủ lấy theo biên tủ, bếp từ và chậu rửa nằm trên tủ. Để trống ô type của hạng mục nào thì bỏ hạng mục đó. 1. Tủ lạnh = hình chữ nhật sâu 500…750, dài 850…1200 có nét dải cùng dài ngoài cạnh dài (G19: dải 50, cách 30). Dải ở phía ra phòng. 2. Bếp từ = hình chữ nhật 450…560 × 550…650 chứa ≥ 2 vòng tròn. Chậu rửa = polyline hở khung 650…850 × 400…520 chứa vòng thoát nước. 3. Tủ bếp = hình chữ nhật sâu 550…650 chứa tâm bếp từ hoặc chậu (hình không chứa gì là tủ khác, bỏ). Một hình = tủ thẳng; hai hình vuông góc sát nhau = tủ chữ L. Tủ lạnh nằm trong hình tủ (G19: CH01, 04, 06, 10, 11, 14, 17) thì cắt phần đó khỏi tủ. Tủ phụ = hình tủ không có bếp, chậu nhưng vuông góc và sát đầu nhánh tủ (G19: CH06, CH11, 2100 × 600 chắn giữa bếp và bàn ăn): dùng type IN[4], mặt trước quay về nhánh tủ, không có đá (người dùng chốt 2026-11-02). 4. Lưng tủ, tủ lạnh áp mặt nhô ra phòng nhất (biên Room Finish, mặt tường, len), cách lưng CAD ≤ IN[10]; đầu tủ cách tường bên ≤ IN[11] thì kéo chạm tường. Bếp từ, chậu giữ vị trí CAD dọc tường, lưng thẳng lưng tủ (mẫu FPT P4: gốc family nằm trên mặt lưng tủ). 5. Cỡ: tool dò tham số instance (đổi +100 mm, đo khung, hoàn tác); tên đã biết: tủ lạnh Chieu dai; tủ thẳng Chieu dai, Chieu sau; tủ L chieu dai L1, chieu dai L2. Không có tham số → giữ cỡ type, báo "cần soát". Bếp từ, chậu giữ cỡ type. 6. Hướng family (đối chiếu mẫu FPT P4 2026-11-02): gốc giữa lưng, lưng về +Y, quay ngược → IN[14] = True. Tủ L: gốc ở góc ngoài, trục X = chieu dai L1, trục Y = chieu dai L2 (10 mẫu, góc ngoài trùng góc hai tường). Tool vẫn đọc nét family trên mặt bằng để xác nhận, góc khung không có nét là góc trong; không đọc được thì lấy góc ngoài ở gốc. Mọi góc L đạt được bằng xoay, không cần soi gương. 7. Cao độ: Elevation from Level = đỉnh sàn tại tâm món đồ − level + IN[12] (mặc định 21 như mẫu người dùng: sàn 50, nội thất 71). 8. Đá mặt tủ = Floor type IN[8], biên theo tủ đã căn (6 đỉnh với tủ L), Height Offset From Level = IN[13] (mặc định 50 như mẫu). Theo mẫu FPT P4: lưng theo lưng tủ, mép trước lùi IN[16] (90: tủ sâu 600, đá sâu 510), đầu không sát tường lùi IN[17] (50), đầu sát tường giữ nguyên. 9. Comments = "ARV-TaoNoiThatBepTuCAD <hạng mục>". Món của tool đã có mà lệch / sai hướng / sai cao độ / sai cỡ / khác type → sửa tại chỗ; món cùng family người dùng tự đặt → bỏ qua. Đá của tool đã có mà khác biên → báo Id để xoá tay rồi Run lại, tool không tự xoá."""
+__title__ = "Nội thất bếp"
+import os
+import sys
+
+_here = os.path.dirname(os.path.abspath(__file__))
+_lib = os.path.normpath(os.path.join(_here, "..", "..", "..", "lib"))
+if _lib not in sys.path:
+    sys.path.insert(0, _lib)
+
+import arv_dynamo_host
+arv_dynamo_host.run_button(_here, __revit__)

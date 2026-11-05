@@ -14,7 +14,7 @@ from datetime import datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 GOC = os.path.dirname(os.path.dirname(HERE))
-DICH = ["ChongTham_VeVenChanTuong.py", "NganChay_TrucHKT.py"]
+DICH = ["ChongTham_VeVenChanTuong.py", "NganChay_TrucHKT.py", "LanCanLouver_TuDong.py"]
 MOC0 = "# ==== PHẦN CHUNG ĐẶT SHEET"
 MOC1 = "# ==== HẾT PHẦN CHUNG ĐẶT SHEET ===="
 

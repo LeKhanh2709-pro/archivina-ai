@@ -1,0 +1,132 @@
+{
+  "ten": "LanCanLouver_TuDong",
+  "mo_ta": "Bấm trên mặt bằng tầng: tạo / mở 'MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>' (template riêng: tường xây Halftone, vách / cột BTCT tô đặc, ẩn nội thất / thiết bị vệ sinh / trục link) rồi tag lan can (Railings) và louver theo MARK: tiền tố LK = lan can, LV = louver; tag ưu tiên ngay giữa, phía ngoài nhà, không đè tường / cửa / chữ, lệch thì có leader; bấm lại không trùng; tuỳ chọn đặt lên bản vẽ kèm bảng thống kê lan can / louver. Mặc định Dry-run.",
+  "py": "LanCanLouver_TuDong.py",
+  "dau_vao": [
+    {
+      "ten": "Tên view mặt bằng (trống = view đang mở)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Family tag lan can (Railing Tags)",
+      "kieu": "string",
+      "gia_tri": "AV-Railing Tag- Mark-lan can"
+    },
+    {
+      "ten": "Family tag louver (Window Tags)",
+      "kieu": "string",
+      "gia_tri": "TAG LOUVER MARK"
+    },
+    {
+      "ten": "Family tag louver Generic Model (Generic Model Tags)",
+      "kieu": "string",
+      "gia_tri": "ARV_Tag Louver Mark GM"
+    },
+    {
+      "ten": "Tiền tố Mark lan can (;)",
+      "kieu": "string",
+      "gia_tri": "LK;LC"
+    },
+    {
+      "ten": "Dry-run (True = chỉ báo cáo)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Tiền tố Mark louver (;)",
+      "kieu": "string",
+      "gia_tri": "LV"
+    },
+    {
+      "ten": "Từ khoá louver trong Type Comments / tên family (;)",
+      "kieu": "string",
+      "gia_tri": "Louver;Lam"
+    },
+    {
+      "ten": "Khoảng hở tag - vật cản (mm giấy)",
+      "kieu": "number",
+      "gia_tri": 1.0
+    },
+    {
+      "ten": "Thư mục log (trống = Documents, ARV_Logs)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Đặt lại vị trí tag đã có",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Tag xoay theo phương lan can / louver",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Tạo / mở mặt bằng định vị lan can, louver rồi tag",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Tên view template / tiền tố tên view",
+      "kieu": "string",
+      "gia_tri": "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER"
+    },
+    {
+      "ten": "Hạng mục ẩn thêm trong template (BuiltInCategory, ;)",
+      "kieu": "string",
+      "gia_tri": "OST_PlumbingFixtures"
+    },
+    {
+      "ten": "Luôn bật leader",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Thư mục family tag đóng gói (trống = lib\tag_lan_can của nút)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Đặt mặt bằng lên bản vẽ",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Giai đoạn",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Hạng mục",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Khổ giấy (A1 / A0)",
+      "kieu": "string",
+      "gia_tri": "A1"
+    },
+    {
+      "ten": "Khung tên Family : Type (trống = tự tìm)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Số hiệu sheet (trống = tiếp theo)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tên sheet (trống = tự đặt)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Chỉ tag Mark đúng tiền tố",
+      "kieu": "bool",
+      "gia_tri": true
+    }
+  ]
+}

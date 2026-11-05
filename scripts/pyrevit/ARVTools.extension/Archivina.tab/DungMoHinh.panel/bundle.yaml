@@ -1,0 +1,7 @@
+title: Dựng mô hình
+layout:
+  - KetCau
+  - KienTruc
+  - HoanThien
+  - ThietBiWC
+  - NoiThat

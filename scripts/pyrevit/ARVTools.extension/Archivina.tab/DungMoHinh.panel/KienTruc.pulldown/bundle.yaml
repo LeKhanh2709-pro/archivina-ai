@@ -1,0 +1,10 @@
+title: "Kiến\ntrúc"
+tooltip: "Các nút dựng kiến trúc (bấm để xổ danh sách). Mặc định chạy thử (dry-run), CHƯA DUYỆT."
+layout:
+  - TaoTuongTuCAD
+  - TaoCuaTuCAD
+  - TaoCuaSoTuCAD
+  - "---"
+  - TaoGoLogia
+  - TraGoLogia
+  - TaoLanCanLouverLogia

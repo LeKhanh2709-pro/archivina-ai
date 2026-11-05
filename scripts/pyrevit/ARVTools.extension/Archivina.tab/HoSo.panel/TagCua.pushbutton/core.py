@@ -1399,6 +1399,20 @@ def them_kich_thuoc(doc, fams, dry, thu_muc_nguon=u""):
                 pass
         return kq
 
+    def gop_dung(lb, fd):
+        """Nhãn gộp đúng mẫu "830X2200": Width trước, Height sau, giữa có chữ X (tiền tố Height / hậu tố Width).
+        Model G19_A_L3-32 có family AV-Tag-Window-Lomo (hạng mục Door Tags) nhãn gộp "Height Width" → hiện "2200 830",
+        SAI (người dùng báo 2026-11-04) → không dùng làm nguồn."""
+        f = []
+        for fm in lb.GetParameterFormatting():
+            try:
+                f.append((str(fm.GetParameterDefinition(fd).BuiltInParameter), fm.Prefix or u"", fm.Suffix or u""))
+            except Exception:
+                pass
+        if len(f) != 2 or f[0][0] not in BIP_RONG or f[1][0] not in BIP_CAO:
+            return False
+        return u"X" in (f[0][2] + f[1][1]).upper()
+
     def nhan_theo(fd, ds):
         for lb in FilteredElementCollector(fd).OfClass(lop_nhan):
             if any(b in ds for b, _ in fmts(lb, fd)):
@@ -1416,7 +1430,7 @@ def them_kich_thuoc(doc, fams, dry, thu_muc_nguon=u""):
         r = [t_ for b, t_ in f if b in BIP_RONG]
         c = [t_ for b, t_ in f if b in BIP_CAO]
         if r and c:
-            return "gop"
+            return "gop" if gop_dung(lb, fd) else None
         if r and len(f) == 1 and not r[0]:
             return "rong"
         if c and len(f) == 1:
@@ -1519,6 +1533,36 @@ def them_kich_thuoc(doc, fams, dry, thu_muc_nguon=u""):
                     continue
                 fd = doc.EditFamily(fam)
                 da_mo.append(fd)
+                sai = [lb for lb in FilteredElementCollector(fd).OfClass(lop_nhan)
+                       if any(b in BIP_RONG for b, _ in fmts(lb, fd)) and any(b in BIP_CAO for b, _ in fmts(lb, fd))
+                       and not gop_dung(lb, fd)]
+                net = khung_cua_tool(fd)
+                mk = nhan_theo(fd, ("ALL_MODEL_TYPE_MARK",))
+                if sai and len(net) >= 5 and mk is not None:
+                    # Ô kích thước do công cụ chép SAI thứ tự ("2200 830") → bỏ nhãn đó + khung 2 ô của công cụ, đưa nhãn
+                    # mã về giữa khung rồi thêm lại theo cách Width "X" Height bên dưới
+                    if dry:
+                        ket_qua.append(u"'%s': sẽ sửa ô kích thước sai thứ tự (cao rộng) thành rộng X cao" % ten_f)
+                        continue
+                    t = Transaction(fd, u"Bỏ ô kích thước sai thứ tự")
+                    t.Start()
+                    try:
+                        from System.Collections.Generic import List
+                        ys_ = []
+                        for c in net:
+                            ys_ += [c.GeometryCurve.GetEndPoint(0).Y, c.GeometryCurve.GetEndPoint(1).Y]
+                        ids = List[ElementId]()
+                        for e_ in list(net) + sai:
+                            ids.Add(e_.Id)
+                        fd.Delete(ids)
+                        mk.VerticalAlignment = getattr(type(mk.VerticalAlignment), "Middle")
+                        mk.Coord = XYZ(mk.Coord.X, (max(ys_) + min(ys_)) / 2.0, mk.Coord.Z)
+                        t.Commit()
+                    except Exception:
+                        if t.HasStarted() and not t.HasEnded():
+                            t.RollBack()
+                        raise
+                    ket_qua.append(u"'%s': bỏ ô kích thước sai thứ tự (cao rộng)" % ten_f)
                 if nhan_theo(fd, BIP_RONG) is not None:
                     # Đã thêm ô kích thước trước đó → chỉ chỉnh lại cỡ khung / chữ theo hằng số hiện hành (vd. bản 17 × 8 mm
                     # chạy trên model người dùng 2026-11-03 → bản gọn 14 × 7 mm, chữ 2 mm)

@@ -1,0 +1,3 @@
+title: "Sofa từ CAD"
+tooltip: "Đặt sofa (Furniture 2D) trong phòng khách ăn từ mặt bằng DWG đã Link, NHẬN DIỆN THEO HÌNH DẠNG như tool 22 giường (Revit gộp nét block vào một GeometryInstance nên không dùng tên block). 1. Sofa trên CAD, layer A-Nội thất / A-Interior = hình chữ U: hai tay vịn song song cùng dài 600…1100, nối bằng nét tựa lưng dài 1200…2600 nằm cách đầu tay vịn 100…300 (G19: rộng 1600, tay vịn 810, nét tựa 170; rộ Mặc định chạy thử (dry-run). Nguồn: ARV_TaoSofaTuCAD_v1.dyn. TRẠNG THÁI: CHƯA DUYỆT."
+author: Archivina BIM

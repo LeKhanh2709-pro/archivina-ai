@@ -1,0 +1,16 @@
+title: "Nội\nthất"
+tooltip: "Các nút dựng nội thất (bấm để xổ danh sách). Mặc định chạy thử (dry-run), CHƯA DUYỆT."
+layout:
+  - TaoGiuongTuCAD
+  - TaoTuDauGiuongTuCAD
+  - TaoTuQuanAoTuCAD
+  - "---"
+  - TaoSofaTuCAD
+  - TaoTuTiViTuCAD
+  - TaoBanAnTuCAD
+  - "---"
+  - TaoNoiThatBepTuCAD
+  - TaoBanLamViecTuCAD
+  - "---"
+  - TaoMayGiatTuCAD
+  - TaoCucNongDHTuCAD

@@ -1,0 +1,9 @@
+title: "Thiết bị\nWC"
+tooltip: "Các nút dựng thiết bị wc (bấm để xổ danh sách). Mặc định chạy thử (dry-run), CHƯA DUYỆT."
+layout:
+  - TaoLavaboTuCAD
+  - TaoSenTamTuCAD
+  - TaoBonCauTuCAD
+  - "---"
+  - TaoVachKinhTamTuCAD
+  - TaoVoiXitLoGiayWC

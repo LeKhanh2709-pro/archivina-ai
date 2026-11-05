@@ -16,6 +16,7 @@ import re
 import sys
 import json
 import shutil
+import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -62,7 +63,11 @@ BUTTONS = [
     ("HoSo", "NganChay", u"Ngăn\ncháy lan", "../dynamo/NganChay_TrucHKT"),
     ("HoSo", "LoMoShaft", u"Lỗ mở\nshaft", "../dynamo/LoMo_ShaftOpening"),
     ("HoSo", "TagCua", u"Định vị\n+ tag cửa", "../dynamo/TagCua_TuDong"),
+    # Mặt bằng định vị lan can, louver: tag theo Mark LK / LV (người dùng yêu cầu + duyệt ảnh, icon PA1 2026-11-05)
+    ("HoSo", "LanCanLouver", u"Định vị\nlan can, louver", "../dynamo/LanCanLouver_TuDong"),
     ("HoSo", "ChiTietCua", u"Chi tiết\ncửa", "../dynamo/ChiTietCua_TuDong"),
+    # Bảng thống kê cửa đi / cửa sổ của mặt bằng đang mở, gộp theo Type Mark (người dùng yêu cầu 2026-11-04)
+    ("HoSo", "ThongKeCua", u"Thống kê\ncửa", "../dynamo/ThongKeCua_TuDong"),
     # Bộ AI REVIT (TUONG XAY) của đồng nghiệp, áp dụng 2026-11-04: mặt bằng tường xây cả tầng + dim định vị + legend +
     # sheet; nút một chạm (MOT_CHAM), Shift+bấm = hộp thoại đầy đủ
     ("HoSo", "TuongXay", u"Tường\nxây", "../dynamo/ARV_MBTuongXayTang_v1"),
@@ -81,6 +86,23 @@ MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"
                          "hoi": u"arv_hoi_sheet.hoi_ngan_chay", "tao_view": 18},
             "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},
             "TagCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng", "hoi": u"arv_hoi_sheet.hoi"},
+            # Định vị lan can, louver (2026-11-05): mặt bằng tầng đang mở → lõi tạo / mở mặt bằng định vị rồi tag;
+            # hoi_lan_can_louver trả về IN[17] – IN[23] (đặt lên bản vẽ)
+            "LanCanLouver": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng",
+                             "hoi": u"arv_hoi_sheet.hoi_lan_can_louver",
+                             "tip": u"Mở mặt bằng tầng rồi bấm: hỏi đặt lên bản vẽ, rồi tạo / mở 'MẶT BẰNG ĐỊNH VỊ LAN CAN, "
+                                    u"LOUVER - <tầng>' và tag lan can / louver theo Mark (LK = lan can, LV = louver; Mark "
+                                    u"trống / sai tiền tố thì liệt kê, không tag), tag ngay giữa phía ngoài nhà, không đè, "
+                                    u"bấm lại không trùng; kèm bảng thống kê lan can / louver. Ctrl+Z một lần là hoàn tác. "
+                                    u"Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run."},
+            # Thống kê cửa: mặt bằng tầng đang mở → bảng cửa (mỗi loại 1 dòng: tên hiện tại / tên đổi / dài / cao, người
+            # dùng yêu cầu 2026-11-04 tối) → đổi Type Mark (IN[7]) + tuỳ chọn bảng thống kê Revit (IN[8])
+            "ThongKeCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng",
+                           "hoi": u"arv_bang_cua.hoi_thong_ke_cua",
+                           "tip": u"Mở mặt bằng tầng rồi bấm: hiện bảng các loại cửa đi / cửa sổ trong mặt bằng (cửa trùng hiện "
+                                  u"1 lần): tên hiện tại, tên đổi, chiều dài, chiều cao, số lượng. Gõ tên mới rồi bấm Đổi tên "
+                                  u"(đổi Type Mark, Ctrl+Z một lần là hoàn tác); tuỳ chọn tạo bảng thống kê Revit. Shift+bấm: "
+                                  u"hộp thoại đầy đủ, mặc định Dry-run."},
             "ChiTietCua": {"view_in": None, "tu_khoa": u"", "ten_view": u"bất kỳ", "khong_view": True,
                            "hoi": u"arv_hoi_sheet.hoi_chi_tiet_cua"},
             # Tường xây (người dùng yêu cầu 2026-11-04: bỏ hộp thoại 17 ô, chỉ hỏi đặt lên bản vẽ như Chống thấm):
@@ -103,6 +125,16 @@ STACKS = {
                 ["TaoSofaTuCAD", "TaoTuTiViTuCAD", "TaoBanAnTuCAD"],
                 ["TaoNoiThatBepTuCAD", "TaoBanLamViecTuCAD"], ["TaoMayGiatTuCAD", "TaoCucNongDHTuCAD"]],
 }
+
+
+# Thu gọn (người dùng duyệt ảnh 2026-11-05): 5 nhóm dựng hình (STACKS) gộp vào 1 panel GOP_PANEL, mỗi nhóm = 1 nút lớn
+# xổ xuống (<GOP_PANEL>.panel\<Nhóm>.pulldown\<Tên>.pushbutton), trong nút xổ các chồng cũ ngăn cách bằng vạch "---".
+# Icon nút xổ: icons\<Nhóm>.png nếu có, không thì lấy icon của nút đại diện. Bỏ khoá khỏi PULLDOWNS = về lại chồng nút nhỏ.
+GOP_PANEL = "DungMoHinh"
+PULLDOWNS = {"KetCau": (u"Kết\ncấu", "TaoCotVachTuCAD"), "KienTruc": (u"Kiến\ntrúc", "TaoTuongTuCAD"),
+             "HoanThien": (u"Hoàn\nthiện", "TaoSanHoanThien"), "ThietBiWC": (u"Thiết bị\nWC", "TaoBonCauTuCAD"),
+             "NoiThat": (u"Nội\nthất", "TaoSofaTuCAD")}
+PANEL_TITLES[GOP_PANEL] = u"Dựng mô hình"
 
 
 def stack_of(panel, name):
@@ -497,14 +529,18 @@ def main():
         py_path = base + ".py"
         dyn_path = base + ".dyn"
         stack = stack_of(panel, name)
-        if stack:
+        if stack or panel in PULLDOWNS:
             title = u" ".join(title.split(u"\n"))
         spec, warn = build_spec(name, title, py_path, dyn_path)
         pdir = os.path.join(tab, panel + ".panel")
-        bdir = os.path.join(pdir, stack + ".stack", name + ".pushbutton") if stack else \
-            os.path.join(pdir, name + ".pushbutton")
-        # Nút đã có ở chỗ khác (nút lớn ↔ trong chồng) → chuyển nguyên thư mục, không tạo bản trùng trên ribbon
-        cu = [d for d in [os.path.join(pdir, name + ".pushbutton")] +
+        ddir = os.path.join(tab, GOP_PANEL + ".panel", panel + ".pulldown")
+        if panel in PULLDOWNS:
+            bdir = os.path.join(ddir, name + ".pushbutton")
+        else:
+            bdir = os.path.join(pdir, stack + ".stack", name + ".pushbutton") if stack else \
+                os.path.join(pdir, name + ".pushbutton")
+        # Nút đã có ở chỗ khác (nút lớn ↔ trong chồng ↔ trong nút xổ) → chuyển nguyên thư mục, không tạo bản trùng
+        cu = [d for d in [os.path.join(pdir, name + ".pushbutton"), os.path.join(ddir, name + ".pushbutton")] +
               [os.path.join(pdir, s, name + ".pushbutton") for s in (os.listdir(pdir) if os.path.isdir(pdir) else [])
                if s.endswith(".stack")] if d != bdir and os.path.isdir(d)]
         if cu and not os.path.isdir(bdir):
@@ -541,6 +577,8 @@ def main():
                     if mc.get("hoi") else u"Bấm: vẽ luôn trên view {} đang mở (không hộp thoại, Ctrl+Z một lần là hoàn tác). "
                 tip = (dau + u"Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. {} Nguồn: {}.").format(
                     mc["ten_view"], spec["summary"][:300], tool + ".dyn")
+        if mc and mc.get("tip"):
+            tip = u"{} Nguồn: {}.".format(mc["tip"], tool + ".dyn")
         write(os.path.join(bdir, "script.py"), script_py)
         write(os.path.join(bdir, "bundle.yaml"),
               u"title: {}\ntooltip: {}\nauthor: Archivina BIM\n".format(json.dumps(title, ensure_ascii=False),
@@ -560,6 +598,36 @@ def main():
         if chi and not any(p == panel and n in chi for p, n, _, _ in BUTTONS):
             continue
         pdir = os.path.join(tab, panel + ".panel")
+        if panel in PULLDOWNS:
+            ten, dai_dien = PULLDOWNS[panel]
+            ddir = os.path.join(tab, GOP_PANEL + ".panel", panel + ".pulldown")
+            nhom = [list(g) for g in STACKS.get(panel, [])]
+            le = [n for p, n, _, _ in BUTTONS if p == panel and not any(n in g for g in nhom)]
+            if le:
+                nhom.append(le)
+            dong = []
+            for g in nhom:
+                if dong:
+                    dong.append(u'"---"')
+                dong += g
+            write(os.path.join(ddir, "bundle.yaml"), u"title: {}\ntooltip: {}\nlayout:\n{}".format(
+                json.dumps(ten, ensure_ascii=False),
+                json.dumps(u"Các nút dựng {} (bấm để xổ danh sách). Mặc định chạy thử (dry-run), CHƯA DUYỆT.".format(
+                    PANEL_TITLES[panel].lower()), ensure_ascii=False),
+                u"".join(u"  - {}\n".format(n) for n in dong)))
+            for duoi in (".png", ".dark.png"):
+                icon = os.path.join(HERE, "icons", panel + duoi)
+                if not os.path.isfile(icon):
+                    icon = os.path.join(HERE, "icons", dai_dien + duoi)
+                if os.path.isfile(icon):
+                    shutil.copyfile(icon, os.path.join(ddir, "icon" + duoi))
+            # Panel cũ không còn nút nào (chỉ còn bundle.yaml của chồng) → chuyển vào _backup, không xoá
+            if os.path.isdir(pdir) and not any(d.endswith(".pushbutton") for _, ds, _ in os.walk(pdir) for d in ds):
+                bk = os.path.join(os.path.dirname(os.path.dirname(HERE)), "_backup",
+                                  u"{}.panel_{}".format(panel, time.strftime("%Y%m%d_%H%M")))
+                shutil.move(pdir, bk)
+                print(u"Panel cũ {} (không còn nút) → {}".format(panel, bk))
+            continue
         order = []
         for k, grp in enumerate(STACKS.get(panel, []), 1):
             assert 2 <= len(grp) <= 3 and all(any(p == panel and n == m for p, n, _, _ in BUTTONS) for m in grp), \
@@ -570,6 +638,13 @@ def main():
         order += [n for p, n, _, _ in BUTTONS if p == panel and not stack_of(panel, n)]
         write(os.path.join(pdir, "bundle.yaml"), u"title: {}\nlayout:\n{}".format(
             PANEL_TITLES[panel], u"".join(u"  - {}\n".format(n) for n in order)))
+    if any(p in PULLDOWNS for p in panels):
+        k = min(panels.index(p) for p in panels if p in PULLDOWNS)
+        ds = [p for p in panels if p not in PULLDOWNS]
+        ds.insert(k, GOP_PANEL)
+        write(os.path.join(tab, GOP_PANEL + ".panel", "bundle.yaml"), u"title: {}\nlayout:\n{}".format(
+            PANEL_TITLES[GOP_PANEL], u"".join(u"  - {}\n".format(p) for p in panels if p in PULLDOWNS)))
+        panels = ds
     write(os.path.join(tab, "bundle.yaml"), u"layout:\n{}".format(
         u"".join(u"  - {}\n".format(p) for p in panels + PANEL_VIET_TAY)))
 
