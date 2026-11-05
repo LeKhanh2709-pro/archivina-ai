@@ -1,0 +1,15 @@
+#! python3
+# -*- coding: utf-8 -*-
+# File sinh tự động bởi scripts/pyrevit/build_from_dynamo.py – không sửa tay.
+"""Mặt bằng định vị lan can, louver (người dùng yêu cầu 2026-11-05: "giống nút Định vị + tag cửa", lan can / louver nhận diện và hiện tên theo MARK): - Bấm trên mặt bằng tầng: tạo / mở "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>" (nhân bản view đang mở, không kèm chú thích; template "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER": sàn Halftone, tường xây Halftone, vách / cột BTCT tô đặc, ẩn nội thất / thiết bị vệ sinh / thiết bị cơ điện / ký hiệu mặt đứng, mặt cắt, ẩn trục file link; crop sát nhà) rồi tag. View đang mở đã là mặt bằng định vị lan can thì tag luôn. Tạo view / template / đặt sheet dùng khối chung DatSheet_chung.py (như Chống thấm, Ngăn cháy lan). - Nhận diện theo Mark (instance): Mark bắt đầu bằng tiền tố lan can (IN[4], G19 "LK-01") = lan can, tiền tố louver (IN[6], G19 "LV-01") = louver, ở mọi hạng mục. Mark khác tiền tố: Railings = lan can; Windows / Generic Models có Type Comments hoặc tên family / type chứa từ khoá louver (IN[7]) = louver. Chưa có Mark thì KHÔNG tag, liệt kê để điền Mark (tag hiện Mark nên không có Mark thì tag trống). - Chỉ tag đối tượng có Mark đúng tiền tố (IN[24]); lan can / louver mang Mark khác (vd. số tự tăng 55, 56…) thì liệt kê để đặt lại Mark. - Tag hiện Mark: Railings → family IN[1] (Railing Tags, G19 "AV-Railing Tag- Mark-lan can" người dùng dựng), Windows → IN[2] (Window Tags, G19 "TAG LOUVER MARK"), Generic Models → IN[3] (Generic Model Tags). Dự án chưa có family đó thì dùng / nạp bản đóng gói ARV_Tag Lan Can Mark / ARV_Tag Louver Mark / ARV_Tag Louver Mark GM (thư mục IN[16], mặc định <extension>/lib/tag_lan_can, chép từ 2 family mẫu của người dùng); không có file thì báo, bỏ hạng mục đó. Hạng mục khác (tường, curtain wall…) mang Mark LK / LV chỉ liệt kê: API không đổi được family tag sang Multi-Category (thử 2026-11-05: "The input category id cannot be assigned"). - Vị trí tag như Tag cửa: ưu tiên NGAY GIỮA đối tượng, phía NGOÀI nhà (xa tâm nhà), không đè tường / cột / cửa / cửa sổ / lan can / louver / chữ / tag; lưới gần (dịch dọc ≤ ½ đối tượng + 2 bề dài tag, lùi ≤ TAM_XA_MM_GIAY); lệch khỏi giữa thì leader gắn vào đối tượng; hết chỗ trống thì chỗ ít đè nhất + liệt kê "CẦN XEM LẠI". Tag nằm ngang như 2 tag mẫu người dùng đặt ở G19 Tầng 1 (IN[11] = xoay theo phương đối tượng như tag cửa). - Bấm lại không trùng: đối tượng đã có tag (bất kỳ) trong view thì bỏ qua; IN[10] = dời lại tag đã có cùng family. - Đặt lên bản vẽ (IN[17] – IN[23]): khung tên theo khổ, giữa vùng vẽ, giữ tỉ lệ view; sheet trống có sẵn mang số hiệu đó thì đặt vào; 2 bảng thống kê "BẢNG THỐNG KÊ LAN CAN / LOUVER <TẦNG>" (Mark, chiều dài / rộng × cao, số lượng, gộp theo Mark, lọc theo tầng) góc phải dưới. Dry-run: đặt thử tag trong SubTransaction rồi huỷ, không tạo view / sheet / nạp family."""
+__title__ = "Định vị\nlan can, louver"
+import os
+import sys
+
+_here = os.path.dirname(os.path.abspath(__file__))
+_lib = os.path.normpath(os.path.join(_here, "..", "..", "..", "lib"))
+if _lib not in sys.path:
+    sys.path.insert(0, _lib)
+
+import arv_dynamo_host
+arv_dynamo_host.run_button(_here, __revit__)

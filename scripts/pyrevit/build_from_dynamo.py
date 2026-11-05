@@ -68,6 +68,8 @@ BUTTONS = [
     ("HoSo", "ChiTietCua", u"Chi tiết\ncửa", "../dynamo/ChiTietCua_TuDong"),
     # Bảng thống kê cửa đi / cửa sổ của mặt bằng đang mở, gộp theo Type Mark (người dùng yêu cầu 2026-11-04)
     ("HoSo", "ThongKeCua", u"Thống kê\ncửa", "../dynamo/ThongKeCua_TuDong"),
+    # Bảng đặt tên (Mark) + bảng thống kê lan can, louver như nút Thống kê cửa (người dùng duyệt ảnh, icon PA1, 2026-11-05)
+    ("HoSo", "ThongKeLanCan", u"Thống kê\nlan can, louver", "../dynamo/ThongKeLanCan_TuDong"),
     # Bộ AI REVIT (TUONG XAY) của đồng nghiệp, áp dụng 2026-11-04: mặt bằng tường xây cả tầng + dim định vị + legend +
     # sheet; nút một chạm (MOT_CHAM), Shift+bấm = hộp thoại đầy đủ
     ("HoSo", "TuongXay", u"Tường\nxây", "../dynamo/ARV_MBTuongXayTang_v1"),
@@ -103,6 +105,13 @@ MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"
                                   u"1 lần): tên hiện tại, tên đổi, chiều dài, chiều cao, số lượng. Gõ tên mới rồi bấm Đổi tên "
                                   u"(đổi Type Mark, Ctrl+Z một lần là hoàn tác); tuỳ chọn tạo bảng thống kê Revit. Shift+bấm: "
                                   u"hộp thoại đầy đủ, mặc định Dry-run."},
+            # Thống kê lan can, louver: mặt bằng tầng đang mở → bảng đặt tên (IN[7] = JSON [{ids, moi}], IN[8] = bảng Revit)
+            "ThongKeLanCan": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng",
+                              "hoi": u"arv_bang_lan_can.hoi_thong_ke_lan_can",
+                              "tip": u"Mở mặt bằng tầng rồi bấm: hiện bảng lan can / louver trong mặt bằng (cùng loại + cùng "
+                                     u"kích thước hiện 1 dòng): tên hiện tại (Mark), tên đổi, chiều dài, chiều cao, số lượng. "
+                                     u"Gõ tên mới (LK-…, LV-…) rồi bấm Đổi tên (đặt Mark, Ctrl+Z một lần là hoàn tác); tuỳ chọn "
+                                     u"tạo bảng thống kê Revit. Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run."},
             "ChiTietCua": {"view_in": None, "tu_khoa": u"", "ten_view": u"bất kỳ", "khong_view": True,
                            "hoi": u"arv_hoi_sheet.hoi_chi_tiet_cua"},
             # Tường xây (người dùng yêu cầu 2026-11-04: bỏ hộp thoại 17 ô, chỉ hỏi đặt lên bản vẽ như Chống thấm):

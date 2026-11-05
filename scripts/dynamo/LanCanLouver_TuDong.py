@@ -76,8 +76,9 @@ MAC_DINH = ["", u"AV-Railing Tag- Mark-lan can", u"TAG LOUVER MARK", u"ARV_Tag L
             u"LV", u"Louver;Lam", 1.0, "", False, False, True, TEN_MAU, u"OST_PlumbingFixtures", False, "",
             False, "", "", "A1", "", "", "", True]
 # Family tag đóng gói (lib\tag_lan_can\<tên>.rfa): dùng khi dự án không có family IN[1] / IN[2] / IN[3]
-DU_PHONG_LAN_CAN = u"ARV_Tag Lan Can Mark"
-DU_PHONG_LOUVER = u"ARV_Tag Louver Mark"
+# Cùng tên 2 family mẫu của người dùng trong G19 (người dùng yêu cầu 2026-11-05: model khác nạp đúng family đó)
+DU_PHONG_LAN_CAN = u"AV-Railing Tag- Mark-lan can"
+DU_PHONG_LOUVER = u"TAG LOUVER MARK"
 DU_PHONG_GM = u"ARV_Tag Louver Mark GM"       # Generic Model Tags (louver dựng bằng Generic Model)
 SO_MAC_DINH = u"A.DVLC.00"
 PHAT_PHIA_MM_GIAY = 8.0     # phạt khi đặt tag ở phía trong nhà (mm giấy, cộng vào khoảng cách)
@@ -209,8 +210,13 @@ def lay_kieu_tag(doc, ten_fam, bic, dry, bao):
         bao.append(u"Sẽ nạp family tag '%s' từ %s." % (ten_fam, duong))
         return None
     TransactionManager.Instance.EnsureInTransaction(doc)
-    doc.LoadFamily(duong, tuy_chon_nap())
-    TransactionManager.Instance.TransactionTaskDone()
+    try:
+        doc.LoadFamily(duong, tuy_chon_nap())
+    except Exception as ex:
+        bao.append(u"KHÔNG nạp được family tag '%s' từ %s: %s" % (ten_fam, duong, (u"%s" % ex).splitlines()[0][:200]))
+        return None
+    finally:
+        TransactionManager.Instance.TransactionTaskDone()
     ten_nap = os.path.splitext(os.path.basename(duong))[0]
     s = tim_kieu_tag(doc, ten_fam, bic) or tim_kieu_tag(doc, ten_nap, bic)
     bao.append(u"Nạp family tag '%s' từ %s%s." % (ten_nap, duong, u"" if s is not None else u" – KHÔNG thấy kiểu tag sau khi nạp"))
@@ -442,7 +448,7 @@ def _chinh():
                        u"chưa tag (tag tay bằng Multi-Category Tag): %s" % (len(khac), u", ".join(khac[:20])))
     chua_mark = [(e, lop) for e, lop, _, _ in ds if not mark(e)]
     if chua_mark:
-        xem_lai.append(u"%d đối tượng CHƯA CÓ Mark (không tag, điền Mark rồi bấm lại): %s" % (
+        xem_lai.append(u"%d đối tượng CHƯA CÓ Mark (không tag; đặt tên bằng nút Thống kê lan can, louver rồi bấm lại): %s" % (
             len(chua_mark), u", ".join(u"%d (%s)" % (e.Id.Value, lop) for e, lop in chua_mark[:30])))
 
     # ---------- Kiểu tag (nạp family đóng gói nếu thiếu; ngoài transaction) ----------
@@ -452,7 +458,7 @@ def _chinh():
 
     sai_tt = [(e, lop) for e, lop, _, _ in ds if mark(e) and not dung_tien_to(e, lop)]
     if sai_tt and doc_in(24):
-        xem_lai.append(u"%d đối tượng có Mark KHÔNG theo tiền tố %s (không tag, đặt lại Mark rồi bấm lại): %s" % (
+        xem_lai.append(u"%d đối tượng có Mark KHÔNG theo tiền tố %s (không tag; đặt tên bằng nút Thống kê lan can, louver rồi bấm lại): %s" % (
             len(sai_tt), u" / ".join(tach(doc_in(4)) + tach(doc_in(6))),
             u", ".join(u"%d (%s, Mark %s)" % (e.Id.Value, lop, mark(e)) for e, lop in sai_tt[:30])))
 
@@ -463,7 +469,9 @@ def _chinh():
                BuiltInCategory.OST_Windows: (doc_in(2), BuiltInCategory.OST_WindowTags, DU_PHONG_LOUVER),
                BuiltInCategory.OST_GenericModel: (doc_in(3), BuiltInCategory.OST_GenericModelTags, DU_PHONG_GM)}
     kieu = {}
-    can = set(bic for e, lop, bic, _ in ds if se_tag(e, lop))
+    # Luôn nạp family tag lan can + louver (Windows), và Generic Models nếu view có louver loại đó, kể cả khi chưa có đối
+    # tượng nào đủ Mark để tag: người dùng cần family trong dự án (2026-11-05: model chưa có Mark thì trước đây không nạp)
+    can = set(bic for _, _, bic, _ in ds) | set((BuiltInCategory.OST_StairsRailing, BuiltInCategory.OST_Windows))
     for bic in can:
         ten_fam, cat_tag, du_phong = bic_tag[bic]
         s = tim_kieu_tag(doc, ten_fam, cat_tag)
@@ -839,7 +847,8 @@ def _chinh():
                                             ten_sheet, SO_MAC_DINH, None)
                 for s_ in b_:
                     p(s_)
-                if any(s_.startswith(u"ĐÃ ĐẶT") for s_ in b_):
+                # View đã nằm trên sheet từ lần bấm trước (lúc đó chưa có Mark nên chưa có bảng): vẫn bổ sung bảng còn thiếu
+                if any(s_.startswith(u"ĐÃ ĐẶT") or u"đã nằm trên sheet" in s_ for s_ in b_):
                     for s_ in dat_bang_thong_ke(doc, view, [x for x in ds if se_tag(x[0], x[1])], tang):
                         p(s_)
             except Exception as ex:
@@ -906,15 +915,23 @@ def tao_bang_tk(doc, bic, ten_bang, level, loai, ds_mark):
         return None
 
     f_mark = lay(BuiltInParameter.ALL_MODEL_MARK)
+    # Cột như bảng cửa + ThongKeLanCan_TuDong.py (người dùng yêu cầu 2026-11-05 "như cửa"): Tên / Chiều dài / Chiều cao / SL
     if loai == LOP_LAN_CAN:
-        f_2 = None          # bỏ cột Loại (tên railing type dài, bảng tràn sang mặt bằng – thử G19 2026-11-05)
-        f_3 = lay(BuiltInParameter.CURVE_ELEM_LENGTH, BuiltInParameter.INSTANCE_LENGTH_PARAM)
-        nhan = (u"Ký hiệu", u"", u"Tổng chiều dài")
+        f_2 = lay(BuiltInParameter.CURVE_ELEM_LENGTH, BuiltInParameter.INSTANCE_LENGTH_PARAM)
+        f_3 = None
+        for sf in d.GetSchedulableFields():
+            try:
+                if sf.GetName(doc) == u"Railing Height":
+                    f_3 = d.AddField(sf)
+                    break
+            except Exception:
+                pass
+        nhan = (u"Tên", u"Tổng chiều dài", u"Chiều cao")
     else:
         f_2 = lay(BuiltInParameter.WINDOW_WIDTH, BuiltInParameter.GENERIC_WIDTH, BuiltInParameter.FAMILY_WIDTH_PARAM)
         f_3 = lay(BuiltInParameter.WINDOW_HEIGHT, BuiltInParameter.DOOR_HEIGHT, BuiltInParameter.GENERIC_HEIGHT,
                   BuiltInParameter.FAMILY_HEIGHT_PARAM)
-        nhan = (u"Ký hiệu", u"Chiều rộng", u"Chiều cao")
+        nhan = (u"Tên", u"Chiều dài", u"Chiều cao")
     f_dem = None
     for sf in d.GetSchedulableFields():
         if str(sf.FieldType) == "Count":
@@ -929,9 +946,10 @@ def tao_bang_tk(doc, bic, ten_bang, level, loai, ds_mark):
     for f, nh in hien:
         if f is not None:
             f.ColumnHeading = nh
-    if loai == LOP_LAN_CAN and f_3 is not None:
+    for f in (f_dem, f_2 if loai == LOP_LAN_CAN else None):
         try:
-            f_3.DisplayType = ScheduleFieldDisplayType.Totals
+            if f is not None:
+                f.DisplayType = ScheduleFieldDisplayType.Totals
         except Exception:
             pass
     try:
@@ -959,10 +977,12 @@ def tao_bang_tk(doc, bic, ten_bang, level, loai, ds_mark):
         d.ClearSortGroupFields()
         d.AddSortGroupField(ScheduleSortGroupField(f_mark.FieldId))
     d.IsItemized = False
-    try:
-        d.ShowTitle = True
-    except Exception:
-        pass
+    for ten_tt, gt in (("ShowTitle", True), ("ShowHeaders", True), ("ShowGrandTotal", True),
+                       ("ShowGrandTotalTitle", True), ("ShowGrandTotalCount", False), ("GrandTotalTitle", u"TỔNG")):
+        try:
+            setattr(d, ten_tt, gt)
+        except Exception:
+            pass
     return vs, u"tạo mới"
 
 
@@ -984,6 +1004,9 @@ def dat_bang_thong_ke(doc, view, ds, tang):
     x0, y0, x1, y1 = sh_vung_ve(sh, tbs[0], net)
     lv = view.GenLevel
     bang = []
+    co_san = dict((si.ScheduleId.Value, si) for si in FilteredElementCollector(doc, sh.Id).OfClass(ScheduleSheetInstance)
+                  if not si.IsTitleblockRevisionSchedule)
+    y_dau = y0          # bảng đã đặt trên sheet thì giữ nguyên chỗ, bảng mới xếp lên trên
     for lop, nhan in ((LOP_LAN_CAN, u"LAN CAN"), (LOP_LOUVER, u"LOUVER")):
         dem = {}
         for e, l, bic, _ in ds:
@@ -995,6 +1018,9 @@ def dat_bang_thong_ke(doc, view, ds, tang):
         try:
             vs, cach = tao_bang_tk(doc, bic, u"BẢNG THỐNG KÊ %s %s" % (nhan, tang.upper()), lv, lop, dem[bic])
             doc.Regenerate()
+            if vs.Id.Value in co_san:
+                y_dau = max(y_dau, co_san[vs.Id.Value].get_BoundingBox(sh).Max.Y + ft(KHE_BANG_MM))
+                continue
             si = ScheduleSheetInstance.Create(doc, sh.Id, vs.Id, XYZ(x0, y1, 0))
             bang.append((si, vs, cach))
             if len(dem) > 1:
@@ -1003,7 +1029,7 @@ def dat_bang_thong_ke(doc, view, ds, tang):
         except Exception as ex:
             bao.append(u"Không tạo được bảng thống kê %s: %s" % (nhan, (u"%s" % ex).splitlines()[0][:150]))
     doc.Regenerate()
-    y = y0
+    y = y_dau
     khe = ft(KHE_BANG_MM)
     for si, vs, cach in reversed(bang):
         bb_ = si.get_BoundingBox(sh)

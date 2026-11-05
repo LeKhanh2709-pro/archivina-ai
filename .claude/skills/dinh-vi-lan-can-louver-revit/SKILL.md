@@ -1,6 +1,6 @@
 ---
 name: dinh-vi-lan-can-louver-revit
-description: 'Mặt bằng định vị lan can, louver Revit – Đứng ở mặt bằng tầng bấm 1 nút: tạo / mở "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>" (template riêng như mặt bằng định vị cửa: tường xây Halftone, vách / cột BTCT tô đặc, ẩn nội thất, thiết bị vệ sinh, trục link), rồi tag lan can (Railings) và louver (Windows / Generic Models) theo MARK: Mark tiền tố LK = lan can, LV = louver, tag hiện đúng Mark; tag ưu tiên ngay giữa đối tượng, phía ngoài nhà, không đè tường / cửa / chữ, lệch thì có leader; bấm lại không trùng; Mark trống / sai tiền tố thì liệt kê; tuỳ chọn đặt lên bản vẽ kèm bảng thống kê lan can / louver. Nút pyRevit Archivina > HS TKBVTC > Định vị lan can, louver + graph Dynamo LanCanLouver_TuDong.dyn. Dùng khi người dùng nhờ "mặt bằng định vị lan can", "định vị louver", "tag lan can / louver theo mark", "tag LK / LV", hoặc sửa / thử nút này.'
+description: 'Mặt bằng định vị lan can, louver Revit – Đứng ở mặt bằng tầng bấm 1 nút: tạo / mở "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>" (template riêng như mặt bằng định vị cửa: tường xây Halftone, vách / cột BTCT tô đặc, ẩn nội thất, thiết bị vệ sinh, trục link), rồi tag lan can (Railings) và louver (Windows / Generic Models) theo MARK: Mark tiền tố LK = lan can, LV = louver, tag hiện đúng Mark; tag ưu tiên ngay giữa đối tượng, phía ngoài nhà, không đè tường / cửa / chữ, lệch thì có leader; bấm lại không trùng; Mark trống / sai tiền tố thì liệt kê; tuỳ chọn đặt lên bản vẽ kèm bảng thống kê lan can / louver. Nút pyRevit Archivina > HS TKBVTC > Định vị lan can, louver + graph Dynamo LanCanLouver_TuDong.dyn. Kèm nút Thống kê lan can, louver: bảng đặt tên (Mark) + schedule như nút Thống kê cửa. Dùng khi người dùng nhờ "mặt bằng định vị lan can", "định vị louver", "tag lan can / louver theo mark", "tag LK / LV", "thống kê lan can / louver", "đặt Mark lan can", hoặc sửa / thử các nút này.'
 ---
 
 # Mặt bằng định vị lan can, louver (Archivina, Revit 2027)
@@ -31,9 +31,10 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
 3. **Chỉ tag Mark đúng tiền tố** (IN[24], mặc định bật). Mark trống / sai tiền tố (vd. 55) → không tag, liệt kê "CẦN XEM
    LẠI" để người dùng điền Mark rồi bấm lại.
 4. **Family tag**: Railings → IN[1] `AV-Railing Tag- Mark-lan can`; Windows → IN[2] `TAG LOUVER MARK`; Generic Models →
-   IN[3] `ARV_Tag Louver Mark GM`. Dự án thiếu → dùng / nạp bản đóng gói trong `lib\tag_lan_can\`
-   (`ARV_Tag Lan Can Mark.rfa` – Railing Tags, `ARV_Tag Louver Mark.rfa` – Window Tags, `ARV_Tag Louver Mark GM.rfa` –
-   Generic Model Tags; chép từ 2 family mẫu của người dùng, family GM đổi hạng mục). Tag xong mà chữ tag ≠ Mark thì báo.
+   IN[3] `ARV_Tag Louver Mark GM`. Dự án thiếu → nạp bản đóng gói trong `lib\tag_lan_can\` (cùng tên family mẫu G19 của
+   người dùng; `ARV_Tag Louver Mark GM.rfa` là bản đổi hạng mục sang Generic Model Tags). **Luôn nạp** family lan can +
+   louver (Windows), và GM nếu view có louver loại đó, KỂ CẢ khi chưa có đối tượng nào đủ Mark để tag (sửa 2026-11-05: bản
+   đầu chỉ nạp khi có đối tượng sẽ tag nên model chưa có Mark không nạp gì). Tag xong mà chữ tag ≠ Mark thì báo.
    Hạng mục khác (tường, curtain wall…) mang Mark LK / LV: chỉ liệt kê (Revit 2027.3 KHÔNG đổi được family tag sang
    Multi-Category qua API: "The input category id cannot be assigned").
 5. **Vị trí tag** (thuật toán Tag cửa): hệ cục bộ theo đối tượng (lan can: đoạn đường dẫn dài nhất; louver: Hand /
@@ -46,16 +47,36 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
 7. **Đặt lên bản vẽ** (IN[17] – IN[23], hộp thoại `arv_hoi_sheet.hoi_lan_can_louver` = `_hoi_mat_bang` dời chỉ số 7):
    khung tên theo khổ, giữa vùng vẽ, giữ tỉ lệ view, thu trục; sheet trống có sẵn mang tên "định vị lan can" thì gợi ý số
    hiệu đó; số mặc định tiếp theo trong hạng mục (`A.DVLC.01` khi chưa có). Sau đó 2 bảng thống kê
-   `BẢNG THỐNG KÊ LAN CAN <TẦNG>` (Ký hiệu / Tổng chiều dài / Số lượng) và `BẢNG THỐNG KÊ LOUVER <TẦNG>` (Ký hiệu /
-   Chiều rộng / Chiều cao / Số lượng), gộp theo Mark, lọc tầng + Mark BeginsWith tiền tố chung, sát góc phải dưới vùng vẽ;
-   bảng cùng tên đã có thì dùng lại.
+   `BẢNG THỐNG KÊ LAN CAN <TẦNG>` (Tên / Tổng chiều dài / Chiều cao / Số lượng) và `BẢNG THỐNG KÊ LOUVER <TẦNG>` (Tên /
+   Chiều dài / Chiều cao / Số lượng), gộp theo Mark, dòng TỔNG, lọc tầng + Mark BeginsWith tiền tố chung, sát góc phải dưới
+   vùng vẽ; bảng cùng tên đã có thì dùng lại. View đã nằm trên sheet từ lần bấm trước thì bổ sung bảng còn thiếu, bảng đã
+   đặt giữ nguyên chỗ.
 8. Dry-run (IN[5]): đặt thử tag trong SubTransaction rồi huỷ; không tạo view / sheet / nạp family (chỉ báo "sẽ …").
+
+## Nút Thống kê lan can, louver (người dùng yêu cầu 2026-11-05: "thống kê lan can louver như cửa")
+- `Archivina` → `HS TKBVTC` → **Thống kê lan can, louver** (`ThongKeLanCan.pushbutton`, sau Thống kê cửa; icon PA1 mdi
+  `table-edit`, người dùng duyệt ảnh 2026-11-05). Lõi `scripts\dynamo\ThongKeLanCan_TuDong.py` (+ `.json`, `.dyn`), bảng
+  `lib\arv_bang_lan_can.py` (`hoi_thong_ke_lan_can`, viết tay). Thứ tự dùng trên model chưa có Mark: Thống kê (đặt tên) →
+  Định vị (tag + bảng lên sheet).
+- **Bảng đặt tên**: cột như bảng cửa (Loại / Family : Type / Tên hiện tại / Tên đổi / Chiều dài / Chiều cao / SL mặt bằng /
+  SL cả dự án). Khác cửa: tên là MARK của từng đối tượng, không phải Type Mark. 1 dòng = cùng lớp + type + kích thước
+  (lan can dài làm tròn 10 mm, cao = Railing Height của type) + Mark đúng tiền tố; Mark trống / sai tiền tố gộp chung để
+  đặt tên 1 lần (hiện `75, 76, 80 … (11 Mark)`). Dòng vàng: chưa có Mark đúng tiền tố / tên trùng nhóm khác. Bấm Đổi
+  tên: tên sai tiền tố hoặc trùng nhóm khác thì hỏi Yes / No.
+- **Ô "cả các tầng khác"** (mặc định tích, nhớ ở `%APPDATA%\pyRevit\ARVTools\ThongKeLanCan.json`): đặt Mark cho cả đối
+  tượng cùng nhóm toàn dự án. Nhóm đã có Mark đúng tiền tố khác không bị ghi đè vì khoá nhóm chứa Mark.
+- **Bảng Revit**: cùng tên với bảng của nút Định vị; đã có thì CẬP NHẬT cột / lọc / gộp. Lan can Railings, louver theo hạng
+  mục có nhiều louver nhất trong view (bộ lọc không có "hoặc", còn lại báo CẦN XEM LẠI); lọc Mark BeginsWith khi chỉ dùng
+  1 tiền tố, dùng cả LK + LC thì HasValue.
+- Nhiều đối tượng cùng Mark làm Revit thêm cảnh báo `Elements have duplicate "Mark" values`: bản sao L3-32 từ 0 lên 8
+  (đúng 8 nhóm có > 1 cái). Hệ quả của việc gộp theo Mark, không chặn; chưa báo người dùng xử lý gì thêm.
 
 ## Tệp
 - Lõi `scripts\dynamo\LanCanLouver_TuDong.py` (25 ô IN). Khối "PHẦN CHUNG ĐẶT SHEET" chép từ `DatSheet_chung.py` bằng
   `python scripts\dynamo\gop_dat_sheet.py` – không sửa tay khối đó. Spec `LanCanLouver_TuDong.json` → `.dyn` bằng
   `build_dyn.py`.
-- Family tag đóng gói: `scripts\pyrevit\ARVTools.extension\lib\tag_lan_can\`.
+- Family tag đóng gói: `scripts\pyrevit\ARVTools.extension\lib\tag_lan_can\` (bản tên `ARV_Tag Lan Can Mark` / `ARV_Tag
+  Louver Mark` cũ đã chuyển vào `_backup\tag_lan_can_20261105_1029\`).
 - Hộp thoại: `lib\arv_hoi_sheet.py` → `hoi_lan_can_louver` (thêm 2026-11-05; `_hoi_mat_bang` có thêm tham số
   `nhan_dat`, mặc định giữ chữ cũ cho Chống thấm / Ngăn cháy lan).
 - Nút: `Archivina` → `HS TKBVTC` → **Định vị lan can, louver** (thư mục `HoSo.panel\LanCanLouver.pushbutton`, ngay sau
@@ -80,7 +101,15 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
   bản sao G19 Mark GỐC: tạo view + sheet A.DVLC.01, tag `LK-01` + `LV-01`, liệt kê 20 lan can chưa có Mark + 16 louver
   Mark số (55…70); bấm lần 2 không thêm. Người dùng chưa bấm trong Revit của mình (`Cần xác nhận lại`).
 
+- Sửa 2026-11-05 trưa, thử bản sao model thật L3-32 (chưa có 2 family, 17 lan can chưa Mark, 17 louver Mark số):
+  - Lõi (`_tmp\revit_lancan\thu2\`, Dynamo): nạp đủ 2 family dù tag 0; 6 + 3 dòng đặt tên; 34 tag đúng chữ, 0 đè; bấm lại
+    không trùng.
+  - NÚT THẬT qua journal (`_tmp\pyrevit_lancan\ext2\` nút `ARVTestLK`, `journal2.txt`, `kq2\`; đã gỡ khỏi Extension Search
+    Path): Định vị (nạp family, sheet A.DVLC.01, chưa bảng) → Thống kê → Định vị (34 tag, 2 bảng vào sheet đã có) → bấm
+    lại 2 nút từ view định vị không trùng. Người dùng chưa bấm trong Revit của mình (`Cần xác nhận lại`).
+
 ## Bẫy đã gặp
+- Thử nhánh nạp family phải dùng model KHÔNG có family: G19 có sẵn nên lần thử đầu không chạy tới nhánh này.
 - Phía ngoài theo TÂM NHÀ sai với nhà chữ U (logia nhìn ra sân trong bị tag vào trong căn) → dò tia 2 phía tới tường gần
   nhất (giao tia – cạnh chính xác; dò bước 100 mm nhảy qua tường mỏng), phía trống xa hơn là ngoài; bỏ tường chứa điểm
   giữa đối tượng (gờ dưới lan can).

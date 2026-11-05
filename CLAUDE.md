@@ -205,6 +205,15 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     trùng. **Người dùng duyệt ảnh + icon PA1 (`tag-text-outline`) 2026-11-05, đã build** nút `Archivina` → `HS TKBVTC` →
     `Định vị lan can, louver` (sau Định vị + tag cửa); bấm nút thật qua journal trên G19 Mark gốc OK (`_tmp\pyrevit_lancan\`).
     Revit phải Reload pyRevit; người dùng chưa bấm thử (`Cần xác nhận lại`).
+  - **Sửa 2026-11-05 trưa** (người dùng báo trên model thật không nạp được family tag, gửi G19): luôn nạp family tag lan
+    can + louver kể cả chưa có Mark đúng (bản đầu chỉ nạp khi có đối tượng sẽ tag), bản đóng gói mang đúng tên G19
+    `AV-Railing Tag- Mark-lan can` / `TAG LOUVER MARK`; view đã trên sheet thì bổ sung bảng còn thiếu.
+  - **Nút `Thống kê lan can, louver`** (`ThongKeLanCan_TuDong.dyn`, người dùng yêu cầu "như cửa", duyệt ảnh + icon PA1
+    `table-edit` 2026-11-05, đã build): bảng đặt tên `lib\arv_bang_lan_can.py` (tên = MARK từng đối tượng; cùng loại + kích
+    thước 1 dòng) + `BẢNG THỐNG KÊ LAN CAN / LOUVER <TẦNG>` (Tên / Chiều dài / Chiều cao / Số lượng, gộp theo Mark, TỔNG).
+    Bấm nút thật qua journal trên bản sao L3-32 OK (`_tmp\pyrevit_lancan\kq2\`): nạp 2 family, 34 tag đúng chữ, bảng vào
+    sheet đã có, bấm lại không trùng; cảnh báo duplicate Mark 0 → 8. Người dùng chưa bấm trong Revit của mình
+    (`Cần xác nhận lại`).
 - `ARV_MBTuongXayTang_v1.dyn` (bộ AI REVIT `AI REVIT\TUONG XAY\` của đồng nghiệp, người dùng yêu cầu áp dụng 2026-11-04;
   bản gốc giữ nguyên, bản dùng ở `scripts\dynamo\`):
   - Chức năng: mặt bằng TƯỜNG XÂY (định vị tường) cả tầng theo mẫu FPT P5 A.CD.04.07: view mới chép thông số template
