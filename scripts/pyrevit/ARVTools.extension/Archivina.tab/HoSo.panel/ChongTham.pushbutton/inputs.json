@@ -162,7 +162,7 @@
    "type": "str",
    "decl": "str",
    "label": "View template gán cho view (trống = giữ; \"<Không dùng view template>\" = bỏ template; nút hỏi trong hộp thoại, người dùng yêu cầu 2026-11-05)",
-   "default": "",
+   "default": null,
    "kind": "normal"
   },
   {
@@ -170,7 +170,7 @@
    "type": "float",
    "decl": "float",
    "label": "Tỉ lệ view, mẫu số (0 = giữ; template khoá tỉ lệ thì theo template)",
-   "default": 0.0,
+   "default": null,
    "kind": "normal"
   }
  ]

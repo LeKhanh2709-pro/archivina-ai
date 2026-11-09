@@ -106,6 +106,14 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     `AV_Hatch Chống Thấm WC` (`HATCH_CHUNG`), chú thích 1 mục "CHỐNG THẤM SÀN WC, LÔ GIA" + nét vén; kiểu `... Logia`
     chỉ còn để nhận hatch cũ (không vẽ trùng) và chú thích view cũ đã có. Thử bản sao TẦNG 3: 59 hatch cùng kiểu, chú
     thích 2 mục, bấm lại không trùng. Nút sinh lại 09:20; G19 thật (đã vẽ 2 kiểu từ trước) không sửa lại.
+  - **Bảng ghi chú có Diện tích** (người dùng yêu cầu + duyệt ảnh 2026-11-09, mẫu "Bảng ghi chú"): drafting view
+    `BẢNG GHI CHÚ - <tên>` thay chú thích cũ, cột DIỆN TÍCH | KÝ HIỆU | TÊN VỊ TRÍ CHỐNG THẤM / NGĂN CHÁY LAN; diện tích =
+    tổng tham số Area các Filled Region cùng kiểu trong view (`sh_dien_tich`, 1 số lẻ), hàng nét vén để trống; chưa đưa
+    phần "Lưu ý" / số hiệu chi tiết của mẫu. Bấm lại: bảng đã có thì chỉ sửa chữ ô diện tích; sheet còn view
+    `CHÚ THÍCH - ...` bản cũ thì chỉ báo (người dùng tự xoá viewport rồi bấm lại, bảng được đặt mới). Thử Dynamo bản sao
+    (`_tmp\revit_dientich\thu1\`): L3-32 TẦNG 3 221,6 m² / 1,1 m² (3 ô có dấu X CAD), G19 119,0 + 109,6 / 11,6 m², đối
+    chiếu biên hatch khớp, bấm lại không trùng. Nút ChongTham + NganChay + LanCanLouver sinh lại 09:49 (Lan can chỉ do
+    khối chung), Revit phải Reload pyRevit; nút thật chưa bấm thử (`Cần xác nhận lại`).
 - **Hỏi View template + Tỉ lệ, KHÔNG tự tạo template** (người dùng yêu cầu 2026-11-05, áp cho 5 nút Chống thấm, Ngăn cháy
   lan, Định vị + tag cửa, Định vị lan can louver, Tường xây):
   - Hộp thoại `arv_hoi_sheet._bang(tpl_view=...)` thêm 2 ô ngay sau ô "Đặt lên bản vẽ": View template (template mặt bằng

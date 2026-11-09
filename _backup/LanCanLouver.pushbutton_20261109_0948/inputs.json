@@ -1,0 +1,225 @@
+{
+ "key": "LanCanLouver",
+ "title": "Định vị lan can, louver",
+ "summary": "Mặt bằng định vị lan can, louver (người dùng yêu cầu 2026-11-05: \"giống nút Định vị + tag cửa\", lan can / louver nhận diện và hiện tên theo MARK): - Bấm trên mặt bằng tầng: tạo / mở \"MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>\" (nhân bản view đang mở, không kèm chú thích; template \"MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER\": sàn Halftone, tường xây Halftone, vách / cột BTCT tô đặc, ẩn nội thất / thiết bị vệ sinh / thiết bị cơ điện / ký hiệu mặt đứng, mặt cắt, ẩn trục file link; crop sát nhà) rồi tag. View đang mở đã là mặt bằng định vị lan can thì tag luôn. Tạo view / template / đặt sheet dùng khối chung DatSheet_chung.py (như Chống thấm, Ngăn cháy lan). - Nhận diện theo Mark (instance): Mark bắt đầu bằng tiền tố lan can (IN[4], G19 \"LK-01\") = lan can, tiền tố louver (IN[6], G19 \"LV-01\") = louver, ở mọi hạng mục. Mark khác tiền tố: Railings = lan can; Windows / Generic Models có Type Comments hoặc tên family / type chứa từ khoá louver (IN[7]) = louver. Chưa có Mark thì KHÔNG tag, liệt kê để điền Mark (tag hiện Mark nên không có Mark thì tag trống). - Chỉ tag đối tượng có Mark đúng tiền tố (IN[24]); lan can / louver mang Mark khác (vd. số tự tăng 55, 56…) thì liệt kê để đặt lại Mark. - Tag hiện Mark: Railings → family IN[1] (Railing Tags, G19 \"AV-Railing Tag- Mark-lan can\" người dùng dựng), Windows → IN[2] (Window Tags, G19 \"TAG LOUVER MARK\"), Generic Models → IN[3] (Generic Model Tags). Dự án chưa có family đó thì dùng / nạp bản đóng gói ARV_Tag Lan Can Mark / ARV_Tag Louver Mark / ARV_Tag Louver Mark GM (thư mục IN[16], mặc định <extension>\\lib\\tag_lan_can, chép từ 2 family mẫu của người dùng); không có file thì báo, bỏ hạng mục đó. Hạng mục khác (tường, curtain wall…) mang Mark LK / LV chỉ liệt kê: API không đổi được family tag sang Multi-Category (thử 2026-11-05: \"The input category id cannot be assigned\"). - Vị trí tag như Tag cửa: ưu tiên NGAY GIỮA đối tượng, phía NGOÀI nhà (xa tâm nhà), không đè tường / cột / cửa / cửa sổ / lan can / louver / chữ / tag; lưới gần (dịch dọc ≤ ½ đối tượng + 2 bề dài tag, lùi ≤ TAM_XA_MM_GIAY); lệch khỏi giữa thì leader gắn vào đối tượng; hết chỗ trống thì chỗ ít đè nhất + liệt kê \"CẦN XEM LẠI\". Tag nằm ngang như 2 tag mẫu người dùng đặt ở G19 Tầng 1 (IN[11] = xoay theo phương đối tượng như tag cửa). - Bấm lại không trùng: đối tượng đã có tag (bất kỳ) trong view thì bỏ qua; IN[10] = dời lại tag đã có cùng family. - Đặt lên bản vẽ (IN[17] – IN[23]): khung tên theo khổ, giữa vùng vẽ, giữ tỉ lệ view; sheet trống có sẵn mang số hiệu đó thì đặt vào; 2 bảng thống kê \"BẢNG THỐNG KÊ LAN CAN / LOUVER <TẦNG>\" (Mark, chiều dài / rộng × cao, số lượng, gộp theo Mark, lọc theo tầng) góc phải dưới. Dry-run: đặt thử tag trong SubTransaction rồi huỷ, không tạo view / sheet / nạp family.",
+ "transaction": "ARV - Định vị lan can, louver",
+ "source": "LanCanLouver_TuDong.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên view mặt bằng (trống = view đang mở)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Family tag lan can (Railing Tags)",
+   "default": "AV-Railing Tag- Mark-lan can",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Family tag louver hạng mục Windows (Window Tags)",
+   "default": "TAG LOUVER MARK",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Family tag louver hạng mục Generic Models (Generic Model Tags)",
+   "default": "ARV_Tag Louver Mark GM",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Tiền tố Mark lan can, cách nhau bằng ;",
+   "default": "LK;LC",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run (True = chỉ báo cáo)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Tiền tố Mark louver, cách nhau bằng ;",
+   "default": "LV",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Từ khoá louver trong Type Comments / tên family / type, cách nhau bằng ;",
+   "default": "Louver;Lam",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "float",
+   "decl": "float",
+   "label": "Khoảng hở tag - vật cản (mm giấy)",
+   "default": 1.0,
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "str",
+   "decl": "str",
+   "label": "Thư mục log (trống = Documents\\ARV_Logs\\lan_can_louver)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 10,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Đặt lại vị trí tag đã có (cùng family tag)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 11,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Tag xoay theo phương lan can / louver (False = luôn nằm ngang)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 12,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Tạo / mở mặt bằng định vị lan can, louver rồi tag trên đó (False = tag ngay trên view IN[0])",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 13,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên view template / tiền tố tên view",
+   "default": "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER",
+   "kind": "normal"
+  },
+  {
+   "index": 14,
+   "type": "str",
+   "decl": "str",
+   "label": "Hạng mục ẩn thêm trong template công cụ tạo (BuiltInCategory, ;)",
+   "default": "OST_PlumbingFixtures",
+   "kind": "normal"
+  },
+  {
+   "index": 15,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Luôn bật leader",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 16,
+   "type": "str",
+   "decl": "str",
+   "label": "Thư mục family tag .rfa đóng gói (trống = <extension>\\lib\\tag_lan_can khi chạy nút)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 17,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Đặt mặt bằng lên bản vẽ",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 18,
+   "type": "str",
+   "decl": "str",
+   "label": "Giai đoạn",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 19,
+   "type": "str",
+   "decl": "str",
+   "label": "Hạng mục",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 20,
+   "type": "str",
+   "decl": "str",
+   "label": "Khổ giấy (A1 / A0)",
+   "default": "A1",
+   "kind": "normal"
+  },
+  {
+   "index": 21,
+   "type": "str",
+   "decl": "str",
+   "label": "Khung tên \"Family : Type\" (trống = tự tìm theo khổ)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 22,
+   "type": "str",
+   "decl": "str",
+   "label": "Số hiệu sheet (trống = tiếp theo trong hạng mục)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 23,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên sheet (trống = \"MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER <TẦNG>\")",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 24,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Chỉ tag đối tượng có Mark đúng tiền tố IN[4] / IN[6] (False = tag mọi lan can / louver có Mark)",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 25,
+   "type": "str",
+   "decl": "str",
+   "label": "View template gán cho mặt bằng định vị (trống = giữ; \"<Không dùng view template>\" = bỏ template; nút hỏi trong hộp thoại, 2026-11-05). Công cụ KHÔNG tạo / sửa view template nữa.",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 26,
+   "type": "float",
+   "decl": "float",
+   "label": "Tỉ lệ view, mẫu số (0 = giữ; template khoá tỉ lệ thì theo template)",
+   "default": 0.0,
+   "kind": "normal"
+  }
+ ]
+}

@@ -114,6 +114,9 @@ O_LUOI_MM = 20.0          # cạnh ô lưới quét dấu chân tường
 LOI_MONG_MM = 30.0        # tường có lõi mỏng hơn (gạch ốp, lớp gỗ…) là lớp hoàn thiện → không coi là vách
 NOI_HO_MM = 400.0         # đầu tường hở cách tường khác tới mức này thì nối (như Revit khép room)
 DT_CO_BANG_CHUNG_M2 = 30.0   # ô có ống đứng / shaft opening: nhận tới diện tích này
+TU_LAYER_X = ("lo mo", "lomo", "material", "truc", "hkt", "shaft", "mep", "ky thuat")  # layer CAD có dấu X trục / lỗ mở
+TU_LAYER_BO = ("hatch", "hidden", "khuat", "center", "thang", "elev", "lift", "interior", "noi that")
+SO_X_CAD_TIN = 3          # CAD có từ chừng này dấu X trở lên: ô chỉ có hình học mà không có dấu X thì không vẽ, liệt kê
 TU_SAN_KC = ("sbt", "ket cau", "btct", "structural")   # sàn kết cấu: không dùng để loại ô
 NHOM = "ARV_NganChay"
 CAT_AN = (BuiltInCategory.OST_PlumbingFixtures, BuiltInCategory.OST_Furniture,
@@ -398,8 +401,11 @@ def goc_chinh(tuong):
     return max(dem.items(), key=lambda kv: kv[1])[0] if dem else 0.0
 
 
-def mat_day(e, opt):
-    """Các mặt đáy (pháp tuyến hướng xuống) của khối đối tượng → list[list[vòng điểm 2D]]"""
+def mat_day(e, opt, tf=None):
+    """Các mặt đáy (pháp tuyến hướng xuống) của khối đối tượng → list[list[vòng điểm 2D]];
+    tf: Transform của file link (toạ độ đưa về model chính)"""
+    if tf is not None:
+        return [[[(q.X, q.Y) for q in (tf.OfPoint(XYZ(x, y, 0)) for x, y in v)] for v in f] for f in mat_day(e, opt)]
     kq = []
     ds = list(e.get_Geometry(opt) or [])
     while ds:
@@ -503,6 +509,46 @@ def quet_khe(view, lv):
         except Exception:
             pass
     bao_cao.append("Quét theo dải lõi %d tường (bỏ %d tường ốp / hoàn thiện mỏng)" % (len(loi), bo_mong))
+    # tường / cột / vách của file link Revit (kết cấu BTCT) trong phạm vi nhà: hộp kỹ thuật tựa vào vách lõi của link
+    # (HQV tháp B 2026-11-05: model kiến trúc không vẽ vách BTCT → ô hở, bị sót; ô nhận được thì tràn lên vách link)
+    if mat:
+        xs_ = [p[0] for f in mat for v in f for p in v]
+        ys_ = [p[1] for f in mat for v in f for p in v]
+        bien = (min(xs_) - mm(2000), min(ys_) - mm(2000), max(xs_) + mm(2000), max(ys_) + mm(2000))
+        so_link, ten_link = 0, []
+        for li in FilteredElementCollector(doc).OfClass(RevitLinkInstance):
+            try:
+                ld = li.GetLinkDocument()
+                if ld is None or li.IsHidden(view):
+                    continue
+                tf = li.GetTotalTransform()
+            except Exception:
+                continue
+            n0 = so_link
+            for cat in (BuiltInCategory.OST_Walls, BuiltInCategory.OST_Columns, BuiltInCategory.OST_StructuralColumns):
+                for e in FilteredElementCollector(ld).OfCategory(cat).WhereElementIsNotElementType():
+                    bb = e.get_BoundingBox(None)
+                    if bb is None:
+                        continue
+                    a, b = tf.OfPoint(bb.Min), tf.OfPoint(bb.Max)
+                    if not (min(a.Z, b.Z) - mm(10) <= zc <= max(a.Z, b.Z) + mm(10)):
+                        continue
+                    try:
+                        vongs = mat_day(e, opt, tf)
+                    except Exception:
+                        continue
+                    for vong in vongs:
+                        vx = [[xoay(p) for p in v] for v in vong]          # cùng hệ toạ độ đã xoay với bien
+                        ps = [p for v in vx for p in v]
+                        if not ps or max(p[0] for p in ps) < bien[0] or min(p[0] for p in ps) > bien[2] or \
+                                max(p[1] for p in ps) < bien[1] or min(p[1] for p in ps) > bien[3]:
+                            continue
+                        mat.append(vx)
+                        so_link += 1
+            if so_link > n0:
+                ten_link.append("%s (%d)" % (ten(li).split(" : ")[0], so_link - n0))
+        if so_link:
+            bao_cao.append("Quét thêm %d mặt đáy tường / cột / vách của file link: %s" % (so_link, ", ".join(ten_link)))
     c = mm(O_LUOI_MM)
     # đường phân chia phòng (Room Separation) trên level: coi như vách mỏng 1,5 ô lưới (G19: khép 2 ô ở hành lang)
     for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_RoomSeparationLines) \
@@ -752,6 +798,74 @@ def toa_do(p):
     return "(%d, %d)" % (round(ra_mm(p[0])), round(ra_mm(p[1])))
 
 
+def dau_x_cad(view, lv):
+    """Dấu X (2 đường chéo của khung trục / lỗ mở) trong file CAD import / link của mặt bằng tầng, trên layer có từ khoá
+    TU_LAYER_X (lỗ mở, A-Material, trục, HKT…), bỏ layer TU_LAYER_BO (hatch, nét khuất thang máy…)
+    → list[{c, pts (4 góc), m2, layer}] (HQV tháp B 2026-11-05: 85 ô A-Lo mo + 31 ô A-Material = 116 trục)"""
+    z = lv.Elevation
+    nhom = {}
+    for ii in FilteredElementCollector(doc).OfClass(ImportInstance):
+        opt = Options()
+        try:
+            if ii.ViewSpecific:
+                ov = doc.GetElement(ii.OwnerViewId)
+                gl = getattr(ov, "GenLevel", None)      # PythonNet3: không dùng isinstance với lớp Revit
+                if gl is None or gl.Id != lv.Id:
+                    continue
+                opt.View = ov
+            else:
+                bb = ii.get_BoundingBox(None)
+                if bb is None or not (bb.Min.Z - mm(1500) <= z <= bb.Max.Z + mm(1500)):
+                    continue
+            ds = list(ii.get_Geometry(opt) or [])
+        except Exception:
+            continue
+        while ds:
+            g = ds.pop()
+            tn = g.GetType().Name
+            if tn == "GeometryInstance":
+                ds.extend(list(g.GetInstanceGeometry()))
+                continue
+            if tn not in ("Line", "PolyLine"):
+                continue
+            try:
+                st = doc.GetElement(g.GraphicsStyleId)
+                lop = st.GraphicsStyleCategory.Name if st is not None else ""
+            except Exception:
+                lop = ""
+            k = khong_dau(lop.split("$0$")[-1])
+            if not any(t in k for t in TU_LAYER_X) or any(t in k for t in TU_LAYER_BO):
+                continue
+            pts = [g.GetEndPoint(0), g.GetEndPoint(1)] if tn == "Line" else list(g.GetCoordinates())
+            for a, b in zip(pts, pts[1:]):
+                L = math.hypot(b.X - a.X, b.Y - a.Y)
+                if L < mm(150):
+                    continue
+                key = (round((a.X + b.X) / 2 / mm(30)), round((a.Y + b.Y) / 2 / mm(30)), lop)
+                nhom.setdefault(key, []).append(((a.X, a.Y), (b.X, b.Y), L))
+    kq, da = [], set()
+    for (_, _, lop), ds in nhom.items():
+        for i in range(len(ds)):
+            for j in range(i + 1, len(ds)):
+                (a1, b1, L1), (a2, b2, L2) = ds[i], ds[j]
+                if abs(L1 - L2) > mm(20):
+                    continue
+                if abs(((b1[0] - a1[0]) * (b2[0] - a2[0]) + (b1[1] - a1[1]) * (b2[1] - a2[1])) / (L1 * L2)) > 0.995:
+                    continue
+                cx, cy = (a1[0] + b1[0] + a2[0] + b2[0]) / 4, (a1[1] + b1[1] + a2[1] + b2[1]) / 4
+                khoa = (round(cx / mm(50)), round(cy / mm(50)))
+                if khoa in da:
+                    continue
+                goc4 = sorted([a1, b1, a2, b2], key=lambda p: math.atan2(p[1] - cy, p[0] - cx))
+                rong, dai = kich_thuoc(goc4)
+                dt = abs(sum(goc4[t][0] * goc4[(t + 1) % 4][1] - goc4[(t + 1) % 4][0] * goc4[t][1] for t in range(4))) / 2
+                if rong < mm(100) or ra_m2(dt) > DT_CO_BANG_CHUNG_M2:
+                    continue
+                da.add(khoa)
+                kq.append({"c": (cx, cy), "pts": goc4, "m2": ra_m2(dt), "layer": lop.split("$0$")[-1]})
+    return kq
+
+
 def tim_truc(view, lv, da_lam, viec, ghi_them):
     """Nhận trục / hộp kỹ thuật trên level của view → (se_lam, da_co, bi_loai, xem_lai).
     da_lam(v): ô đã làm rồi (đã hatch / đã có lỗ mở) → bỏ qua; viec: chữ trong báo cáo ("hatch", "tạo lỗ mở")"""
@@ -826,8 +940,20 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
     bao_cao.append("Quét dấu chân %d mặt đáy tường / cột: %d khoảng trống kín ≤ %g m2" % (
         so_mat, len(khe), DT_CO_BANG_CHUNG_M2))
 
+    # ---- dấu X trục / lỗ mở trong CAD import của tầng ----
+    xcad = dau_x_cad(view, lv)
+    co_cad = len(xcad) >= SO_X_CAD_TIN
+    if xcad:
+        dem_l = {}
+        for d in xcad:
+            dem_l[d["layer"]] = dem_l.get(d["layer"], 0) + 1
+        bao_cao.append("CAD của tầng: %d dấu X trục / lỗ mở (%s)%s" % (
+            len(xcad), ", ".join("%s %d" % kv for kv in sorted(dem_l.items())),
+            " → ô chỉ có hình học mà không có dấu X thì không vẽ" if co_cad else ""))
+    x_dung = set()            # chỉ số dấu X đã nằm trong ô được nhận
+
     # ---- phân loại ----
-    se_ve, da_co, bi_loai, xem_lai = [], 0, [], []
+    se_ve, da_co, bi_loai, xem_lai, khong_x = [], 0, [], [], []
     for v in room_hkt + khe:
         pts = v["pts"]
         x, y = v["diem"]
@@ -835,10 +961,22 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         if trong(loai) or any(r.IsPointInRoom(XYZ(x, y, z + mm(1000))) for r in room_loai):
             bi_loai.append((v, "thang máy / thang bộ"))
             continue
+        ix = [i for i, d in enumerate(xcad) if trong_vung(d["c"][0], d["c"][1], pts)]
+        tong_x = sum(xcad[i]["m2"] for i in ix)
         if v["ten"]:
             nguon = "tên room '%s'" % v["ten"]
         elif any(trong_vung(x, y, r["pts"]) for r in room_hkt):
             continue          # đã nhận theo room đặt tên
+        elif ix:
+            # ô kín chứa dấu X CAD: ô không lớn hơn nhiều so với khung X thì bo theo mép tường thô của ô;
+            # ô rộng hơn hẳn (tường hộp chưa dựng trong model) thì để bo theo khung X ở dưới
+            # ô chứa từ 2 dấu X trở lên (vách ngăn giữa các hộp chưa dựng) hoặc không trùm khung X (điểm 30 % từ góc
+            # vào tâm nằm ngoài ô) cũng bo theo khung X
+            if v["m2"] > max(2.0 * tong_x, tong_x + 0.5) or len(ix) > 1 or not all(
+                    trong_vung(q[0] + 0.3 * (xcad[ix[0]]["c"][0] - q[0]), q[1] + 0.3 * (xcad[ix[0]]["c"][1] - q[1]), pts)
+                    for q in xcad[ix[0]]["pts"]):
+                continue
+            nguon = "dấu X CAD"
         elif trong(cua) or trong(tb):
             continue
         elif trong(shaft):
@@ -847,9 +985,13 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
             nguon = "ống đứng"
         elif (not trong(cua_so) and not any(trong_vung(x, y, s_) for s_ in san)
               and v["m2"] <= DT_MAX_M2 and v["kt"][0] >= RONG_MIN_MM):
+            if co_cad:
+                khong_x.append(v)       # CAD đã đánh dấu đủ trục mà ô này không có dấu X → không vẽ, liệt kê
+                continue
             nguon = "hình học"
         else:
             continue
+        x_dung.update(ix)
         if da_lam(v):
             da_co += 1
             continue
@@ -857,12 +999,38 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         se_ve.append(v)
         if v["kt"][0] > O_LON_MM:
             xem_lai.append(v)
+    # dấu X CAD không nằm trong ô kín nào được nhận (tường hộp chưa dựng / ô hở): bo theo khung dấu X
+    for i, d in enumerate(xcad):
+        if i in x_dung:
+            continue
+        cx, cy = d["c"]
+        if any(trong_vung(p[0], p[1], [d["pts"]]) for p in loai) or any(
+                r.IsPointInRoom(XYZ(cx, cy, z + mm(1000))) for r in room_loai):
+            continue
+        if any(trong_vung(cx, cy, v["pts"]) for v in se_ve):
+            continue
+        g4 = d["pts"]
+        v = {"pts": [g4], "loops": [[Line.CreateBound(XYZ(a[0], a[1], z), XYZ(b[0], b[1], z))
+                                     for a, b in zip(g4, g4[1:] + g4[:1])]],
+             "m2": d["m2"], "diem": (cx, cy), "kt": tuple(ra_mm(t) for t in kich_thuoc(g4)), "ten": ""}
+        if da_lam(v):
+            da_co += 1
+            continue
+        v["nguon"] = "khung X CAD"
+        se_ve.append(v)
+        if v["kt"][0] > O_LON_MM:
+            xem_lai.append(v)
+    if khong_x:
+        bao_cao.append("KHÔNG VẼ %d ô kín nhỏ không có dấu X trong CAD (khe tường, hốc – Cần xác nhận lại): %s" % (
+            len(khong_x), "; ".join("%.2f m2 %dx%d tại %s" % (v["m2"], round(v["kt"][0]), round(v["kt"][1]),
+                                                              toa_do(v["diem"])) for v in khong_x)))
     try:     # danh sách khoảng trống (mm) để vẽ ảnh đối chiếu khi cần
         import json
         with open(os.path.join(THU_MUC, "ngan_chay_vung.json"), "w", encoding="utf-8") as f:
             json.dump([{"m2": round(v["m2"], 3), "kt": [round(t) for t in v["kt"]], "nguon": v.get("nguon", ""),
                         "pts": [[(round(ra_mm(p[0])), round(ra_mm(p[1]))) for p in l] for l in v["pts"]]}
-                       for v in room_hkt + khe], f, ensure_ascii=False)
+                       for v in room_hkt + khe + [v for v in se_ve if v["nguon"] == "khung X CAD"]],
+                      f, ensure_ascii=False)
     except Exception:
         pass
     dem_nguon = {}
@@ -1006,7 +1174,7 @@ def chinh():
 #     đang trống. View đã nằm trên sheet thì không đặt thêm.
 #   - Thu trục của file hiện tại trong view về sát quanh nhà (đầu trục ViewSpecific, cách mép tường SH_TRUC_DU_MM giấy)
 #     để khung viewport không bị trục dài đẩy lệch / tràn khổ (thử G19: trục A, X1 làm khung rộng 720 > 681 mm).
-#   - Chú thích (ô mẫu hatch / nét + chữ) vẽ trong drafting view "CHÚ THÍCH - <tên sheet>" cùng tỉ lệ mặt bằng (mẫu
+#   - Bảng ghi chú (Diện tích | Ký hiệu | Tên vị trí) vẽ trong drafting view "BẢNG GHI CHÚ - <tên sheet>" cùng tỉ lệ mặt bằng (mẫu
 #     hatch theo model co giãn đúng như trên mặt bằng), đặt sát góc phải dưới vùng vẽ. Chữ chỉ là tên vùng, không ghi
 #     vật liệu / chiều cao vén (chưa có số liệu).
 # Tạo view khi tầng chưa có (người dùng yêu cầu 2026-11-04, "tạo view, đặt template như MB định vị cửa"): sh_tao_view
@@ -1027,6 +1195,12 @@ SH_TIEU_DE_MM = 15.0         # chỗ tên view dưới viewport
 SH_O_MAU_MM = (16.0, 7.0)    # ô mẫu chú thích (rộng, cao) mm giấy
 SH_DONG_MM = 11.0            # khoảng cách dòng chú thích
 SH_KHE_CHU_MM = 4.0          # khe giữa ô mẫu và chữ
+SH_BANG_COT_MM = (24.0, 22.0, 78.0)   # Bảng ghi chú: rộng cột Diện tích / Ký hiệu / Tên vị trí, mm giấy
+SH_BANG_TIEU_DE_MM = 9.0     # cao dòng tên bảng, dòng tiêu đề cột
+SH_BANG_HANG_MM = 12.0       # cao mỗi hàng
+SH_BANG_LE_MM = 2.0          # lề chữ cột Tên vị trí
+SH_TEN_BANG = u"BẢNG GHI CHÚ"
+SH_TEN_CHU_THICH_CU = u"CHÚ THÍCH"   # view chú thích bản trước 2026-11-09 (không có diện tích)
 SH_AN_VIEW_MOI = ("OST_Furniture", "OST_FurnitureSystems", "OST_Casework", "OST_SpecialityEquipment",
                   "OST_MechanicalEquipment", "OST_Elev", "OST_Sections")   # hạng mục ẩn trong template mới
 SH_HALFTONE_VIEW_MOI = ("OST_Floors",)          # tường: theo filter tường xây / vách BTCT như MB định vị cửa
@@ -1284,48 +1458,182 @@ def sh_thu_truc(doc, view):
     return u"Thu trục: %d trục cắt sát nhà (cách mép tường %g mm giấy)." % (n, SH_TRUC_DU_MM)
 
 
+def sh_dien_tich(doc, view, id_kieu):
+    """Tổng diện tích (m2) các Filled Region kiểu id_kieu trong view. Có vùng không đọc được thì None (ghi [Chờ bổ sung])."""
+    tong = 0.0
+    for r in FilteredElementCollector(doc, view.Id).OfClass(FilledRegion):
+        if r.GetTypeId().Value != id_kieu.Value:
+            continue
+        p = r.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED)
+        if p is None or not p.HasValue:
+            return None
+        tong += UnitUtils.ConvertFromInternalUnits(p.AsDouble(), UnitTypeId.SquareMeters)
+    return tong
+
+
+def sh_chu_dt(m2):
+    return u"%.1f m²" % m2 if m2 is not None else u"[Chờ bổ sung]"
+
+
+def sh_cap_nhat_bang(doc, v, muc):
+    """Bảng ghi chú đã có: chỉ sửa chữ ô diện tích theo số mới (ghép ô với tên vị trí cùng hàng), không xoá gì.
+    Gọi TRONG transaction. Trả về chuỗi báo cáo."""
+    notes = list(FilteredElementCollector(doc, v.Id).OfClass(TextNote))
+    doi, thieu = [], []
+    for m in muc:
+        if "m2" not in m:
+            continue
+        nhan = [t for t in notes if t.Text.strip() == m["chu"]]
+        o = [t for t in notes if nhan and t.Id.Value != nhan[0].Id.Value and t.Coord.X < nhan[0].Coord.X
+             and abs(t.Coord.Y - nhan[0].Coord.Y) < sh_ft(0.5 * v.Scale)]
+        if not o:
+            thieu.append(m["chu"])
+            continue
+        moi = sh_chu_dt(m["m2"])
+        if o[0].Text.strip() != moi:
+            doi.append(u"%s: %s → %s" % (m["chu"], o[0].Text.strip(), moi))
+            o[0].Text = moi
+    kq = u"đã cập nhật diện tích (%s)" % u"; ".join(doi) if doi else u"diện tích không đổi"
+    if thieu:
+        kq += u"; CẦN XEM LẠI: bảng không có hàng %s" % u", ".join(thieu)
+    return kq
+
+
 def sh_chu_thich(doc, ten_view, ti_le, muc):
-    """Drafting view chú thích. muc: [{"vung": id kiểu Filled Region, "vien": id line style | None, "chu": u"..."} |
-    {"net": GraphicsStyle, "chu": u"..."}]. Trả về (view, báo cáo). Gọi TRONG transaction."""
+    """Bảng ghi chú (drafting view) theo mẫu người dùng 2026-11-09: Diện tích | Ký hiệu | Tên vị trí.
+    muc: [{"vung": id kiểu Filled Region, "vien": id line style | None, "chu": u"...", "m2": số, "cot": u"tên cột 3"} |
+    {"net": GraphicsStyle, "chu": u"..."}] (hàng không có "m2" để trống ô diện tích). Trả về (view, báo cáo).
+    Gọi TRONG transaction."""
     for v in FilteredElementCollector(doc).OfClass(ViewDrafting):
         if not v.IsTemplate and v.Name == ten_view:
             sh_ = v.get_Parameter(BuiltInParameter.VIEWER_SHEET_NUMBER)
             if sh_ is not None and sh_.AsString() and sh_.AsString() not in (u"---", u"-"):
-                return None, u"Chú thích '%s' đã nằm trên sheet %s – không đặt thêm." % (ten_view, sh_.AsString())
-            return v, u"dùng lại view chú thích '%s'" % ten_view
+                return None, u"Bảng '%s' đã nằm trên sheet %s – không đặt thêm." % (ten_view, sh_.AsString())
+            return v, u"dùng lại bảng '%s', %s" % (ten_view, sh_cap_nhat_bang(doc, v, muc))
     vft = [t for t in FilteredElementCollector(doc).OfClass(ViewFamilyType) if t.ViewFamily == ViewFamily.Drafting]
     if not vft:
-        return None, u"Dự án không có kiểu Drafting View – không vẽ chú thích."
+        return None, u"Dự án không có kiểu Drafting View – không vẽ bảng ghi chú."
     v = ViewDrafting.Create(doc, vft[0].Id)
     v.Name = ten_view
     v.Scale = ti_le
-    s = float(ti_le)
-    w, h = sh_ft(SH_O_MAU_MM[0] * s), sh_ft(SH_O_MAU_MM[1] * s)
-    dong, khe = sh_ft(SH_DONG_MM * s), sh_ft(SH_KHE_CHU_MM * s)
+
+    def g(mm):      # mm giấy → feet trong view
+        return sh_ft(mm * float(ti_le))
+
+    w, h = g(SH_O_MAU_MM[0]), g(SH_O_MAU_MM[1])
+    c1, c2, c3 = [g(x) for x in SH_BANG_COT_MM]
+    rong = c1 + c2 + c3
+    td, hang = g(SH_BANG_TIEU_DE_MM), g(SH_BANG_HANG_MM)
+    day = -2 * td - hang * len(muc)
+    gs = None
+    for sc in doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines).SubCategories:
+        if sc.Name == u"Thin Lines":
+            gs = sc.GetGraphicsStyle(GraphicsStyleType.Projection)
+
+    def ke(x0, y0, x1, y1):
+        dc = doc.Create.NewDetailCurve(v, Line.CreateBound(XYZ(x0, y0, 0), XYZ(x1, y1, 0)))
+        if gs is not None:
+            dc.LineStyle = gs
+
+    for i in range(len(muc) + 3):
+        y = -td * min(i, 2) - hang * max(i - 2, 0)
+        ke(0, y, rong, y)
+    ke(0, 0, 0, day)
+    ke(rong, 0, rong, day)
+    ke(c1, -td, c1, day)
+    ke(c1 + c2, -td, c1 + c2, day)
     kc = sh_kieu_chu(doc)
-    opt = TextNoteOptions(kc)
-    opt.HorizontalAlignment = HorizontalTextAlignment.Left
-    opt.VerticalAlignment = VerticalTextAlignment.Middle
-    TextNote.Create(doc, v.Id, XYZ(0, 0, 0), u"CHÚ THÍCH:", opt)
-    y = -dong
-    for m in muc:
-        yc = y
+    giua, trai = TextNoteOptions(kc), TextNoteOptions(kc)
+    giua.HorizontalAlignment = HorizontalTextAlignment.Center
+    giua.VerticalAlignment = VerticalTextAlignment.Middle
+    trai.HorizontalAlignment = HorizontalTextAlignment.Left
+    trai.VerticalAlignment = VerticalTextAlignment.Middle
+    cot3 = muc[0].get("cot", u"TÊN VỊ TRÍ")
+    TextNote.Create(doc, v.Id, XYZ(rong / 2.0, -td / 2.0, 0), SH_TEN_BANG, giua)
+    y = -1.5 * td
+    TextNote.Create(doc, v.Id, XYZ(c1 / 2.0, y, 0), u"DIỆN TÍCH", giua)
+    TextNote.Create(doc, v.Id, XYZ(c1 + c2 / 2.0, y, 0), u"KÝ HIỆU", giua)
+    TextNote.Create(doc, v.Id, XYZ(c1 + c2 + c3 / 2.0, y, 0), cot3, giua)
+    xm = c1 + c2 / 2.0
+    for i, m in enumerate(muc):
+        yc = -2 * td - hang * (i + 0.5)
         if "vung" in m:
             cl = CurveLoop()
-            p = [XYZ(0, yc - h / 2, 0), XYZ(w, yc - h / 2, 0), XYZ(w, yc + h / 2, 0), XYZ(0, yc + h / 2, 0)]
-            for i in range(4):
-                cl.Append(Line.CreateBound(p[i], p[(i + 1) % 4]))
+            p = [XYZ(xm - w / 2, yc - h / 2, 0), XYZ(xm + w / 2, yc - h / 2, 0), XYZ(xm + w / 2, yc + h / 2, 0),
+                 XYZ(xm - w / 2, yc + h / 2, 0)]
+            for k in range(4):
+                cl.Append(Line.CreateBound(p[k], p[(k + 1) % 4]))
             ds = NetList[CurveLoop]()
             ds.Add(cl)
             fr = FilledRegion.Create(doc, m["vung"], v.Id, ds)
             if m.get("vien") is not None:
                 fr.SetLineStyleId(m["vien"])
         else:
-            dc = doc.Create.NewDetailCurve(v, Line.CreateBound(XYZ(0, yc, 0), XYZ(w, yc, 0)))
+            dc = doc.Create.NewDetailCurve(v, Line.CreateBound(XYZ(xm - w / 2, yc, 0), XYZ(xm + w / 2, yc, 0)))
             dc.LineStyle = m["net"]
-        TextNote.Create(doc, v.Id, XYZ(w + khe, yc, 0), m["chu"], opt)
-        y -= dong
-    return v, u"tạo view chú thích '%s' (%d mục)" % (ten_view, len(muc))
+        if "m2" in m:
+            TextNote.Create(doc, v.Id, XYZ(c1 / 2.0, yc, 0), sh_chu_dt(m["m2"]), giua)
+        TextNote.Create(doc, v.Id, XYZ(c1 + c2 + g(SH_BANG_LE_MM), yc, 0), m["chu"], trai)
+    return v, u"tạo bảng '%s' (%d hàng)" % (ten_view, len(muc))
+
+
+def sh_dat_bang(doc, view, sh, vung, muc, ten_sheet, bao):
+    """Vẽ + đặt Bảng ghi chú sát góc phải dưới vùng vẽ. Gọi TRONG transaction. Trả về khung (x0, y0, x1, y1) hoặc None."""
+    x0, y0, x1, y1 = vung
+    b = sh_ft(SH_BIEN_MM)
+    try:
+        vct, msg = sh_chu_thich(doc, u"%s - %s" % (SH_TEN_BANG, ten_sheet), view.Scale, muc)
+        bao.append(u"Bảng ghi chú: %s." % msg)
+        for m in muc:
+            if "m2" in m:
+                bao.append(u"Diện tích %s: %s (tổng Filled Region trong view)." % (m["chu"], sh_chu_dt(m["m2"])))
+        if vct is None:
+            return None
+        doc.Regenerate()
+        vp_ct = Viewport.Create(doc, sh.Id, vct.Id, XYZ(x1, y0, 0))
+        k_ = sh_kieu_viewport(doc, False)
+        if k_ is not None:
+            vp_ct.ChangeTypeId(k_.Id)
+        doc.Regenerate()
+        o_ = vp_ct.GetBoxOutline()
+        wc, hc = o_.MaximumPoint.X - o_.MinimumPoint.X, o_.MaximumPoint.Y - o_.MinimumPoint.Y
+        vp_ct.SetBoxCenter(XYZ(x1 - b - wc / 2.0, y0 + b + hc / 2.0, 0))
+        return (x1 - b - wc, y0 + b, x1 - b, y0 + b + hc)
+    except Exception as ex:
+        bao.append(u"Không vẽ được bảng ghi chú: %s" % (u"%s" % ex).splitlines()[0][:150])
+        return None
+
+
+def sh_bang_khi_da_dat(doc, view, so_sheet, muc, ten_sheet):
+    """View đã nằm trên sheet (bấm lại): cập nhật diện tích của Bảng ghi chú; chưa có bảng thì đặt mới; còn chú thích bản
+    cũ thì chỉ báo (công cụ không tự xoá). Gọi NGOÀI transaction. Trả về [báo cáo]."""
+    if not muc:
+        return []
+    sheets = [s for s in FilteredElementCollector(doc).OfClass(ViewSheet) if s.SheetNumber == so_sheet]
+    if not sheets:
+        return []
+    sh = sheets[0]
+    dat = [doc.GetElement(i) for i in sh.GetAllPlacedViews()]
+    bang = [v for v in dat if v.ViewType == ViewType.DraftingView and v.Name.startswith(SH_TEN_BANG + u" - ")]
+    if bang:
+        TransactionManager.Instance.EnsureInTransaction(doc)
+        msg = sh_cap_nhat_bang(doc, bang[0], muc)
+        TransactionManager.Instance.TransactionTaskDone()
+        return [u"Bảng ghi chú trên sheet %s: %s." % (so_sheet, msg)]
+    cu = [v for v in dat if v.ViewType == ViewType.DraftingView and v.Name.startswith(SH_TEN_CHU_THICH_CU + u" - ")]
+    if cu:
+        return [u"CẦN XEM LẠI: sheet %s còn chú thích bản cũ '%s' (chưa có diện tích). Xoá viewport đó trên sheet rồi bấm "
+                u"lại nút để đặt Bảng ghi chú mới (công cụ không tự xoá)." % (so_sheet, cu[0].Name)]
+    tbs = [t for t in FilteredElementCollector(doc, sh.Id).OfClass(FamilyInstance)
+           .OfCategory(BuiltInCategory.OST_TitleBlocks)]
+    if not tbs:
+        return [u"Sheet %s không có khung tên – chưa đặt Bảng ghi chú." % so_sheet]
+    net = sh_net_khung(doc, doc.GetElement(tbs[0].GetTypeId()))     # mở family khung tên: phải ngoài transaction
+    bao = []
+    TransactionManager.Instance.EnsureInTransaction(doc)
+    sh_dat_bang(doc, view, sh, sh_vung_ve(sh, tbs[0], net), muc, ten_sheet, bao)
+    TransactionManager.Instance.TransactionTaskDone()
+    return bao
 
 
 SH_KHONG_TPL = u"<Không dùng view template>"    # giá trị ô View template của hộp thoại = bỏ template
@@ -1636,12 +1944,16 @@ def sh_crop_theo_tuong(doc, view):
 def dat_mat_bang_len_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, so_mac_dinh, muc_chu_thich):
     """Tạo sheet + đặt mặt bằng giữa vùng vẽ + chú thích góc phải dưới. Trả về [báo cáo]."""
     bao = []
+    so_dang = None
     try:
         dang = view.get_Parameter(BuiltInParameter.VIEWER_SHEET_NUMBER)
         if dang is not None and dang.AsString() and dang.AsString() not in (u"---", u"-"):
-            return [u"View '%s' đã nằm trên sheet %s – không đặt thêm." % (view.Name, dang.AsString())]
+            so_dang = dang.AsString()
     except Exception:
         pass
+    if so_dang:
+        return ([u"View '%s' đã nằm trên sheet %s – không đặt thêm." % (view.Name, so_dang)]
+                + sh_bang_khi_da_dat(doc, view, so_dang, muc_chu_thich, ten_sheet))
     cap = sh_cap_thu_muc(doc)
     pid_gd, pid_hm = sh_gd_hm(doc, cap)
     so = (so_hieu or u"").strip() or sh_so_tiep(doc, pid_gd, gd, pid_hm, hm, so_mac_dinh)
@@ -1697,24 +2009,7 @@ def sh_dat_vao(doc, view, sh, tb_inst, tb, muc_chu_thich, bao, ten_sheet, cap, k
     TransactionManager.Instance.EnsureInTransaction(doc)
     x0, y0, x1, y1 = sh_vung_ve(sh, tb_inst, net)
     b = sh_ft(SH_BIEN_MM)
-    o_ct = None
-    if muc_chu_thich:
-        try:
-            vct, msg = sh_chu_thich(doc, u"CHÚ THÍCH - %s" % ten_sheet, view.Scale, muc_chu_thich)
-            bao.append(u"Chú thích: %s." % msg)
-            if vct is not None:
-                doc.Regenerate()
-                vp_ct = Viewport.Create(doc, sh.Id, vct.Id, XYZ(x1, y0, 0))
-                k_ = sh_kieu_viewport(doc, False)
-                if k_ is not None:
-                    vp_ct.ChangeTypeId(k_.Id)
-                doc.Regenerate()
-                o_ = vp_ct.GetBoxOutline()
-                wc, hc = o_.MaximumPoint.X - o_.MinimumPoint.X, o_.MaximumPoint.Y - o_.MinimumPoint.Y
-                vp_ct.SetBoxCenter(XYZ(x1 - b - wc / 2.0, y0 + b + hc / 2.0, 0))
-                o_ct = (x1 - b - wc, y0 + b, x1 - b, y0 + b + hc)
-        except Exception as ex:
-            bao.append(u"Không vẽ được chú thích: %s" % (u"%s" % ex).splitlines()[0][:150])
+    o_ct = sh_dat_bang(doc, view, sh, (x0, y0, x1, y1), muc_chu_thich, ten_sheet, bao) if muc_chu_thich else None
     try:
         prm = view.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION)
         if prm is not None and not prm.IsReadOnly and not (prm.AsString() or u"").strip():
@@ -1778,7 +2073,8 @@ def len_ban_ve(view):
                 for sc in doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines).SubCategories:
                     if sc.Name == TEN_NET:
                         vien = sc.GetGraphicsStyle(GraphicsStyleType.Projection).Id
-                muc.append({"vung": t.Id, "vien": vien, "chu": "NGĂN CHÁY LAN TRỤC / HỘP KỸ THUẬT"})
+                muc.append({"vung": t.Id, "vien": vien, "chu": "NGĂN CHÁY LAN TRỤC / HỘP KỸ THUẬT",
+                            "m2": sh_dien_tich(doc, view, t.Id), "cot": "TÊN VỊ TRÍ NGĂN CHÁY LAN"})
                 break
     tang = view.GenLevel.Name if view.GenLevel is not None else view.Name
     gd, hm, kho, khung, so, ten_sh = SH_IN
