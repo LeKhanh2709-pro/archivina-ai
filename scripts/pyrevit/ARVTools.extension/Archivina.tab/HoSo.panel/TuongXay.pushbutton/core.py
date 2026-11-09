@@ -51,6 +51,14 @@
 #   IN[17] (bool) Đặt lên bản vẽ (mặc định True; D:\AI thêm 2026-11-04 cho nút một chạm). False = chỉ dựng view + legend,
 #                không tạo / đụng sheet. Số hiệu IN[4] là sheet TRỐNG có sẵn (không view, không bảng thống kê) thì đặt
 #                vào sheet đó, giữ tên / khung tên / tham số (như Chống thấm), không cần bật IN[14].
+#   IN[18] (str) Vùng x0,y0,x1,y1 mm (trống = cả tầng; tách nhiều tờ: chạy mỗi vùng một lần) – VD "2380000,540313,2450000,590000"
+#   IN[19] (str) Ẩn trục có tên bắt đầu bằng (cách ';', trống = không ẩn) – VD "XA;YA"
+#   IN[20] (str) Trục theo CAD link: layer đường trục;layer ký hiệu (trống = không theo CAD) – VD "A-axis;A-Symbol"
+#   IN[21] (str) Line style nét đứt tại đường cắt khi tách vùng (có sẵn trong file) – VD "AV-Net Dut Callout"
+#   IN[22] (str) Ẩn tường theo tiền tố tên type (cách ';', trống = không ẩn) – VD "WF_;WA_F1"
+#   IN[23] (str) Số chuỗi dim hành lang (1 = gộp giữa, 2 = mỗi bên tường một chuỗi)
+#   IN[24] (str) Chuỗi hành lang chỉ dim cửa + trục (1 = có, trống = không)
+#   IN[25] (str) Room coi như ngoài nhà; có giá trị = mặt ngoài chỉ dim cửa sổ, cửa lùa, trục – VD "Logia"
 # OUTPUT
 #   OUT[0] (list[str])  Báo cáo
 #   OUT[1] (list)       Trống
@@ -68,7 +76,7 @@ if DYNAMO:
     clr.AddReference("RevitAPI")
     from Autodesk.Revit.DB import (FilteredElementCollector, XYZ, Transaction, ModelPathUtils, BuiltInParameter,
                                    BuiltInCategory, Level, ViewType, ViewFamily, ViewFamilyType, ViewPlan, ViewSheet,
-                                   Viewport, ElementId, Reference, FamilySymbol, FamilyInstance, ElementType, View,
+                                   Viewport, ViewportRotation, ElementId, Reference, FamilySymbol, FamilyInstance, ElementType, View,
                                    LocationPoint, LocationCurve, FailureProcessingResult, IFailuresPreprocessor,
                                    FailureSeverity, FilledRegion, FilledRegionType, CurveLoop, Line, TextNote,
                                    TextNoteOptions, TextNoteType, HorizontalTextAlignment, Category,
@@ -76,7 +84,9 @@ if DYNAMO:
                                    ReferenceArray, Options, Solid, PlanarFace, DimensionType, Dimension,
                                    RevitLinkInstance, Grid, DatumEnds, DatumExtentType, GeometryInstance,
                                    FamilyInstanceReferenceType, ElementCategoryFilter, LogicalOrFilter,
-                                   DocumentValidation, CurveElement, ParameterFilterElement, ScheduleSheetInstance)
+                                   DocumentValidation, CurveElement, ParameterFilterElement, ScheduleSheetInstance,
+                                   ImportInstance, Arc, PolyLine, GraphicsStyleType, ViewDetailLevel,
+                                   OverrideGraphicSettings, FillPatternElement, Color, Material)
     from System.Collections.Generic import List
     try:
         clr.AddReference("RevitServices")
@@ -117,7 +127,18 @@ SIDE_STEP = 600.0
 EXT_MAX = 12000.0          # đầu chuỗi kéo tới tường / KC gặp đầu tiên trong khoảng này
 CLIP_STEP = 100.0          # bước dò dọc đường dim tìm đoạn nằm trong căn hộ
 CLIP_MIN = 1000.0          # đoạn chuỗi còn lại ngắn hơn → bỏ
-EXT_MIN = 30.0            # gần hơn = đầu chuỗi đã chạm tường, không kéo
+FACADE_STEP = 25.0         # mm giấy: mặt ngoài so le lệch hàng ≤ → gộp một chuỗi ở hàng ngoài cùng
+FACADE_JOIN = 3000.0       # mm: hai đoạn mặt ngoài hở ≤ → coi là liền nhau
+FACADE_DEPTH = 3000.0      # mm: tường / cột trong dải này tính từ mặt ngoài vào → mặt ngoài còn tiếp tục
+FACADE_HOLE = 3000.0       # mm: đoạn không có tường / cột dài hơn → hết mặt ngoài
+FACADE_WALK = 15000.0      # mm: quãng dò tối đa từ đầu chuỗi
+GRID_END_REACH = 1000.0   # mm: trục cách đầu chuỗi mặt ngoài ≤ → chuỗi kéo tới trục đó
+LOGIA_MERGE = 15.0         # mm giấy: chuỗi logia đưa ra ngoài cách chuỗi mặt ngoài ≤ → gộp mốc
+FACADE_ROW_GAP = 8.0       # mm giấy: hàng dim trục cách chuỗi mặt ngoài (mẫu KTS ~ 800 ở 1/100)
+FACADE_ROW_SKIP = 25.0     # mm giấy: chuỗi cách mép tường ngoài cùng ≤ → đã có hàng dim trục ở mép, không thêm
+CORR_TWO_MIN = 14.0       # mm giấy: hành lang hẹp hơn → không đủ chỗ 2 chuỗi, về 1 chuỗi giữa
+VISIBLE_TOL = 30.0        # mm: cấu kiện nhô khỏi mặt tường phía đặt chuỗi ít hơn → khuất, không lấy mốc ở hành lang
+EXT_MIN = 30.0           # gần hơn = đầu chuỗi đã chạm tường, không kéo
 EXT_FACE_TOL = 150.0       # mốc cuối: mặt lệch biên gần của vật gặp ≤ (mặt lõi lùi trát 15; khuôn cửa sổ lùi
 #                            so với hộp bao gồm bậu / nẹp)
 BAND_PAD = 60.0            # dải tuyến nới thêm khi tìm tường vuông góc / kết cấu chạm tuyến
@@ -130,6 +151,7 @@ CUT_Z = 1000.0             # cao độ mặt cắt so với level
 HIDE_CATS = ("OST_Furniture", "OST_PlumbingFixtures", "OST_MechanicalEquipment", "OST_Rooms", "OST_RoomTags",
              "OST_Floors", "OST_Casework", "OST_SpecialityEquipment", "OST_FurnitureSystems")
 TEXT_TITLE = u"AV_Text 3mm_Arial-Bold"
+TEXT_TITLE_ALT = (u"AV_Text 3mm_bold",)   # tên khác của cùng kiểu chữ ở template dự án khác (HQV)
 TEXT_BODY = u"AV_Arial_2 mm_Dot"
 NOTE_COLS = (20.0, 96.0, 34.0)
 
@@ -220,8 +242,9 @@ def parse_materials(text):
         if u"=" not in item:
             continue
         key, rest = item.split(u"=", 1)
-        hatch, _, desc = rest.partition(u"|")
-        res.append((norm(key).lower(), norm(hatch), norm(desc)))
+        hatch, _, more = rest.partition(u"|")
+        desc, _, pat = more.partition(u"|")     # phần 3 (tùy chọn): fill pattern của ô ký hiệu, trùng pattern mặt bằng
+        res.append((norm(key).lower(), norm(hatch), norm(desc), norm(pat)))
     return res
 
 
@@ -336,6 +359,11 @@ def opening_faces(e, view, along_x):
     return min(fl, key=lambda q: q[0]), max(fl, key=lambda q: q[0])
 
 
+SLIDING_WORDS = (u"trượt", u"truot", u"lùa", u"lua")
+FACADE_REFS = set()                # id(Reference) mép cửa sổ / cửa lùa
+OUTSIDE_ROOMS = set()              # tên Room coi như ngoài nhà (IN[25])
+
+
 def collect_openings(level, view):
     """{id tường chủ: [(mép nhỏ (tọa độ, Ref), mép lớn (tọa độ, Ref))]} – cửa đi / cửa sổ trên tường thẳng.
     Mép = mặt hình học THẬT của khuôn (G19 2026-11-03: ước theo Width + hướng tay → vài cửa đảo Left / Right,
@@ -365,6 +393,10 @@ def collect_openings(level, view):
             a, b = (cc - h, L[0]), (cc + h, R[0])
             edge = (a, b) if hand >= 0 else ((cc - h, R[0]), (cc + h, L[0]))
         edge = rough_jambs(e.Host, along_x, edge, jamb_cache)
+        fam = norm(e.Symbol.FamilyName).lower()
+        if id_value(e.Category.Id) == -2000014 or any(k in fam for k in SLIDING_WORDS):   # -2000014 = OST_Windows
+            FACADE_REFS.add(id(edge[0][1]))          # mặt ngoài chỉ dim cửa sổ + cửa lùa
+            FACADE_REFS.add(id(edge[1][1]))
         res.setdefault(id_value(e.Host.Id), []).append(edge)
     return res
 
@@ -487,19 +519,70 @@ def walls_box(walls):
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def pick_scale(scales, box, legend_h):
-    """Tỷ lệ đầu tiên mà MB (tường + dim + đầu trục, ước theo CROP_PAD) và legend phía dưới vừa vùng vẽ."""
+def pick_scale(scales, box, legend_h, stagger=0.0):
+    """(tỷ lệ, quay 90°): mỗi tỷ lệ thử đặt thẳng rồi quay, hết mới xuống tỷ lệ nhỏ hơn (KTS: quay trước, giảm tỷ lệ
+    sau). MB gồm tường + dim + đầu trục, ước theo CROP_PAD; legend nằm phía dưới. Không tỷ lệ nào vừa → tỷ lệ cuối,
+    đặt thẳng; make_sheet sẽ cảnh báo tràn."""
     aw = AREA_X1 - AREA_X0 - 2 * SHEET_PAD
     ah = AREA_Y1 - AREA_Y0 - 2 * SHEET_PAD
     for s in scales:
-        w = (box[2] - box[0]) / s + 2 * CROP_PAD
+        w = (box[2] - box[0]) / s + 2 * (CROP_PAD + stagger)
         h = (box[3] - box[1]) / s + 2 * CROP_PAD
         if w <= aw and h + legend_h + 12.0 <= ah:
-            return s
-    return scales[-1]
+            return s, False
+        if h <= aw and w + legend_h + 12.0 <= ah:
+            return s, True
+    return scales[-1], False
 
 
-def make_view(level, name, template, scale, box, old=None):
+def hide_wall_types(view, prefixes):
+    """Ẩn trong view các tường theo tiền tố tên type (len chân tường HQV: WF_Len…; filter 'LCT' của template không bắt)."""
+    if not prefixes:
+        return 0
+    ids = List[ElementId]()
+    for w in FilteredElementCollector(doc, view.Id).OfClass(Wall).ToElements():
+        if any(norm(get_name(doc.GetElement(w.GetTypeId()))).startswith(p) for p in prefixes) and w.CanBeHidden(view):
+            ids.Add(w.Id)
+    if ids.Count:
+        view.HideElements(ids)
+    return ids.Count
+
+
+def draw_cut_lines(view, box, cut, scale, style_name, warns):
+    """Nét đứt tại mép cắt của tờ (tách vùng). Làm lại: xóa nét cũ cùng line style nằm đúng tuyến cắt (detail line
+    không có tham số Comments để đánh dấu – đo 2026-11-08)."""
+    if not any(c is not None for c in cut):
+        return
+    subs = doc.Settings.Categories.get_Item(BuiltInCategory.OST_Lines).SubCategories
+    style = None
+    if subs.Contains(style_name):
+        style = subs.get_Item(style_name).GetGraphicsStyle(GraphicsStyleType.Projection)
+    if style is None:
+        warns.append(u"Không có line style '{}' (IN[21]) → không vẽ nét đứt đường cắt.".format(style_name))
+        return
+    ov = CUT_OVER * scale
+    z = view.GenLevel.Elevation
+    existing = [e for e in FilteredElementCollector(doc, view.Id).OfClass(CurveElement).ToElements()
+                if e.LineStyle is not None and e.LineStyle.Id == style.Id and isinstance(e.GeometryCurve, Line)]
+    for i, val in enumerate(cut):
+        if val is None:
+            continue
+        inward = CUT_LINE_IN if i < 2 else -CUT_LINE_IN
+        along = val + inward
+        delete_ids([e for e in existing
+                    if abs(to_mm(e.GeometryCurve.GetEndPoint(0).Y if i in (1, 3) else e.GeometryCurve.GetEndPoint(0).X)
+                           - along) < 1.0
+                    and abs(to_mm(e.GeometryCurve.GetEndPoint(1).Y if i in (1, 3) else e.GeometryCurve.GetEndPoint(1).X)
+                            - along) < 1.0])
+        if i in (1, 3):
+            p, q = XYZ(from_mm(box[0] - ov), from_mm(val + inward), z), XYZ(from_mm(box[2] + ov), from_mm(val + inward), z)
+        else:
+            p, q = XYZ(from_mm(val + inward), from_mm(box[1] - ov), z), XYZ(from_mm(val + inward), from_mm(box[3] + ov), z)
+        dc = doc.Create.NewDetailCurve(view, Line.CreateBound(p, q))
+        dc.LineStyle = style
+
+
+def make_view(level, name, template, scale, box, old=None, cut=(None, None, None, None), stagger=0.0):
     """old: view cùng tên đã có (Làm lại) → dùng lại, xóa dim của view, KHÔNG chép lại template – giữ VG KTS đã
     chỉnh (G19 2026-11-03: tắt Grids link KC bị mất khi tool xóa view tạo mới)."""
     if old is not None:
@@ -518,6 +601,7 @@ def make_view(level, name, template, scale, box, old=None):
             v.ApplyViewTemplateParameters(template)
             v.ViewTemplateId = ElementId.InvalidElementId
     v.Scale = scale
+    v.DetailLevel = ViewDetailLevel.Fine   # Fine mới có nét lớp trát; view dùng lại có thể đã bị đổi (KTS 2026-11-08)
     for name_ in HIDE_CATS:
         try:
             c = Category.GetCategory(doc, getattr(BuiltInCategory, name_))
@@ -526,10 +610,13 @@ def make_view(level, name, template, scale, box, old=None):
         except Exception:
             pass
     pad = CROP_PAD * scale
+    pad_x = pad + stagger * scale    # chỗ cho đầu trục ngang kéo so le (chỉ khi trục theo CAD)
     v.CropBoxActive = True
     cb = v.CropBox
-    cb.Min = XYZ(from_mm(box[0] - pad), from_mm(box[1] - pad), cb.Min.Z)
-    cb.Max = XYZ(from_mm(box[2] + pad), from_mm(box[3] + pad), cb.Max.Z)
+    cb.Min = XYZ(from_mm(box[0] - pad_x if cut[0] is None else cut[0]),
+                 from_mm(box[1] - pad if cut[1] is None else cut[1]), cb.Min.Z)
+    cb.Max = XYZ(from_mm(box[2] + pad_x if cut[2] is None else cut[2]),
+                 from_mm(box[3] + pad if cut[3] is None else cut[3]), cb.Max.Z)
     v.CropBox = cb
     v.CropBoxVisible = False
     doc.Regenerate()
@@ -555,12 +642,82 @@ def hide_by_filter(view, name, warns):
         return False
 
 
-def fit_grids(view, box, scale, warns):
+CUT_OFFSET = 2.5           # mm giấy: đường cắt lệch khỏi trục tại đường cắt, về phía tờ kia (không trùng nét trục)
+CUT_LINE_IN = 30.0         # mm: nét đứt lùi vào trong mép crop để không bị crop xén
+CUT_OVER = 12.0            # mm giấy: nét đứt nhô ra ngoài tường hai đầu
+GRID_STAGGER = 12.0       # mm giấy: đầu trục kéo xa hơn để không đè trục sát bên (CAD: YB6, YB9, YB14 kéo dài, YB2 gập)
+CAD_BUBBLE_R = 5000.0      # mm: tâm ký hiệu cách đầu đường trục ≤ → đầu đó có đầu trục (CAD HQV: tới 4575)
+CAD_BOX_TOL = 500.0        # mm: trục nằm sát ngoài hộp tường vẫn thuộc vùng (trục tại đường cắt hiện ở cả 2 tờ)
+CAD_NEAR = 15000.0         # mm: đầu trục CAD cách mép vùng ≤ → trục thuộc mép đó của vùng
+
+
+def read_cad_grids(axis_layer, symbol_layer):
+    """Đường trục + ký hiệu đầu trục trên CAD link (layer so theo phần sau $0$ của xref).
+    Trả về {'v': [(tọa độ, lo, hi, có đầu lo, có đầu hi, so le)], 'h': [...]} hoặc None nếu không có đường trục."""
+    segs, circles = {True: {}, False: {}}, []
+
+    def add(p, q, elbow):
+        vert = abs(p[0] - q[0]) < 5.0
+        if not vert and abs(p[1] - q[1]) >= 5.0:
+            return
+        a, b = (p[1], q[1]) if vert else (p[0], q[0])
+        lo, hi = min(a, b), max(a, b)
+        if hi - lo < 5000.0:
+            return
+        key = int(round(p[0] if vert else p[1]))
+        old = segs[vert].get(key)
+        if old is None or hi - lo > old[1] - old[0]:
+            segs[vert][key] = (lo, hi, elbow)
+
+    for ii in FilteredElementCollector(doc).OfClass(ImportInstance).ToElements():
+        geo = ii.get_Geometry(Options())
+        if geo is None:
+            continue
+        for g in geo:
+            if not isinstance(g, GeometryInstance):
+                continue
+            for o in g.GetInstanceGeometry():
+                st = doc.GetElement(o.GraphicsStyleId)
+                cat = st.GraphicsStyleCategory if st is not None else None
+                if cat is None:
+                    continue
+                layer = cat.Name.strip().lower().split(u"$")[-1]
+                if layer == axis_layer:
+                    if isinstance(o, Line):
+                        p, q = o.GetEndPoint(0), o.GetEndPoint(1)
+                        add((to_mm(p.X), to_mm(p.Y)), (to_mm(q.X), to_mm(q.Y)), False)
+                    elif isinstance(o, PolyLine):
+                        c = [(to_mm(t.X), to_mm(t.Y)) for t in o.GetCoordinates()]
+                        for i in range(len(c) - 1):
+                            add(c[i], c[i + 1], len(c) > 2)
+                elif layer == symbol_layer and isinstance(o, Arc) and not o.IsBound and to_mm(o.Radius) >= 500.0:
+                    circles.append((to_mm(o.Center.X), to_mm(o.Center.Y)))
+        if segs[True] or segs[False]:
+            break
+    if not segs[True] and not segs[False]:
+        return None
+
+    def bubble(x, y):
+        return any((x - cx) ** 2 + (y - cy) ** 2 <= CAD_BUBBLE_R ** 2 for cx, cy in circles)
+
+    lows = sorted(v[0] for v in segs[False].values()) or [0.0]
+    mid = lows[len(lows) // 2]
+    return {"v": [(float(k), v[0], v[1], bubble(k, v[0]), bubble(k, v[1]), False) for k, v in segs[True].items()],
+            "h": [(float(k), v[0], v[1], bubble(v[0], k), bubble(v[1], k), v[2] or v[0] < mid - 500.0)
+                  for k, v in segs[False].items()]}
+
+
+def fit_grids(view, box, scale, warns, hide_prefixes=(), hide_outside=False, cad=None, cut=(None, None, None, None)):
     """Trục của file (song song X / Y): 2D trong view, dài tới GRID_END mm giấy ngoài tường, đầu trục 2 đầu.
     Trả về (trục dọc [(x mm, Reference)], trục ngang [(y mm, Reference)])."""
     ext = GRID_END * scale
-    gx, gy = [], []
+    gx, gy, gx_lo, gx_hi = [], [], [], []
+    to_hide, to_show = List[ElementId](), List[ElementId]()
     for gr in FilteredElementCollector(doc).OfClass(Grid).ToElements():
+        if any(norm(get_name(gr)).startswith(p) for p in hide_prefixes):   # trục khối khác: ẩn trong view, không dim
+            if gr.CanBeHidden(view):
+                to_hide.Add(gr.Id)
+            continue
         c = gr.Curve
         if not isinstance(c, Line):
             continue
@@ -568,31 +725,76 @@ def fit_grids(view, box, scale, warns):
         if not vert and abs(c.Direction.X) <= 0.99:
             continue
         p0 = c.GetEndPoint(0)
-        if vert and not box[0] - 1.0 <= to_mm(p0.X) <= box[2] + 1.0:
+        tol = CAD_BOX_TOL if cad is not None else 1.0
+        if (vert and not box[0] - tol <= to_mm(p0.X) <= box[2] + tol) or (
+                not vert and not box[1] - tol <= to_mm(p0.Y) <= box[3] + tol):
+            if hide_outside and gr.CanBeHidden(view):    # tách vùng: trục ngoài vùng giữ dài hết mô hình → khung VP phình
+                to_hide.Add(gr.Id)
             continue
-        if not vert and not box[1] - 1.0 <= to_mm(p0.Y) <= box[3] + 1.0:
-            continue
+        side0, side1 = box[1] if vert else box[0], box[3] if vert else box[2]
+        lo_v, hi_v, b_lo, b_hi, line_only = side0 - ext, side1 + ext, True, True, False
+        if cad is not None:          # thể hiện theo CAD link: trục không có trên CAD → ẩn; đầu trục đúng phía CAD
+            pos = to_mm(p0.X if vert else p0.Y)
+            spec = next((s for s in cad["v" if vert else "h"] if abs(s[0] - pos) <= 5.0), None)
+            if spec is None:
+                if gr.CanBeHidden(view):
+                    to_hide.Add(gr.Id)
+                continue
+            b_lo, b_hi = spec[3], spec[4]
+            if vert:                 # tách vùng: đầu trục phải nằm ở mép ngoài của chính vùng này
+                b_lo = b_lo and abs(spec[1] - side0) <= CAD_NEAR
+                b_hi = b_hi and abs(spec[2] - side1) <= CAD_NEAR
+                if not b_lo and not b_hi:
+                    if min(spec[2], side1) - max(spec[1], side0) < 1000.0:   # trục của cánh khác
+                        if gr.CanBeHidden(view):
+                            to_hide.Add(gr.Id)
+                        continue
+                    line_only = True  # đoạn đuôi trục từ cánh khác: chỉ có nét, không đầu trục, không dim
+            extra = GRID_STAGGER * scale if spec[5] else 0.0
+            lo_v = side0 - ext - extra if b_lo else max(spec[1], side0 - ext)
+            hi_v = side1 + ext + extra if b_hi else min(spec[2], side1 + ext)
+            c_lo, c_hi = cut[1] if vert else cut[0], cut[3] if vert else cut[2]
+            if c_lo is not None and not b_lo:         # đầu không ký hiệu không vượt đường cắt (Revit không crop trục 2D)
+                lo_v = max(lo_v, c_lo + CUT_LINE_IN)
+            if c_hi is not None and not b_hi:
+                hi_v = min(hi_v, c_hi - CUT_LINE_IN)
         try:
             for e in (DatumEnds.End0, DatumEnds.End1):
                 gr.SetDatumExtentType(e, view, DatumExtentType.ViewSpecific)
             cv = list(gr.GetCurvesInView(DatumExtentType.ViewSpecific, view))[0]
             q0, q1 = cv.GetEndPoint(0), cv.GetEndPoint(1)
             if vert:
-                a, b = XYZ(q0.X, from_mm(box[1] - ext), q0.Z), XYZ(q0.X, from_mm(box[3] + ext), q0.Z)
+                a, b = XYZ(q0.X, from_mm(lo_v), q0.Z), XYZ(q0.X, from_mm(hi_v), q0.Z)
             else:
-                a, b = XYZ(from_mm(box[0] - ext), q0.Y, q0.Z), XYZ(from_mm(box[2] + ext), q0.Y, q0.Z)
-            if (q1 - q0).DotProduct(b - a) < 0:
+                a, b = XYZ(from_mm(lo_v), q0.Y, q0.Z), XYZ(from_mm(hi_v), q0.Y, q0.Z)
+            swapped = (q1 - q0).DotProduct(b - a) < 0
+            if swapped:
                 a, b = b, a
             gr.SetCurveInView(DatumExtentType.ViewSpecific, view, Line.CreateBound(a, b))
-            gr.ShowBubbleInView(DatumEnds.End0, view)
-            gr.ShowBubbleInView(DatumEnds.End1, view)
+            for end, has in ((DatumEnds.End1 if swapped else DatumEnds.End0, b_lo),
+                             (DatumEnds.End0 if swapped else DatumEnds.End1, b_hi)):
+                if has:
+                    gr.ShowBubbleInView(end, view)
+                else:
+                    gr.HideBubbleInView(end, view)
         except Exception as ex:
             warns.append(u"Trục {}: không chỉnh được đầu trục ({}).".format(get_name(gr), ex))
+        if gr.IsHidden(view):        # view dùng lại (Làm lại): trục đã ẩn ở lần chạy trước nay thuộc vùng
+            to_show.Add(gr.Id)
+        if line_only:
+            continue
+        item = (to_mm(p0.X if vert else p0.Y), Reference(gr))
+        (gx if vert else gy).append(item)
         if vert:
-            gx.append((to_mm(p0.X), Reference(gr)))
-        else:
-            gy.append((to_mm(p0.Y), Reference(gr)))
-    return gx, gy
+            if b_lo:
+                gx_lo.append(item)
+            if b_hi:
+                gx_hi.append(item)
+    if to_show.Count:
+        view.UnhideElements(to_show)
+    if to_hide.Count:
+        view.HideElements(to_hide)
+    return gx, gy, gx_lo, gx_hi
 
 
 # --- Dim ----------------------------------------------------------------------------
@@ -729,6 +931,37 @@ def place_texts(dim, along_x, pos, lo, hi, sides, scale, occ):
     return moved, stuck
 
 
+def clear_chain_pos(ch, gx, gy, scale):
+    """Đường dim + dải chữ không được nằm trên trục song song: dời đường dim tối đa 6 mm giấy, ưu tiên ra xa tường,
+    vào phía tường tối đa 2 mm. Chữ ngang nằm trên đường dim, chữ dọc nằm trái đường dim."""
+    par = [c for c, _r in (gy if ch.ax else gx)]
+    b0, b1 = (-0.6 * scale, 3.1 * scale) if ch.ax else (-3.1 * scale, 0.6 * scale)
+    sign = ch.sgn or 1.0
+    for k in range(13):
+        for dl in ((k * 0.5, -k * 0.5) if k else (0.0,)):
+            if dl < -2.0:
+                continue
+            p = ch.pos + sign * dl * scale
+            if not any(p + b0 < g < p + b1 for g in par):
+                return p
+    return ch.pos
+
+
+def add_obstacles(occ, walls, struct, gx, gy, box, scale):
+    """Trục, tường, cột / vách vào occ: chữ dim tự tránh (KTS 2026-11-08: dim, trục không chồng nhau và không chồng
+    đối tượng khác)."""
+    ext, t = GRID_END * scale, 0.2 * scale
+    for c, _r in gx:
+        occ.append(((c - t, box[1] - ext, c + t, box[3] + ext), None))
+    for c, _r in gy:
+        occ.append(((box[0] - ext, c - t, box[2] + ext, c + t), None))
+    for wi in walls:
+        bb = wi.w.get_BoundingBox(None)
+        occ.append(((to_mm(bb.Min.X), to_mm(bb.Min.Y), to_mm(bb.Max.X), to_mm(bb.Max.Y)), None))
+    for s in struct:
+        occ.append(((s[0], s[1], s[2], s[3]), None))
+
+
 def register_dim_text(dim, along_x, scale, occ):
     segs = [s for s in dim.Segments] if dim.NumberOfSegments > 1 else [dim]
     for s in segs:
@@ -736,15 +969,20 @@ def register_dim_text(dim, along_x, scale, occ):
             occ.append((text_box(along_x, s.TextPosition, to_mm(s.Value), scale), None))
 
 
-def grid_dims(view, box, gx, gy, scale, dtype, z, occ):
+def grid_dims(view, box, gx, gy, scale, dtype, z, occ, gx_lo=None, gx_hi=None):
     """Dim trục 4 phía × 2 hàng; chữ + đường dim ghi vào occ để chữ dim tường tránh."""
     n = 0
     for refs, along_x, lo_side, hi_side, lo, hi in ((gx, True, box[1], box[3], box[0], box[2]),
                                                    (gy, False, box[0], box[2], box[1], box[3])):
         if len(refs) < 2:
             continue
-        srt = sorted(refs, key=lambda q: q[0])
         for sign, base in ((-1.0, lo_side), (1.0, hi_side)):
+            side_refs = refs
+            if along_x and gx_lo is not None:     # theo CAD: dim trục chỉ ở phía có đầu trục, chỉ trục của phía đó
+                side_refs = gx_lo if sign < 0 else gx_hi
+            if len(side_refs) < 2:
+                continue
+            srt = sorted(side_refs, key=lambda q: q[0])
             for pos, rr in ((base + sign * GRID_CHAIN * scale, srt), (base + sign * GRID_TOTAL * scale,
                                                                          [srt[0], srt[-1]])):
                 d = new_dim(view, along_x, pos, lo, hi, rr, dtype, z)
@@ -760,7 +998,10 @@ def room_kind(x, y, z, public):
     if r is None:
         return 0
     p = r.get_Parameter(BuiltInParameter.ROOM_NAME)
-    return 1 if norm(p.AsString() if p else u"") in public else 2
+    name = norm(p.AsString() if p else u"")
+    if name in OUTSIDE_ROOMS:          # logia: tính là ngoài nhà để dim cửa lùa, chuỗi không bị cắt như phòng căn hộ
+        return 3
+    return 1 if name in public else 2
 
 
 def side_kind(x, y, z, public, solids):
@@ -769,6 +1010,8 @@ def side_kind(x, y, z, public, solids):
     2026-11-03 (G19 lõi thang): hộp kỹ thuật, khoảng trống trong lõi không có Room (lõi phải ~3,5 m) bị coi là mặt
     ngoài → dim trong lõi; khe thông tầng X4–X5, đầu hành lang hở vẫn có tia thoát → mặt ngoài."""
     kd = room_kind(x, y, z, public)
+    if kd == 3:
+        return 0
     if kd != 0:
         return kd
     if any(b[0] <= x <= b[2] and b[1] <= y <= b[3] for b in solids):
@@ -790,8 +1033,9 @@ def side_kind(x, y, z, public, solids):
     return 0
 
 
-def make_alignments(walls):
-    """Tuyến: các tường cùng phương, lệch tim ≤ ALIGN_TOL, hở ≤ ALIGN_GAP (gộp bắc cầu)."""
+def make_alignments(walls, opens=None):
+    """Tuyến: các tường cùng phương, lệch tim ≤ ALIGN_TOL, hở ≤ ALIGN_GAP (gộp bắc cầu). Tuyến ngắn vẫn giữ nếu có cửa
+    sổ / cửa lùa (HQV: tường ngắn của mặt ngoài so le bị bỏ → thiếu dim cửa sổ)."""
     out = []
     for ax in (True, False):
         ws = sorted([w for w in walls if w.ax == ax], key=lambda q: q.c)
@@ -807,7 +1051,9 @@ def make_alignments(walls):
                 hit[0].extend(g)
                 groups.remove(g)
         for g in groups:
-            if sum(o.hi - o.lo for o in g) >= ALIGN_MIN:
+            has_facade = opens is not None and any(id(e[0][1]) in FACADE_REFS for o in g
+                                                   for e in opens.get(id_value(o.w.Id), []))
+            if sum(o.hi - o.lo for o in g) >= ALIGN_MIN or has_facade:
                 out.append((ax, g))
     return out
 
@@ -958,7 +1204,14 @@ def extend_chains(chains, walls, struct, gx, gy, stoppers=()):
     return n
 
 
-def merge_corridors(chains, scale):
+def corridor_gap(ch, scale):
+    """Mẫu KTS 2026-11-08 (HQV YB5–YB6, rộng 1800): chữ nằm giữa tường và đường dim → cách mặt tường 6 mm giấy (đo 594),
+    chữ nằm phía lòng hành lang → 5 mm (đo 491). Chữ ngang ở trên đường dim, chữ dọc ở trái đường dim."""
+    toward_wall = ch.sgn < 0 if ch.ax else ch.sgn > 0
+    return (6.0 if toward_wall else 5.0) * scale
+
+
+def merge_corridors(chains, scale, two=False):
     """KTS 2026-11-03 (G19 hành lang X2–X3 rộng 1600): 2 chuỗi hành lang đối diện nhau, khoảng thông thủy giữa 2
     mặt tường < CORR_MERGE mm giấy → chữ 2 chuỗi đè nhau. Gộp thành MỘT chuỗi ở giữa hành lang, mốc của cả hai
     bên, chữ đoạn ngắn kéo xen kẽ hai phía. Gộp theo CỤM (một bên tường bị tách nhiều tuyến – G19 X3: ghép từng
@@ -987,10 +1240,18 @@ def merge_corridors(chains, scale):
         downs = [ch for ch in grp if ch.sgn < 0]
         if not ups or not downs:
             continue
+        if two and min(ch.face for ch in downs) - max(ch.face for ch in ups) >= CORR_TWO_MIN * scale:
+            for ch in grp:                  # mỗi bên tường một chuỗi riêng, chỉ mốc của bên đó
+                hidden = set(id(t) for t in getattr(ch, "back", ()))
+                ch.refs = [t for t in ch.refs if id(t) not in hidden]
+                ch.kind = u"hành lang"
+                ch.pos = ch.face + ch.sgn * corridor_gap(ch, scale)
+            continue
         used.update(id(ch) for ch in grp)
         refs = []
-        for ch in grp:
-            refs += ch.refs
+        for ch in grp:                      # đầu hành lang hở xếp 'mặt ngoài': vẫn bỏ mốc khuất khi gộp vào hành lang
+            hidden = set(id(t) for t in getattr(ch, "back", ()))
+            refs += [t for t in ch.refs if id(t) not in hidden]
         face_a, face_b = max(ch.face for ch in ups), min(ch.face for ch in downs)
         bands = [ch.band for ch in grp if ch.band is not None]
         band = (min(b[0] for b in bands), max(b[1] for b in bands)) if bands else None
@@ -1000,17 +1261,167 @@ def merge_corridors(chains, scale):
     return [ch for ch in chains if id(ch) not in used] + out
 
 
-def wall_chains(view, walls, align, opens, struct, gx, gy, scale, dtype, z, public, log, occ):
+def move_logia_chains(chains, z, public, scale):
+    """KTS 2026-11-08: dim cửa lùa không nằm trong lòng logia. Chuỗi trong logia đưa ra ngoài mép logia; có chuỗi mặt
+    ngoài cùng phía sát đó thì gộp mốc vào chuỗi ấy."""
+    out = []
+    logia = []
+    for ch in chains:
+        n = 8
+        pts = [ch.lo + (ch.hi - ch.lo) * i / float(n) for i in range(1, n)]
+        inside = [s for s in pts if room_kind(*((s, ch.pos, z) if ch.ax else (ch.pos, s, z)), public=public) == 3]
+        if ch.kind.startswith(u"mặt ngoài") and ch.sgn and inside:
+            logia.append((ch, inside[len(inside) // 2]))
+        else:
+            out.append(ch)
+    for ch, s in logia:
+        p, steps = ch.pos, 0
+        while steps < 60 and room_kind(*((s, p, z) if ch.ax else (p, s, z)), public=public) == 3:
+            p += ch.sgn * 100.0
+            steps += 1
+        new_pos = p + ch.sgn * WALL_EXT * scale
+        host = [t for t in out if t.ax == ch.ax and t.sgn == ch.sgn and t.kind.startswith(u"mặt ngoài")
+                and abs(t.pos - new_pos) <= LOGIA_MERGE * scale and t.lo <= ch.hi + ALIGN_GAP and t.hi >= ch.lo - ALIGN_GAP]
+        if host:
+            t = min(host, key=lambda q: abs(q.pos - new_pos))
+            t.refs += [r for r in ch.refs if r not in getattr(ch, "back", ())]
+            t.lo, t.hi = min(t.lo, ch.lo), max(t.hi, ch.hi)
+        else:
+            ch.pos = new_pos
+            out.append(ch)
+    return out
+
+
+def merge_facade_steps(chains, scale):
+    """Mặt ngoài so le: các chuỗi cùng phía, lệch hàng ≤ FACADE_STEP và liền nhau → một chuỗi ở hàng ngoài cùng
+    (KTS 2026-11-08: kéo dim ra ngoài để dim được phần còn thiếu)."""
+    fac = [c for c in chains if c.kind.startswith(u"mặt ngoài") and c.sgn]
+    parent = dict((id(c), id(c)) for c in fac)
+
+    def root(k):
+        while parent[k] != k:
+            k = parent[k]
+        return k
+    for a in fac:
+        for b in fac:
+            if a is not b and a.ax == b.ax and a.sgn == b.sgn and abs(a.pos - b.pos) <= FACADE_STEP * scale \
+                    and a.lo <= b.hi + FACADE_JOIN and b.lo <= a.hi + FACADE_JOIN:
+                parent[root(id(a))] = root(id(b))
+    groups, drop = {}, set()
+    for c in fac:
+        groups.setdefault(root(id(c)), []).append(c)
+    for grp in groups.values():
+        if len(grp) < 2:
+            continue
+        main_ch = max(grp, key=lambda c: c.pos * c.sgn)      # hàng ngoài cùng theo hướng ra ngoài
+        for c in grp:
+            if c is main_ch:
+                continue
+            main_ch.refs = main_ch.refs + c.refs
+            main_ch.lo, main_ch.hi = min(main_ch.lo, c.lo), max(main_ch.hi, c.hi)
+            drop.add(id(c))
+    return [c for c in chains if id(c) not in drop]
+
+
+def extend_facade_to_grids(ch, keep, solids, grids, scale):
+    """Kéo đầu chuỗi mặt ngoài tới trục góc nhà: đi dọc mặt ngoài tới khi hết tường / cột, hoặc gặp khối chắn đường dim."""
+    F = ch.pos - ch.sgn * WALL_EXT * scale
+    win0, win1 = (F - FACADE_DEPTH, F + 50.0) if ch.sgn > 0 else (F - 50.0, F + FACADE_DEPTH)
+    if ch.ax:
+        strips = [(b[0], b[2], b[1], b[3]) for b in solids]
+    else:
+        strips = [(b[1], b[3], b[0], b[2]) for b in solids]
+    for d in (1.0, -1.0):
+        end = ch.hi if d > 0 else ch.lo
+        last, limit = end, None
+        for i in range(1, int(FACADE_WALK / 200.0) + 1):
+            s = end + d * 200.0 * i
+            here = [q for q in strips if q[0] <= s <= q[1]]
+            if any(q[2] <= ch.pos <= q[3] for q in here):
+                limit = s + d * 300.0
+                break
+            if any(q[3] >= win0 and q[2] <= win1 for q in here):
+                last = s
+            elif abs(s - last) > FACADE_HOLE:
+                break
+        if limit is None:
+            limit = last + d * GRID_END_REACH
+        cand = [(c_, r_) for c_, r_ in grids if (end < c_ <= limit if d > 0 else limit <= c_ < end)]
+        if not cand:
+            continue
+        c_, r_ = max(cand, key=lambda q: q[0] * d)
+        if not any(abs(c_ - t[0]) < 1.0 for t in keep):
+            keep.append((c_, r_, PRI_GRID))
+        if d > 0:
+            ch.hi = c_
+        else:
+            ch.lo = c_
+
+
+def add_facade_grid_row(view, ch, gx, gy, gx_lo, gx_hi, box, scale, dtype, z, occ, log):
+    """Hàng dim trục ngoài chuỗi mặt ngoài, cho các mặt không nằm ở mép bản vẽ (mép đã có hàng dim trục)."""
+    side = (box[1] if ch.sgn < 0 else box[3]) if ch.ax else (box[0] if ch.sgn < 0 else box[2])
+    has_row = len(gx_lo if ch.sgn < 0 else gx_hi) >= 2 if ch.ax else True
+    if has_row and abs(ch.pos - side) <= FACADE_ROW_SKIP * scale:
+        return
+    refs = sorted([q for q in (gx if ch.ax else gy) if ch.lo - GRID_END_REACH < q[0] < ch.hi + GRID_END_REACH],
+                  key=lambda q: q[0])
+    if len(refs) < 2:
+        return
+    lo, hi = refs[0][0], refs[-1][0]
+    probe = Chain(ch.ax, ch.c, lo, hi, ch.pos + ch.sgn * FACADE_ROW_GAP * scale, ch.sgn, ch.kind, [], None, None)
+    pos = clear_chain_pos(probe, gx, gy, scale)
+    d = new_dim(view, ch.ax, pos, lo, hi, refs, dtype, z)
+    if d is None:
+        log.append([u"X" if ch.ax else u"Y", u"{:.0f}".format(ch.c), u"", u"hàng dim trục mặt ngoài", len(refs), u"LỖI tạo dim"])
+        return
+    doc.Regenerate()
+    place_texts(d, ch.ax, pos, lo, hi, (), scale, occ)
+
+
+def wall_chains(view, walls, align, opens, struct, gx, gy, scale, dtype, z, public, log, occ, two=False,
+                door_grid_only=False, box=None, gx_lo=(), gx_hi=()):
     chains = plan_chains(walls, align, opens, struct, gx, gy, scale, z, public)
-    chains = merge_corridors(chains, scale)
+    chains = merge_corridors(chains, scale, two)
+    if two:
+        for ch in chains:                # hành lang một bên tường: cùng khoảng cách với hành lang hai bên
+            if ch.kind == u"hành lang" and ch.sgn:
+                ch.pos = ch.face + ch.sgn * corridor_gap(ch, scale)
     n_ext = extend_chains(chains, walls, struct, gx, gy, opening_stoppers(view.GenLevel, view))
     if n_ext:
         log.append([u"", u"", u"", u"kéo dài đầu chuỗi tới tường gặp đầu tiên", n_ext, u""])
     chains, n_cut = clip_apartments(chains, z, public)
     if n_cut:
         log.append([u"", u"", u"", u"cắt đoạn chuỗi đi qua căn hộ / lõi", n_cut, u""])
+    if OUTSIDE_ROOMS:
+        chains = merge_facade_steps(move_logia_chains(chains, z, public, scale), scale)
+    solids = [(s[0], s[1], s[2], s[3]) for s in struct]
+    for wi in walls:
+        bb = wi.w.get_BoundingBox(None)
+        solids.append((to_mm(bb.Min.X), to_mm(bb.Min.Y), to_mm(bb.Max.X), to_mm(bb.Max.Y)))
     n_dim, n_moved, n_stuck = 0, 0, 0
     for ch in chains:
+        if door_grid_only and ch.kind.startswith(u"hành lang"):   # KTS 2026-11-08: hành lang chỉ dim vào cửa và trục
+            keep = [t for t in ch.refs if t[2] in (PRI_OPEN, PRI_GRID)]
+            if not any(t[2] == PRI_OPEN for t in keep):           # không có cửa: chỉ còn trục, đã có ở dim trục
+                log.append([u"X" if ch.ax else u"Y", u"{:.0f}".format(ch.c), u"{:.0f}–{:.0f}".format(ch.lo, ch.hi),
+                            ch.kind, 0, u"bỏ: đoạn không có cửa"])
+                continue
+            ch.refs = keep
+            ch.lo, ch.hi = min(t[0] for t in keep), max(t[0] for t in keep)
+        elif OUTSIDE_ROOMS and ch.kind.startswith(u"mặt ngoài"):  # KTS 2026-11-08: chỉ cửa sổ, cửa lùa logia, trục
+            keep = [t for t in ch.refs if t[2] == PRI_GRID or id(t[1]) in FACADE_REFS]
+            keep += [(c_, r_, PRI_GRID) for c_, r_ in (gx if ch.ax else gy)     # chuỗi bắt đầu / kết thúc ở trục sát đầu
+                     if ch.lo - GRID_END_REACH < c_ < ch.hi + GRID_END_REACH
+                     and not any(abs(c_ - t[0]) < 1.0 for t in keep)]
+            if not any(t[2] != PRI_GRID for t in keep):
+                log.append([u"X" if ch.ax else u"Y", u"{:.0f}".format(ch.c), u"{:.0f}–{:.0f}".format(ch.lo, ch.hi),
+                            ch.kind, 0, u"bỏ: đoạn không có cửa sổ / cửa lùa"])
+                continue
+            ch.lo, ch.hi = min(t[0] for t in keep), max(t[0] for t in keep)
+            extend_facade_to_grids(ch, keep, solids, gx if ch.ax else gy, scale)
+            ch.refs = keep
+        ch.pos = clear_chain_pos(ch, gx, gy, scale)
         chain = dedupe(ch.refs)
         d = dim_no_tiny(view, ch.ax, ch.pos, ch.lo, ch.hi, chain, ch.refs, dtype, z)
         row = [u"X" if ch.ax else u"Y", u"{:.0f}".format(ch.c), u"{:.0f}–{:.0f}".format(ch.lo, ch.hi), ch.kind,
@@ -1030,6 +1441,8 @@ def wall_chains(view, walls, align, opens, struct, gx, gy, scale, dtype, z, publ
         mv, st = place_texts(d, ch.ax, ch.pos, ch.lo, ch.hi, sides, scale, occ)
         n_moved += mv
         n_stuck += st
+        if OUTSIDE_ROOMS and ch.kind.startswith(u"mặt ngoài") and box is not None:
+            add_facade_grid_row(view, ch, gx, gy, gx_lo, gx_hi, box, scale, dtype, z, occ, log)
         log.append(row + [u"{} đoạn{}".format(max(d.NumberOfSegments, 1),
                                               u", {} chữ còn chồng".format(st) if st else u"")])
     return n_dim, n_moved, n_stuck
@@ -1069,11 +1482,23 @@ def plan_chains(walls, align, opens, struct, gx, gy, scale, z, public):
         sgn = -1.0 if pick == 0 else 1.0
         pos = c + sgn * (hw + gap)
         blo, bhi = c - hw - BAND_PAD, c + hw + BAND_PAD
-        refs = []
+        refs, back = [], []                              # back: mốc khuất sau tường, gộp chuỗi hành lang thì bỏ
+
+        def behind(p_lo, p_hi, at, _c=c, _hw=hw, _sgn=sgn, _g=g):
+            """Cấu kiện vuông góc nằm sau tuyến tường (phía căn hộ), đứng từ phía đặt chuỗi không thấy (KTS 2026-11-08)."""
+            shown = p_hi > _c + _hw + VISIBLE_TOL if _sgn > 0 else p_lo < _c - _hw - VISIBLE_TOL
+            return not shown and any(o.lo - 1.0 <= at <= o.hi + 1.0 for o in _g)
+
         for q in walls:                                  # tường vuông góc chạm tuyến → mặt lõi
             if q.ax == ax or q.hi < blo or q.lo > bhi or not lo - 150.0 <= q.c <= hi + 150.0:
                 continue
-            refs += [(cd, r, PRI_CORE) for cd, r in q.cores]
+            new = [(cd, r, PRI_CORE) for cd, r in q.cores]
+            if behind(q.lo, q.hi, q.c):
+                if kind != u"hành lang":
+                    back += new
+                    refs += new
+                continue
+            refs += new
         edges = []
         ids = set(id_value(o.w.Id) for o in g)
         for wid in ids:                                  # cửa trên tuyến → 2 mép khuôn
@@ -1104,9 +1529,20 @@ def plan_chains(walls, align, opens, struct, gx, gy, scale, z, public):
             alo, ahi = (x0, x1) if ax else (y0, y1)
             if shi < blo or slo > bhi or ahi < lo - 150.0 or alo > hi + 150.0:
                 continue
-            refs += [(cd, r, PRI_STRUCT) for fx, cd, r in faces if fx == ax]
+            for fx, cd, r in faces:
+                if fx != ax:
+                    continue
+                item = (cd, r, PRI_STRUCT)
+                if behind(slo, shi, cd):
+                    if kind != u"hành lang":
+                        back.append(item)
+                        refs.append(item)
+                    continue
+                refs.append(item)
         refs += [(cd, r, PRI_GRID) for cd, r in (gx if ax else gy) if lo - 1.0 < cd < hi + 1.0]
-        chains.append(Chain(ax, c, lo, hi, pos, sgn, kind, refs, c + sgn * hw, (blo, bhi)))
+        new_ch = Chain(ax, c, lo, hi, pos, sgn, kind, refs, c + sgn * hw, (blo, bhi))
+        new_ch.back = back
+        chains.append(new_ch)
     return chains
 
 
@@ -1133,7 +1569,7 @@ class NoteDraw(object):
         bb = tn.get_BoundingBox(self.view)
         return tn, (to_mm(bb.Max.Y - bb.Min.Y) / self.s if bb is not None else 3.0)
 
-    def swatch(self, x0, x1, cy, frt):
+    def swatch(self, x0, x1, cy, frt, pattern=u""):
         loop = CurveLoop()
         pts = [self.Q(x0 + 2.0, cy + 2.2), self.Q(x1 - 2.0, cy + 2.2), self.Q(x1 - 2.0, cy - 2.2),
                self.Q(x0 + 2.0, cy - 2.2)]
@@ -1141,7 +1577,26 @@ class NoteDraw(object):
             loop.Append(Line.CreateBound(pts[i], pts[(i + 1) % 4]))
         loops = List[CurveLoop]()
         loops.Add(loop)
-        FilledRegion.Create(doc, frt.Id, self.view.Id, loops)
+        region = FilledRegion.Create(doc, frt.Id, self.view.Id, loops)
+        ogs = None                         # override trong legend: không phải tạo filled region type mới
+        if isinstance(pattern, Material):  # đúng Cut Pattern của vật liệu lõi (mặt + nền, cả màu)
+            ogs = OverrideGraphicSettings()
+            ogs.SetSurfaceForegroundPatternId(pattern.CutForegroundPatternId)
+            ogs.SetSurfaceForegroundPatternColor(pattern.CutForegroundPatternColor)
+            ogs.SetSurfaceForegroundPatternVisible(pattern.CutForegroundPatternId != ElementId.InvalidElementId)
+            ogs.SetSurfaceBackgroundPatternId(pattern.CutBackgroundPatternId)
+            ogs.SetSurfaceBackgroundPatternColor(pattern.CutBackgroundPatternColor)
+            ogs.SetSurfaceBackgroundPatternVisible(pattern.CutBackgroundPatternId != ElementId.InvalidElementId)
+        elif pattern:
+            fpe = by_name(FillPatternElement, pattern)
+            if fpe is not None:
+                ogs = OverrideGraphicSettings()
+                ogs.SetSurfaceForegroundPatternId(fpe.Id)
+                ogs.SetSurfaceForegroundPatternVisible(True)
+                if pattern == u"<Solid fill>":   # cột / vách link KC trên mặt bằng tô đặc xám
+                    ogs.SetSurfaceForegroundPatternColor(Color(128, 128, 128))
+        if ogs is not None:
+            self.view.SetElementOverrides(region.Id, ogs)
 
 
 def note_rows(walls, struct_mats, mats, warns):
@@ -1149,10 +1604,12 @@ def note_rows(walls, struct_mats, mats, warns):
     link KC (G19: tường VBT-150 của file là gờ logia, thấp hơn mặt cắt) → chiều dày ghi 'Theo hồ sơ KC'."""
     groups = {}
     for wi in walls:
-        groups.setdefault(norm(wi.mat), set()).add(int(round(wi.core_mm)))
+        tn = norm(get_name(doc.GetElement(wi.w.GetTypeId()))).lower()
+        key = next((m[0] for m in mats if m[0] and m[0] in tn), norm(wi.mat))   # từ khóa IN[11] khớp tên type trước
+        groups.setdefault(key, set()).add(int(round(wi.core_mm)))
     for m in struct_mats:
         groups.setdefault(m, set())
-    rows = []
+    rows, merged = [], {}
     for mat, cores in sorted(groups.items()):
         hit = next((m for m in mats if m[0] and m[0] in mat.lower()), None)
         frt, desc = None, mat or u"(chưa gán vật liệu)"
@@ -1163,8 +1620,13 @@ def note_rows(walls, struct_mats, mats, warns):
                 warns.append(u"Không có filled region type '{}' → ô ký hiệu '{}' để trống.".format(hit[1], desc))
         else:
             warns.append(u"Vật liệu lõi '{}' chưa có trong IN[11] → ghi tên vật liệu, không hatch.".format(mat))
+        pat = (hit[3] if hit is not None else u"") or by_name(Material, mat) or u""   # không ghi pattern → đọc từ vật liệu lõi
+        merged.setdefault(desc, [frt, set(), pat])       # cùng mô tả (BTCT file + link KC) → 1 dòng
+        merged[desc][0] = merged[desc][0] or frt
+        merged[desc][1] |= cores
+    for desc, (frt, cores, pat) in sorted(merged.items()):
         val = u", ".join(u"{}".format(c) for c in sorted(cores)) + u" mm" if cores else u"Theo hồ sơ KC"
-        rows.append((frt, desc, val))
+        rows.append((frt, desc, val, pat))
     return rows
 
 
@@ -1183,7 +1645,8 @@ def finish_note(walls):
 
 def make_legend(name, walls, struct_mats, mats, rebuild, warns):
     """Legend bảng ký hiệu tường + lưu ý. Trả về (legend | None, cao mm giấy)."""
-    t_title, t_body = by_name(TextNoteType, TEXT_TITLE), by_name(TextNoteType, TEXT_BODY)
+    t_title = next((t for t in (by_name(TextNoteType, n) for n in (TEXT_TITLE,) + TEXT_TITLE_ALT) if t is not None), None)
+    t_body = by_name(TextNoteType, TEXT_BODY)
     if t_title is None or t_body is None:
         warns.append(u"Thiếu text type '{}' / '{}' → không vẽ legend ghi chú.".format(TEXT_TITLE, TEXT_BODY))
         return None, 0.0
@@ -1222,13 +1685,13 @@ def make_legend(name, walls, struct_mats, mats, rebuild, warns):
         nd.text((xs[i] + xs[i + 1]) / 2.0, y - 1.6, NOTE_COLS[i] - 2.0, hd, center=True)
     y -= 6.0
     nd.line((0.0, y), (W, y))
-    for frt, desc, val in note_rows(walls, struct_mats, mats, warns):
+    for frt, desc, val, pat in note_rows(walls, struct_mats, mats, warns):
         tn, h = nd.text(xs[1] + 1.5, y - 1.5, NOTE_COLS[1] - 3.0, desc)
         rh = max(7.0, h + 3.0)
         cy = y - rh / 2.0
         tn.Coord = nd.Q(xs[1] + 1.5, cy + h / 2.0)
         if frt is not None:
-            nd.swatch(xs[0], xs[1], cy, frt)
+            nd.swatch(xs[0], xs[1], cy, frt, pat)
         nd.text((xs[2] + xs[3]) / 2.0, cy + 1.3, NOTE_COLS[2] - 2.0, val, center=True)
         y -= rh
         nd.line((0.0, y), (W, y))
@@ -1272,6 +1735,13 @@ def place_label(vp, o, warns):
         vp.LabelOffset = XYZ(0, 0, 0)
         doc.Regenerate()
         lo = vp.GetLabelOutline()
+        if vp.Rotation == ViewportRotation.Counterclockwise:
+            # VP quay: tên hình quay theo (nằm dọc mép phải) và LabelOffset (a, b) dời trên sheet (-b, a) – đo 2026-11-08
+            dx = o[2] + LABEL_GAP - to_mm(lo.MinimumPoint.X)
+            dy = o[1] + CROP_PAD - to_mm(lo.MinimumPoint.Y)
+            vp.LabelOffset = XYZ(from_mm(dy), from_mm(-dx), 0)
+            vp.LabelLineLength = from_mm(max(50.0, o[3] - o[1] - 2 * CROP_PAD))
+            return
         top = to_mm(lo.MaximumPoint.Y) - o[1]
         left = to_mm(lo.MinimumPoint.X) - o[0]
         vp.LabelOffset = XYZ(from_mm(CROP_PAD - left), from_mm(-LABEL_GAP - top), 0)
@@ -1305,7 +1775,7 @@ def empty_sheet(sh):
                    for x in FilteredElementCollector(doc, sh.Id).OfClass(ScheduleSheetInstance))
 
 
-def make_sheet(number, name, tb, vp_type, plan, legend, warns, sh=None):
+def make_sheet(number, name, tb, vp_type, plan, legend, warns, sh=None, rotate=False):
     """sh: sheet trống có sẵn (D:\\AI 2026-11-04) → đặt vào đó, giữ số hiệu / tên / khung tên."""
     if sh is None:
         sh = ViewSheet.Create(doc, tb.Id)
@@ -1314,6 +1784,9 @@ def make_sheet(number, name, tb, vp_type, plan, legend, warns, sh=None):
     vp = Viewport.Create(doc, sh.Id, plan.Id, XYZ(from_mm((AREA_X0 + AREA_X1) / 2.0), from_mm(400.0), 0))
     if vp_type is not None:
         vp.ChangeTypeId(vp_type.Id)
+    if rotate:                # Revit dời khung đi xa khi quay (đo G19/HQV 2026-11-08) → căn vị trí phải đứng sau bước này
+        vp.Rotation = ViewportRotation.Counterclockwise
+        doc.Regenerate()
     # Trục của file link (ByHostView) không bị crop cắt → khung viewport phình (G19: 766 thay vì 698 mm). Đo và
     # căn vị trí khi TẠM ẩn link, rồi hiện lại – phòng khi không có filter IN[16] (khung đúng sau khi KTS tắt tay).
     links = List[ElementId]()
@@ -1334,6 +1807,9 @@ def make_sheet(number, name, tb, vp_type, plan, legend, warns, sh=None):
     if o[0] < AREA_X0 - 0.5 or o[2] > AREA_X1 + 0.5:
         warns.append(u"MB rộng {:.0f} mm giấy, vượt vùng vẽ {:.0f} mm → thêm tỷ lệ nhỏ hơn vào IN[3].".format(
             o[2] - o[0], AREA_X1 - AREA_X0))
+    if o[1] < AREA_Y0 - 0.5 or o[3] > AREA_Y1 + 0.5:
+        warns.append(u"MB cao {:.0f} mm giấy, vượt vùng vẽ {:.0f} mm → tràn khung tên, thêm tỷ lệ nhỏ hơn vào "
+                     u"IN[3].".format(o[3] - o[1], AREA_Y1 - AREA_Y0))
     lvp = None
     if legend is not None:
         lvp = Viewport.Create(doc, sh.Id, legend.Id, XYZ(from_mm(150.0), from_mm(80.0), 0))
@@ -1415,7 +1891,11 @@ def write_log(rows, level_name, dry_run):
 
 def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_name, vp_name, dim_grid_name,
          dim_wall_name, legend_name, mat_text, public_text, dry_run, rebuild, group_text=u"", grid_filter=u"",
-         place=True):
+         place=True, region_text=u"", hide_grid_text=u"", cad_grid_text=u"", cut_style=u"", hide_wall_text=u"",
+         corridor_chains=u"1", corridor_only=u"", outside_rooms=u""):
+    OUTSIDE_ROOMS.clear()
+    OUTSIDE_ROOMS.update(norm(s) for s in split_list(outside_rooms))
+    FACADE_REFS.clear()
     if is_central_file(doc):
         raise StopReport([u"DỪNG: file đang mở là file CENTRAL. Hãy mở file local hoặc bản detached/copy."])
     if level_name.strip():
@@ -1431,6 +1911,14 @@ def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_na
         scales = [int(float(s)) for s in split_list(scale_text)]
     except ValueError:
         raise StopReport([u"DỪNG: IN[3] tỷ lệ '{}' không hợp lệ.".format(scale_text)])
+    region = None
+    if region_text.strip():              # tách tầng lớn thành nhiều tờ: chạy tool một lần cho mỗi vùng
+        try:
+            region = [float(s) for s in region_text.replace(u";", u",").split(u",")]
+        except ValueError:
+            region = []
+        if len(region) != 4 or region[0] >= region[2] or region[1] >= region[3]:
+            raise StopReport([u"DỪNG: IN[18] vùng '{}' phải là x0,y0,x1,y1 (mm).".format(region_text)])
     if not scales or not view_name.strip() or (place and not number.strip()):
         raise StopReport([u"DỪNG: thiếu tỷ lệ (IN[3]), tên view (IN[1]) hoặc số sheet (IN[4])."])
     template = None
@@ -1480,6 +1968,15 @@ def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_na
     if foreign:
         raise StopReport([u"DỪNG: số sheet {} đang dùng cho '{}' – đổi IN[4].".format(number, foreign[0].Name)])
     reuse = [v for v in old_views if v.GenLevel is not None and v.GenLevel.Id == level.Id][:1]   # giữ, không xóa
+    # Đổi số sheet khi Làm lại: view dùng lại còn nằm trên sheet số cũ → Viewport.Create báo "viewId cannot be added".
+    # Sheet cũ cùng tên = bản tool đã tạo → xóa như Làm lại; khác tên → dừng, không đụng (HQV 2026-11-08 A140 → ACD.08.02).
+    held = [s for s in FilteredElementCollector(doc).OfClass(ViewSheet).ToElements()
+            if place and reuse and s.GetAllPlacedViews().Contains(reuse[0].Id) and norm(s.SheetNumber) != norm(number)]
+    other = [s for s in held if norm(s.Name) != norm(sheet_name)]
+    if other:
+        raise StopReport([u"DỪNG: view '{}' đang nằm trên sheet {} '{}' – gỡ view khỏi sheet đó rồi chạy lại.".format(
+            view_name, other[0].SheetNumber, other[0].Name)])
+    old_sheets = old_sheets + held
     locked = [get_name(e) for e in old_views + old_sheets
               if e not in reuse and not DocumentValidation.CanDeleteElement(doc, e.Id)]
     if locked:
@@ -1506,29 +2003,68 @@ def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_na
                 len(drop), len(old_sheets)))
             delete_ids(drop + old_sheets)
         walls = collect_walls(level)
+        walls_all = walls                # bảng ghi chú theo cả tầng: các tờ tách vùng dùng chung một bảng
+        if region is not None:
+            def _inside(x0, y0, x1, y1):           # theo tâm hộp bao → mỗi cấu kiện chỉ thuộc một vùng
+                return region[0] <= (x0 + x1) / 2.0 <= region[2] and region[1] <= (y0 + y1) / 2.0 <= region[3]
+            kept = []
+            for wi in walls:
+                bb = wi.w.get_BoundingBox(None)
+                if _inside(to_mm(bb.Min.X), to_mm(bb.Min.Y), to_mm(bb.Max.X), to_mm(bb.Max.Y)):
+                    kept.append(wi)
+            walls = kept
         if not walls:
-            raise StopReport([u"DỪNG: level {} không có tường lõi ≥ {:.0f} mm.".format(level.Name, CORE_MIN)])
+            raise StopReport([u"DỪNG: level {} không có tường lõi ≥ {:.0f} mm trong vùng đã chọn.".format(
+                level.Name, CORE_MIN)])
         box = walls_box(walls)
         struct_mats = set()
         struct = collect_structure(level, warns, struct_mats)
-        legend, legend_h = (make_legend(legend_name.strip(), walls, struct_mats, parse_materials(mat_text), rebuild,
+        if region is not None:
+            struct = [s for s in struct if _inside(s[0], s[1], s[2], s[3])]
+        legend, legend_h = (make_legend(legend_name.strip(), walls_all, struct_mats, parse_materials(mat_text), rebuild,
                                         warns) if legend_name.strip() else (None, 0.0))
-        scale = pick_scale(scales, box, legend_h)
-        view = make_view(level, view_name.strip(), template, scale, box, keep)
+        stagger = GRID_STAGGER if len(split_list(cad_grid_text)) >= 2 else 0.0
+        scale, rotate = pick_scale(scales, box, legend_h, stagger)
+        cut = [None, None, None, None]   # x0, y0, x1, y1: mép vùng sát hộp tường là mép cắt, crop đúng tại đó
+        if region is not None:
+            off = CUT_OFFSET * scale
+            for i in (0, 1):
+                if abs(region[i] - box[i]) <= 1000.0:
+                    cut[i] = region[i] - off
+            for i in (2, 3):
+                if abs(region[i] - box[i]) <= 1000.0:
+                    cut[i] = region[i] + off
+        view = make_view(level, view_name.strip(), template, scale, box, keep, cut, stagger)
+        draw_cut_lines(view, box, cut, scale, cut_style.strip(), warns)
+        n_hid = hide_wall_types(view, [norm(s) for s in split_list(hide_wall_text)])
+        if n_hid:
+            warns.append(u"Đã ẩn {} tường theo IN[22] trong view.".format(n_hid))
         if hide_by_filter(view, grid_filter, warns):
             warns.append(u"Đã ẩn trục không phải kiến trúc (link KC) bằng filter '{}'.".format(grid_filter.strip()))
-        gx, gy = fit_grids(view, box, scale, warns)
+        cad = None
+        cad_layers = [s.strip().lower() for s in split_list(cad_grid_text)]
+        if len(cad_layers) >= 2:
+            cad = read_cad_grids(cad_layers[0], cad_layers[1])
+            if cad is None:
+                warns.append(u"Không thấy đường trục layer '{}' trên CAD link → trục thể hiện như mặc định.".format(
+                    cad_layers[0]))
+        gx, gy, gx_lo, gx_hi = fit_grids(view, box, scale, warns, [norm(s) for s in split_list(hide_grid_text)],
+                                         region is not None, cad, cut)
         occ = []                                         # ô chữ / đường dim đã đặt – chữ dim không chồng nhau
-        n_grid = grid_dims(view, box, gx, gy, scale, dt_grid, z, occ)
+        add_obstacles(occ, walls, struct, gx, gy, box, scale)
+        n_grid = grid_dims(view, box, gx, gy, scale, dt_grid, z, occ,
+                           gx_lo if cad is not None else None, gx_hi if cad is not None else None)
         opens = collect_openings(level, view)
-        align = make_alignments(walls)
+        align = make_alignments(walls, opens if OUTSIDE_ROOMS else None)
         n_wall, n_moved, n_stuck = wall_chains(view, walls, align, opens, struct, gx, gy, scale, dt_wall, z, public,
-                                               log, occ)
+                                               log, occ, corridor_chains.strip() == u"2",
+                                               corridor_only.strip() == u"1", box, gx_lo, gx_hi)
         if n_stuck:
             warns.append(u"Còn {} chữ dim không tìm được chỗ trống (xem cột Kết quả) – KTS kéo tay.".format(n_stuck))
         sheet, group = None, []
         if place:
-            sheet, vp, lvp = make_sheet(number.strip(), sheet_name.strip(), tb, vp_type, view, legend, warns, target)
+            sheet, vp, lvp = make_sheet(number.strip(), sheet_name.strip(), tb, vp_type, view, legend, warns, target,
+                                        rotate)
             if target is None:
                 group = set_sheet_group(sheet, group_text, warns)
             else:
@@ -1537,9 +2073,10 @@ def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_na
             p = view.get_Parameter(BuiltInParameter.VIEW_DESCRIPTION)
             if p is not None and not p.IsReadOnly:
                 p.Set(sheet.Name)
-        summary = [u"Level {} – view '{}' 1/{} – {}".format(level.Name, get_name(view), scale,
-                                                            u"sheet {} '{}'".format(sheet.SheetNumber, sheet.Name)
-                                                            if sheet is not None else u"không đặt lên sheet (IN[17])"),
+        summary = [u"Level {} – view '{}' 1/{}{} – {}".format(level.Name, get_name(view), scale,
+                                                              u" (VP quay 90°)" if rotate else u"",
+                                                              u"sheet {} '{}'".format(sheet.SheetNumber, sheet.Name)
+                                                              if sheet is not None else u"không đặt lên sheet (IN[17])"),
                    u"Tường lõi ≥ {:.0f}: {} đoạn, {} tuyến; trục {} dọc / {} ngang".format(
                        CORE_MIN, len(walls), len(align), len(gx), len(gy)),
                    u"Dim trục: {} – chuỗi định vị tường: {} (dời {} chữ dim tránh chồng, còn chồng {})".format(
@@ -1601,6 +2138,14 @@ if DYNAMO:
             _in(15, u"01_GiaiDoan=03_TKBVTC;02_HangMuc=04_MatBangTuongXay"),
             _in(16, u"Trục + Level- Kiến Trúc-Not"),
             bool(_in(17, True)),
+            u"{}".format(_in(18, u"")),
+            u"{}".format(_in(19, u"")),
+            u"{}".format(_in(20, u"")),
+            u"{}".format(_in(21, u"")),
+            u"{}".format(_in(22, u"")),
+            u"{}".format(_in(23, u"2")),
+            u"{}".format(_in(24, u"1")),
+            u"{}".format(_in(25, u"Logia;Lô gia;Lô Gia;LOGIA;LÔ GIA")),
         ))
     except StopReport as ex:
         OUT = [ex.lines, []]

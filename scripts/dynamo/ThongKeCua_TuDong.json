@@ -1,6 +1,6 @@
 {
   "ten": "ThongKeCua_TuDong",
-  "mo_ta": "Bảng thống kê cửa đi / cửa sổ của mặt bằng đang mở: cột Ký hiệu (Type Mark) / Rộng / Cao / Số lượng, gộp theo Type Mark (cửa trùng hiện 1 dòng), lọc theo tầng của mặt bằng, bỏ cửa có Type Comments chứa chữ Louver; bấm lại thì cập nhật bảng cũ, không tạo trùng. Mặc định Dry-run.",
+  "mo_ta": "Bảng thống kê cửa đi / cửa sổ của mặt bằng đang mở: cột Ký hiệu (Type Mark) / Rộng / Cao / Số lượng, gộp theo Type Mark (cửa trùng hiện 1 dòng), lọc theo tầng của mặt bằng, bỏ cửa có Type Comments chứa chữ Louver, Lam thép hoặc Lam nhôm; bấm lại thì cập nhật bảng cũ, không tạo trùng. Mặc định Dry-run.",
   "py": "ThongKeCua_TuDong.py",
   "dau_vao": [
     {
@@ -16,7 +16,7 @@
     {
       "ten": "Type Comments có chữ này thì không thống kê (;)",
       "kieu": "string",
-      "gia_tri": "Louver"
+      "gia_tri": "Louver;Lam thép;Lam nhôm"
     },
     {
       "ten": "Dry-run (True = chỉ báo cáo)",

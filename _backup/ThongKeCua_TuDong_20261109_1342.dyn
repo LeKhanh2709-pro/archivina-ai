@@ -1,0 +1,691 @@
+{
+  "Uuid": "95b76a64-3ee1-42ee-809e-717c67190a47",
+  "IsCustomNode": false,
+  "Description": "Bảng thống kê cửa đi / cửa sổ của mặt bằng đang mở: cột Ký hiệu (Type Mark) / Rộng / Cao / Số lượng, gộp theo Type Mark (cửa trùng hiện 1 dòng), lọc theo tầng của mặt bằng, bỏ cửa có Type Comments chứa chữ Louver hoặc Lam thép; bấm lại thì cập nhật bảng cũ, không tạo trùng. Mặc định Dry-run.",
+  "Name": "ThongKeCua_TuDong",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "dbede7b2872e4eb1970c15ceeb1c9a87",
+      "Name": "Tên view mặt bằng (trống = view đang mở)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "33d8ea3db931461cb35dadc4f132b452",
+      "Name": "Hạng mục thống kê (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Cửa đi;Cửa sổ",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "21b394d987e147888ec81554f47b09b7",
+      "Name": "Type Comments có chữ này thì không thống kê (;)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "Louver;Lam thép",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "cb1135ddd1e7410da50d8918ea099dbc",
+      "Name": "Dry-run (True = chỉ báo cáo)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "e3aadbf98c574681a3686704cedc0c0b",
+      "Name": "Mẫu tên bảng ({loai}, {tang}, {view})",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "THỐNG KÊ {loai} - {tang}",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "640ddff08ef24c10be4fc29d743b24c8",
+      "Name": "Mở bảng vừa tạo",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "136eafe5fc794e00a13128e85df707ba",
+      "Name": "Chỉ đếm cửa thấy trên sheet đặt bảng (Filter by sheet)",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "false",
+      "Description": "Enables selection between True and False"
+    },
+    {
+      "Id": "28c9e5e241604df7ba00de345da293c0",
+      "Name": "Đổi tên cửa: JSON {id type: Type Mark mới} (trống = không đổi)",
+      "Type": "string",
+      "Type2": "string",
+      "Value": "",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "5f760beca57c414499432328888fde78",
+      "Name": "Tạo / cập nhật bảng thống kê Revit",
+      "Type": "boolean",
+      "Type2": "boolean",
+      "Value": "true",
+      "Description": "Enables selection between True and False"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "dbede7b2872e4eb1970c15ceeb1c9a87",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0e454355830e4704b499e81da58d4eea",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "Cửa đi;Cửa sổ",
+      "Id": "33d8ea3db931461cb35dadc4f132b452",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00a028711c7e4023bcc14aba12cbdebd",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "Louver;Lam thép",
+      "Id": "21b394d987e147888ec81554f47b09b7",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cebc9b6ef382496db53d3b30fa981fae",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "cb1135ddd1e7410da50d8918ea099dbc",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e79f3415bfee42d7b5019f120c7b5362",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "THỐNG KÊ {loai} - {tang}",
+      "Id": "e3aadbf98c574681a3686704cedc0c0b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "baf86f87e8484bceb426bb291bdd4669",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "640ddff08ef24c10be4fc29d743b24c8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "bf17c508509444cf84e69f24b437bf4a",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": false,
+      "Id": "136eafe5fc794e00a13128e85df707ba",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5a80a01e3bf44c0998bac6f4489bd7ec",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "Description": "Creates a string.",
+      "InputValue": "",
+      "Id": "28c9e5e241604df7ba00de345da293c0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "175d49a8dd40405b94e59845d73e5362",
+          "Name": "",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "Description": "Enables selection between True and False",
+      "InputValue": true,
+      "Id": "5f760beca57c414499432328888fde78",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d5dc3906bfd640d3b15672441644f688",
+          "Name": "",
+          "Description": "boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "Code": "# Bảng thống kê cửa của mặt bằng đang mở (người dùng yêu cầu 2026-11-04: \"tạo 1 bảng thống kê các cửa có trong mặt bằng\n# đó, những cửa trùng thì hiện 1 lần\"):\n#   - Mỗi hạng mục 1 bảng: \"THỐNG KÊ CỬA ĐI - <tầng>\", \"THỐNG KÊ CỬA SỔ - <tầng>\" (Revit không gộp được cửa đi + cửa sổ\n#     vào 1 bảng: bảng nhiều hạng mục không có cột Rộng / Cao và bộ lọc không có \"hoặc\" – khảo sát Revit 2027.3).\n#   - Cột: Ký hiệu (Type Mark) / Rộng / Cao / Số lượng; KHÔNG liệt kê từng cái (Itemize tắt), gộp theo Type Mark → cửa\n#     trùng ký hiệu hiện 1 dòng kèm số lượng; dòng tổng cuối bảng.\n#   - Lọc: Level = tầng của mặt bằng, bỏ cửa có Type Comments CHỨA chữ loại trừ (Louver, Lam thép; không phân biệt hoa\n#     thường / dấu, vd. \"Louver\", \"LOUVER nhôm\", \"CỬA LAM THÉP LOGIA CĂN HỘ\" – người dùng yêu cầu 2026-11-09; bảng Revit\n#     dùng bộ lọc \"does not contain\", thêm cả dạng HOA / thường vì bộ lọc này phân biệt). \"Filter by sheet\" TẮT mặc định (bật thì bảng đặt\n#     trên sheet không có mặt bằng sẽ trống – thử 2026-11-04); mặt bằng crop 1 phần tầng thì bật IN[6] rồi đặt bảng lên\n#     sheet của mặt bằng đó để bảng chỉ đếm cửa thấy trên sheet.\n#   - Bảng cùng tên đã có (bấm lại) thì cập nhật lại cột / lọc / gộp, không tạo trùng, không xoá. Chưa có thì nhân bản\n#     bảng cùng hạng mục có sẵn của dự án (giữ kiểu trình bày công ty), không có thì tạo mới.\n#   - Đổi tên cửa (người dùng yêu cầu 2026-11-04 tối: \"1 bảng hiện ra, có các cửa, tên hiện tại, tên đổi, chiều dài,\n#     chiều cao\"): nút bật bảng lib\\arv_bang_cua.py (mỗi loại cửa thấy trong mặt bằng 1 dòng), người dùng gõ tên mới →\n#     IN[7] = JSON {id type: tên mới} → đổi Type Mark của type đó (áp cho mọi cửa cùng type trong dự án). Làm TRƯỚC\n#     bảng thống kê để bảng hiện tên mới. IN[8] = có tạo / cập nhật bảng thống kê Revit không.\n#   - Báo CẦN XEM LẠI: cửa chưa có Type Mark, cùng Type Mark mà khác kích thước (Revit để trống ô), số cửa thấy trong\n#     mặt bằng khác số cửa của tầng.\n# Dry-run chỉ báo cáo, không sửa mô hình.\n# INPUT\n#   IN[0] (str)  Tên view mặt bằng (để trống = view đang mở)\n#   IN[1] (str)  Hạng mục thống kê: Cửa đi;Cửa sổ (bỏ bớt nếu chỉ cần 1 bảng)\n#   IN[2] (str)  Type Comments CÓ CHỨA chữ này thì KHÔNG thống kê (vd. Louver;Lam thép), cách nhau bằng ;\n#   IN[3] (bool) Dry-run (True = chỉ báo cáo)\n#   IN[4] (str)  Mẫu tên bảng ({loai} = CỬA ĐI / CỬA SỔ, {tang} = tên tầng, {view} = tên view)\n#   IN[5] (bool) Mở bảng vừa tạo (bảng đầu tiên)\n#   IN[6] (bool) Chỉ đếm cửa thấy trên sheet đặt bảng (Filter by sheet; dùng cho mặt bằng crop 1 phần tầng)\n#   IN[7] (str)  Đổi tên cửa: JSON {\"<id type>\": \"<Type Mark mới>\"} (trống = không đổi; nút điền từ bảng cửa)\n#   IN[8] (bool) Tạo / cập nhật bảng thống kê Revit (THỐNG KÊ CỬA ĐI / CỬA SỔ - <tầng>)\n# OUTPUT\n#   OUT (list[str])  Báo cáo\nimport traceback\nimport unicodedata\nimport clr\nclr.AddReference(\"RevitAPI\")\nclr.AddReference(\"RevitServices\")\nfrom Autodesk.Revit.DB import *\nimport Autodesk.Revit.DB as _RevitDB\n# pythonnet 3.0: tên đã được import đích danh trước đó trong phiên bị loại khỏi \"import *\" → bổ sung đủ tên\nglobals().update({_n: getattr(_RevitDB, _n) for _n in dir(_RevitDB) if not _n.startswith(\"_\") and _n not in globals()})\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nTRANSACTION_NAME = u\"ARV - Thống kê cửa\"\nMAC_DINH = [\"\", u\"Cửa đi;Cửa sổ\", u\"Louver;Lam thép\", True, u\"THỐNG KÊ {loai} - {tang}\", True, False, \"\", True]\n# (từ khoá không dấu nhận trong IN[1], hạng mục, nhãn, tham số rộng, tham số cao)\nHANG_MUC = [(u\"cua di\", BuiltInCategory.OST_Doors, u\"CỬA ĐI\", BuiltInParameter.DOOR_WIDTH, BuiltInParameter.DOOR_HEIGHT),\n            (u\"cua so\", BuiltInCategory.OST_Windows, u\"CỬA SỔ\", BuiltInParameter.WINDOW_WIDTH,\n             BuiltInParameter.WINDOW_HEIGHT)]\nCOT = [u\"Tên\", u\"Chiều dài\", u\"Chiều cao\", u\"Số lượng\"]\n\n\ndef doc_in(i):\n    try:\n        v = IN[i]\n    except Exception:\n        v = None\n    return MAC_DINH[i] if v is None or (isinstance(v, str) and v == \"\" and MAC_DINH[i] != \"\") else v\n\n\ndef khong_dau(s):\n    s = unicodedata.normalize(\"NFD\", u\"%s\" % (s or u\"\")).replace(u\"đ\", u\"d\").replace(u\"Đ\", u\"D\")\n    return u\"\".join(c for c in s if unicodedata.category(c) != \"Mn\").lower()\n\n\ndef tach(s):\n    return [x.strip() for x in (s or \"\").split(\";\") if x.strip()]\n\n\ndef mm(v):\n    return UnitUtils.ConvertFromInternalUnits(v, UnitTypeId.Millimeters)\n\n\ndef ten(e):\n    try:\n        return Element.Name.GetValue(e)\n    except Exception:\n        try:\n            return e.Name\n        except Exception:\n            return \"?\"\n\n\ndef gia_tri_kt(e, t, bips):\n    \"\"\"Kích thước (mm) lấy ở instance trước, không có thì ở type.\"\"\"\n    for o in (e, t):\n        if o is None:\n            continue\n        for b in bips:\n            p = o.get_Parameter(b)\n            if p is not None and p.HasValue and p.StorageType == StorageType.Double:\n                return int(round(mm(p.AsDouble())))\n    return None\n\n\ndef chuoi_type(t, bip):\n    p = t.get_Parameter(bip) if t is not None else None\n    return (p.AsString() or u\"\").strip() if p is not None else u\"\"\n\n\ndef co_chu(s, ds):\n    \"\"\"s CÓ CHỨA một chữ trong ds (ds đã khong_dau) – không phân biệt hoa thường / dấu.\"\"\"\n    ks = khong_dau(s)\n    return bool(ks) and any(k in ks for k in ds)\n\n\ndef dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru):\n    \"\"\"Cửa thấy trong mặt bằng: {Type Mark: {\"so\": n, \"kt\": set((rộng, cao)), \"type\": set(tên)}}, số bị loại, các Type\n    Comments bị loại, số khác tầng (thấy trong view nhưng Level khác tầng → bảng không đếm).\"\"\"\n    lv = view.GenLevel\n    nhom, bo, bo_tc, khac_tang = {}, 0, set(), []\n    for e in FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType():\n        t = doc.GetElement(e.GetTypeId())\n        tc = chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_COMMENTS)\n        if co_chu(tc, loai_tru):\n            bo += 1\n            bo_tc.add(tc)\n            continue\n        if lv is not None and e.LevelId != lv.Id:\n            khac_tang.append(e)\n            continue\n        mk = chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_MARK)\n        g = nhom.setdefault(mk, {\"so\": 0, \"kt\": set(), \"type\": set()})\n        g[\"so\"] += 1\n        g[\"kt\"].add((gia_tri_kt(e, t, (rong_bip, BuiltInParameter.FAMILY_WIDTH_PARAM)),\n                     gia_tri_kt(e, t, (cao_bip, BuiltInParameter.FAMILY_HEIGHT_PARAM))))\n        g[\"type\"].add(u\"%s : %s\" % (t.FamilyName if t is not None else u\"?\", ten(t)))\n    return nhom, bo, bo_tc, khac_tang\n\n\ndef dem_theo_tang(doc, lv, bic, loai_tru):\n    n = 0\n    for e in FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType():\n        if e.LevelId != lv.Id:\n            continue\n        t = doc.GetElement(e.GetTypeId())\n        if co_chu(chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_COMMENTS), loai_tru):\n            continue\n        n += 1\n    return n\n\n\ndef lap_bang(doc, bic, ten_bang, level, loai_tru_tc, rong_bip, cao_bip, theo_sheet=False):\n    \"\"\"Tạo / cập nhật bảng thống kê 1 hạng mục: cột Ký hiệu / Rộng / Cao / Số lượng, gộp theo Type Mark, lọc Level +\n    Type Comments. Trả về (bảng, cách làm).\"\"\"\n    vs = None\n    for x in FilteredElementCollector(doc).OfClass(ViewSchedule):\n        if not x.IsTemplate and x.Name == ten_bang:\n            vs = x\n            break\n    if vs is not None:\n        if vs.Definition.CategoryId.Value != int(bic):\n            raise Exception(u\"đã có bảng tên '%s' nhưng khác hạng mục – đổi tên bảng đó hoặc đổi mẫu tên\" % ten_bang)\n        cach = u\"cập nhật bảng đã có\"\n    else:\n        nguon = [x for x in FilteredElementCollector(doc).OfClass(ViewSchedule)\n                 if not x.IsTemplate and not x.IsTitleblockRevisionSchedule and not x.IsInternalKeynoteSchedule\n                 and x.Definition.CategoryId.Value == int(bic)]\n        nguon.sort(key=lambda x: (0 if u\"thong ke\" in khong_dau(x.Name) else 1, x.Name))\n        vs = None\n        if nguon:\n            try:\n                vs = doc.GetElement(nguon[0].Duplicate(ViewDuplicateOption.Duplicate))\n                cach = u\"nhân bản kiểu trình bày của '%s'\" % nguon[0].Name\n            except Exception:\n                vs = None\n        if vs is None:\n            vs = ViewSchedule.CreateSchedule(doc, ElementId(bic))\n            cach = u\"tạo mới\"\n        vs.Name = ten_bang\n    d = vs.Definition\n    co = {}\n    for i in range(d.GetFieldCount()):\n        f = d.GetField(i)\n        if str(f.FieldType) == \"Count\":\n            co.setdefault((\"count\", None), f)\n            continue\n        try:\n            co.setdefault((\"pid\", f.ParameterId.Value), f)\n        except Exception:\n            pass\n\n    def lay(bip):\n        k = (\"pid\", int(bip))\n        if k in co:\n            return co[k]\n        for sf in d.GetSchedulableFields():\n            try:\n                if str(sf.FieldType) != \"Count\" and sf.ParameterId.Value == int(bip):\n                    co[k] = d.AddField(sf)\n                    return co[k]\n            except Exception:\n                pass\n        return None\n\n    f_mark = lay(BuiltInParameter.ALL_MODEL_TYPE_MARK)\n    f_rong = lay(rong_bip) or lay(BuiltInParameter.FAMILY_WIDTH_PARAM)\n    f_cao = lay(cao_bip) or lay(BuiltInParameter.FAMILY_HEIGHT_PARAM)\n    f_dem = co.get((\"count\", None))\n    if f_dem is None:\n        for sf in d.GetSchedulableFields():\n            if str(sf.FieldType) == \"Count\":\n                f_dem = d.AddField(sf)\n                break\n    f_tang = lay(BuiltInParameter.FAMILY_LEVEL_PARAM) or lay(BuiltInParameter.SCHEDULE_LEVEL_PARAM)\n    f_tc = lay(BuiltInParameter.ALL_MODEL_TYPE_COMMENTS)\n    if f_mark is None or f_dem is None:\n        raise Exception(u\"không thêm được cột Type Mark / Count vào bảng\")\n    hien = [(f_mark, COT[0]), (f_rong, COT[1]), (f_cao, COT[2]), (f_dem, COT[3])]\n    ids_hien = [g.FieldId for g, _ in hien if g is not None]\n    for i in range(d.GetFieldCount()):\n        f = d.GetField(i)\n        f.IsHidden = not any(f.FieldId == x for x in ids_hien)\n    for f, nhan in hien:\n        if f is not None:\n            f.ColumnHeading = nhan\n    try:\n        f_dem.DisplayType = ScheduleFieldDisplayType.Totals\n    except Exception:\n        pass\n    try:\n        from System.Collections.Generic import List\n        thu_tu = List[ScheduleFieldId]()\n        for x in ids_hien:\n            thu_tu.Add(x)\n        for i in range(d.GetFieldCount()):\n            f = d.GetField(i)\n            if not any(f.FieldId == x for x in ids_hien):\n                thu_tu.Add(f.FieldId)\n        d.SetFieldOrder(thu_tu)\n    except Exception:\n        pass\n    d.ClearFilters()\n    if f_tang is not None and level is not None:\n        d.AddFilter(ScheduleFilter(f_tang.FieldId, ScheduleFilterType.Equal, level.Id))\n    if f_tc is not None:\n        chu_loc = []                    # bộ lọc bảng Revit phân biệt HOA / thường (thử 2026-11-09) → thêm đủ 3 dạng\n        for tc in loai_tru_tc:\n            for x in (tc, tc.upper(), tc.lower()):\n                if x not in chu_loc:\n                    chu_loc.append(x)\n        for x in chu_loc:               # \"does not contain\": Type Comments có chữ này ở bất kỳ đâu đều bị bỏ\n            d.AddFilter(ScheduleFilter(f_tc.FieldId, ScheduleFilterType.NotContains, x))\n    d.ClearSortGroupFields()\n    d.AddSortGroupField(ScheduleSortGroupField(f_mark.FieldId))\n    d.IsItemized = False                # gộp: cửa trùng Type Mark → 1 dòng\n    for ten_tt, gt in ((\"ShowTitle\", True), (\"ShowHeaders\", True), (\"ShowGrandTotal\", True),\n                       (\"ShowGrandTotalTitle\", True), (\"ShowGrandTotalCount\", False), (\"GrandTotalTitle\", u\"TỔNG\")):\n        try:\n            setattr(d, ten_tt, gt)\n        except Exception:\n            pass\n    try:\n        if d.IsValidCategoryForFilterBySheet() and d.IsFilteredBySheet != bool(theo_sheet):\n            d.IsFilteredBySheet = bool(theo_sheet)\n    except Exception:\n        pass\n    return vs, cach\n\n\ndef doc_bang(vs):\n    \"\"\"Nội dung bảng như hiển thị (đọc lại sau khi tạo).\"\"\"\n    dong = []\n    try:\n        sec = vs.GetTableData().GetSectionData(SectionType.Body)\n        for r in range(sec.NumberOfRows):\n            o = [vs.GetCellText(SectionType.Body, r, c) for c in range(sec.NumberOfColumns)]\n            if any(x.strip() for x in o):\n                dong.append(u\" | \".join(o))\n    except Exception as ex:\n        dong.append(u\"(không đọc được nội dung bảng: %s)\" % ex)\n    return dong\n\n\ndef doi_ten(doc, json_doi, dry, bao, xem_lai):\n    \"\"\"Đổi Type Mark theo JSON {id type: tên mới}. Báo từng dòng; tên mới trùng Type Mark của type khác cùng hạng mục thì\n    vẫn đổi (người dùng đã xác nhận trong bảng) nhưng ghi CẦN XEM LẠI.\"\"\"\n    import json\n    if not json_doi:\n        return\n    try:\n        doi = json.loads(json_doi)\n    except Exception as ex:\n        bao.append(u\"IN[7] không phải JSON hợp lệ: %s\" % ex)\n        return\n    if not doi:\n        bao.append(u\"Không có tên cửa nào cần đổi.\")\n        return\n    bao.append(u\"\")\n    bao.append(u\"== ĐỔI TÊN CỬA (Type Mark) – %d loại%s\" % (len(doi), u\" (DRY-RUN)\" if dry else u\"\"))\n    if not dry:\n        TransactionManager.Instance.EnsureInTransaction(doc)\n    for k, moi in doi.items():\n        moi = (u\"%s\" % moi).strip()\n        try:\n            t = doc.GetElement(ElementId(int(k)))\n        except Exception:\n            t = None\n        if t is None or not moi:\n            bao.append(u\"   bỏ qua id %s: không có loại cửa này / tên trống\" % k)\n            continue\n        p = t.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_MARK)\n        cu = (p.AsString() or u\"\") if p is not None else u\"\"\n        so = sum(1 for e in FilteredElementCollector(doc).OfCategoryId(t.Category.Id).WhereElementIsNotElementType()\n                 if e.GetTypeId().Value == t.Id.Value)\n        nhan = u\"%s : %s\" % (getattr(t, \"FamilyName\", u\"\"), ten(t))\n        if p is None or p.IsReadOnly:\n            bao.append(u\"   KHÔNG đổi được '%s' (%s): Type Mark chỉ đọc\" % (cu, nhan))\n            continue\n        trung = [u\"%s : %s\" % (getattr(x, \"FamilyName\", u\"\"), ten(x))\n                 for x in FilteredElementCollector(doc).OfCategoryId(t.Category.Id).WhereElementIsElementType()\n                 if x.Id.Value != t.Id.Value and chuoi_type(x, BuiltInParameter.ALL_MODEL_TYPE_MARK) == moi\n                 and (u\"%s\" % x.Id.Value) not in doi]\n        if trung:\n            xem_lai.append(u\"Tên mới '%s' của %s trùng loại cửa khác: %s – bảng thống kê gộp chung 1 dòng.\" % (\n                moi, nhan, u\"; \".join(trung[:3])))\n        if not dry:\n            p.Set(moi)\n        bao.append(u\"   %s → %s  (%s, %d cửa trong dự án)\" % (cu or u\"(trống)\", moi, nhan, so))\n    if not dry:\n        doc.Regenerate()\n\n\ndef _chinh():\n    doc = DocumentManager.Instance.CurrentDBDocument\n    bao = []\n    ten_view = doc_in(0)\n    if ten_view:\n        ung = [v for v in FilteredElementCollector(doc).OfClass(ViewPlan) if not v.IsTemplate and v.Name == ten_view]\n        ung.sort(key=lambda v: 0 if v.ViewType == ViewType.FloorPlan else 1)\n        av = doc.ActiveView\n        if av is not None and any(v.Id.Value == av.Id.Value for v in ung):\n            ung = [av]\n        view = ung[0] if ung else None\n        if view is None:\n            return [u\"Không có view mặt bằng tên '%s'.\" % ten_view]\n    else:\n        view = doc.ActiveView\n    if view is None or view.ViewType not in (ViewType.FloorPlan, ViewType.EngineeringPlan, ViewType.AreaPlan) \\\n            or view.GenLevel is None:\n        return [u\"View '%s' không phải mặt bằng tầng. Mở mặt bằng cần thống kê rồi chạy lại.\" % (ten(view) if view else \"-\")]\n    lv = view.GenLevel\n    dry = bool(doc_in(3))\n    loai_tru = tach(doc_in(2))\n    loai_tru_thuong = [khong_dau(x) for x in loai_tru]\n    chon = [khong_dau(x) for x in tach(doc_in(1))]\n    hang_muc = [h for h in HANG_MUC if any(h[0] in c for c in chon)]\n    if not hang_muc:\n        return [u\"IN[1] không có hạng mục nào nhận được (Cửa đi / Cửa sổ).\"]\n    bao.append(u\"Mặt bằng: %s – tầng %s%s\" % (view.Name, lv.Name, u\" (DRY-RUN: chỉ báo cáo)\" if dry else u\"\"))\n    mau = doc_in(4) or MAC_DINH[4]\n    xem_lai = []\n    bang_tao = []\n    doi_ten(doc, doc_in(7), dry, bao, xem_lai)\n    lam_bang = bool(doc_in(8))\n    if not lam_bang:\n        hang_muc = []\n        bao.append(u\"Không tạo bảng thống kê Revit (IN[8] tắt).\")\n    for _, bic, nhan, rong_bip, cao_bip in hang_muc:\n        nhom, bo, bo_tc, khac_tang = dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru_thuong)\n        tong = sum(g[\"so\"] for g in nhom.values())\n        theo_tang = dem_theo_tang(doc, lv, bic, loai_tru_thuong)\n        ten_bang = mau.replace(u\"{loai}\", nhan).replace(u\"{tang}\", lv.Name.upper()).replace(u\"{view}\", view.Name)\n        bao.append(u\"\")\n        bao.append(u\"== %s: %d cái thấy trong mặt bằng, %d ký hiệu (mỗi ký hiệu 1 dòng)%s\" % (\n            nhan, tong, len(nhom), (u\", bỏ %d cái Type Comments có chữ %s (%s)\" % (\n                bo, u\" / \".join(loai_tru), u\"; \".join(sorted(bo_tc))[:200])) if bo else u\"\"))\n        for mk in sorted(nhom, key=lambda k: (k == u\"\", k)):\n            g = nhom[mk]\n            kt = sorted(g[\"kt\"], key=lambda x: (x[0] or 0, x[1] or 0))\n            bao.append(u\"   %-14s %s  x%d\" % (mk or u\"(trống)\", u\", \".join(u\"%sx%s\" % (a or u\"?\", b or u\"?\") for a, b in kt),\n                                            g[\"so\"]))\n            if not mk:\n                xem_lai.append(u\"%s chưa có Type Mark (%d cái, gộp chung 1 dòng trống): %s\" % (\n                    nhan, g[\"so\"], u\"; \".join(sorted(g[\"type\"]))[:300]))\n            elif len(kt) > 1:\n                xem_lai.append(u\"%s '%s' cùng ký hiệu nhưng khác kích thước %s – ô Rộng / Cao để trống: %s\" % (\n                    nhan, mk, u\", \".join(u\"%sx%s\" % k for k in kt), u\"; \".join(sorted(g[\"type\"]))[:300]))\n        if khac_tang:\n            xem_lai.append(u\"%d %s thấy trong mặt bằng nhưng Level khác tầng %s – bảng KHÔNG đếm (vd. id %s).\" % (\n                len(khac_tang), nhan.lower(), lv.Name, u\", \".join(str(e.Id.Value) for e in khac_tang[:5])))\n        if theo_tang != tong and not doc_in(6):\n            xem_lai.append(u\"%s: tầng %s có %d cái, mặt bằng chỉ thấy %d (crop / ẩn) – bảng lọc theo tầng nên đếm %d; đặt \"\n                           u\"bảng lên sheet của mặt bằng này và bật IN[6] (Shift+bấm) thì bảng chỉ đếm cửa thấy trên sheet.\"\n                           % (nhan, lv.Name, theo_tang, tong, theo_tang))\n        if dry:\n            bao.append(u\"   Sẽ tạo / cập nhật bảng '%s'.\" % ten_bang)\n            continue\n        TransactionManager.Instance.EnsureInTransaction(doc)\n        st = SubTransaction(doc)            # bảng lỗi giữa chừng thì huỷ riêng bảng đó\n        st.Start()\n        try:\n            vs, cach = lap_bang(doc, bic, ten_bang, lv, loai_tru, rong_bip, cao_bip, bool(doc_in(6)))\n            doc.Regenerate()\n            st.Commit()\n            bang_tao.append(vs)\n            bao.append(u\"   Bảng '%s' (%s):\" % (ten_bang, cach))\n            for d_ in doc_bang(vs):\n                bao.append(u\"      \" + d_)\n        except Exception as ex:\n            if st.HasStarted() and not st.HasEnded():\n                st.RollBack()\n            bao.append(u\"   KHÔNG tạo được bảng '%s': %s\" % (ten_bang, (u\"%s\" % ex).splitlines()[0][:200]))\n    TransactionManager.Instance.TransactionTaskDone()\n    if xem_lai:\n        bao.append(u\"\")\n        bao.append(u\"CẦN XEM LẠI:\")\n        bao.extend(u\" - \" + s for s in xem_lai)\n    if bang_tao and doc_in(5):\n        try:\n            DocumentManager.Instance.CurrentUIDocument.RequestViewChange(bang_tao[0])\n        except Exception:\n            pass\n    return bao\n\n\ntry:\n    OUT = _chinh()\nexcept Exception:\n    try:\n        TransactionManager.Instance.ForceCloseTransaction()\n    except Exception:\n        pass\n    OUT = [u\"LỖI:\", traceback.format_exc()]\n",
+      "Engine": "PythonNet3",
+      "VariableInputPorts": true,
+      "Id": "c2b316b8a8e74193af2fdd43f6d08df6",
+      "NodeType": "PythonScriptNode",
+      "Inputs": [
+        {
+          "Id": "ad87bcc24d194c24b6efcad39f4dfc79",
+          "Name": "IN[0]",
+          "Description": "Tên view mặt bằng (trống = view đang mở)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9057b469d1de4b05b278ee02397d7287",
+          "Name": "IN[1]",
+          "Description": "Hạng mục thống kê (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f3b003ae557d42ef8ef76671b4184ecf",
+          "Name": "IN[2]",
+          "Description": "Type Comments có chữ này thì không thống kê (;)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a3621734cfbf4f219bb82dc23180881c",
+          "Name": "IN[3]",
+          "Description": "Dry-run (True = chỉ báo cáo)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "689044792fa04dc8b759b50e65e41289",
+          "Name": "IN[4]",
+          "Description": "Mẫu tên bảng ({loai}, {tang}, {view})",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "34c001dc72b24915bc92078e230bbfe7",
+          "Name": "IN[5]",
+          "Description": "Mở bảng vừa tạo",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0f305c8b718440e4acdedfe04475849d",
+          "Name": "IN[6]",
+          "Description": "Chỉ đếm cửa thấy trên sheet đặt bảng (Filter by sheet)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bf4042110f8043c79dc5da31a0fb0df7",
+          "Name": "IN[7]",
+          "Description": "Đổi tên cửa: JSON {id type: Type Mark mới} (trống = không đổi)",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0192934484904e7cb93335c564d13523",
+          "Name": "IN[8]",
+          "Description": "Tạo / cập nhật bảng thống kê Revit",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7df2b8ddb9a84d7bbc4677f8ffa7a61d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "WatchWidth": 900.0,
+      "WatchHeight": 500.0,
+      "Id": "f1738deca3e944fbb014ac5b498300c8",
+      "NodeType": "ExtensionNode",
+      "Inputs": [
+        {
+          "Id": "1a5b6ed9650b4ec7b4205427e0ba8abe",
+          "Name": "",
+          "Description": "Node to show output from",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9251ff8015184ca2b54c47c46222db62",
+          "Name": "",
+          "Description": "Node output",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualizes a node's output"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "0e454355830e4704b499e81da58d4eea",
+      "End": "ad87bcc24d194c24b6efcad39f4dfc79",
+      "Id": "961a776cb42f46f6b41f8f0f69be79bb",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "00a028711c7e4023bcc14aba12cbdebd",
+      "End": "9057b469d1de4b05b278ee02397d7287",
+      "Id": "1b126eb712454a80834486435b266fc5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "cebc9b6ef382496db53d3b30fa981fae",
+      "End": "f3b003ae557d42ef8ef76671b4184ecf",
+      "Id": "5a40d2f8281349dc89f6ae1236970f06",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e79f3415bfee42d7b5019f120c7b5362",
+      "End": "a3621734cfbf4f219bb82dc23180881c",
+      "Id": "e54e9859d66f4bbca8b0d6d99faea869",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "baf86f87e8484bceb426bb291bdd4669",
+      "End": "689044792fa04dc8b759b50e65e41289",
+      "Id": "399ff344d00e4c018d9357a3818b4692",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "bf17c508509444cf84e69f24b437bf4a",
+      "End": "34c001dc72b24915bc92078e230bbfe7",
+      "Id": "a0924ad928dc4fb0ac9133f8e6189573",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "5a80a01e3bf44c0998bac6f4489bd7ec",
+      "End": "0f305c8b718440e4acdedfe04475849d",
+      "Id": "b03d4176f7ad4fdd9229452849e18c78",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "175d49a8dd40405b94e59845d73e5362",
+      "End": "bf4042110f8043c79dc5da31a0fb0df7",
+      "Id": "221fa505f71c4defa05e5a94d5a73a72",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "d5dc3906bfd640d3b15672441644f688",
+      "End": "0192934484904e7cb93335c564d13523",
+      "Id": "2243e72b6051413492e5a746d5aca658",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "7df2b8ddb9a84d7bbc4677f8ffa7a61d",
+      "End": "1a5b6ed9650b4ec7b4205427e0ba8abe",
+      "Id": "b05e7bc90e3340d7a2a8ce34a0239898",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "EnableLegacyPolyCurveBehavior": true,
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [],
+  "Author": "Archivina",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.6.2.11575",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Id": "dbede7b2872e4eb1970c15ceeb1c9a87",
+        "Name": "Tên view mặt bằng (trống = view đang mở)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "33d8ea3db931461cb35dadc4f132b452",
+        "Name": "Hạng mục thống kê (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 130.0
+      },
+      {
+        "Id": "21b394d987e147888ec81554f47b09b7",
+        "Name": "Type Comments có chữ này thì không thống kê (;)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 260.0
+      },
+      {
+        "Id": "cb1135ddd1e7410da50d8918ea099dbc",
+        "Name": "Dry-run (True = chỉ báo cáo)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 390.0
+      },
+      {
+        "Id": "e3aadbf98c574681a3686704cedc0c0b",
+        "Name": "Mẫu tên bảng ({loai}, {tang}, {view})",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 520.0
+      },
+      {
+        "Id": "640ddff08ef24c10be4fc29d743b24c8",
+        "Name": "Mở bảng vừa tạo",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 650.0
+      },
+      {
+        "Id": "136eafe5fc794e00a13128e85df707ba",
+        "Name": "Chỉ đếm cửa thấy trên sheet đặt bảng (Filter by sheet)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 780.0
+      },
+      {
+        "Id": "28c9e5e241604df7ba00de345da293c0",
+        "Name": "Đổi tên cửa: JSON {id type: Type Mark mới} (trống = không đổi)",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 910.0
+      },
+      {
+        "Id": "5f760beca57c414499432328888fde78",
+        "Name": "Tạo / cập nhật bảng thống kê Revit",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 0.0,
+        "Y": 1040.0
+      },
+      {
+        "Id": "c2b316b8a8e74193af2fdd43f6d08df6",
+        "Name": "ThongKeCua_TuDong",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 600.0,
+        "Y": 0.0
+      },
+      {
+        "Id": "f1738deca3e944fbb014ac5b498300c8",
+        "Name": "Báo cáo",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "ShowGeometry": true,
+        "X": 1000.0,
+        "Y": 0.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "ad1cf77f416c4cb286bc94c4b6696c50",
+        "Title": "Đầu vào",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "dbede7b2872e4eb1970c15ceeb1c9a87",
+          "33d8ea3db931461cb35dadc4f132b452",
+          "21b394d987e147888ec81554f47b09b7",
+          "cb1135ddd1e7410da50d8918ea099dbc",
+          "e3aadbf98c574681a3686704cedc0c0b",
+          "640ddff08ef24c10be4fc29d743b24c8",
+          "136eafe5fc794e00a13128e85df707ba",
+          "28c9e5e241604df7ba00de345da293c0",
+          "5f760beca57c414499432328888fde78"
+        ],
+        "HasNestedGroups": false,
+        "Left": -20,
+        "Top": -60,
+        "Width": 420,
+        "Height": 1210.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 1210.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "1c554ff53d524f0796f0a97e4d199c21",
+        "Title": "Xử lý",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "c2b316b8a8e74193af2fdd43f6d08df6"
+        ],
+        "HasNestedGroups": false,
+        "Left": 580,
+        "Top": -60,
+        "Width": 300,
+        "Height": 200,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 200,
+        "TextblockHeight": 50.0,
+        "Background": "#FFFFB8D8"
+      },
+      {
+        "Id": "06c8e9821a654ff391c4964346073852",
+        "Title": "Đầu ra",
+        "DescriptionText": "",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "f1738deca3e944fbb014ac5b498300c8"
+        ],
+        "HasNestedGroups": false,
+        "Left": 980,
+        "Top": -60,
+        "Width": 940,
+        "Height": 560,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 0,
+        "InitialHeight": 560,
+        "TextblockHeight": 50.0,
+        "Background": "#FFB9F9E1"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.6
+  }
+}

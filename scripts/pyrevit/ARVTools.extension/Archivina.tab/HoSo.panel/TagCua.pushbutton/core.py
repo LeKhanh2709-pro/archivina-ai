@@ -1,6 +1,6 @@
 # Tự động tag cửa đi + cửa sổ trên mặt bằng đang mở của Revit (người dùng chốt 2026-11-02, sửa theo góp ý cùng ngày):
 #   - Cửa đi: family tag "AV_Door Tag"; cửa sổ: "AV_Window Tag"; cửa sổ có tên family / type chứa từ khoá lam:
-#     "AV_Louver Tag". Đối tượng có Type Comments "Louver" thì KHÔNG tag.
+#     "AV_Louver Tag". Đối tượng có Type Comments "Louver", "Cửa nhôm" hoặc "Cửa lam thép" thì KHÔNG tag (người dùng chốt 2026-11-09).
 #   - Tag hiện đúng Type Mark: nhãn family có tiền tố (vd. "S3.") thì thay bằng nhãn Type Mark trơn chép từ family tag
 #     cùng hạng mục trong dự án (Revit 2027.3 không sửa được tiền tố nhãn qua API), rồi nạp lại family.
 #   - Tag nằm ngang, ưu tiên NGAY GIỮA cửa (cửa đi phía không mở cánh, cửa sổ phía ngoài theo FacingOrientation);
@@ -71,7 +71,7 @@ from RevitServices.Transactions import TransactionManager
 
 MAC_DINH = ["", "AV_Door Tag", "AV_Window Tag", "AV_Louver Tag", "Lam;Louver", True, True,
             "OST_Furniture;OST_FurnitureSystems;OST_Casework;OST_SpecialityEquipment;OST_PlumbingFixtures",
-            "Fire Rating;EI;Giới hạn chịu lửa", 1.0, "", "Louver", True, False, False, False,
+            "Fire Rating;EI;Giới hạn chịu lửa", 1.0, "", u"Louver;Cửa nhôm;Cửa lam thép", True, False, False, False,
             True, u"MẶT BẰNG ĐỊNH VỊ CỬA", u"MẶT BẰNG ĐỊNH VỊ CỬA - {tang}", True, "",
             False, "", "", "A1", "", "", "", "", 0.0]
 HAU_TO_TEMPLATE = u" (ẩn nội thất)"
@@ -109,6 +109,13 @@ def khong_dau(s):
 
 def tach(s):
     return [x.strip() for x in (s or "").split(";") if x.strip()]
+
+
+def ds_loai_tru(s):
+    """Type Comments không tag = danh sách IN[11] + các loại luôn loại trừ (máy còn nhớ IN[11] cũ vẫn bỏ đủ các loại này)."""
+    ds = tach(s)
+    co = [khong_dau(x) for x in ds]
+    return ds + [x for x in (u"Louver", u"Cửa nhôm", u"Cửa lam thép") if khong_dau(x) not in co]
 
 
 def mm(v):
@@ -196,7 +203,7 @@ def _chinh():
         else:
             try:
                 sheet_ctx, sh_msg = chuan_bi_sheet(doc, view, doc_in(22), doc_in(23), doc_in(24), doc_in(25), doc_in(26),
-                                                   doc_in(27), tach(doc_in(11)))
+                                                   doc_in(27), ds_loai_tru(doc_in(11)))
             except Exception as ex:
                 TransactionManager.Instance.ForceCloseTransaction()
                 sh_msg = [u"Không đặt được lên sheet: %s" % (u"%s" % ex).splitlines()[0][:200]]
@@ -326,7 +333,8 @@ def _chinh():
             return u""
 
     # Loại trừ theo Type Comments (vd. Louver): không tag; tag cửa / cửa sổ đang gắn trên đó thì liệt kê (xoá nếu IN[15])
-    tk_loai = [khong_dau(x) for x in tach(doc_in(11))]
+    ten_loai = u";".join(ds_loai_tru(doc_in(11)))
+    tk_loai = [khong_dau(x) for x in tach(ten_loai)]
 
     def bi_loai(e):
         t = doc.GetElement(e.GetTypeId())
@@ -449,6 +457,26 @@ def _chinh():
     ei_thieu = []
     tpl_msg = u""
     xoa_msg = u""
+    co_lap = []           # có phần tử = đang cô lập tạm do công cụ bật
+
+    def bat_co_lap():
+        """IndependentTag.Create xử lý lại mọi đối tượng đang hiện trong view, kể cả tag vừa tạo (đo 2026-11-09 trên HQV
+        tháp B: để nguyên 1,2 s / tag, cô lập cửa + hạng mục tag 0,59 s, chỉ cô lập cửa đi + cửa sổ 0,017 s) → cô lập tạm
+        trong lúc tạo tag, KHÔNG gồm hạng mục tag. Người dùng đang tự cô lập trong view thì không đụng."""
+        if co_lap or view.IsInTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate):
+            return
+        from System.Collections.Generic import List
+        ids = List[ElementId]()
+        for bic in (BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows):
+            ids.Add(ElementId(bic))
+        view.IsolateCategoriesTemporary(ids)
+        co_lap.append(True)
+
+    def tat_co_lap():
+        if co_lap:
+            del co_lap[:]
+            view.DisableTemporaryViewMode(TemporaryViewMode.TemporaryHideIsolate)
+
     try:
         # --- View template ẩn nội thất ---
         if doc_in(6):
@@ -465,11 +493,15 @@ def _chinh():
                 for tg in tag_tren_loai:
                     ids.Add(tg.Id)
                 doc.Delete(ids)
-                xoa_msg = u"Đã xoá %d tag trên đối tượng có Type Comments '%s': %s" % (len(tag_tren_loai), doc_in(11), ds_ten)
+                xoa_msg = u"Đã xoá %d tag trên đối tượng có Type Comments '%s': %s" % (len(tag_tren_loai), ten_loai, ds_ten)
             else:
                 xoa_msg = (u"Có %d tag đang gắn trên đối tượng có Type Comments '%s' (chưa xoá; Shift+bấm, tích ô Xoá "
-                           u"để xoá): %s" % (len(tag_tren_loai), doc_in(11), ds_ten))
+                           u"để xoá): %s" % (len(tag_tren_loai), ten_loai, ds_ten))
 
+        # Tăng tốc (người dùng báo nút chậm 2026-11-09; HQV tháp B 195 tag mất 475 s ở bước tạo tag + Regenerate): tạo / đưa
+        # hết tag về điểm đặt cửa trước, Regenerate MỘT lần, đo khung từng tag rồi mới tìm chỗ. Khung tag tại điểm đặt
+        # không phụ thuộc tag khác nên chỗ đặt như cũ.
+        viec = []
         ds = [(e, "cua") for e in cuas] + [(e, "cs") for e in css]
         for e, loai in ds:
             if e.Id.Value in id_loai:
@@ -502,17 +534,25 @@ def _chinh():
             hu_, hv_ = uv(h)
             huong = TagOrientation.Vertical if abs(hv_) > abs(hu_) else TagOrientation.Horizontal
             if tg_cu is None:
+                bat_co_lap()
                 tg = IndependentTag.Create(doc, kieu.Id, view.Id, Reference(e), False, huong, goc)
-                nhan_cu = None
             else:
                 tg = tg_cu
-                nhan_cu = u"chữ / tag %d" % tg.Id.Value
-                bo_vat_can.add(nhan_cu)
                 tg.HasLeader = False
                 tg.TagOrientation = huong
                 tg.TagHeadPosition = goc
+            viec.append((e, loai, tg, tg_cu, dc))
+        tat_co_lap()
+        if viec:
             doc.Regenerate()
-            k = khung_hop(tg.get_BoundingBox(view))
+        viec = [x + (khung_hop(x[2].get_BoundingBox(view)),) for x in viec]    # đo hết TRƯỚC khi dời tag nào
+        for e, loai, tg, tg_cu, dc, k in viec:
+            goc, h, f, poly_e, h0, h1, f0, f1 = dc
+            if tg_cu is None:
+                nhan_cu = None
+            else:
+                nhan_cu = u"chữ / tag %d" % tg.Id.Value
+                bo_vat_can.add(nhan_cu)       # tag cũ thôi là vật cản khi tới lượt nó
             hu, hv = uv(goc)
             cu = (k[0][0] + k[2][0]) / 2.0 - hu       # lệch tâm khung so với đầu tag
             cv_ = (k[0][1] + k[2][1]) / 2.0 - hv
@@ -636,8 +676,7 @@ def _chinh():
             if loai == "cua":
                 ei = gia_tri_ei(doc, e, tach(doc_in(8)))
                 if ei:
-                    doc.Regenerate()
-                    txt = u""
+                    txt = u""         # chữ tag đã có sau lần Regenerate chung (dời tag / leader không đổi chữ)
                     try:
                         txt = tg.TagText or u""
                     except Exception:
@@ -649,6 +688,10 @@ def _chinh():
         else:
             st.Commit()
     except Exception:
+        try:
+            tat_co_lap()
+        except Exception:
+            pass
         if st.HasStarted() and not st.HasEnded():
             st.RollBack()
         raise
@@ -665,7 +708,7 @@ def _chinh():
     p(u"View: %s (1:%d)%s" % (view.Name, view.Scale, u" – DRY-RUN, chưa ghi gì" if dry else u""))
     p(u"Đã tag: %d cửa đi, %d cửa sổ, %d lam / louver; đặt lại %d tag cũ; %d tag có leader; bỏ qua %d đối tượng "
       u"đã có tag; không tag %d đối tượng có Type Comments '%s'" %
-      (tao["cua"], tao["cs"], tao["lam"], dat_lai, so_leader, bo_qua, len(loai_tru), doc_in(11)))
+      (tao["cua"], tao["cs"], tao["lam"], dat_lai, so_leader, bo_qua, len(loai_tru), ten_loai))
     if tien_to_msg:
         p(tien_to_msg)
     if xoa_msg:
@@ -1186,8 +1229,19 @@ def tao_bang(doc, bic, ten_bang, level, loai_tru_tc):
     if f_tang is not None and level is not None:
         d.AddFilter(ScheduleFilter(f_tang.FieldId, ScheduleFilterType.Equal, level.Id))
     if f_tc is not None:
-        for tc in loai_tru_tc:
-            d.AddFilter(ScheduleFilter(f_tc.FieldId, ScheduleFilterType.NotEqual, tc))
+        # Bộ lọc bảng phân biệt hoa thường / dấu: lấy đúng các chuỗi Type Comments đang có trong dự án khớp từ khoá (như lọc
+        # tag). Revit cho tối đa 8 bộ lọc, 1 đã dùng cho tầng.
+        tk = [khong_dau(x) for x in loai_tru_tc]
+        gt = set()
+        for t in FilteredElementCollector(doc).OfCategory(bic).WhereElementIsElementType():
+            pr = t.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_COMMENTS)
+            s = pr.AsString() if pr is not None else None
+            if s and any(k in khong_dau(s) for k in tk):
+                gt.add(s)
+        for s in sorted(gt)[:7]:
+            d.AddFilter(ScheduleFilter(f_tc.FieldId, ScheduleFilterType.NotEqual, s))
+        if len(gt) > 7:
+            cach += u"; CẦN XEM LẠI: chỉ lọc được 7 trong %d cách ghi Type Comments loại trừ" % len(gt)
     d.ClearSortGroupFields()
     if f_mark is not None:
         d.AddSortGroupField(ScheduleSortGroupField(f_mark.FieldId))

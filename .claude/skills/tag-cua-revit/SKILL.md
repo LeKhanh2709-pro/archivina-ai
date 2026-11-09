@@ -16,8 +16,11 @@ Chốt 2026-11-02 sáng (8 câu hỏi), sửa theo góp ý của người dùng 
    - Cửa sổ có tên family / type chứa `Lam` / `Louver` thì dùng `AV_Louver Tag`; ít gặp vì các đối tượng này thường đã bị
      loại ở quy tắc 2.
    - Thiếu family thì báo và bỏ qua hạng mục đó, không tự load.
-2. **Không tag đối tượng có Type Comments `Louver`** (IN[11], so không phân biệt hoa thường / dấu). G19 có 17 lam
-   `AV-Lam Thép Logia2`.
+2. **Không tag đối tượng có Type Comments chứa `Louver`, `Cửa nhôm` hoặc `Cửa lam thép`** (người dùng chốt 2026-11-09; IN[11], so không
+   phân biệt hoa thường / dấu; 3 từ này luôn loại kể cả khi máy còn nhớ IN[11] cũ, xem `ds_loai_tru`). G19 có 17 lam
+   `AV-Lam Thép Logia2`. Chỉ xét Type Comments: family tên `CuaNhom_...` mà Type Comments không ghi thì vẫn tag.
+   Bảng thống kê trên sheet bỏ cùng các đối tượng này; bộ lọc Revit phân biệt hoa thường / dấu nên lõi lấy đúng chuỗi đang
+   có trong dự án.
    - Tag đang gắn trên các đối tượng này thì liệt kê trong báo cáo.
    - Chỉ xoá khi bật IN[15] (ô có chữ "Xoá": Shift+bấm, tích ô rồi xác nhận).
 3. **Tag hiện đúng Type Mark, không tiền tố**. Nhãn family cũ là `S3.` + Type Mark.
@@ -209,10 +212,20 @@ Người dùng yêu cầu tạo mặt bằng mới từ mặt bằng đã cho, t
 - Bỏ tiền tố nhãn chạy TRƯỚC, ngoài transaction (EditFamily / LoadFamily), sau đó lấy lại kiểu tag. Phần còn lại nằm
   trong 1 transaction `ARV - Tag cửa`. Dry-run: đặt thử trong `SubTransaction` rồi huỷ, nhãn chỉ báo "sẽ bỏ".
 - Log `tag_cua_<ngày giờ µs>_<view id>.txt`: báo cáo + "CHI TIẾT VỊ TRÍ" (ứng viên được chọn, lý do bỏ ứng viên trước).
+- **Tốc độ** (người dùng báo nút chậm 2026-11-09; đo trên bản sao HQV tháp B, Tầng 5BA, 195 tag, 3522 tường: lõi 496 s → 27 s,
+  195 tag khớp bản cũ về vị trí / leader / hướng; thử ở `_tmp\tagcua_nhanh\`):
+  - Tạo / đưa hết tag về điểm đặt cửa trước (vòng 1), `Regenerate` MỘT lần, đo khung TẤT CẢ tag TRƯỚC khi dời tag nào,
+    rồi mới tìm chỗ (vòng 2). Không gọi `Regenerate` trong vòng lặp.
+  - `IndependentTag.Create` xử lý lại mọi đối tượng đang hiện trong view, kể cả tag vừa tạo: để nguyên 1,2 s / tag; cô lập
+    cửa + hạng mục tag 0,59 s; chỉ cô lập cửa đi + cửa sổ 0,017 s → `bat_co_lap` / `tat_co_lap` quanh vòng 1, KHÔNG thêm
+    Door Tags / Window Tags vào danh sách cô lập. View đang được người dùng cô lập tạm thì không đụng (chậm như cũ).
+  - Coarse, Wireframe, SubTransaction, bảng thống kê trên sheet, family tag đóng gói: không ảnh hưởng. Đọc hình học tường
+    chỉ 0,8 s, không cần tối ưu.
 
 ## Tệp
-- Lõi: `scripts\dynamo\TagCua_TuDong.py` (16 ô IN). Spec `TagCua_TuDong.json`, sinh `.dyn` bằng
-  `python scripts\dynamo\build_dyn.py scripts\dynamo\TagCua_TuDong.json`.
+- Lõi: `scripts\dynamo\TagCua_TuDong.py` (30 ô IN). **KHÔNG chạy `build_dyn.py` với `TagCua_TuDong.json`**: spec chỉ có 28 ô,
+  sinh lại sẽ mất IN[28] / IN[29] (thêm vào `.dyn` bằng `_tmp\tpl_tl\them_in_dyn.py`) và làm `inputs.json` của nút mất mặc
+  định. Sửa `.py` thì chỉ thay chuỗi `Code` của Python node trong `.dyn` (`_tmp\tagcua_nhanh\thay_code_dyn.py`), giữ CRLF.
 - Nút: `scripts\pyrevit\...\HoSo.panel\TagCua.pushbutton` là file SINH, không sửa tay; khai báo trong `BUTTONS` +
   `MOT_CHAM` (`tu_khoa` rỗng) của `build_from_dynamo.py`. Sinh lại bằng:
   `python scripts\pyrevit\build_from_dynamo.py "<gốc>\file mau revit\dynamo" --chi TagCua` (Git Bash: đặt

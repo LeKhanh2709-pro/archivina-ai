@@ -165,6 +165,15 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
   Usage khác Non-bearing hoặc tên loại chứa BTCT / VBT / WS_ / Concrete / Bê tông) + cột tô đặc xám 100 viền đen, bằng 3
   filter `ARV_*` (màu ghi đè theo hạng mục Walls không hiện trong Revit 2027.3); template ẩn thêm Sections; template đã
   có filter `ARV_Vách BTCT` thì giữ nguyên. Chưa thử với link KC thật (`Cần xác nhận lại`).
+  **Không tag cửa nhôm, cửa lam thép (người dùng chốt 2026-11-09; chỉ xét Type Comments, không theo tên family):** Type
+  Comments chứa `Louver`, `Cửa nhôm` hoặc `Cửa lam thép` (mẫu `CỬA LAM THÉP LOGIA CĂN HỘ`) thì không tag, không vào
+  bảng thống kê trên sheet (không phân biệt hoa thường / dấu). Thử bản sao G19, gán tạm Type Comments: 94 đối tượng bị loại,
+  61 tag, ô trống vẫn tag, bấm lại không trùng. Bản sao HQV Tầng 5BA (05/11) không có loại nào ghi `Cửa nhôm` dù có family
+  `CuaNhom_1Canh_MoQuay`. Nút sinh lại 14:47; người dùng chưa bấm thử (`Cần xác nhận lại`).
+  **Tăng tốc (người dùng báo chậm 2026-11-09):** tạo hết tag rồi Regenerate 1 lần, cô lập tạm cửa đi + cửa sổ trong lúc tạo tag
+  (không gồm hạng mục tag), xong trả view. Bản sao HQV tháp B Tầng 5BA, 195 tag: lõi 496 s → 27 s, 195 tag khớp bản cũ. Nút
+  sinh lại 11:38, Revit phải Reload pyRevit; người dùng chưa bấm thử (`Cần xác nhận lại`). Bẫy: không chạy `build_dyn.py` cho
+  TagCua (mất IN[28] / IN[29]), xem skill.
 - `MatBang_DinhViCua.dyn` (2026-11-02 chiều, ĐÃ GỘP vào Tag cửa 2026-11-03; quy tắc trong skill `tag-cua-revit`):
   - Chức năng: nhân bản mặt bằng đang mở (không kèm chú thích) thành `MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>` và gán template
     `MẶT BẰNG ĐỊNH VỊ CỬA`.
@@ -274,6 +283,22 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     (ảnh `co_san\`). Legend thiếu dòng cột vách BTCT vì bản sao không đọc được link KC. Một lần chạy trước đó Revit tắt
     đột ngột giữa transaction (không rõ nguyên nhân, lần sau cùng thao tác OK: `Cần xác nhận lại`; `lan2_sap\`).
   - Nút chưa bấm thử trong Revit thật, người dùng chưa duyệt (`Cần xác nhận lại`).
+  - **Áp dụng `AI REVIT\TUONG XAY 2`** (người dùng yêu cầu 2026-11-09; 3 graph HQV tháp B Tầng 5BA, `_PhiaBac` / `_PhiaNam` chung
+    code mới nhất, `_5BA` là bản cũ hơn): gộp 3 chiều vào `ARV_MBTuongXayTang_v1.py` (giữ phần riêng của máy; bản trước
+    `_backup\*_20261109_1706*`). Mới: tách tầng thành nhiều tờ, trục theo CAD link, nét đứt đường cắt, ẩn trục / tường theo
+    tiền tố, quay viewport 90° trước khi giảm tỉ lệ, 2 chuỗi dim hành lang, hành lang chỉ dim cửa + trục, Room coi như ngoài
+    nhà (Logia), ô legend theo Cut Pattern vật liệu. IN[17] vẫn là Đặt lên bản vẽ, 8 ô mới là **IN[18] – IN[25]** (graph đồng
+    nghiệp đánh IN[17] – IN[24]). Sửa thêm: chỗ cho đầu trục so le chỉ cộng vào crop khi có trục CAD (L3-32 TẦNG 3 không thì
+    718 mm vượt vùng vẽ 697 mm); IN[17] False không gom sheet đang chứa view dùng lại. **Bật sẵn 3 quy tắc dim cho nút
+    một chạm** (người dùng chốt 2026-11-09): IN[23] = 2, IN[24] = 1, IN[25] = `Logia;Lô gia;Lô Gia;LOGIA;LÔ GIA` (so khớp đúng tên
+    Room, phân biệt hoa thường); 5 ô còn lại trống, Shift+bấm thì nhập được. Thử bản sao L3-32 TẦNG 3 (27 Room `Logia`, ảnh
+    `_tmp\tuongxay2\thu1\l3b - Sheet - A-TX-78 ...png`): 25 chuỗi, 0 chữ chồng, 1/100; mặt ngoài chỉ còn cửa sổ, cửa lùa, trục;
+    nút sinh lại 17:21 (bản trước `_backup\*_20261109_1721_truoc_bat_quy_tac*`). Phần dùng chung luôn áp dụng: mốc khuất sau tường không vào chuỗi hành lang (L3-32 hành
+    lang 76 → 45 mốc), view Fine, chữ dim tránh trục / tường. 3 graph chép vào `scripts\dynamo\` với Dry-run bật, Làm lại
+    tắt (bản đồng nghiệp: Dry-run tắt, Làm lại bật), code giữ nguyên của đồng nghiệp.
+    Thử bản sao (`_tmp\tuongxay2\thu1\`): HQV Dry-run bản gộp = code đồng nghiệp (chỉ khác số ô trong 1 dòng thông báo), dựng
+    Phía Bắc ACD.08.02 + Phía Nam ACD.08.04, 14 / 12 chuỗi, 0 chữ chồng; L3-32 đặt sheet A.TX.77 1/100, bấm lại dừng đúng. Nút
+    sinh lại 17:17, Revit phải Reload pyRevit; vỏ nút chưa bấm thử, người dùng chưa duyệt (`Cần xác nhận lại`).
 
 ### Đọc file DWG không cần mở AutoCAD
 Dùng `C:\Program Files\Autodesk\AutoCAD 2027\accoreconsole.exe /i <bản sao.dwg> /s <script.scr>`:

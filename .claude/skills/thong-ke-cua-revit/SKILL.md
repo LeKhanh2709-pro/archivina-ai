@@ -12,7 +12,7 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
 ## Cách dùng
 - Mở mặt bằng tầng → `Archivina` → `HS TKBVTC` → **Thống kê cửa** → hiện **bảng cửa** (`lib\arv_bang_cua.py`, người dùng
   yêu cầu 2026-11-04 tối: "1 bảng hiện ra, có các cửa, tên hiện tại, tên đổi, chiều dài, chiều cao"):
-  - mỗi loại cửa (ElementType) thấy trong mặt bằng 1 dòng, bỏ loại có Type Comments chứa chữ Louver; cửa đi trước, cửa
+  - mỗi loại cửa (ElementType) thấy trong mặt bằng 1 dòng, bỏ loại có Type Comments chứa chữ Louver / Lam thép / Lam nhôm; cửa đi trước, cửa
     sổ sau, theo tên;
   - cột: Loại / Cửa (Family : Type) / Tên hiện tại (Type Mark) / **Tên đổi** (gõ, trống = giữ) / Chiều dài / Chiều cao
     (instance trước, type sau; nhiều giá trị thì `800 / 900`) / SL mặt bằng / SL cả dự án;
@@ -27,7 +27,7 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
 |---|---|---|
 | 0 | Tên view mặt bằng (trống = view đang mở) | trống |
 | 1 | Hạng mục: `Cửa đi;Cửa sổ` (bỏ bớt nếu chỉ cần 1 bảng) | `Cửa đi;Cửa sổ` |
-| 2 | Type Comments CÓ CHỨA chữ này thì không thống kê (`;` ngăn cách) | `Louver` |
+| 2 | Type Comments CÓ CHỨA chữ này thì không thống kê (`;` ngăn cách) | `Louver;Lam thép;Lam nhôm` |
 | 3 | Dry-run | True (nút một chạm truyền False) |
 | 4 | Mẫu tên bảng (`{loai}`, `{tang}`, `{view}`) | `THỐNG KÊ {loai} - {tang}` |
 | 5 | Mở bảng vừa tạo | True |
@@ -47,6 +47,11 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
    cầu 2026-11-09: "trong type comment của cửa có louver thì không hiện thống kê"; bản cũ chỉ bỏ khi ghi đúng y `Louver`).
    Không phân biệt hoa thường / dấu: `Louver`, `LOUVER nhôm`, `Cửa đi + louver` đều bị bỏ. Bảng Revit dùng
    `ScheduleFilterType.NotContains`; lõi + bảng đổi tên (`arv_bang_cua._loai_tru`) so chuỗi không dấu.
+   Thêm `Lam thép` (người dùng yêu cầu 2026-11-09, model HQV ghi "CỬA LAM THÉP LOGIA CĂN HỘ") và `Lam nhôm` (người dùng
+   yêu cầu cùng ngày); chữ `lam` đứng một mình KHÔNG loại (vd. `Cửa lam gỗ` vẫn thống kê). Bộ lọc bảng Revit phân biệt
+   hoa / thường và **mỗi bảng tối đa 8 bộ lọc** (quá thì Revit báo "filter count would be greater than 8", KHÔNG tạo được
+   bảng) nên `lap_bang` bỏ chữ cái đầu của từ khoá (`am thép`, `ouver`) và chỉ thêm dạng thường + HOA: 3 từ khoá = 6 bộ lọc
+   + 1 lọc tầng, còn dư 1; thêm từ khoá thứ 4 phải đổi cách. Dạng khác (`Lam Thép`) bảng Revit chưa bỏ. Sửa danh sách thì sửa cả `_LOAI_TRU` trong `arv_bang_cua.py` (viết không dấu) và `MAC_DINH` + `.json`.
 5. **Bảng cùng tên đã có** → cập nhật lại cột / lọc / gộp (không tạo trùng, không xoá). Chưa có → nhân bản bảng cùng hạng
    mục có sẵn của dự án (ưu tiên tên có "thống kê", giữ kiểu trình bày công ty), không có thì tạo mới. Bảng cùng tên khác
    hạng mục thì báo, không đụng.
@@ -83,6 +88,13 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
 - Bản bảng đổi tên (2026-11-04 21:15): nút thử `TK` đặt `ARV_HOI_ANH` (vẽ bảng ra PNG, coi như bấm Đổi tên) +
   `ARV_TK_THU` (điền sẵn tên đổi) + `arv_bang_cua._LUU` về `_tmp\pyrevit_thongke\kq2\`: "80" → D1 (16 cửa),
   "VKD03-F2E" → D2 (37 cửa), bảng Revit hiện D1 / D2, lần 2 không đổi thêm; ảnh `kq2\bang_lan1.png`, `bang_lan2.png`.
+
+- Từ khoá Lam thép + bộ lọc 3 dạng hoa / thường (2026-11-09, `_tmp\revit_thongkecua\thu6\`, Dynamo trên bản sao L3-32 TẦNG 3, gán thử
+  Type Comments): `CỬA LAM THÉP ...`, `cửa lam thép`, `Cửa Lam thép`, `LOUVER nhôm`, `louver` đều bị bỏ ở cả bảng đổi tên và
+  bảng Revit (cửa đi 110, cửa sổ 18), `Cửa lam nhôm` vẫn còn. Bản sao HQV 05/11 chưa có loại lam thép nên không dùng để thử.
+- Thêm Lam nhôm (2026-11-09, `thu7\` lỗi quá 8 bộ lọc → sửa → `thu8\`, cùng cách thử, chạy `core.py` của nút): `Cửa lam nhôm`,
+  `CỬA LAM NHÔM LOGIA`, `lam nhôm sơn tĩnh điện` + các dạng lam thép / louver đều bị bỏ ở cả 2 bảng (cửa đi 112, cửa sổ 19);
+  `Cửa lam gỗ`, `Cửa nhôm kính`, `Cửa thép` vẫn còn.
 
 ## Trạng thái
 Người dùng chưa bấm thử trong Revit của mình, chưa duyệt (`Cần xác nhận lại`). Revit phải Reload pyRevit mới thấy nút.

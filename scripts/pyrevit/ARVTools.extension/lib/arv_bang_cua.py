@@ -26,7 +26,7 @@ _LUU = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"), "pyRev
 _HANG_MUC = ((DB.BuiltInCategory.OST_Doors, u"Cửa đi", DB.BuiltInParameter.DOOR_WIDTH, DB.BuiltInParameter.DOOR_HEIGHT),
              (DB.BuiltInCategory.OST_Windows, u"Cửa sổ", DB.BuiltInParameter.WINDOW_WIDTH,
               DB.BuiltInParameter.WINDOW_HEIGHT))
-_LOAI_TRU = (u"louver",)         # Type Comments CÓ CHỨA chữ này thì không đưa vào bảng (như IN[2] của core, 2026-11-09)
+_LOAI_TRU = (u"louver", u"lam thep", u"lam nhom")    # Type Comments CÓ CHỨA chữ này (viết không dấu) thì không đưa vào bảng (như IN[2] của core, 2026-11-09)
 _COT = ((u"loai", u"Loại", 70), (u"cua", u"Cửa (Family : Type)", 260), (u"ten", u"Tên hiện tại", 120),
         (u"moi", u"Tên đổi", 120), (u"dai", u"Chiều dài", 80), (u"cao", u"Chiều cao", 80),
         (u"sl", u"SL mặt bằng", 80), (u"sl_da", u"SL cả dự án", 80))
@@ -53,7 +53,7 @@ def _khong_dau(s):
 
 
 def _loai_tru(t):
-    """Type Comments có chữ Louver (bất kỳ đâu, không phân biệt hoa thường / dấu) → không đưa vào bảng."""
+    """Type Comments có chữ Louver / Lam thép / Lam nhôm (bất kỳ đâu, không phân biệt hoa thường / dấu) → không đưa vào bảng."""
     tc = _khong_dau(_chuoi(t, DB.BuiltInParameter.ALL_MODEL_TYPE_COMMENTS))
     return bool(tc) and any(k in tc for k in _LOAI_TRU)
 

@@ -4,9 +4,9 @@
 #     vào 1 bảng: bảng nhiều hạng mục không có cột Rộng / Cao và bộ lọc không có "hoặc" – khảo sát Revit 2027.3).
 #   - Cột: Ký hiệu (Type Mark) / Rộng / Cao / Số lượng; KHÔNG liệt kê từng cái (Itemize tắt), gộp theo Type Mark → cửa
 #     trùng ký hiệu hiện 1 dòng kèm số lượng; dòng tổng cuối bảng.
-#   - Lọc: Level = tầng của mặt bằng, bỏ cửa có Type Comments CHỨA chữ loại trừ (Louver; không phân biệt hoa thường / dấu,
-#     vd. "Louver", "LOUVER nhôm", "Cửa đi louver" – người dùng yêu cầu 2026-11-09; bảng Revit dùng bộ lọc "does not
-#     contain"). "Filter by sheet" TẮT mặc định (bật thì bảng đặt
+#   - Lọc: Level = tầng của mặt bằng, bỏ cửa có Type Comments CHỨA chữ loại trừ (Louver, Lam thép, Lam nhôm; không phân biệt hoa
+#     thường / dấu, vd. "Louver", "LOUVER nhôm", "CỬA LAM THÉP LOGIA CĂN HỘ" – người dùng yêu cầu 2026-11-09; bảng Revit
+#     dùng bộ lọc "does not contain", thêm cả dạng HOA / thường vì bộ lọc này phân biệt). "Filter by sheet" TẮT mặc định (bật thì bảng đặt
 #     trên sheet không có mặt bằng sẽ trống – thử 2026-11-04); mặt bằng crop 1 phần tầng thì bật IN[6] rồi đặt bảng lên
 #     sheet của mặt bằng đó để bảng chỉ đếm cửa thấy trên sheet.
 #   - Bảng cùng tên đã có (bấm lại) thì cập nhật lại cột / lọc / gộp, không tạo trùng, không xoá. Chưa có thì nhân bản
@@ -21,7 +21,7 @@
 # INPUT
 #   IN[0] (str)  Tên view mặt bằng (để trống = view đang mở)
 #   IN[1] (str)  Hạng mục thống kê: Cửa đi;Cửa sổ (bỏ bớt nếu chỉ cần 1 bảng)
-#   IN[2] (str)  Type Comments CÓ CHỨA chữ này thì KHÔNG thống kê (vd. Louver), cách nhau bằng ;
+#   IN[2] (str)  Type Comments CÓ CHỨA chữ này thì KHÔNG thống kê (vd. Louver;Lam thép;Lam nhôm), cách nhau bằng ;
 #   IN[3] (bool) Dry-run (True = chỉ báo cáo)
 #   IN[4] (str)  Mẫu tên bảng ({loai} = CỬA ĐI / CỬA SỔ, {tang} = tên tầng, {view} = tên view)
 #   IN[5] (bool) Mở bảng vừa tạo (bảng đầu tiên)
@@ -43,7 +43,7 @@ from RevitServices.Persistence import DocumentManager
 from RevitServices.Transactions import TransactionManager
 
 TRANSACTION_NAME = u"ARV - Thống kê cửa"
-MAC_DINH = ["", u"Cửa đi;Cửa sổ", "Louver", True, u"THỐNG KÊ {loai} - {tang}", True, False, "", True]
+MAC_DINH = ["", u"Cửa đi;Cửa sổ", u"Louver;Lam thép;Lam nhôm", True, u"THỐNG KÊ {loai} - {tang}", True, False, "", True]
 # (từ khoá không dấu nhận trong IN[1], hạng mục, nhãn, tham số rộng, tham số cao)
 HANG_MUC = [(u"cua di", BuiltInCategory.OST_Doors, u"CỬA ĐI", BuiltInParameter.DOOR_WIDTH, BuiltInParameter.DOOR_HEIGHT),
             (u"cua so", BuiltInCategory.OST_Windows, u"CỬA SỔ", BuiltInParameter.WINDOW_WIDTH,
@@ -235,8 +235,19 @@ def lap_bang(doc, bic, ten_bang, level, loai_tru_tc, rong_bip, cao_bip, theo_she
     if f_tang is not None and level is not None:
         d.AddFilter(ScheduleFilter(f_tang.FieldId, ScheduleFilterType.Equal, level.Id))
     if f_tc is not None:
-        for tc in loai_tru_tc:          # "does not contain": Type Comments có chữ Louver ở bất kỳ đâu đều bị bỏ
-            d.AddFilter(ScheduleFilter(f_tc.FieldId, ScheduleFilterType.NotContains, tc))
+        # Bộ lọc bảng Revit phân biệt HOA / thường và mỗi bảng tối đa 8 bộ lọc (thử 2026-11-09) → bỏ chữ cái đầu của từ khoá
+        # (khỏi lo "Lam" / "lam"), còn 2 dạng thường + HOA: 3 từ khoá = 6 bộ lọc, cộng 1 lọc tầng
+        chu_loc = []
+        for tc in loai_tru_tc:
+            goc = tc[1:] if len(tc) > 3 else tc
+            for x in (goc, goc.lower(), goc.upper()):
+                if x not in chu_loc:
+                    chu_loc.append(x)
+        con_cho = 8 - d.GetFilterCount()
+        for x in chu_loc[:con_cho]:     # "does not contain": Type Comments có chữ này ở bất kỳ đâu đều bị bỏ
+            d.AddFilter(ScheduleFilter(f_tc.FieldId, ScheduleFilterType.NotContains, x))
+        if len(chu_loc) > con_cho:
+            cach += u"; CẦN XEM LẠI: quá 8 bộ lọc của bảng Revit, chưa lọc được: " + u", ".join(chu_loc[con_cho:])
     d.ClearSortGroupFields()
     d.AddSortGroupField(ScheduleSortGroupField(f_mark.FieldId))
     d.IsItemized = False                # gộp: cửa trùng Type Mark → 1 dòng

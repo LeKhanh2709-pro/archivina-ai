@@ -1,0 +1,217 @@
+{
+ "key": "TuongXay",
+ "title": "Tường xây",
+ "summary": "Trình bày MẶT BẰNG TƯỜNG XÂY (định vị tường) cả tầng theo mẫu FPT P5 A.CD.04.07 (KTS chốt 2026-11-03, G19): 1. View mặt bằng mới trên level IN[0] (tên IN[1]), chép thông số view template IN[2] vào view rồi BỎ gắn template (template công ty để 1/150 – KHÔNG sửa template). Ẩn nội thất, thiết bị, Room, sàn. Tỷ lệ = số đầu tiên trong IN[3] mà hình (kể cả dim, đầu trục) ước tính vừa vùng vẽ khung tên. 2. Trục của file: đầu trục 2D ở CẢ 2 ĐẦU, cách tường ngoài cùng GRID_END mm giấy. Dim trục 4 phía, mỗi phía 2 chuỗi: khoảng trục + kích thước tổng (dim type IN[8]). 3. Chuỗi định vị tường (dim type IN[9]): gom tường (lõi ≥ 80, thẳng, song song trục X / Y) thành TUYẾN thẳng hàng (lệch tim ≤ 60, hở ≤ 2500, tổng dài ≥ 4000). Mỗi tuyến xét 2 phía (điểm mẫu cách mặt tường 400): - một phía phần lớn KHÔNG có Room → mặt ngoài nhà: chuỗi đặt phía ngoài, cách mặt tường WALL_EXT mm giấy; - không, mà một phía là Room công cộng IN[12] (hành lang, khu vực chung) → chuỗi phía đó, cách WALL_INT; - cả 2 phía là phòng trong căn → không dim (chi tiết căn hộ đã dim). Mốc: MẶT LÕI (gạch thô, bỏ trát) tường vuông góc chạm tuyến, mép cửa đi / cửa sổ trên tuyến (tham chiếu Left / Right của family), đầu tường của tuyến, mặt cột / vách BTCT của file Revit link (kết cấu), trục. Mốc cách nhau < DIM_MIN gộp; chữ số đoạn ngắn chồng nhau → kéo sang phía ngoài đường dim, lệch xen kẽ. 4. Legend IN[10] (nhân bản một legend có sẵn rồi vẽ): BẢNG KÝ HIỆU GHI CHÚ TƯỜNG – mỗi vật liệu lõi tường một dòng (hatch theo IN[11], loại, các chiều dày lõi) + lưu ý chỉ ghi điều đúng với mô hình. 5. Sheet IN[4] / IN[5], khung tên IN[6], viewport type IN[7]: MB ở trên, giữa vùng vẽ; legend góc dưới trái. 6. Trục file link KC: tắt hiển thị view filter có sẵn IN[16] trong view (trục type không phải '…KT'). Không tạo / sửa type, style, view template, filter. Chưa làm: tag căn hộ, chi tiết điển hình cột vách giao tường xây, dim trong lòng căn.",
+ "transaction": "ARV - Mặt bằng tường xây tầng",
+ "source": "ARV_MBTuongXayTang_v1.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Level (trống = level của view mặt bằng đang mở) – VD \"TẦNG 3\"; bản D:\\AI để trống (nút pyRevit)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên view – VD \"MB TƯỜNG XÂY TẦNG ĐIỂN HÌNH\"",
+   "default": "MB TƯỜNG XÂY TẦNG ĐIỂN HÌNH",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "View template để chép thông số – VD \"TC.04.MatBangTuongXay\"",
+   "default": "TC.04.MatBangTuongXay",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "str",
+   "decl": "str",
+   "label": "Tỷ lệ thử lần lượt – VD \"100;150\"",
+   "default": "100;150",
+   "kind": "normal"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Số hiệu sheet – VD \"A140\"",
+   "default": "A140",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên sheet – VD \"MẶT BẰNG TƯỜNG XÂY TẦNG ĐIỂN HÌNH\"",
+   "default": "MẶT BẰNG TƯỜNG XÂY TẦNG ĐIỂN HÌNH",
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Khung tên (tên family hoặc type) – VD \"AV-Khung A1(841x594)-Kien Truc\"",
+   "default": "AV-Khung A1(841x594)-Kien Truc",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Viewport type – VD \"AV-Title No Line\"",
+   "default": "AV-Title No Line",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "str",
+   "decl": "str",
+   "label": "Dimension type dim trục – VD \"AV_Dim 2.2mm_Cut dim 6mm\"",
+   "default": "AV_Dim 2.2mm_Cut dim 6mm",
+   "kind": "normal"
+  },
+  {
+   "index": 9,
+   "type": "str",
+   "decl": "str",
+   "label": "Dimension type định vị tường – VD \"AV_Dim 2.2mm_Cut dim 4mm\"",
+   "default": "AV_Dim 2.2mm_Cut dim 4mm",
+   "kind": "normal"
+  },
+  {
+   "index": 10,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên legend ghi chú tường (trống = không làm) – VD \"GHI CHÚ TƯỜNG XÂY TẦNG ĐIỂN HÌNH\"",
+   "default": "GHI CHÚ TƯỜNG XÂY TẦNG ĐIỂN HÌNH",
+   "kind": "normal"
+  },
+  {
+   "index": 11,
+   "type": "str",
+   "decl": "str",
+   "label": "Vật liệu lõi → hatch | mô tả, cách nhau ';' – VD \"GachNung=AV_Hatch Gach Xay|Tường gạch đặc nung;BeTong=AV_Hatch BTCT|Cột, vách BTCT\" (vật liệu cột / vách link KC cũng thành một dòng, chiều dày \"Theo hồ sơ KC\")",
+   "default": "GachNung=AV_Hatch Gach Xay|Tường gạch đặc nung;BeTong=AV_Hatch BTCT|Cột, vách BTCT",
+   "kind": "normal"
+  },
+  {
+   "index": 12,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên Room hành lang (cách ';') – VD \"Hành lang\". KTS 2026-11-03: KHÔNG dim trong lõi thang / phòng kỹ thuật → bỏ \"Khu vực chung\" (G19 đặt tên đó cho sảnh thang, phòng kỹ thuật trong lõi)",
+   "default": "Hành lang",
+   "kind": "normal"
+  },
+  {
+   "index": 13,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run: True = dựng thử rồi hoàn tác, chỉ báo cáo (mặc định True)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 14,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Làm lại: đã có view / sheet / legend cùng tên → dựng lại (mặc định False = dừng). View cùng level được DÙNG LẠI (xóa dim của view, giữ VG / ẩn hiện KTS đã chỉnh, không chép lại template); sheet xóa rồi tạo mới; legend xóa nội dung, vẽ lại tại chỗ.",
+   "default": false,
+   "kind": "destructive"
+  },
+  {
+   "index": 15,
+   "type": "str",
+   "decl": "str",
+   "label": "Tham số nhóm Project Browser của sheet \"tên=giá trị;…\" – VD \"01_GiaiDoan=03_TKBVTC;02_HangMuc=04_MatBangTuongXay\" (G19: nhóm có sẵn, như sheet giữ chỗ A107)",
+   "default": "01_GiaiDoan=03_TKBVTC;02_HangMuc=04_MatBangTuongXay",
+   "kind": "normal"
+  },
+  {
+   "index": 16,
+   "type": "str",
+   "decl": "str",
+   "label": "View filter có sẵn để ẨN trục / level không phải kiến trúc (trục file link KC) – VD \"Trục + Level- Kiến Trúc-Not\" (type trục không kết thúc 'KT'; trống = không đụng). Filter áp cả phần tử link (ByHostView). Tool chỉ thêm filter vào view + tắt hiển thị, KHÔNG tạo / sửa filter.",
+   "default": "Trục + Level- Kiến Trúc-Not",
+   "kind": "normal"
+  },
+  {
+   "index": 17,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Đặt lên bản vẽ (mặc định True; D:\\AI thêm 2026-11-04 cho nút một chạm). False = chỉ dựng view + legend, không tạo / đụng sheet. Số hiệu IN[4] là sheet TRỐNG có sẵn (không view, không bảng thống kê) thì đặt vào sheet đó, giữ tên / khung tên / tham số (như Chống thấm), không cần bật IN[14].",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 18,
+   "type": "str",
+   "decl": "str",
+   "label": "Vùng x0,y0,x1,y1 mm (trống = cả tầng; tách nhiều tờ: chạy mỗi vùng một lần) – VD \"2380000,540313,2450000,590000\"",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 19,
+   "type": "str",
+   "decl": "str",
+   "label": "Ẩn trục có tên bắt đầu bằng (cách ';', trống = không ẩn) – VD \"XA;YA\"",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 20,
+   "type": "str",
+   "decl": "str",
+   "label": "Trục theo CAD link: layer đường trục;layer ký hiệu (trống = không theo CAD) – VD \"A-axis;A-Symbol\"",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 21,
+   "type": "str",
+   "decl": "str",
+   "label": "Line style nét đứt tại đường cắt khi tách vùng (có sẵn trong file) – VD \"AV-Net Dut Callout\"",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 22,
+   "type": "str",
+   "decl": "str",
+   "label": "Ẩn tường theo tiền tố tên type (cách ';', trống = không ẩn) – VD \"WF_;WA_F1\"",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 23,
+   "type": "str",
+   "decl": "str",
+   "label": "Số chuỗi dim hành lang (1 = gộp giữa, 2 = mỗi bên tường một chuỗi)",
+   "default": "1",
+   "kind": "normal"
+  },
+  {
+   "index": 24,
+   "type": "str",
+   "decl": "str",
+   "label": "Chuỗi hành lang chỉ dim cửa + trục (1 = có, trống = không)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 25,
+   "type": "str",
+   "decl": "str",
+   "label": "Room coi như ngoài nhà; có giá trị = mặt ngoài chỉ dim cửa sổ, cửa lùa, trục – VD \"Logia\"",
+   "default": "",
+   "kind": "normal"
+  }
+ ]
+}
