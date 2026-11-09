@@ -4,7 +4,9 @@
 #     vào 1 bảng: bảng nhiều hạng mục không có cột Rộng / Cao và bộ lọc không có "hoặc" – khảo sát Revit 2027.3).
 #   - Cột: Ký hiệu (Type Mark) / Rộng / Cao / Số lượng; KHÔNG liệt kê từng cái (Itemize tắt), gộp theo Type Mark → cửa
 #     trùng ký hiệu hiện 1 dòng kèm số lượng; dòng tổng cuối bảng.
-#   - Lọc: Level = tầng của mặt bằng, bỏ Type Comments loại trừ (Louver). "Filter by sheet" TẮT mặc định (bật thì bảng đặt
+#   - Lọc: Level = tầng của mặt bằng, bỏ cửa có Type Comments CHỨA chữ loại trừ (Louver; không phân biệt hoa thường / dấu,
+#     vd. "Louver", "LOUVER nhôm", "Cửa đi louver" – người dùng yêu cầu 2026-11-09; bảng Revit dùng bộ lọc "does not
+#     contain"). "Filter by sheet" TẮT mặc định (bật thì bảng đặt
 #     trên sheet không có mặt bằng sẽ trống – thử 2026-11-04); mặt bằng crop 1 phần tầng thì bật IN[6] rồi đặt bảng lên
 #     sheet của mặt bằng đó để bảng chỉ đếm cửa thấy trên sheet.
 #   - Bảng cùng tên đã có (bấm lại) thì cập nhật lại cột / lọc / gộp, không tạo trùng, không xoá. Chưa có thì nhân bản
@@ -19,7 +21,7 @@
 # INPUT
 #   IN[0] (str)  Tên view mặt bằng (để trống = view đang mở)
 #   IN[1] (str)  Hạng mục thống kê: Cửa đi;Cửa sổ (bỏ bớt nếu chỉ cần 1 bảng)
-#   IN[2] (str)  Type Comments của đối tượng KHÔNG thống kê (vd. Louver), cách nhau bằng ;
+#   IN[2] (str)  Type Comments CÓ CHỨA chữ này thì KHÔNG thống kê (vd. Louver), cách nhau bằng ;
 #   IN[3] (bool) Dry-run (True = chỉ báo cáo)
 #   IN[4] (str)  Mẫu tên bảng ({loai} = CỬA ĐI / CỬA SỔ, {tang} = tên tầng, {view} = tên view)
 #   IN[5] (bool) Mở bảng vừa tạo (bảng đầu tiên)
@@ -97,15 +99,23 @@ def chuoi_type(t, bip):
     return (p.AsString() or u"").strip() if p is not None else u""
 
 
+def co_chu(s, ds):
+    """s CÓ CHỨA một chữ trong ds (ds đã khong_dau) – không phân biệt hoa thường / dấu."""
+    ks = khong_dau(s)
+    return bool(ks) and any(k in ks for k in ds)
+
+
 def dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru):
-    """Cửa thấy trong mặt bằng: {Type Mark: {"so": n, "kt": set((rộng, cao)), "type": set(tên)}}, số bị loại, số khác
-    tầng (thấy trong view nhưng Level khác tầng → bảng không đếm)."""
+    """Cửa thấy trong mặt bằng: {Type Mark: {"so": n, "kt": set((rộng, cao)), "type": set(tên)}}, số bị loại, các Type
+    Comments bị loại, số khác tầng (thấy trong view nhưng Level khác tầng → bảng không đếm)."""
     lv = view.GenLevel
-    nhom, bo, khac_tang = {}, 0, []
+    nhom, bo, bo_tc, khac_tang = {}, 0, set(), []
     for e in FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType():
         t = doc.GetElement(e.GetTypeId())
-        if chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_COMMENTS).lower() in loai_tru:
+        tc = chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_COMMENTS)
+        if co_chu(tc, loai_tru):
             bo += 1
+            bo_tc.add(tc)
             continue
         if lv is not None and e.LevelId != lv.Id:
             khac_tang.append(e)
@@ -116,7 +126,7 @@ def dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru):
         g["kt"].add((gia_tri_kt(e, t, (rong_bip, BuiltInParameter.FAMILY_WIDTH_PARAM)),
                      gia_tri_kt(e, t, (cao_bip, BuiltInParameter.FAMILY_HEIGHT_PARAM))))
         g["type"].add(u"%s : %s" % (t.FamilyName if t is not None else u"?", ten(t)))
-    return nhom, bo, khac_tang
+    return nhom, bo, bo_tc, khac_tang
 
 
 def dem_theo_tang(doc, lv, bic, loai_tru):
@@ -125,7 +135,7 @@ def dem_theo_tang(doc, lv, bic, loai_tru):
         if e.LevelId != lv.Id:
             continue
         t = doc.GetElement(e.GetTypeId())
-        if chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_COMMENTS).lower() in loai_tru:
+        if co_chu(chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_COMMENTS), loai_tru):
             continue
         n += 1
     return n
@@ -225,8 +235,8 @@ def lap_bang(doc, bic, ten_bang, level, loai_tru_tc, rong_bip, cao_bip, theo_she
     if f_tang is not None and level is not None:
         d.AddFilter(ScheduleFilter(f_tang.FieldId, ScheduleFilterType.Equal, level.Id))
     if f_tc is not None:
-        for tc in loai_tru_tc:
-            d.AddFilter(ScheduleFilter(f_tc.FieldId, ScheduleFilterType.NotEqual, tc))
+        for tc in loai_tru_tc:          # "does not contain": Type Comments có chữ Louver ở bất kỳ đâu đều bị bỏ
+            d.AddFilter(ScheduleFilter(f_tc.FieldId, ScheduleFilterType.NotContains, tc))
     d.ClearSortGroupFields()
     d.AddSortGroupField(ScheduleSortGroupField(f_mark.FieldId))
     d.IsItemized = False                # gộp: cửa trùng Type Mark → 1 dòng
@@ -328,7 +338,7 @@ def _chinh():
     lv = view.GenLevel
     dry = bool(doc_in(3))
     loai_tru = tach(doc_in(2))
-    loai_tru_thuong = set(x.lower() for x in loai_tru)
+    loai_tru_thuong = [khong_dau(x) for x in loai_tru]
     chon = [khong_dau(x) for x in tach(doc_in(1))]
     hang_muc = [h for h in HANG_MUC if any(h[0] in c for c in chon)]
     if not hang_muc:
@@ -343,13 +353,14 @@ def _chinh():
         hang_muc = []
         bao.append(u"Không tạo bảng thống kê Revit (IN[8] tắt).")
     for _, bic, nhan, rong_bip, cao_bip in hang_muc:
-        nhom, bo, khac_tang = dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru_thuong)
+        nhom, bo, bo_tc, khac_tang = dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru_thuong)
         tong = sum(g["so"] for g in nhom.values())
         theo_tang = dem_theo_tang(doc, lv, bic, loai_tru_thuong)
         ten_bang = mau.replace(u"{loai}", nhan).replace(u"{tang}", lv.Name.upper()).replace(u"{view}", view.Name)
         bao.append(u"")
         bao.append(u"== %s: %d cái thấy trong mặt bằng, %d ký hiệu (mỗi ký hiệu 1 dòng)%s" % (
-            nhan, tong, len(nhom), (u", bỏ %d cái Type Comments %s" % (bo, u" / ".join(loai_tru))) if bo else u""))
+            nhan, tong, len(nhom), (u", bỏ %d cái Type Comments có chữ %s (%s)" % (
+                bo, u" / ".join(loai_tru), u"; ".join(sorted(bo_tc))[:200])) if bo else u""))
         for mk in sorted(nhom, key=lambda k: (k == u"", k)):
             g = nhom[mk]
             kt = sorted(g["kt"], key=lambda x: (x[0] or 0, x[1] or 0))

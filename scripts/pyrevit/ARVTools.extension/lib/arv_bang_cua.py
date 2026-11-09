@@ -26,7 +26,7 @@ _LUU = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"), "pyRev
 _HANG_MUC = ((DB.BuiltInCategory.OST_Doors, u"Cửa đi", DB.BuiltInParameter.DOOR_WIDTH, DB.BuiltInParameter.DOOR_HEIGHT),
              (DB.BuiltInCategory.OST_Windows, u"Cửa sổ", DB.BuiltInParameter.WINDOW_WIDTH,
               DB.BuiltInParameter.WINDOW_HEIGHT))
-_LOAI_TRU = (u"louver",)         # Type Comments không đưa vào bảng (như IN[2] của core)
+_LOAI_TRU = (u"louver",)         # Type Comments CÓ CHỨA chữ này thì không đưa vào bảng (như IN[2] của core, 2026-11-09)
 _COT = ((u"loai", u"Loại", 70), (u"cua", u"Cửa (Family : Type)", 260), (u"ten", u"Tên hiện tại", 120),
         (u"moi", u"Tên đổi", 120), (u"dai", u"Chiều dài", 80), (u"cao", u"Chiều cao", 80),
         (u"sl", u"SL mặt bằng", 80), (u"sl_da", u"SL cả dự án", 80))
@@ -45,6 +45,17 @@ def _ten(e):
 def _chuoi(t, bip):
     p = t.get_Parameter(bip) if t is not None else None
     return (p.AsString() or u"").strip() if p is not None else u""
+
+
+def _khong_dau(s):
+    s = unicodedata.normalize("NFD", u"%s" % (s or u"")).replace(u"đ", u"d").replace(u"Đ", u"D")
+    return u"".join(c for c in s if unicodedata.category(c) != "Mn").lower()
+
+
+def _loai_tru(t):
+    """Type Comments có chữ Louver (bất kỳ đâu, không phân biệt hoa thường / dấu) → không đưa vào bảng."""
+    tc = _khong_dau(_chuoi(t, DB.BuiltInParameter.ALL_MODEL_TYPE_COMMENTS))
+    return bool(tc) and any(k in tc for k in _LOAI_TRU)
 
 
 def _kt(e, t, bips):
@@ -83,7 +94,7 @@ def lay_dong(doc, view):
         nhom = {}
         for e in DB.FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType():
             t = doc.GetElement(e.GetTypeId())
-            if t is None or _chuoi(t, DB.BuiltInParameter.ALL_MODEL_TYPE_COMMENTS).lower() in _LOAI_TRU:
+            if t is None or _loai_tru(t):
                 continue
             g = nhom.setdefault(t.Id.Value, {"t": t, "sl": 0, "dai": set(), "cao": set()})
             g["sl"] += 1

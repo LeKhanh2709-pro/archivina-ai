@@ -1,0 +1,52 @@
+{
+  "ten": "ThongKeCua_TuDong",
+  "mo_ta": "Bảng thống kê cửa đi / cửa sổ của mặt bằng đang mở: cột Ký hiệu (Type Mark) / Rộng / Cao / Số lượng, gộp theo Type Mark (cửa trùng hiện 1 dòng), lọc theo tầng của mặt bằng, bỏ Type Comments Louver; bấm lại thì cập nhật bảng cũ, không tạo trùng. Mặc định Dry-run.",
+  "py": "ThongKeCua_TuDong.py",
+  "dau_vao": [
+    {
+      "ten": "Tên view mặt bằng (trống = view đang mở)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Hạng mục thống kê (;)",
+      "kieu": "string",
+      "gia_tri": "Cửa đi;Cửa sổ"
+    },
+    {
+      "ten": "Type Comments không thống kê (;)",
+      "kieu": "string",
+      "gia_tri": "Louver"
+    },
+    {
+      "ten": "Dry-run (True = chỉ báo cáo)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Mẫu tên bảng ({loai}, {tang}, {view})",
+      "kieu": "string",
+      "gia_tri": "THỐNG KÊ {loai} - {tang}"
+    },
+    {
+      "ten": "Mở bảng vừa tạo",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Chỉ đếm cửa thấy trên sheet đặt bảng (Filter by sheet)",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Đổi tên cửa: JSON {id type: Type Mark mới} (trống = không đổi)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tạo / cập nhật bảng thống kê Revit",
+      "kieu": "bool",
+      "gia_tri": true
+    }
+  ]
+}

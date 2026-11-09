@@ -1,6 +1,6 @@
 ---
 name: thong-ke-cua-revit
-description: 'Thống kê + đổi tên cửa Revit – Đứng ở mặt bằng tầng đang mở, bấm 1 nút hiện BẢNG các loại cửa đi / cửa sổ trong mặt bằng (cửa trùng hiện 1 lần): Loại, Cửa (Family : Type), Tên hiện tại, Tên đổi (gõ được), Chiều dài, Chiều cao, SL mặt bằng, SL cả dự án; bấm Đổi tên → đổi Type Mark (tag cửa tự hiện tên mới), báo tên trùng. Tuỳ chọn tạo bảng thống kê (Schedule) Revit cửa đi và cửa sổ của mặt bằng đó: cột Ký hiệu (Type Mark) / Rộng / Cao / Số lượng, gộp theo Type Mark nên cửa trùng ký hiệu chỉ hiện 1 dòng kèm số lượng, dòng TỔNG cuối bảng; lọc theo tầng của mặt bằng, bỏ đối tượng Type Comments Louver; bấm lại thì cập nhật bảng cũ, không tạo trùng, không xoá. Báo cửa chưa có Type Mark, cùng ký hiệu khác kích thước, mặt bằng crop không thấy hết cửa của tầng. Nút pyRevit Archivina > HS TKBVTC > Thống kê cửa + graph Dynamo ThongKeCua_TuDong.dyn. Dùng khi người dùng nhờ "điền / đổi tên cửa", "đặt lại ký hiệu cửa", "thống kê cửa", "bảng thống kê cửa đi / cửa sổ của tầng", "đếm cửa theo ký hiệu", "schedule cửa gộp trùng", hoặc sửa / thử nút Thống kê cửa.'
+description: 'Thống kê + đổi tên cửa Revit – Đứng ở mặt bằng tầng đang mở, bấm 1 nút hiện BẢNG các loại cửa đi / cửa sổ trong mặt bằng (cửa trùng hiện 1 lần): Loại, Cửa (Family : Type), Tên hiện tại, Tên đổi (gõ được), Chiều dài, Chiều cao, SL mặt bằng, SL cả dự án; bấm Đổi tên → đổi Type Mark (tag cửa tự hiện tên mới), báo tên trùng. Tuỳ chọn tạo bảng thống kê (Schedule) Revit cửa đi và cửa sổ của mặt bằng đó: cột Ký hiệu (Type Mark) / Rộng / Cao / Số lượng, gộp theo Type Mark nên cửa trùng ký hiệu chỉ hiện 1 dòng kèm số lượng, dòng TỔNG cuối bảng; lọc theo tầng của mặt bằng, bỏ đối tượng có Type Comments chứa chữ Louver; bấm lại thì cập nhật bảng cũ, không tạo trùng, không xoá. Báo cửa chưa có Type Mark, cùng ký hiệu khác kích thước, mặt bằng crop không thấy hết cửa của tầng. Nút pyRevit Archivina > HS TKBVTC > Thống kê cửa + graph Dynamo ThongKeCua_TuDong.dyn. Dùng khi người dùng nhờ "điền / đổi tên cửa", "đặt lại ký hiệu cửa", "thống kê cửa", "bảng thống kê cửa đi / cửa sổ của tầng", "đếm cửa theo ký hiệu", "schedule cửa gộp trùng", hoặc sửa / thử nút Thống kê cửa.'
 ---
 
 # Thống kê cửa Revit (Archivina)
@@ -12,7 +12,8 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
 ## Cách dùng
 - Mở mặt bằng tầng → `Archivina` → `HS TKBVTC` → **Thống kê cửa** → hiện **bảng cửa** (`lib\arv_bang_cua.py`, người dùng
   yêu cầu 2026-11-04 tối: "1 bảng hiện ra, có các cửa, tên hiện tại, tên đổi, chiều dài, chiều cao"):
-  - mỗi loại cửa (ElementType) thấy trong mặt bằng 1 dòng, bỏ Louver; cửa đi trước, cửa sổ sau, theo tên;
+  - mỗi loại cửa (ElementType) thấy trong mặt bằng 1 dòng, bỏ loại có Type Comments chứa chữ Louver; cửa đi trước, cửa
+    sổ sau, theo tên;
   - cột: Loại / Cửa (Family : Type) / Tên hiện tại (Type Mark) / **Tên đổi** (gõ, trống = giữ) / Chiều dài / Chiều cao
     (instance trước, type sau; nhiều giá trị thì `800 / 900`) / SL mặt bằng / SL cả dự án;
   - dòng vàng: chưa có tên hoặc cùng tên với loại cửa khác trong bảng;
@@ -26,7 +27,7 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
 |---|---|---|
 | 0 | Tên view mặt bằng (trống = view đang mở) | trống |
 | 1 | Hạng mục: `Cửa đi;Cửa sổ` (bỏ bớt nếu chỉ cần 1 bảng) | `Cửa đi;Cửa sổ` |
-| 2 | Type Comments không thống kê | `Louver` |
+| 2 | Type Comments CÓ CHỨA chữ này thì không thống kê (`;` ngăn cách) | `Louver` |
 | 3 | Dry-run | True (nút một chạm truyền False) |
 | 4 | Mẫu tên bảng (`{loai}`, `{tang}`, `{view}`) | `THỐNG KÊ {loai} - {tang}` |
 | 5 | Mở bảng vừa tạo | True |
@@ -42,7 +43,10 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
    (Count, hiện tổng) + dòng tổng `TỔNG`.
 3. **Cột bảng Revit**: Tên (Type Mark) / Chiều dài / Chiều cao / Số lượng; Rộng / Cao lấy `DOOR_WIDTH` / `WINDOW_WIDTH` (không có thì
    `FAMILY_WIDTH_PARAM`), tương tự chiều cao. Trường khác của bảng nhân bản thì ẩn, không xoá.
-4. **Lọc**: Level = tầng của mặt bằng (`FAMILY_LEVEL_PARAM`), Type Comments khác từng giá trị IN[2].
+4. **Lọc**: Level = tầng của mặt bằng (`FAMILY_LEVEL_PARAM`), Type Comments **không chứa** từng chữ IN[2] (người dùng yêu
+   cầu 2026-11-09: "trong type comment của cửa có louver thì không hiện thống kê"; bản cũ chỉ bỏ khi ghi đúng y `Louver`).
+   Không phân biệt hoa thường / dấu: `Louver`, `LOUVER nhôm`, `Cửa đi + louver` đều bị bỏ. Bảng Revit dùng
+   `ScheduleFilterType.NotContains`; lõi + bảng đổi tên (`arv_bang_cua._loai_tru`) so chuỗi không dấu.
 5. **Bảng cùng tên đã có** → cập nhật lại cột / lọc / gộp (không tạo trùng, không xoá). Chưa có → nhân bản bảng cùng hạng
    mục có sẵn của dự án (ưu tiên tên có "thống kê", giữ kiểu trình bày công ty), không có thì tạo mới. Bảng cùng tên khác
    hạng mục thì báo, không đụng.
