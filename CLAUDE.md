@@ -29,6 +29,11 @@ Loại công trình chính: nhà ở dân dụng (nhà phố, biệt thự), chu
    - Không phụ thuộc thiết lập máy: đặt tạm rồi trả lại UCS World (kể cả trước `-WBLOCK`), HPANNOTATIVE 0, hatch không nền / trong suốt; UNDO Control None / One thì bỏ nhóm undo; thoát ký tự đại diện trong tên layer khi đưa vào `-LAYER`; mẫu hatch theo file `.pat` thì đo kích thước thực rồi chỉnh tỉ lệ; báo khi LISPSYS ≠ 1.
    - **Máy khác không phải cài gì** (người dùng chốt 2026-10-23): LISP cần Python thì dùng gói Python mang theo (Python nhúng + thư viện, chỉ chép thư mục), vd. `D:\AI\_tools\CHONGTHAM_python` → chép vào `<ổ>:\AI\_tools\` máy kia, LISP tự tìm. Gói lớn không đẩy lên GitHub. `scripts\cai_dat_python.ps1` chỉ là đường dự phòng.
    - Quy tắc 1–7 vẫn áp dụng trên máy này (thư mục gốc tự tìm được là `D:\AI`, tạm `D:\AI\_tmp`).
+9. **Claude chạy phần mềm ở chế độ nền, không chạy trực tiếp trên màn hình.** (người dùng chốt 2026-11-10) Lý do: người dùng đang làm việc trên chính máy này, cửa sổ bật lên sẽ che màn hình và chiếm bàn phím.
+   - AutoCAD: ưu tiên `accoreconsole.exe` (không có cửa sổ). Cần AutoCAD đầy đủ thì chạy `acad.exe /b` bằng `Start-Process -WindowStyle Minimized`.
+   - Revit và phần mềm có giao diện khác: chạy phiên riêng, thu nhỏ hoặc ẩn cửa sổ. Bấm nút bằng UI Automation (`InvokePattern`), không giả lập chuột / bàn phím, không lấy focus.
+   - Không chụp toàn màn hình. Cần ảnh thì xuất từ chính phần mềm, hoặc chụp đúng cửa sổ phiên thử bằng `PrintWindow`.
+   - Việc bắt buộc phải hiện cửa sổ lên màn hình thì báo người dùng trước và chờ đồng ý. Không đụng vào phiên Revit / AutoCAD người dùng đang mở.
 
 ## Môi trường phần mềm
 | Phần mềm | Phiên bản | Ghi chú |
@@ -43,6 +48,7 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
 
 ### Chạy Dynamo trên bản sao .rvt (Claude tự chạy)
 - `D:\AI\_tmp\revit_g19\chay_dynamo_ui.ps1 -Journal <journal.txt> -FileXong <file kết quả>`: mở Revit 2027 riêng bằng journal (mở bản sao trong `_tmp`, mở Dynamo có giao diện + graph), tự bấm **Run** bằng UI Automation (chờ nút Run bật; hộp thoại Dynamo "Open external file?" khi graph ở thư mục mới thì tự bấm **Yes**, người dùng cho phép 2026-10-27), chờ file kết quả rồi đóng phiên. Mỗi lần ~1 phút.
+  - **Chạy nền** (quy tắc 9, sửa 2026-11-10; áp cho script này và `_tmp\pyrevit_test\chay_test.ps1`, mỗi script chạy trong một tiến trình PowerShell riêng vì trùng tên kiểu `AnCuaSo`): mọi cửa sổ của đúng PID phiên này bị cắt vùng hiển thị về rỗng (`SetWindowRgn`; cửa sổ chính Revit 2027 là WPF 1900×1019, làm trong suốt không ăn, đẩy ra ngoài bị kéo về), thêm trong suốt + click xuyên qua + đẩy ra ngoài màn hình (tối đa 5 lần); focus bị chiếm thì trả về ứng dụng đang dùng. Không dùng `-WindowStyle Minimized` lúc khởi động. Lỗi giữa chừng cũng đóng phiên. `-HienCuaSo` = giữ cửa sổ khi cần xem lỗi. Cuối log có số lần lộ trên màn hình (dò 25 điểm mỗi 50 ms bằng `WindowFromPoint`) và bảng từng cửa sổ. Thử bản sao G19 (`_tmp\revit_nen\`, chỉ đọc): Dynamo lộ 0/595 lần quét, nút pyRevit thật qua journal lộ 1/272 (khoảng 50 ms lúc khởi động), cả hai ra đúng kết quả. Focus vẫn có thể bị giành vài lần: Dynamo chiếm 1 lần, không có lần trả (có thể đã tự trả); pyRevit chiếm 2, trả 2; chữ đang gõ có thể lọt trong khoảnh khắc đó. Chỉ kiểm bằng log, chưa ai xác nhận bằng mắt (`Cần xác nhận lại`). Các bản chép ở thư mục `_tmp` khác (gồm `revit_vk_hqv\chay_test.ps1`) chưa có phần này. Nút thử tạm ở `_tmp\revit_nen\da_go_ARVTestNen.extension`.
 - Journal: `PermissiveJournal` + `PerformAutomaticActionInErrorDialog`; `dynShowUI true`, `dynAutomation false` (bật thì graph chạy ngoài API context, không mở được transaction); không thêm dòng trả lời hộp thoại, không thêm `ID_APP_EXIT`.
 - PythonNet3: không dùng `isinstance(e, <lớp Revit>)`, lọc bằng `OfClass` / so `Id.Value`; `import *` chỉ ở cấp module.
 
