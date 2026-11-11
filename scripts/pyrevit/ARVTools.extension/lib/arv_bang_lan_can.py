@@ -17,6 +17,7 @@ clr.AddReference("RevitAPI")
 clr.AddReference("System.Windows.Forms")
 clr.AddReference("System.Drawing")
 import Autodesk.Revit.DB as DB
+import arv_lk
 from System.Windows.Forms import (Form, Label, CheckBox, Button, DialogResult, FormStartPosition, DataGridView,
                                   DataGridViewTextBoxColumn, DataGridViewAutoSizeColumnsMode, DataGridViewSelectionMode,
                                   AnchorStyles, MessageBox, MessageBoxButtons, MessageBoxIcon, DataGridViewEditMode,
@@ -67,7 +68,7 @@ def phan_loai(doc, e, bic):
         return LOUVER
     if bic == DB.BuiltInCategory.OST_StairsRailing:
         return LAN_CAN
-    t = doc.GetElement(e.GetTypeId())
+    t = e.Document.GetElement(e.GetTypeId())
     if t is None:
         return None
     p = t.get_Parameter(DB.BuiltInParameter.ALL_MODEL_TYPE_COMMENTS)
@@ -116,10 +117,10 @@ def _nhom_mot(doc, e, bic):
     lop = phan_loai(doc, e, bic)
     if lop is None:
         return None
-    t = doc.GetElement(e.GetTypeId())
+    t = e.Document.GetElement(e.GetTypeId())
     dai, cao = _kich_thuoc(doc, e, t, lop)
     mk = _mark(e)
-    tid = t.Id.Value if t is not None else -1
+    tid = (t.Id.Value if not e.Document.IsLinked else (e.Document.Title, t.Id.Value)) if t is not None else -1
     return (lop, tid, dai, cao, mk if _dung_tien_to(mk, lop) else u""), lop, t, dai, cao, mk
 
 
@@ -136,7 +137,8 @@ def lay_dong(doc, view):
     can_dat. Trả về (dòng, {Mark: [khoá nhóm]} cả dự án để báo trùng tên)."""
     trong_view = {}
     for bic in _HANG_MUC:
-        for e in DB.FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType():
+        for e in list(DB.FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType()) + \
+                arv_lk.doi_tuong_link(doc, view, bic):
             r = _nhom_mot(doc, e, bic)
             if r is None:
                 continue
@@ -164,7 +166,7 @@ def lay_dong(doc, view):
                      "dai": u"%s" % g["dai"] if g["dai"] is not None else u"?",
                      "cao": u"%s" % g["cao"] if g["cao"] is not None else u"?",
                      "sl": len(g["ids"]), "sl_da": len(ca_du_an.get(khoa, g["ids"])),
-                     "ids": g["ids"], "ids_da": ca_du_an.get(khoa, g["ids"])})
+                     "ids": g["ids"], "ids_da": ca_du_an.get(khoa, g["ids"]), "link": t is not None and t.Document.IsLinked})
     dong.sort(key=lambda d: (d["lop"] != LAN_CAN, not d["dung"], d["ten"], d["cua"], -(int(d["dai"]) if d["dai"] != u"?" else 0)))
     return dong, ten_du_an
 
@@ -242,6 +244,9 @@ def hoi_thong_ke_lan_can(doc, view):
         r = g.Rows[i]
         for k, _, _ in _COT:
             r.Cells[k].Value = u"%s" % (thu.get(u"%d" % i_d, u"") if k == u"moi" else d[k])
+        if d.get("link"):           # đối tượng trong file link: chỉ đọc (đặt Mark phải mở file link)
+            r.Cells[u"moi"].ReadOnly = True
+            r.Cells[u"moi"].Style.BackColor = Color.FromArgb(235, 235, 235)
         if not d["dung"] or len(ten_du_an.get(d["khoa"][4], ())) > 1:
             for k, _, _ in _COT:
                 if k != u"moi":

@@ -257,7 +257,7 @@ def sh_thu_truc(doc, view):
     """Đầu trục của file hiện tại trong view → ViewSpecific, cắt theo khung bao tường + SH_TRUC_DU_MM × tỉ lệ. Chỉ đổi
     hiển thị trục trong view này (không đổi trục 3D / view khác); trục của link không sửa. Gọi TRONG transaction."""
     xs, ys = [], []
-    for w in FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType():
+    for w in list(FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType()) + lk_thay(doc, view, BuiltInCategory.OST_Walls, True):
         bb = w.get_BoundingBox(view)
         if bb is not None:
             xs += [bb.Min.X, bb.Max.X]
@@ -750,7 +750,7 @@ def sh_crop_theo_tuong(doc, view):
     tf = cb.Transform
     inv = tf.Inverse
     xs, ys = [], []
-    for w in FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType():
+    for w in list(FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType()) + lk_thay(doc, view, BuiltInCategory.OST_Walls, True):
         bb = w.get_BoundingBox(None)
         if bb is None:
             continue

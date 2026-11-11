@@ -311,17 +311,19 @@ def _chinh():
             p(u"CHƯA CÓ family tag '%s' trong dự án → bỏ qua hạng mục này (Load family rồi chạy lại)." % ten_fam)
 
     # ---------- Đối tượng cần tag ----------
-    def thay(bic):
-        return list(FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType())
+    def thay(bic, theo_level=False):
+        # đối tượng model chính + đối tượng trong file link đang thấy (cửa: đúng tầng; vật cản: mọi thứ đang hiện)
+        return list(FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType()) +             lk_thay(doc, view, bic, theo_level)
 
-    cuas = thay(BuiltInCategory.OST_Doors)
-    css = thay(BuiltInCategory.OST_Windows)
+    p(lk_ghi_chu(doc, view))
+    cuas = thay(BuiltInCategory.OST_Doors, True)
+    css = thay(BuiltInCategory.OST_Windows, True)
     # Tag có sẵn trong view theo đối tượng được tag
     tag_co = {}           # id đối tượng → [tag]
     for tg in FilteredElementCollector(doc, view.Id).OfClass(IndependentTag):
         try:
-            for i in tg.GetTaggedLocalElementIds():
-                tag_co.setdefault(i.Value, []).append(tg)
+            for k_tag in lk_khoa_tag(tg):
+                tag_co.setdefault(k_tag, []).append(tg)
         except Exception:
             pass
     ten_fam_tag = set(x for x in (doc_in(1), doc_in(2), doc_in(3)) if x)
@@ -337,7 +339,7 @@ def _chinh():
     tk_loai = [khong_dau(x) for x in tach(ten_loai)]
 
     def bi_loai(e):
-        t = doc.GetElement(e.GetTypeId())
+        t = e.Document.GetElement(e.GetTypeId())
         if t is None or not tk_loai:
             return False
         try:
@@ -368,7 +370,7 @@ def _chinh():
     # Tường: hình chữ nhật dấu chân thật (theo hình học, đúng cả khi location line lệch tâm)
     so_tuong = 0
     diem_tuong = {}
-    for w in FilteredElementCollector(doc, view.Id).OfClass(Wall):
+    for w in list(FilteredElementCollector(doc, view.Id).OfClass(Wall)) + lk_thay(doc, view, BuiltInCategory.OST_Walls, False):
         lc = w.Location
         cv = lc.Curve if lc is not None and hasattr(lc, "Curve") else None
         poly = None
@@ -398,10 +400,18 @@ def _chinh():
             h = e.HandOrientation
             f = e.FacingOrientation
         except Exception:
-            k = khung_hop(e.get_BoundingBox(view))
-            if k:
-                vat_can.append((k, u"cửa %d" % e.Id.Value))
-            continue
+            # cửa sổ làm tấm của vách kính (curtain panel): không có điểm đặt → tâm khung bao, phương theo vách
+            try:
+                bb_ = e.get_BoundingBox(None)
+                d_ = e.Host.Location.Curve.Direction
+                h = XYZ(d_.X, d_.Y, 0).Normalize()
+                f = XYZ(-h.Y, h.X, 0)
+                goc = XYZ((bb_.Min.X + bb_.Max.X) / 2.0, (bb_.Min.Y + bb_.Max.Y) / 2.0, bb_.Min.Z)
+            except Exception:
+                k = khung_hop(e.get_BoundingBox(view))
+                if k:
+                    vat_can.append((k, u"cửa %d" % e.Id.Value))
+                continue
         r = hcn_cuc_bo(diem_hinh_hoc(e), goc, h, f)
         if r is None:
             continue
@@ -517,7 +527,7 @@ def _chinh():
                     continue
             kieu = kieu_cua
             if loai == "cs":
-                t = doc.GetElement(e.GetTypeId())
+                t = e.Document.GetElement(e.GetTypeId())
                 ten_ft = khong_dau((t.FamilyName if t else "") + " " + ten(t))
                 if any(k in ten_ft for k in tk_lam):
                     loai, kieu = "lam", kieu_lam
@@ -535,7 +545,7 @@ def _chinh():
             huong = TagOrientation.Vertical if abs(hv_) > abs(hu_) else TagOrientation.Horizontal
             if tg_cu is None:
                 bat_co_lap()
-                tg = IndependentTag.Create(doc, kieu.Id, view.Id, Reference(e), False, huong, goc)
+                tg = IndependentTag.Create(doc, kieu.Id, view.Id, lk_tham_chieu(e), False, huong, goc)
             else:
                 tg = tg_cu
                 tg.HasLeader = False
@@ -742,6 +752,397 @@ def _chinh():
     return bao_cao
 
 
+# ==== PHẦN CHUNG FILE LINK (nguồn: Link_chung.py, chép vào công cụ bằng gop_link.py – không sửa tay trong công cụ) ====
+# Model chỉ chứa link (vd. HQV Site: tường / cửa / WC đều nằm trong các file link): công cụ đọc đối tượng link qua LkPT, là
+# lớp bọc trả toạ độ đã đổi về model chính và chuyển mọi thuộc tính khác cho phần tử gốc. Phần tử trong link chỉ ĐỌC được.
+LK_HE_SO_ID = 10000000000      # id giả = id link instance × hệ số + id phần tử, không trùng giữa các link
+
+
+def _lk_mm(v):
+    return UnitUtils.ConvertToInternalUnits(v, UnitTypeId.Millimeters)
+
+
+class LkId(object):
+    """Id giả của phần tử link: có .Value như ElementId, dùng làm khoá và để in."""
+    def __init__(self, v):
+        self.Value = v
+
+    def __eq__(self, o):
+        return getattr(o, "Value", None) == self.Value
+
+    def __ne__(self, o):
+        return not self.__eq__(o)
+
+    def __hash__(self):
+        return hash(self.Value)
+
+    def __str__(self):
+        return "%d" % self.Value
+
+
+class _LkViTri(object):
+    """Location của phần tử link, đã đổi về toạ độ model chính."""
+    def __init__(self, pt):
+        self._pt = pt
+        self._loc = pt._e.Location
+
+    @property
+    def Point(self):
+        return self._pt._tf.OfPoint(self._loc.Point)
+
+    @property
+    def Curve(self):
+        return self._loc.Curve.CreateTransformed(self._pt._tf)
+
+    @property
+    def Rotation(self):
+        return self._loc.Rotation
+
+    def get_ElementsAtJoin(self, i):
+        return [LkPT(x, self._pt._li, self._pt._tf) for x in self._loc.get_ElementsAtJoin(i)]
+
+
+class _LkDoanBien(object):
+    """BoundarySegment của room link: GetCurve đã đổi toạ độ."""
+    def __init__(self, sg, tf):
+        self._sg, self._tf = sg, tf
+
+    def GetCurve(self):
+        return self._sg.GetCurve().CreateTransformed(self._tf)
+
+
+class LkPT(object):
+    """Phần tử trong file link nhìn như phần tử model chính (chỉ đọc). Thuộc tính không khai báo ở đây lấy từ phần tử gốc."""
+    def __init__(self, e, li, tf=None):
+        self._e = e
+        self._li = li
+        self._tf = tf if tf is not None else li.GetTotalTransform()
+
+    def __getattr__(self, ten_tt):
+        return getattr(self._e, ten_tt)
+
+    @property
+    def Id(self):
+        return LkId(self._li.Id.Value * LK_HE_SO_ID + self._e.Id.Value)
+
+    @property
+    def Location(self):
+        return _LkViTri(self) if self._e.Location is not None else None
+
+    @property
+    def HandOrientation(self):
+        return self._tf.OfVector(self._e.HandOrientation)
+
+    @property
+    def FacingOrientation(self):
+        return self._tf.OfVector(self._e.FacingOrientation)
+
+    @property
+    def Orientation(self):
+        return self._tf.OfVector(self._e.Orientation)
+
+    @property
+    def Host(self):
+        h = self._e.Host
+        return LkPT(h, self._li, self._tf) if h is not None else None
+
+    def GetPath(self):
+        return [c.CreateTransformed(self._tf) for c in self._e.GetPath()]
+
+    def get_BoundingBox(self, view=None):
+        bb = self._e.get_BoundingBox(None)
+        if bb is None:
+            return None
+        ds = [self._tf.OfPoint(XYZ(x, y, z)) for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)
+              for z in (bb.Min.Z, bb.Max.Z)]
+        kq = BoundingBoxXYZ()
+        kq.Min = XYZ(min(p.X for p in ds), min(p.Y for p in ds), min(p.Z for p in ds))
+        kq.Max = XYZ(max(p.X for p in ds), max(p.Y for p in ds), max(p.Z for p in ds))
+        return kq
+
+    def get_Geometry(self, opt):
+        """Hình học đã đổi toạ độ. Có view thì lấy theo mặt bằng cùng tầng trong file link (để có nét 2D: cánh mở, ký hiệu)."""
+        o = Options()
+        try:
+            o.IncludeNonVisibleObjects = opt.IncludeNonVisibleObjects
+            o.ComputeReferences = opt.ComputeReferences
+        except Exception:
+            pass
+        vm = lk_view_tang(self._e, self._tf) if getattr(opt, "View", None) is not None else None
+        if vm is not None:
+            o.View = vm
+        else:
+            try:
+                o.DetailLevel = opt.DetailLevel if getattr(opt, "View", None) is None else ViewDetailLevel.Fine
+            except Exception:
+                o.DetailLevel = ViewDetailLevel.Fine
+        g = self._e.get_Geometry(o)
+        if vm is not None and (g is None or not any(True for _ in g)):       # view trong link ẩn đối tượng → lấy hình 3D
+            o2 = Options()
+            o2.DetailLevel = ViewDetailLevel.Fine
+            o2.ComputeReferences = o.ComputeReferences
+            g = self._e.get_Geometry(o2)
+        return g.GetTransformed(self._tf) if g is not None else None
+
+    def GetBoundarySegments(self, opt):
+        kq = self._e.GetBoundarySegments(opt)
+        return [[_LkDoanBien(s, self._tf) for s in vong] for vong in kq] if kq is not None else None
+
+    @property
+    def GeometryCurve(self):
+        return self._e.GeometryCurve.CreateTransformed(self._tf)
+
+    def IsPointInRoom(self, p):
+        return self._e.IsPointInRoom(self._tf.Inverse.OfPoint(p))
+
+    def IsHidden(self, view):
+        return False
+
+    def CanBeHidden(self, view):
+        return False
+
+
+def la_link(e):
+    return isinstance(e, LkPT)
+
+
+def lk_tham_chieu(e):
+    """Reference để tag / dim: phần tử link thì là link reference."""
+    return Reference(e._e).CreateLinkReference(e._li) if la_link(e) else Reference(e)
+
+
+def lk_cac_link(doc, view):
+    """Các link đã nạp và đang thấy trong view: [(instance, document, transform)]."""
+    kq = []
+    for li in FilteredElementCollector(doc, view.Id).OfClass(RevitLinkInstance):
+        try:
+            ld = li.GetLinkDocument()
+            if ld is not None:
+                kq.append((li, ld, li.GetTotalTransform()))
+        except Exception:
+            pass
+    return kq
+
+
+def lk_level_khop(ld, tf, lv):
+    """Id level của file link trùng cao độ với level lv của model chính (đã tính link đặt lệch cao độ, vd. tầng điển hình)."""
+    return set(l.Id.Value for l in FilteredElementCollector(ld).OfClass(Level)
+               if abs(l.Elevation + tf.Origin.Z - lv.Elevation) < _lk_mm(5))
+
+
+_LK_VIEW = {}
+
+
+def lk_view_tang(e, tf):
+    """Mặt bằng trong file link cùng level của e (để đọc nét 2D của family); không có thì None."""
+    ld = e.Document
+    k = (ld.PathName or ld.Title, e.LevelId.Value)
+    if k not in _LK_VIEW:
+        ds = [v for v in FilteredElementCollector(ld).OfClass(ViewPlan)
+              if not v.IsTemplate and v.ViewType == ViewType.FloorPlan and v.GenLevel is not None
+              and v.GenLevel.Id == e.LevelId]
+        ds.sort(key=lambda v: v.Id.Value)
+        _LK_VIEW[k] = ds[0] if ds else None
+    return _LK_VIEW[k]
+
+
+def lk_tren_level(e, ids, tf=None, lv=None):
+    """Phần tử e (trong link) thuộc các level ids? LevelId rỗng thì xét tham số level, host, cuối cùng theo cao độ."""
+    if e.LevelId.Value in ids:
+        return True
+    if e.LevelId != ElementId.InvalidElementId:
+        return False
+    for bip in (BuiltInParameter.INSTANCE_SCHEDULE_ONLY_LEVEL_PARAM, BuiltInParameter.FAMILY_LEVEL_PARAM,
+                BuiltInParameter.STAIRS_RAILING_BASE_LEVEL_PARAM):
+        try:
+            p = e.get_Parameter(bip)
+            if p is not None and p.HasValue:
+                return p.AsElementId().Value in ids
+        except Exception:
+            pass
+    try:
+        if e.Host is not None and e.Host.LevelId.Value in ids:
+            return True
+    except Exception:
+        pass
+    if tf is not None and lv is not None:
+        bb = e.get_BoundingBox(None)
+        if bb is not None:
+            z = bb.Min.Z + tf.Origin.Z
+            return lv.Elevation - _lk_mm(300) <= z <= lv.Elevation + _lk_mm(2000)
+    return False
+
+
+def lk_thay(doc, view, bic, theo_level=True):
+    """Đối tượng hạng mục bic trong các link đang thấy trong view (đúng tầng của view khi theo_level) → list[LkPT]."""
+    kq = []
+    lv = view.GenLevel
+    for li, ld, tf in lk_cac_link(doc, view):
+        ids = lk_level_khop(ld, tf, lv) if theo_level and lv is not None else None
+        if theo_level and not ids:
+            continue
+        for e in FilteredElementCollector(doc, view.Id, li.Id).OfCategory(bic).WhereElementIsNotElementType():
+            if ids is None or lk_tren_level(e, ids, tf, lv):
+                kq.append(LkPT(e, li, tf))
+    return kq
+
+
+def lk_tang(doc, view, bic):
+    """Như lk_thay nhưng không lọc theo view (kể cả đối tượng view không vẽ, vd. room) – chỉ trong link đang thấy, đúng tầng."""
+    kq = []
+    lv = view.GenLevel
+    for li, ld, tf in lk_cac_link(doc, view):
+        ids = lk_level_khop(ld, tf, lv)
+        if not ids:
+            continue
+        for e in FilteredElementCollector(ld).OfCategory(bic).WhereElementIsNotElementType():
+            if lk_tren_level(e, ids, tf, lv):
+                kq.append(LkPT(e, li, tf))
+    return kq
+
+
+def lk_room_tai_diem(doc, view, p):
+    """Room trong link tại điểm p (toạ độ model chính) → LkPT hoặc None."""
+    for li, ld, tf in lk_cac_link(doc, view):
+        try:
+            r = ld.GetRoomAtPoint(tf.Inverse.OfPoint(p))
+        except Exception:
+            r = None
+        if r is not None:
+            return LkPT(r, li, tf)
+    return None
+
+
+def lk_khoa_tag(tg):
+    """Khoá các đối tượng mà tag đang gắn (phần tử model chính: id; phần tử link: id giả như LkPT.Id)."""
+    kq = []
+    for x in tg.GetTaggedElementIds():
+        if x.LinkInstanceId != ElementId.InvalidElementId:
+            kq.append(x.LinkInstanceId.Value * LK_HE_SO_ID + x.LinkedElementId.Value)
+        else:
+            kq.append(x.HostElementId.Value)
+    return kq
+
+
+def lk_ghi_chu(doc, view):
+    """Một dòng báo cáo: các link đang thấy trong view + số link khớp tầng."""
+    ds = lk_cac_link(doc, view)
+    lv = view.GenLevel
+    khop = [li.Name.split(" : ")[0] for li, ld, tf in ds if lv is not None and lk_level_khop(ld, tf, lv)]
+    return "File link thấy trong view: %d, khớp tầng: %s" % (len(ds), ", ".join(sorted(set(khop))) or "(không)")
+def lk_bang_ve(doc, ten_view, tieu_de, cot, rong_cot, dong):
+    """Bảng vẽ trên drafting view tỉ lệ 1:1: Revit không lọc được bảng thống kê theo tầng khi lấy cả file link (Level của
+    link không dùng được làm bộ lọc; thêm link thì đếm mọi tầng của mọi bản link). cot: tên cột; rong_cot: mm giấy; dong:
+    list[list[chuỗi]]. Đã có view tên đó thì chỉ sửa chữ khi đúng số dòng, không xoá gì. Gọi TRONG transaction.
+    Trả về (view, cách làm)."""
+    cao_dong, cao_dau = _lk_mm(8), _lk_mm(10)
+    so_cot = len(cot)
+    ds = [v for v in FilteredElementCollector(doc).OfClass(ViewDrafting) if not v.IsTemplate and v.Name == ten_view]
+    if ds:
+        v = ds[0]
+        notes = sorted(FilteredElementCollector(doc, v.Id).OfClass(TextNote), key=lambda n: (-round(n.Coord.Y, 2), n.Coord.X))
+        cu = [n for n in notes if round(n.Coord.Y, 2) < 0]             # ô dữ liệu nằm dưới tiêu đề + đầu cột
+        ky_vong = sum(1 for d in dong for x in d if x != u"")
+        if len(cu) != ky_vong:
+            return v, u"bảng '%s' đã có nhưng khác số ô (%d, cần %d) – CHƯA cập nhật, xoá view đó rồi bấm lại" % (ten_view, len(cu), ky_vong)
+        phang = [x for d in dong for x in d if x != u""]
+        for n, x in zip(cu, phang):
+            if n.Text != x:
+                n.Text = x
+        return v, u"cập nhật chữ bảng đã có"
+    vft = [t for t in FilteredElementCollector(doc).OfClass(ViewFamilyType) if t.ViewFamily == ViewFamily.Drafting][0]
+    v = ViewDrafting.Create(doc, vft.Id)
+    v.Name = ten_view
+    v.Scale = 1
+    kieu = sorted(FilteredElementCollector(doc).OfClass(TextNoteType), key=lambda t: t.Id.Value)
+    def diem_kieu(t):
+        ten_k = (t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString() or u"").lower()
+        co = t.get_Parameter(BuiltInParameter.TEXT_SIZE).AsDouble()
+        return (0 if u"arial" in ten_k else 1, abs(co - _lk_mm(2.5)))
+    kt = min(kieu, key=diem_kieu)
+    tong = sum(_lk_mm(x) for x in rong_cot)
+    tao_chu = lambda x_, y_, s_: TextNote.Create(doc, v.Id, XYZ(x_, y_, 0), s_, kt.Id)
+    tao_net = lambda a_, b_: doc.Create.NewDetailCurve(v, Line.CreateBound(a_, b_))
+    tao_chu(_lk_mm(2), cao_dau * 1.5, tieu_de)
+    xs = [0.0]
+    for r_ in rong_cot:
+        xs.append(xs[-1] + _lk_mm(r_))
+    y_tren = cao_dau
+    y_day = -cao_dong * len(dong)
+    for i_ in range(len(dong) + 2):
+        y_ = cao_dau if i_ == 0 else -cao_dong * (i_ - 1)
+        tao_net(XYZ(0, y_, 0), XYZ(tong, y_, 0))
+    for x_ in xs:
+        tao_net(XYZ(x_, y_tren, 0), XYZ(x_, y_day, 0))
+    for c_ in range(so_cot):
+        tao_chu(xs[c_] + _lk_mm(2), cao_dau - _lk_mm(3), cot[c_])
+    for r_i, d in enumerate(dong):
+        for c_ in range(so_cot):
+            if d[c_] != u"":
+                tao_chu(xs[c_] + _lk_mm(2), -cao_dong * r_i - _lk_mm(2), d[c_])
+    return v, u"bảng vẽ mới (drafting view)"
+
+
+class LkBangTrenSheet(object):
+    """Viewport của bảng vẽ, dùng được như ScheduleSheetInstance khi xếp bảng lên sheet (Point = góc trên trái)."""
+    def __init__(self, vp):
+        self._vp = vp
+
+    def get_BoundingBox(self, v=None):
+        o = self._vp.GetBoxOutline()
+        bb = BoundingBoxXYZ()
+        bb.Min, bb.Max = o.MinimumPoint, o.MaximumPoint
+        return bb
+
+    @property
+    def Point(self):
+        o = self._vp.GetBoxOutline()
+        return XYZ(o.MinimumPoint.X, o.MaximumPoint.Y, 0)
+
+    @Point.setter
+    def Point(self, p):
+        o = self._vp.GetBoxOutline()
+        w, h = o.MaximumPoint.X - o.MinimumPoint.X, o.MaximumPoint.Y - o.MinimumPoint.Y
+        self._vp.SetBoxCenter(XYZ(p.X + w / 2.0, p.Y - h / 2.0, 0))
+
+
+def lk_kich_thuoc(e):
+    """(chiều dài / rộng, chiều cao) mm dạng chuỗi của cửa, lan can, louver (model chính hoặc link), dùng cho bảng vẽ."""
+    def mm_(p):
+        return u"%d" % round(UnitUtils.ConvertFromInternalUnits(p.AsDouble(), UnitTypeId.Millimeters))
+
+    def tim(bips, nguon):
+        for b in bips:
+            for o in nguon:
+                p = o.get_Parameter(b) if o is not None else None
+                if p is not None and p.HasValue and p.StorageType == StorageType.Double and p.AsDouble() > 0:
+                    return mm_(p)
+        return u""
+    t = e.Document.GetElement(e.GetTypeId())
+    dai = tim((BuiltInParameter.CURVE_ELEM_LENGTH, BuiltInParameter.INSTANCE_LENGTH_PARAM, BuiltInParameter.DOOR_WIDTH,
+               BuiltInParameter.WINDOW_WIDTH, BuiltInParameter.GENERIC_WIDTH, BuiltInParameter.FAMILY_WIDTH_PARAM), (e, t))
+    cao = tim((BuiltInParameter.DOOR_HEIGHT, BuiltInParameter.WINDOW_HEIGHT, BuiltInParameter.GENERIC_HEIGHT,
+               BuiltInParameter.FAMILY_HEIGHT_PARAM), (e, t))
+    if not cao and t is not None:
+        p = t.LookupParameter("Railing Height")
+        if p is not None and p.HasValue:
+            cao = mm_(p)
+    return dai, cao
+
+
+def lk_dat_bang_len_sheet(doc, sh, vs, x0, y1):
+    """Đặt drafting view bảng lên sheet (view đã nằm trên sheet khác thì nêu lỗi). Trả về LkBangTrenSheet."""
+    if not Viewport.CanAddViewToSheet(doc, sh.Id, vs.Id):
+        raise Exception(u"bảng '%s' đã nằm trên sheet khác" % vs.Name)
+    vp = Viewport.Create(doc, sh.Id, vs.Id, XYZ(x0, y1, 0))
+    for t in FilteredElementCollector(doc).OfClass(ElementType):
+        if t.GetType().Name == "ElementType" and t.Category is None and (t.FamilyName or u"") == u"Viewport" and u"No Line" in (t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString() or u""):
+            vp.ChangeTypeId(t.Id)
+            break
+    return LkBangTrenSheet(vp)
+# ==== HẾT PHẦN CHUNG FILE LINK ====
+
+
 def mark(e):
     try:
         return e.get_Parameter(BuiltInParameter.ALL_MODEL_MARK).AsString() or "-"
@@ -750,6 +1151,7 @@ def mark(e):
 
 
 def gia_tri_ei(doc, e, ten_ts):
+    doc = e.Document        # cửa có thể nằm trong file link
     """Giá trị chống cháy của cửa (instance trước, rồi type); rỗng nếu không có."""
     t = doc.GetElement(e.GetTypeId())
     for el in (e, t):
@@ -1136,7 +1538,7 @@ def kich_thuoc_view(doc, view):
         return cb.Max.X - cb.Min.X, cb.Max.Y - cb.Min.Y
     U, V = view.RightDirection, view.UpDirection
     us, vs = [], []
-    for w in FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType():
+    for w in list(FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType()) + lk_thay(doc, view, BuiltInCategory.OST_Walls, True):
         bb = w.get_BoundingBox(view)
         if bb is None:
             continue
@@ -1146,6 +1548,32 @@ def kich_thuoc_view(doc, view):
     if not us:
         return ft(30000.0), ft(20000.0)
     return (max(us) - min(us)) * 1.1, (max(vs) - min(vs)) * 1.1
+
+
+def bang_ve_cua(doc, view, bic, ten_bang, loai_tru_tc):
+    """Bảng vẽ cửa đi / cửa sổ của tầng (model chính + file link): Tên / Chiều rộng / Chiều cao / Số lượng, gộp theo Type Mark."""
+    tk = [khong_dau(x) for x in loai_tru_tc]
+    nhom = {}
+    ds = list(FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType()) + lk_thay(doc, view, bic, True)
+    for e in ds:
+        t = e.Document.GetElement(e.GetTypeId())
+        if t is None:
+            continue
+        tc = khong_dau((t.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_COMMENTS).AsString() or u"") if t.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_COMMENTS) else u"")
+        if tc and any(k in tc for k in tk):
+            continue
+        p = t.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_MARK)
+        mk = (p.AsString() or u"").strip() if p is not None else u""
+        g = nhom.setdefault(mk, {"so": 0, "kt": set()})
+        g["so"] += 1
+        g["kt"].add(lk_kich_thuoc(e))
+    dong = []
+    for mk in sorted(nhom, key=lambda k: (k == u"", k)):
+        g = nhom[mk]
+        r_, c_ = (list(g["kt"])[0] if len(g["kt"]) == 1 else (u"", u""))
+        dong.append([mk or u"(trống)", r_, c_, u"%d" % g["so"]])
+    dong.append([u"TỔNG", u"", u"", u"%d" % sum(g["so"] for g in nhom.values())])
+    return lk_bang_ve(doc, ten_bang, ten_bang, [u"Tên", u"Chiều rộng", u"Chiều cao", u"Số lượng"], [34, 22, 22, 20], dong)
 
 
 def tao_bang(doc, bic, ten_bang, level, loai_tru_tc):
@@ -1306,8 +1734,13 @@ def chuan_bi_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, loai_tru_t
     bang = []
     for bic, loai in ((BuiltInCategory.OST_Doors, u"CỬA ĐI"), (BuiltInCategory.OST_Windows, u"CỬA SỔ")):
         try:
-            vs, cach = tao_bang(doc, bic, u"BẢNG THỐNG KÊ %s %s" % (loai, tang.upper()), view.GenLevel, loai_tru_tc)
-            si = ScheduleSheetInstance.Create(doc, sh.Id, vs.Id, XYZ(x0, y1, 0))
+            ten_b = u"BẢNG THỐNG KÊ %s %s" % (loai, tang.upper())
+            if lk_thay(doc, view, bic, True):        # cửa trong file link: Revit không lọc được bảng theo tầng → bảng vẽ
+                vs, cach = bang_ve_cua(doc, view, bic, ten_b, loai_tru_tc)
+                si = lk_dat_bang_len_sheet(doc, sh, vs, x0, y1)
+            else:
+                vs, cach = tao_bang(doc, bic, ten_b, view.GenLevel, loai_tru_tc)
+                si = ScheduleSheetInstance.Create(doc, sh.Id, vs.Id, XYZ(x0, y1, 0))
             bang.append((si, vs, cach))
         except Exception as ex:
             bao.append(u"Không tạo được bảng thống kê %s: %s" % (loai, (u"%s" % ex).splitlines()[0][:120]))
@@ -1841,12 +2274,41 @@ def tuy_chon_nap(ghi_de_tham_so=False):
 TRUC_DU_MM_GIAY = 20.0      # đầu trục cách mép nhà (mm giấy) khi thu trục
 
 
+def crop_theo_tuong_link(doc, view):
+    """View chưa crop và tường nằm trong file link → crop theo khung bao tường đúng tầng + 35 mm giấy."""
+    tuong = lk_thay(doc, view, BuiltInCategory.OST_Walls, True)
+    if not tuong:
+        return u""
+    cb = view.CropBox
+    tf = cb.Transform
+    inv = tf.Inverse
+    xs, ys = [], []
+    for w in tuong:
+        bb = w.get_BoundingBox(None)
+        if bb is None:
+            continue
+        for x in (bb.Min.X, bb.Max.X):
+            for y in (bb.Min.Y, bb.Max.Y):
+                q = inv.OfPoint(XYZ(x, y, 0))
+                xs.append(q.X)
+                ys.append(q.Y)
+    du = ft(35.0 * view.Scale)
+    moi = BoundingBoxXYZ()
+    moi.Transform = tf
+    moi.Min = XYZ(min(xs) - du, min(ys) - du, cb.Min.Z)
+    moi.Max = XYZ(max(xs) + du, max(ys) + du, cb.Max.Z)
+    view.CropBox = moi
+    view.CropBoxActive = True
+    view.CropBoxVisible = False
+    return u"Crop view theo tường của file link + 35 mm giấy."
+
+
 def thu_truc(doc, view):
     """Thu trục về sát quanh nhà như mẫu người dùng (2026-11-03): đầu trục của file hiện tại trong view chuyển sang
     ViewSpecific và cắt theo khung bao tường của nhà + TRUC_DU_MM_GIAY × tỉ lệ. Không đổi trục 3D / view khác. Trục
     của link không sửa được (đã ẩn bằng filter)."""
     xs, ys = [], []
-    for w in FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType():
+    for w in list(FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType()) + lk_thay(doc, view, BuiltInCategory.OST_Walls, True):
         bb = w.get_BoundingBox(view)
         if bb is not None:
             xs += [bb.Min.X, bb.Max.X]
@@ -2144,6 +2606,10 @@ def mb_dinh_vi_cua(doc, goc, dry, ten_tpl, mau_ten, ten_bic_an, tpl_chon=u"", ti
         bao.append(thu_truc(doc, moi))
     except Exception as ex:
         bao.append(u"Không thu được trục: %s" % (u"%s" % ex).splitlines()[0][:150])
+    if not moi.CropBoxActive:
+        ms = crop_theo_tuong_link(doc, moi)         # model chỉ có link: không crop thì khung view tràn theo cả khu đất
+        if ms:
+            bao.append(ms)
     TransactionManager.Instance.TransactionTaskDone()
     bao.append(u"View '%s': template %s, tỉ lệ 1:%d." % (moi.Name, u"'%s'" % tpl.Name if tpl is not None else u"(không)",
                                                          moi.Scale))

@@ -490,6 +490,14 @@ def hoi_chi_tiet_cua(doc, view, uidoc=None):
             u" + ".join(ds), u" (bỏ qua %d đối tượng khác)" % n_khac if n_khac else u"")
     else:
         dong_dau = u"Chưa chọn cửa / vách kính: bấm Chạy rồi chọn trên màn hình, bấm Finish để xong."
+        try:          # cửa nằm trong file link: nút này chưa làm được (không ẩn được đối tượng khác trong link để vẽ mặt đứng chỉ có cửa)
+            import arv_lk
+            n_lk = len(arv_lk.doi_tuong_link(doc, view, DB.BuiltInCategory.OST_Doors)) + \
+                len(arv_lk.doi_tuong_link(doc, view, DB.BuiltInCategory.OST_Windows))
+            if n_lk:
+                dong_dau += u" Mặt bằng này có %d cửa trong file link: nút chỉ làm được cửa của model chính, cửa trong link phải mở file link để làm." % n_lk
+        except Exception:
+            pass
     pid_gd, pid_hm = _gd_hm(doc)
     cua_cong_cu = []
     for s in DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet):

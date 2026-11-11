@@ -16,6 +16,7 @@ clr.AddReference("RevitAPI")
 clr.AddReference("System.Windows.Forms")
 clr.AddReference("System.Drawing")
 import Autodesk.Revit.DB as DB
+import arv_lk
 from System.Windows.Forms import (Form, Label, CheckBox, Button, DialogResult, FormStartPosition, DataGridView,
                                   DataGridViewTextBoxColumn, DataGridViewAutoSizeColumnsMode, DataGridViewSelectionMode,
                                   AnchorStyles, MessageBox, MessageBoxButtons, MessageBoxIcon, DataGridViewEditMode,
@@ -92,11 +93,13 @@ def lay_dong(doc, view):
     dong = []
     for bic, loai, b_rong, b_cao in _HANG_MUC:
         nhom = {}
-        for e in DB.FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType():
-            t = doc.GetElement(e.GetTypeId())
+        for e in list(DB.FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType()) + \
+                arv_lk.doi_tuong_link(doc, view, bic):
+            t = e.Document.GetElement(e.GetTypeId())
             if t is None or _loai_tru(t):
                 continue
-            g = nhom.setdefault(t.Id.Value, {"t": t, "sl": 0, "dai": set(), "cao": set()})
+            k_nhom = t.Id.Value if not e.Document.IsLinked else (e.Document.Title, t.Id.Value)
+            g = nhom.setdefault(k_nhom, {"t": t, "sl": 0, "dai": set(), "cao": set(), "link": e.Document.IsLinked})
             g["sl"] += 1
             g["dai"].add(_kt(e, t, (b_rong, DB.BuiltInParameter.FAMILY_WIDTH_PARAM)))
             g["cao"].add(_kt(e, t, (b_cao, DB.BuiltInParameter.FAMILY_HEIGHT_PARAM)))
@@ -109,7 +112,8 @@ def lay_dong(doc, view):
                 sl_da[k] = sl_da.get(k, 0) + 1
         for k, g in nhom.items():
             t = g["t"]
-            dong.append({"id": k, "cat": int(bic), "loai": loai, "cua": u"%s : %s" % (t.FamilyName, _ten(t)),
+            dong.append({"id": k, "link": g["link"], "cat": int(bic), "loai": loai + (u" (link)" if g["link"] else u""),
+                         "cua": u"%s : %s" % (t.FamilyName, _ten(t)),
                          "ten": _chuoi(t, DB.BuiltInParameter.ALL_MODEL_TYPE_MARK),
                          "dai": u" / ".join(str(x) for x in sorted(x for x in g["dai"] if x is not None)) or u"?",
                          "cao": u" / ".join(str(x) for x in sorted(x for x in g["cao"] if x is not None)) or u"?",
@@ -190,6 +194,9 @@ def hoi_thong_ke_cua(doc, view):
         r = g.Rows[i]
         for k, _, _ in _COT:
             r.Cells[k].Value = u"%s" % (thu.get(d["ten"], u"") if k == u"moi" else d[k])
+        if d.get("link"):           # cửa trong file link: chỉ đọc (đổi tên phải mở file link)
+            r.Cells[u"moi"].ReadOnly = True
+            r.Cells[u"moi"].Style.BackColor = Color.FromArgb(235, 235, 235)
         if not d["ten"] or dem_ten.get((d["cat"], d["ten"]), 0) > 1:
             for k, _, _ in _COT:
                 if k != u"moi":
