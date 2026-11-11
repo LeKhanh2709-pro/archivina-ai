@@ -51,6 +51,8 @@ Quy tắc nhận diện, thông số hatch, cách phân biệt thang máy: đọ
 - Người dùng chốt: **hatch hết ô có dấu X của trục / hộp** (trừ thang máy, nội thất, lỗ mở sàn `lo mo` không có ống). Ô lớn > 1400 × 1400 mm, ô ống gió nằm giữa hành lang không tường bao: vẫn hatch nhưng liệt kê riêng trong báo cáo để người dùng xem lại (`Cần xác nhận lại`).
 - Không ghi trị số giới hạn chịu lửa (EI…) hay điều khoản QCVN nếu người dùng chưa cung cấp (`[Chờ bổ sung]`).
 
+- **Nút Revit Ngăn cháy lan dùng skill này** (2026-11-11): mặt bằng Revit có CAD link → nút gọi `scripts\chay_cho_revit.ps1 -Dwg <dwg> -OutDir <thư mục>` (bước 1 + 2, `--khong-excel`, ghi `xong.txt` OK / LOI) rồi đọc `<tên>_vung.json`. Sửa quy tắc nhận diện ở đây thì nút Revit tự dùng bản mới (kết quả cũ lưu theo DWG: DWG không đổi thì nút không chạy lại). Cờ `--khong-excel`: không ghi `.xlsx`.
+
 ## Báo cáo cho người dùng
 - Số vùng: sẽ hatch / đã có / loại; số hatch đã tạo; đường dẫn bản sao DWG + Excel + PNG.
 - Danh sách vùng cần xem lại (ô lớn, ô giữa hành lang, ô bị loại vì chạm thang máy) kèm tọa độ tâm.

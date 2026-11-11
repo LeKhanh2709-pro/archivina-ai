@@ -172,6 +172,14 @@
    "label": "Tỉ lệ view, mẫu số (0 = giữ; template khoá tỉ lệ thì theo template)",
    "default": null,
    "kind": "normal"
+  },
+  {
+   "index": 21,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Không dùng CAD link (chỉ nhận phòng ướt theo Revit). Mặc định tắt = mặt bằng đang mở / view chống thấm có file CAD link thì nhận theo CAD (người dùng yêu cầu 2026-11-11, model Site HQV: \"có link cad vào rồi cứ dựa theo cad làm\"): bộ nhận diện của lệnh CAD CHONGTHAM (skill chong-tham-mat-bang: nổ AEC bản sao, tim_phong_uot.py) → bo + nét vén (đã lùi 50, ngắt tại cửa) đổi toạ độ CAD → model, KHÔNG dùng sàn / room / thiết bị Revit. Không có CAD link thì như cũ.",
+   "default": false,
+   "kind": "normal"
   }
  ]
 }

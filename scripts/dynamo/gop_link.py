@@ -21,7 +21,7 @@ DICH = {
     "LanCanLouver_TuDong.py": "\ndef mark(e):",
     "ThongKeCua_TuDong.py": "\ndef dem_trong_view(",
     "ThongKeLanCan_TuDong.py": "\ndef mark(e):",
-    "ChiTietCua_TuDong.py": None,
+    "ChiTietCua_TuDong.py": "\ndef mat_tuong(wall):",
     "ARV_MBTuongXayTang_v1.py": "\ndef collect_walls(level):",
     "LoMo_ShaftOpening_nguon.py": None,
 }

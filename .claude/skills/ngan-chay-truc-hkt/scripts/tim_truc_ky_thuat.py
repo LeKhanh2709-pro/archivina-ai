@@ -290,6 +290,27 @@ def nguon(path):
     return p[0] if p else "(model)"
 
 
+def ghi_excel(f_xlsx, ds, ong_le):
+    from openpyxl import Workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Truc - HKT"
+    ws.append(["STT", "Trạng thái", "Tâm X", "Tâm Y", "Rộng (mm)", "Dài (mm)", "Diện tích (m²)", "Kiểu nhận diện",
+               "Số ống đứng", "Nguồn (xref/block)", "Layer dấu X / khung", "Chữ trong ô", "Ghi chú"])
+    nhan_tt = {"se_hatch": "Sẽ hatch", "da_co": "Đã có hatch", "loai": "Loại"}
+    for v in ds:
+        ws.append([v["id"], nhan_tt[v["trang_thai"]], v["cx"], v["cy"], v["rong"], v["dai"], v["dien_tich_m2"],
+                   v["kieu"], v["so_ong"], ", ".join(v["nguon"]), ", ".join(v["layer_x"]), ", ".join(v["nhan"]),
+                   v["ghi_chu"]])
+    for col, w in zip("ABCDEFGHIJKLM", (6, 12, 9, 9, 10, 10, 13, 30, 10, 34, 26, 16, 50)):
+        ws.column_dimensions[col].width = w
+    ws2 = wb.create_sheet("Ong chua co khung")
+    ws2.append(["STT", "Tâm X", "Tâm Y", "Ghi chú"])
+    for i, (x, y) in enumerate(ong_le, 1):
+        ws2.append([i, x, y, "Ống đứng chưa nằm trong khung nào – kiểm tra trục / hộp (Cần xác nhận lại)"])
+    wb.save(f_xlsx)
+
+
 def main():
     ap = argparse.ArgumentParser(description="Tìm trục/hộp kỹ thuật cần hatch ngăn cháy lan (dấu X).")
     ap.add_argument("dxf")
@@ -309,6 +330,8 @@ def main():
     ap.add_argument("--layer-khung-ong", default=",".join(LAYER_KHUNG_ONG),
                     help="Layer khung lỗ mở MEP: khung kín có ống đứng bên trong là hộp kỹ thuật dù không có X")
     ap.add_argument("--khong-anh", action="store_true", help="Không vẽ ảnh PNG xem lại")
+    ap.add_argument("--khong-excel", action="store_true",
+                    help="Không ghi file Excel (nút Revit Ngăn cháy lan; gói Python mang theo không có openpyxl)")
     a = ap.parse_args()
 
     tach = lambda s: [x.strip() for x in s.split(",") if x.strip()]
@@ -320,7 +343,7 @@ def main():
     f_json = os.path.join(a.out_dir, ten + "_vung.json")
     f_xlsx = os.path.join(a.out_dir, ten + "_vung.xlsx")
     f_png = os.path.join(a.out_dir, ten + "_vung.png")
-    for f in (f_json, f_xlsx):
+    for f in (f_json,) + (() if a.khong_excel else (f_xlsx,)):
         if os.path.exists(f):
             sys.exit(f"Đã tồn tại, không ghi đè: {f} (chuyển bản cũ vào D:\\AI\\_backup trước)")
 
@@ -377,26 +400,13 @@ def main():
                    ong_chua_bo=ong_le),
               open(f_json, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
-    from openpyxl import Workbook
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Truc - HKT"
-    ws.append(["STT", "Trạng thái", "Tâm X", "Tâm Y", "Rộng (mm)", "Dài (mm)", "Diện tích (m²)", "Kiểu nhận diện",
-               "Số ống đứng", "Nguồn (xref/block)", "Layer dấu X / khung", "Chữ trong ô", "Ghi chú"])
-    nhan_tt = {"se_hatch": "Sẽ hatch", "da_co": "Đã có hatch", "loai": "Loại"}
-    for v in ds:
-        ws.append([v["id"], nhan_tt[v["trang_thai"]], v["cx"], v["cy"], v["rong"], v["dai"], v["dien_tich_m2"],
-                   v["kieu"], v["so_ong"], ", ".join(v["nguon"]), ", ".join(v["layer_x"]), ", ".join(v["nhan"]),
-                   v["ghi_chu"]])
-    for col, w in zip("ABCDEFGHIJKLM", (6, 12, 9, 9, 10, 10, 13, 30, 10, 34, 26, 16, 50)):
-        ws.column_dimensions[col].width = w
-    ws2 = wb.create_sheet("Ong chua co khung")
-    ws2.append(["STT", "Tâm X", "Tâm Y", "Ghi chú"])
-    for i, (x, y) in enumerate(ong_le, 1):
-        ws2.append([i, x, y, "Ống đứng chưa nằm trong khung nào – kiểm tra trục / hộp (Cần xác nhận lại)"])
-    wb.save(f_xlsx)
+    if a.khong_excel:
+        f_xlsx = None
+    else:
+        ghi_excel(f_xlsx, ds, ong_le)
 
     if not a.khong_anh and ds:
+
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
@@ -426,7 +436,8 @@ def main():
     print(f"Ô X: {len(o_x)} | ống đứng: {len(ong)} | vùng: {len(ds)} | sẽ hatch: {dem['se_hatch']} | "
           f"đã có: {dem['da_co']} | loại: {dem['loai']} | ống chưa có khung: {len(ong_le)}")
     print(f_json)
-    print(f_xlsx)
+    if f_xlsx:
+        print(f_xlsx)
     if not a.khong_anh:
         print(f_png)
 

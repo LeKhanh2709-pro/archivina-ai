@@ -355,15 +355,145 @@ def lk_tang(doc, view, bic):
 
 
 def lk_room_tai_diem(doc, view, p):
-    """Room trong link tại điểm p (toạ độ model chính) → LkPT hoặc None."""
+    """Room trong link tại điểm p (toạ độ model chính), CHỈ room thuộc tầng của view → LkPT hoặc None. (Link đặt chồng nhiều
+    bản lệch cao độ: bản khác tầng cũng trả room tại điểm đó → biên phòng sai, đo trên HQV Site 2026-11-11: 3 phòng xiên.)"""
+    lv = view.GenLevel
     for li, ld, tf in lk_cac_link(doc, view):
+        ids = lk_level_khop(ld, tf, lv) if lv is not None else None
+        if ids is not None and not ids:
+            continue
         try:
             r = ld.GetRoomAtPoint(tf.Inverse.OfPoint(p))
+        except Exception:
+            r = None
+        if r is not None and (ids is None or r.LevelId.Value in ids):
+            return LkPT(r, li, tf)
+    return None
+
+
+def lk_room_moi_link(doc, p, lv=None):
+    """Room trong bất kỳ link đã nạp tại điểm p (toạ độ model chính) → LkPT hoặc None (không cần view); có lv thì chỉ room
+    thuộc tầng lv (link đặt chồng nhiều bản lệch cao độ)."""
+    for li in FilteredElementCollector(doc).OfClass(RevitLinkInstance):
+        try:
+            ld = li.GetLinkDocument()
+            if ld is None:
+                continue
+            tf = li.GetTotalTransform()
+            ids = lk_level_khop(ld, tf, lv) if lv is not None else None
+            if ids is not None and not ids:
+                continue
+            r = ld.GetRoomAtPoint(tf.Inverse.OfPoint(p))
+            if r is not None and ids is not None and r.LevelId.Value not in ids:
+                r = None
         except Exception:
             r = None
         if r is not None:
             return LkPT(r, li, tf)
     return None
+
+
+def lk_level_host(doc, e):
+    """Level của model chính cùng cao độ với level của phần tử link e (đã tính Z của instance); không có thì None."""
+    try:
+        z = e.Document.GetElement(e.LevelId).Elevation + e._tf.Origin.Z
+    except Exception:
+        return None
+    ds = [l for l in FilteredElementCollector(doc).OfClass(Level) if abs(l.Elevation - z) < _lk_mm(5)]
+    return ds[0] if ds else None
+
+
+def lk_tu_id(doc, v):
+    """Id giả (id link instance × hệ số + id phần tử) → LkPT; id thường → phần tử model chính."""
+    v = int(v)
+    if v < LK_HE_SO_ID:
+        return doc.GetElement(ElementId(v))
+    li = doc.GetElement(ElementId(v // LK_HE_SO_ID))
+    ld = li.GetLinkDocument() if li is not None else None
+    e = ld.GetElement(ElementId(v % LK_HE_SO_ID)) if ld is not None else None
+    return LkPT(e, li) if e is not None else None
+
+
+class LkMat(object):
+    """PlanarFace của phần tử link: pháp tuyến / điểm đã đổi toạ độ, Reference là link reference (dùng để dim)."""
+    def __init__(self, f, tf, li, ref=None):
+        self._f, self._tf = f, tf
+        self.Reference = ref if ref is not None else f.Reference.CreateLinkReference(li)
+        self.FaceNormal = tf.OfVector(f.FaceNormal)
+        self.Origin = tf.OfPoint(f.Origin)
+
+    def GetBoundingBox(self):
+        return self._f.GetBoundingBox()
+
+    def Evaluate(self, uv):
+        return self._tf.OfPoint(self._f.Evaluate(uv))
+
+    def Project(self, p):
+        return self._f.Project(self._tf.Inverse.OfPoint(p))
+
+    def GetType(self):
+        return self._f.GetType()
+
+
+def lk_mat_phang(e, opt):
+    """Các PlanarFace (có reference) của phần tử link e dạng LkMat; hình học lấy trong file link rồi đổi toạ độ."""
+    kq = []
+
+    def duyet(geo, tf):
+        for g in geo:
+            tn = g.GetType().Name
+            if tn == "GeometryInstance":
+                duyet(g.GetInstanceGeometry(), tf)
+            elif tn == "Solid" and g.Volume > 0:
+                for f in g.Faces:
+                    if f.GetType().Name == "PlanarFace" and f.Reference is not None:
+                        try:
+                            kq.append(LkMat(f, tf, e._li))
+                        except Exception:
+                            pass
+    geo = e._e.get_Geometry(opt)
+    if geo is not None:
+        duyet(geo, e._tf)
+    return kq
+
+
+def lk_an_bang_filter(doc, view, ten_f, bics, giu_tu=()):
+    """Ẩn đối tượng trong link theo hạng mục bằng view filter (Revit không Hide in View từng phần tử link): filter tên ten_f,
+    hạng mục bics, giữ lại đối tượng có Family Name chứa một chữ trong giu_tu. Filter cũng áp cho đối tượng model chính.
+    View có template điều khiển filter thì KHÔNG sửa template, chỉ báo. Gọi TRONG transaction. Trả về câu báo cáo."""
+    from System.Collections.Generic import List as _List
+    f = None
+    for x in FilteredElementCollector(doc).OfClass(ParameterFilterElement):
+        if x.Name == ten_f:
+            f = x
+            break
+    if f is None:
+        cats = _List[ElementId]()
+        for b in bics:
+            cats.Add(ElementId(b))
+        pid = ElementId(BuiltInParameter.ALL_MODEL_FAMILY_NAME)
+        loc_duoc = any(i.Value == pid.Value for i in ParameterFilterUtilities.GetFilterableParametersInCommon(doc, cats))
+        luat = _List[FilterRule]()
+        if loc_duoc:
+            for k in giu_tu:
+                luat.Add(ParameterFilterRuleFactory.CreateNotContainsRule(pid, k))
+        if luat.Count:
+            f = ParameterFilterElement.Create(doc, ten_f, cats, ElementParameterFilter(luat))
+        else:
+            f = ParameterFilterElement.Create(doc, ten_f, cats)
+    tpl = doc.GetElement(view.ViewTemplateId) if view.ViewTemplateId != ElementId.InvalidElementId else None
+    if tpl is not None:
+        vg = BuiltInParameter.VIS_GRAPHICS_FILTERS
+        if not any(i.Value == int(vg) for i in tpl.GetNonControlledTemplateParameterIds()):
+            return (u"CẦN XEM LẠI: đối tượng trong link chưa ẩn – template '%s' điều khiển filter (công cụ không sửa template): "
+                    u"thêm filter '%s' vào template và tắt hiển thị." % (tpl.Name, ten_f))
+    try:
+        if not view.IsFilterApplied(f.Id):
+            view.AddFilter(f.Id)
+        view.SetFilterVisibility(f.Id, False)
+        return u"Ẩn đối tượng trong link bằng filter '%s' trong view." % ten_f
+    except Exception as ex:
+        return u"CẦN XEM LẠI: không gắn được filter '%s' vào view (%s)." % (ten_f, (u"%s" % ex).splitlines()[0][:120])
 
 
 def lk_khoa_tag(tg):

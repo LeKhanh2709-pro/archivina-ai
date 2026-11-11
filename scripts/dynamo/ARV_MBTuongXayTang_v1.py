@@ -304,6 +304,9 @@ def core_faces(w, t_ext, t_int):
 
 
 TUONG_LINK = []        # (id link instance, id tường) của tường xây lấy từ link, để collect_structure không tính trùng
+TUONG_DA_THU = []      # WallInfo của tường xây đã thu (để gắn vách kính làm ô mở)
+OPEN_NOTE = []         # ghi chú thêm về ô mở
+TRUC_AN = []           # trục của model chính không hiện ở tầng này (Revit báo datum không thấy trong view)
 VIEW_LINK = []         # mặt bằng đang làm
 
 
@@ -586,15 +589,145 @@ def lk_tang(doc, view, bic):
 
 
 def lk_room_tai_diem(doc, view, p):
-    """Room trong link tại điểm p (toạ độ model chính) → LkPT hoặc None."""
+    """Room trong link tại điểm p (toạ độ model chính), CHỈ room thuộc tầng của view → LkPT hoặc None. (Link đặt chồng nhiều
+    bản lệch cao độ: bản khác tầng cũng trả room tại điểm đó → biên phòng sai, đo trên HQV Site 2026-11-11: 3 phòng xiên.)"""
+    lv = view.GenLevel
     for li, ld, tf in lk_cac_link(doc, view):
+        ids = lk_level_khop(ld, tf, lv) if lv is not None else None
+        if ids is not None and not ids:
+            continue
         try:
             r = ld.GetRoomAtPoint(tf.Inverse.OfPoint(p))
+        except Exception:
+            r = None
+        if r is not None and (ids is None or r.LevelId.Value in ids):
+            return LkPT(r, li, tf)
+    return None
+
+
+def lk_room_moi_link(doc, p, lv=None):
+    """Room trong bất kỳ link đã nạp tại điểm p (toạ độ model chính) → LkPT hoặc None (không cần view); có lv thì chỉ room
+    thuộc tầng lv (link đặt chồng nhiều bản lệch cao độ)."""
+    for li in FilteredElementCollector(doc).OfClass(RevitLinkInstance):
+        try:
+            ld = li.GetLinkDocument()
+            if ld is None:
+                continue
+            tf = li.GetTotalTransform()
+            ids = lk_level_khop(ld, tf, lv) if lv is not None else None
+            if ids is not None and not ids:
+                continue
+            r = ld.GetRoomAtPoint(tf.Inverse.OfPoint(p))
+            if r is not None and ids is not None and r.LevelId.Value not in ids:
+                r = None
         except Exception:
             r = None
         if r is not None:
             return LkPT(r, li, tf)
     return None
+
+
+def lk_level_host(doc, e):
+    """Level của model chính cùng cao độ với level của phần tử link e (đã tính Z của instance); không có thì None."""
+    try:
+        z = e.Document.GetElement(e.LevelId).Elevation + e._tf.Origin.Z
+    except Exception:
+        return None
+    ds = [l for l in FilteredElementCollector(doc).OfClass(Level) if abs(l.Elevation - z) < _lk_mm(5)]
+    return ds[0] if ds else None
+
+
+def lk_tu_id(doc, v):
+    """Id giả (id link instance × hệ số + id phần tử) → LkPT; id thường → phần tử model chính."""
+    v = int(v)
+    if v < LK_HE_SO_ID:
+        return doc.GetElement(ElementId(v))
+    li = doc.GetElement(ElementId(v // LK_HE_SO_ID))
+    ld = li.GetLinkDocument() if li is not None else None
+    e = ld.GetElement(ElementId(v % LK_HE_SO_ID)) if ld is not None else None
+    return LkPT(e, li) if e is not None else None
+
+
+class LkMat(object):
+    """PlanarFace của phần tử link: pháp tuyến / điểm đã đổi toạ độ, Reference là link reference (dùng để dim)."""
+    def __init__(self, f, tf, li, ref=None):
+        self._f, self._tf = f, tf
+        self.Reference = ref if ref is not None else f.Reference.CreateLinkReference(li)
+        self.FaceNormal = tf.OfVector(f.FaceNormal)
+        self.Origin = tf.OfPoint(f.Origin)
+
+    def GetBoundingBox(self):
+        return self._f.GetBoundingBox()
+
+    def Evaluate(self, uv):
+        return self._tf.OfPoint(self._f.Evaluate(uv))
+
+    def Project(self, p):
+        return self._f.Project(self._tf.Inverse.OfPoint(p))
+
+    def GetType(self):
+        return self._f.GetType()
+
+
+def lk_mat_phang(e, opt):
+    """Các PlanarFace (có reference) của phần tử link e dạng LkMat; hình học lấy trong file link rồi đổi toạ độ."""
+    kq = []
+
+    def duyet(geo, tf):
+        for g in geo:
+            tn = g.GetType().Name
+            if tn == "GeometryInstance":
+                duyet(g.GetInstanceGeometry(), tf)
+            elif tn == "Solid" and g.Volume > 0:
+                for f in g.Faces:
+                    if f.GetType().Name == "PlanarFace" and f.Reference is not None:
+                        try:
+                            kq.append(LkMat(f, tf, e._li))
+                        except Exception:
+                            pass
+    geo = e._e.get_Geometry(opt)
+    if geo is not None:
+        duyet(geo, e._tf)
+    return kq
+
+
+def lk_an_bang_filter(doc, view, ten_f, bics, giu_tu=()):
+    """Ẩn đối tượng trong link theo hạng mục bằng view filter (Revit không Hide in View từng phần tử link): filter tên ten_f,
+    hạng mục bics, giữ lại đối tượng có Family Name chứa một chữ trong giu_tu. Filter cũng áp cho đối tượng model chính.
+    View có template điều khiển filter thì KHÔNG sửa template, chỉ báo. Gọi TRONG transaction. Trả về câu báo cáo."""
+    from System.Collections.Generic import List as _List
+    f = None
+    for x in FilteredElementCollector(doc).OfClass(ParameterFilterElement):
+        if x.Name == ten_f:
+            f = x
+            break
+    if f is None:
+        cats = _List[ElementId]()
+        for b in bics:
+            cats.Add(ElementId(b))
+        pid = ElementId(BuiltInParameter.ALL_MODEL_FAMILY_NAME)
+        loc_duoc = any(i.Value == pid.Value for i in ParameterFilterUtilities.GetFilterableParametersInCommon(doc, cats))
+        luat = _List[FilterRule]()
+        if loc_duoc:
+            for k in giu_tu:
+                luat.Add(ParameterFilterRuleFactory.CreateNotContainsRule(pid, k))
+        if luat.Count:
+            f = ParameterFilterElement.Create(doc, ten_f, cats, ElementParameterFilter(luat))
+        else:
+            f = ParameterFilterElement.Create(doc, ten_f, cats)
+    tpl = doc.GetElement(view.ViewTemplateId) if view.ViewTemplateId != ElementId.InvalidElementId else None
+    if tpl is not None:
+        vg = BuiltInParameter.VIS_GRAPHICS_FILTERS
+        if not any(i.Value == int(vg) for i in tpl.GetNonControlledTemplateParameterIds()):
+            return (u"CẦN XEM LẠI: đối tượng trong link chưa ẩn – template '%s' điều khiển filter (công cụ không sửa template): "
+                    u"thêm filter '%s' vào template và tắt hiển thị." % (tpl.Name, ten_f))
+    try:
+        if not view.IsFilterApplied(f.Id):
+            view.AddFilter(f.Id)
+        view.SetFilterVisibility(f.Id, False)
+        return u"Ẩn đối tượng trong link bằng filter '%s' trong view." % ten_f
+    except Exception as ex:
+        return u"CẦN XEM LẠI: không gắn được filter '%s' vào view (%s)." % (ten_f, (u"%s" % ex).splitlines()[0][:120])
 
 
 def lk_khoa_tag(tg):
@@ -843,6 +976,49 @@ def collect_openings(level, view):
             FACADE_REFS.add(id(edge[0][1]))          # mặt ngoài chỉ dim cửa sổ + cửa lùa
             FACADE_REFS.add(id(edge[1][1]))
         res.setdefault(id_value(e.Host.Id), []).append(edge)
+    # Vách kính (curtain wall) nối tiếp tường xây trên cùng tuyến = 1 ô mở của tường xây đó (HQV Site Tầng 2: cửa sổ là
+    # tấm vách kính → mặt ngoài không còn cửa sổ nào làm mốc, chuỗi bị bỏ hết). Mốc = mặt đầu tường xây ở 2 đầu vách.
+    vks = [w for w in FilteredElementCollector(doc).OfClass(Wall).WhereElementIsNotElementType().ToElements()
+           if w.LevelId == level.Id]
+    if TUONG_LINK:
+        li_kt = set(k_[0] for k_ in TUONG_LINK)
+        vks += [w for w in lk_tang_view(level, BuiltInCategory.OST_Walls) if w._li.Id.Value in li_kt]
+    so_vk = 0
+    for vk in vks:
+        try:
+            if vk.CurtainGrid is None:
+                continue
+            hc = vk.Location.Curve
+        except Exception:
+            continue
+        if not isinstance(hc, Line):
+            continue
+        along_x = abs(hc.Direction.X) > 0.999
+        if not along_x and abs(hc.Direction.Y) <= 0.999:
+            continue
+        p0, p1 = hc.GetEndPoint(0), hc.GetEndPoint(1)
+        a0, a1 = sorted([to_mm(p0.X if along_x else p0.Y), to_mm(p1.X if along_x else p1.Y)])
+        cc = to_mm(p0.Y if along_x else p0.X)
+        dau = []
+        for e_ in (a0, a1):
+            tim = [w for w in TUONG_DA_THU if w.ax == along_x and abs(w.c - cc) <= w.hw + 300.0
+                   and min(abs(w.lo - e_), abs(w.hi - e_)) <= 60.0]
+            if not tim:
+                break
+            m_ = rough_jambs(tim[0].w, along_x, ((e_, None), (e_, None)), jamb_cache)
+            r_ = m_[0] if m_[0][1] is not None else (m_[1] if m_[1][1] is not None else None)
+            if r_ is None:
+                break
+            dau.append((tim[0], r_))
+        if len(dau) < 2:
+            continue
+        edge = (dau[0][1], dau[1][1])
+        FACADE_REFS.add(id(edge[0][1]))
+        FACADE_REFS.add(id(edge[1][1]))
+        res.setdefault(id_value(dau[0][0].w.Id), []).append(edge)
+        so_vk += 1
+    if so_vk:
+        OPEN_NOTE.append(u"Vách kính trên tuyến tường xây tính là ô mở: %d vách." % so_vk)
     return res
 
 
@@ -1229,7 +1405,10 @@ def fit_grids(view, box, scale, warns, hide_prefixes=(), hide_outside=False, cad
                 else:
                     gr.HideBubbleInView(end, view)
         except Exception as ex:
-            warns.append(u"Trục {}: không chỉnh được đầu trục ({}).".format(get_name(gr), ex))
+            if u"cannot be visible" in (u"%s" % ex):     # trục của model chính không lên tới tầng này (trục hiện là của link)
+                TRUC_AN.append(get_name(gr))
+            else:
+                warns.append(u"Trục {}: không chỉnh được đầu trục ({}).".format(get_name(gr), ex))
         if gr.IsHidden(view):        # view dùng lại (Làm lại): trục đã ẩn ở lần chạy trước nay thuộc vùng
             to_show.Add(gr.Id)
         if line_only:
@@ -1444,16 +1623,35 @@ def grid_dims(view, box, gx, gy, scale, dtype, z, occ, gx_lo=None, gx_hi=None):
     return n
 
 
-def room_kind(x, y, z, public):
-    r = doc.GetRoomAtPoint(XYZ(from_mm(x), from_mm(y), z))
-    if r is None and TUONG_LINK:                # tường lấy từ link → phòng cũng ở trong link
-        p_ = XYZ(from_mm(x), from_mm(y), z)
+_LINK_TANG = {}
+
+
+def _link_tang(z):
+    """[(link, document, transform ngược, id level của link ở tầng có mặt cắt z)] – tính 1 lần cho mỗi cao độ (room_kind gọi
+    hàng nghìn lần; đọc lại level mỗi lần làm Tầng 5BA HQV Site chạy > 7 phút)."""
+    k = round(z, 3)
+    if k not in _LINK_TANG:
+        ds = []
         for li_ in FilteredElementCollector(doc).OfClass(RevitLinkInstance).ToElements():
             ld_ = li_.GetLinkDocument()
             if ld_ is None:
                 continue
-            r_ = ld_.GetRoomAtPoint(li_.GetTotalTransform().Inverse.OfPoint(p_))
-            if r_ is not None:
+            tf_ = li_.GetTotalTransform()
+            ids_ = set(l_.Id.Value for l_ in FilteredElementCollector(ld_).OfClass(Level)
+                       if z - from_mm(1500) < l_.Elevation + tf_.Origin.Z <= z)
+            if ids_:
+                ds.append((li_, ld_, tf_.Inverse, ids_))
+        _LINK_TANG[k] = ds
+    return _LINK_TANG[k]
+
+
+def room_kind(x, y, z, public):
+    r = doc.GetRoomAtPoint(XYZ(from_mm(x), from_mm(y), z))
+    if r is None and TUONG_LINK:                # tường lấy từ link → phòng cũng ở trong link
+        p_ = XYZ(from_mm(x), from_mm(y), z)
+        for li_, ld_, tfi_, ids_ in _link_tang(z):
+            r_ = ld_.GetRoomAtPoint(tfi_.OfPoint(p_))
+            if r_ is not None and r_.LevelId.Value in ids_:
                 r = r_
                 break
     if r is None:
@@ -1967,13 +2165,13 @@ def plan_chains(walls, align, opens, struct, gx, gy, scale, z, public):
                 refs += [(ca, ra, PRI_OPEN), (cb, rb, PRI_OPEN)]
                 edges += [ca, cb]
         for o in g:                                      # đầu tường của tuyến (bỏ má cửa)
-            geo = o.w.get_Geometry(opt)
-            for gob in (geo or []):
-                if not isinstance(gob, Solid):
-                    continue
-                for f in gob.Faces:
-                    if not isinstance(f, PlanarFace) or f.Reference is None:
-                        continue
+            if la_link(o.w):
+                ds_mat = lk_mat_phang(o.w, opt)
+            else:
+                ds_mat = [f for gob in (o.w.get_Geometry(opt) or []) if isinstance(gob, Solid) for f in gob.Faces
+                          if isinstance(f, PlanarFace) and f.Reference is not None]
+            for f in ds_mat:
+                if True:
                     nv = f.FaceNormal
                     if (abs(nv.X) if ax else abs(nv.Y)) < 0.999:
                         continue
@@ -2464,6 +2662,9 @@ def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_na
                 len(drop), len(old_sheets)))
             delete_ids(drop + old_sheets)
         walls = collect_walls(level)
+        TUONG_DA_THU[:] = walls
+        del TRUC_AN[:]
+        del OPEN_NOTE[:]
         walls_all = walls                # bảng ghi chú theo cả tầng: các tờ tách vùng dùng chung một bảng
         if region is not None:
             def _inside(x0, y0, x1, y1):           # theo tâm hộp bao → mỗi cấu kiện chỉ thuộc một vùng
@@ -2558,6 +2759,10 @@ def main(level_name, view_name, tmpl_name, scale_text, number, sheet_name, tb_na
     report += summary
     if failed:
         warns.append(u"Revit báo lỗi dim tự động → đã xóa dim đó: " + u"; ".join(failed))
+    if TRUC_AN:
+        warns.append(u"{} trục của model chính không hiện ở tầng này (trục đang thấy là của file link, không chỉnh được): {}.".format(
+            len(TRUC_AN), u", ".join(TRUC_AN[:12]) + (u"…" if len(TRUC_AN) > 12 else u"")))
+    warns += OPEN_NOTE
     report += [u"CẢNH BÁO: " + w for w in warns]
     report.append(u"CHƯA LÀM: tag căn hộ, chi tiết điển hình cột vách giao tường xây, dim trong lòng căn. "
                   u"Dim tự động là bản nháp – KTS soát.")

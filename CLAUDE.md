@@ -120,6 +120,39 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     (`_tmp\revit_dientich\thu1\`): L3-32 TẦNG 3 221,6 m² / 1,1 m² (3 ô có dấu X CAD), G19 119,0 + 109,6 / 11,6 m², đối
     chiếu biên hatch khớp, bấm lại không trùng. Nút ChongTham + NganChay + LanCanLouver sinh lại 09:49 (Lan can chỉ do
     khối chung), Revit phải Reload pyRevit; nút thật chưa bấm thử (`Cần xác nhận lại`).
+  - **Nhận phòng ướt theo CAD link** (người dùng yêu cầu 2026-11-11 trên model Site HQV tháp B: "có link cad vào rồi cứ
+    dựa theo cad làm"): mặt bằng đang mở có CAD link (ưu tiên CAD "Current view only") → lõi gọi `chay_cho_lisp.ps1` của
+    skill `chong-tham-mat-bang` (nổ AEC bản sao + `tim_phong_uot.py`, đúng bộ nhận diện của lệnh CAD CHONGTHAM), đổi bo /
+    đảo / nét vén (đã lùi 50, ngắt cửa) sang toạ độ model bằng `GetTotalTransform`, chỉ vẽ vùng `se_ve`; `can_xem` + chỗ
+    cần xem chỉ báo. Không dùng sàn / room / thiết bị Revit. Kết quả nhận diện lưu theo (đường dẫn, cỡ, giờ sửa) DWG ở
+    `<IN[6]>\cad\` → bấm lại không chạy AutoCAD. View đang mở không có CAD thì tìm CAD đặt riêng cho mặt bằng khác cùng
+    tầng; ≥ 2 file khác nhau thì dừng, báo mở đúng mặt bằng (Site Tầng 1 có 2 bản CAD tầng 1: ổ A: ở view `Tầng 1`, Desktop
+    ở `Tầng 1(1)`). IN[21] = "Không dùng CAD link" (mặc định tắt; ô bool trống của nút truyền False nên phải đặt nghĩa
+    ngược). Nhánh Revit cũ tách thành `nhan_dien_revit`. Máy khác cần AutoCAD + script nhận diện (`<ổ>:\AI\.claude\skills`
+    hoặc `<ổ>:\AI\_tools\chongtham_*` do K-TOOL giải nén) + Python có ezdxf (`Cần xác nhận lại`, chưa thử máy khác).
+    Thử nút thật trên bản sao Site (`_tmp\ct_cad\`, `ct_chay.py`, hộp thoại: ACD.19.1_MatBangChongTham, 1:200, A1,
+    KhungTen_A1 : KienTruc, 19. ChiTietChongTham): Tầng 1(1) 21 phòng / 123 nét → A.CD.19.15; Tầng 2(1) 6 / 33 → A.CD.19.16
+    (2 WC 21 m² can_xem); Tầng 3BA 28 / 136 → A.CD.19.17; Tầng 5BA(1) (CAD tầng 4) 54 / 375 → A.CD.19.18 (4 vùng can_xem,
+    nhiều lô gia nhận thiếu); bấm lại không trùng; hatch khớp tường link (ảnh `_tmp\ct_cad\kq\`). Tầng 1 khung mặt bằng
+    559 mm > vùng vẽ 529 mm. Template ACD.19.1 điều khiển filter → thiết bị vệ sinh trong link chưa ẩn (chỉ báo). Nút sinh
+    lại 2026-11-11 11:52, Revit phải Reload pyRevit; người dùng chưa bấm, chưa duyệt (`Cần xác nhận lại`). Bản lõi trước:
+    `_backup\ChongTham_VeVenChanTuong_20261111_1139_truoc_cad.py`.
+  - **Ngăn cháy lan cũng theo CAD link** (người dùng yêu cầu 2026-11-11 "áp dụng tương tự với ngăn cháy lan"):
+    `NganChay_TrucHKT.py` `cad_truc` (ngoài khối PHẦN CHUNG nên Lỗ mở shaft KHÔNG đổi) gọi
+    `.claude\skills\ngan-chay-truc-hkt\scripts\chay_cho_revit.ps1` (mới: `dwg_to_dxf.ps1` + `tim_truc_ky_thuat.py
+    --khong-excel`; cờ `--khong-excel` mới vì gói `_tools\CHONGTHAM_python` không có openpyxl; JSON dở dang của lần lỗi
+    được đổi tên `.loi_<giờ>`, không xoá). Chỉ vẽ ô `se_hatch`, ô `loai` (cabin thang máy) chỉ báo; không quét tường /
+    room / ống Revit. IN[21] = "Không dùng CAD link", IN[5] = thư mục log + đệm `cad\`. Thêm cho CẢ 2 nút: view đích có
+    sẵn đang TẮT crop thì bật crop theo khung tường (Site: view có sẵn `MẶT BẰNG CHONG CHAY LAN` tắt crop thấy cả CAD hầm
+    → khung 12409 × 4555 mm, sheet trống). Thử nút thật trên bản sao Site (`_tmp\ct_cad\nc_chay.py`, hộp thoại:
+    ACD.18_MatBangChongChayLan, 1:200, 18. ChiTietChongChayLan, A1, Tầng 1 = `ACD.18.15` đúng như người dùng gõ): Tầng 1
+    23 ô (vẽ vào view có sẵn) → ACD.18.15; Tầng 2 18 → ACD.18.16; Tầng 3BA 38 → ACD.18.17; Tầng 5BA (CAD tầng 4) 117 →
+    ACD.18.18; bấm lại không trùng; ảnh `_tmp\ct_cad\kq_nc\`. Revit nền 2 lần văng khi chuyển view đầu phiên
+    (ArchiveException corruptData, chạy lại thì qua; `Cần xác nhận lại` nguyên nhân). Nút sinh lại 2026-11-11 12:45;
+    người dùng chưa bấm (`Cần xác nhận lại`). Bản trước: `_backup\NganChay_TrucHKT_*_truoc_cad.py`,
+    `_backup\tim_truc_ky_thuat_20261111_*.py`.
+  - Người dùng xem bản sao thử chống thấm + ngăn cháy lan: "có vẻ ổn rồi" (2026-11-11 trưa), sẽ Reload pyRevit và tự bấm
+    trên model thật; kết quả bấm thật chưa có (`Cần xác nhận lại`).
 - **Hỏi View template + Tỉ lệ, KHÔNG tự tạo template** (người dùng yêu cầu 2026-11-05, áp cho 5 nút Chống thấm, Ngăn cháy
   lan, Định vị + tag cửa, Định vị lan can louver, Tường xây):
   - Hộp thoại `arv_hoi_sheet._bang(tpl_view=...)` thêm 2 ô ngay sau ô "Đặt lên bản vẽ": View template (template mặt bằng
@@ -275,7 +308,14 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
   - Cách làm: khối `scripts\dynamo\Link_chung.py` (chép vào công cụ bằng `gop_link.py`, không sửa tay giữa 2 mốc): `LkPT` bọc phần tử link, đổi toạ độ về model chính; chỉ lấy link đang thấy trong view, đúng tầng theo cao độ (level link + Z của instance = level view, đúng cả tầng điển hình đặt lệch cao độ); tag / dim dùng `CreateLinkReference`. Bảng hỏi trong lib dùng `lib\arv_lk.py`, dòng từ link chỉ đọc (không đổi Type Mark / Mark).
   - Revit KHÔNG lọc được Schedule theo tầng khi có link (thử: `AddFilter` Level báo lỗi; không lọc thì đếm mọi tầng của mọi bản link) → có đối tượng link thì bảng thống kê = drafting view `lk_bang_ve`, bấm lại chỉ sửa chữ khi đúng số ô.
   - Kết quả Tầng 5BA (link L5-L15): 188 cửa đi + 51 cửa sổ, 29 lan can + 33 louver, 77 phòng ướt / 646 nét vén, 75 trục, 803 đoạn tường / 26 chuỗi dim. Đối chiếu chạy thẳng trên bản sao L5-L15: khớp 77 phòng, 75 trục, 29 + 33, 239 tag; nét vén 651 so với 646 đoạn (chưa rõ nguyên nhân, `Cần xác nhận lại`). Tầng 2 (link L1-L3): 80 cửa đi + 70 cửa sổ là tấm vách kính (nay tag được theo khung bao), Ngăn cháy 30 ô.
-  - Còn giới hạn: Chi tiết cửa chưa làm được cửa trong link (không ẩn được đối tượng khác trong link; hộp thoại có báo); thiết bị vệ sinh trong link không ẩn từng cái được (báo CẦN XEM LẠI); Tường xây Tầng 2 có 0 chuỗi dim tường vì cửa sổ là tấm vách kính không vào mốc (giống model không link). Ảnh `_tmp\hs_site_link\anh_ket_qua\`. Nút sinh lại 2026-11-10 20:41, Revit phải Reload pyRevit; `.dyn` chưa sinh lại; người dùng chưa bấm trong Revit của mình (`Cần xác nhận lại`).
+  - Giới hạn ban đầu (đã sửa 2026-11-11, xem dưới): Chi tiết cửa chưa làm cửa trong link; thiết bị vệ sinh trong link không ẩn; Tường xây Tầng 2 có 0 chuỗi dim. Ảnh `_tmp\hs_site_link\anh_ket_qua\`. Nút sinh lại 2026-11-10 20:41, Revit phải Reload pyRevit; `.dyn` chưa sinh lại; người dùng chưa bấm trong Revit của mình (`Cần xác nhận lại`).
+  - **Sửa 2026-11-11** (người dùng: "fix các lỗi, có làm chi tiết cửa"; thử bản sao Site Tầng 5BA + Tầng 2, `_tmp\hs_site_link\kq20`–`kq27`):
+    (1) **Chi tiết cửa nhận cửa trong link**: chọn bằng Tab (Selection.GetReferences) hoặc PickObjects LinkedElement khi mặt bằng chỉ có cửa link; dim bám nét ẩn (Invisible lines) đặt đúng mép / đỉnh / bậu vì dim vào link reference bị Revit bỏ khi regenerate; template riêng `CHI TIẾT CỬA - MẶT ĐỨNG / MẶT BẰNG (LINK)` ẩn cả hạng mục (không Hide in View từng phần tử link được); giữ link chứa cửa khi ẩn phần tử; ẩn ký hiệu mặt cắt / callout của view khác trong 3 view (nguyên nhân khung viewport phình 1071 × 837 mm, có cả trên model không link). DL.18 / DA 10 / SA 18 vào 3 ô A.CD đủ dim.
+    (2) Thiết bị vệ sinh / nội thất trong link: tạo view filter `ARV_Ẩn thiết bị vệ sinh (link)` (giữ phễu theo Family Name) / `ARV_Ẩn thiết bị vệ sinh, nội thất (link)`; template điều khiển filter (ACD.19.1, ACD.18 của HQV) thì KHÔNG sửa template, chỉ báo – người dùng chưa quyết có cho thêm filter vào template không.
+    (3) Ngăn cháy lan / Lỗ mở: ô theo hình học dài ≥ 3000 và rộng ≤ 600 mm (`KHE_DAI_MM`, `KHE_HEP_MM`) không vẽ, liệt kê (Tầng 5BA: 595 × 4950, 185 × 10000) → 73 ô (`Cần xác nhận lại`).
+    (4) Tường xây: mặt đầu tường link lấy bằng `lk_mat_phang` (GetTransformed làm mất reference); vách kính nối tường xây trên tuyến = ô mở (Tầng 2: 0 → 6 chuỗi); room link dò theo tầng có bộ nhớ đệm `_link_tang` (bản không đệm chạy > 7 phút); trục model chính không hiện ở tầng gom 1 dòng cảnh báo.
+    (5) Lệch nét vén 646 / 651: link L5-L15 trong Site tính biên 3 lô gia thiếu vách (nghi do link kết cấu lồng không nạp) → cạnh xiên. Nay room link có cạnh lệch > 1° khỏi mọi phương tường thì KHÔNG vẽ, liệt kê (Logia 5BA.CAN-01.06 / 10.03 / 23.07). Sau sửa 633 đoạn qua link trùng 100 % bản chạy thẳng trên L5-L15 (651 = 633 + 18 đoạn của 3 lô gia). Thử dựng room tạm trong model chính làm Revit thoát → bỏ, bản lỗi `_backup\ChongTham_VeVenChanTuong_*_roomtam_loi.py`.
+    Room link lọc theo tầng (`lk_room_tai_diem`, `lk_room_moi_link(…, lv)`); `ARV_DUMP_VEN` (biến môi trường) chỉ để thử: ghi nét vén + biên phòng ra JSON. Nút sinh lại 2026-11-11 09:35, Revit phải Reload pyRevit; người dùng chưa bấm trong Revit của mình (`Cần xác nhận lại`). Ảnh `_tmp\hs_site_link\anh_ket_qua_2\`.
 - `ARV_MBTuongXayTang_v1.dyn` (bộ AI REVIT `AI REVIT\TUONG XAY\` của đồng nghiệp, người dùng yêu cầu áp dụng 2026-11-04;
   bản gốc giữ nguyên, bản dùng ở `scripts\dynamo\`):
   - Chức năng: mặt bằng TƯỜNG XÂY (định vị tường) cả tầng theo mẫu FPT P5 A.CD.04.07: view mới chép thông số template

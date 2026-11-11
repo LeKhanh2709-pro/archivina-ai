@@ -172,6 +172,14 @@
    "label": "Tỉ lệ view, mẫu số (0 = giữ; template khoá tỉ lệ thì theo template)",
    "default": null,
    "kind": "normal"
+  },
+  {
+   "index": 21,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Không dùng CAD link (chỉ nhận trục theo Revit). Mặc định tắt = mặt bằng đang mở / view ngăn cháy lan có file CAD link thì nhận trục / hộp kỹ thuật theo CAD (người dùng yêu cầu 2026-11-11, model Site HQV: \"áp dụng tương tự [chống thấm] với ngăn cháy lan\"): bộ nhận diện của skill ngan-chay-truc-hkt (dwg_to_dxf.ps1 + tim_truc_ky_thuat.py: dấu X, ống đứng, khung lỗ mở MEP; loại cabin thang máy) → biên ô đổi toạ độ CAD → model; KHÔNG quét tường / room / ống Revit. Không có CAD link thì như cũ.",
+   "default": false,
+   "kind": "normal"
   }
  ]
 }

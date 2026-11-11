@@ -43,6 +43,11 @@
 #   IN[19] (str)  View template gán cho view (trống = giữ; "<Không dùng view template>" = bỏ template; nút hỏi trong
 #                 hộp thoại, người dùng yêu cầu 2026-11-05)
 #   IN[20] (float) Tỉ lệ view, mẫu số (0 = giữ; template khoá tỉ lệ thì theo template)
+#   IN[21] (bool) Không dùng CAD link (chỉ nhận trục theo Revit). Mặc định tắt = mặt bằng đang mở / view ngăn cháy
+#                 lan có file CAD link thì nhận trục / hộp kỹ thuật theo CAD (người dùng yêu cầu 2026-11-11, model Site
+#                 HQV: "áp dụng tương tự [chống thấm] với ngăn cháy lan"): bộ nhận diện của skill ngan-chay-truc-hkt
+#                 (dwg_to_dxf.ps1 + tim_truc_ky_thuat.py: dấu X, ống đứng, khung lỗ mở MEP; loại cabin thang máy) →
+#                 biên ô đổi toạ độ CAD → model; KHÔNG quét tường / room / ống Revit. Không có CAD link thì như cũ.
 # OUTPUT
 #   OUT (list[str])  Báo cáo
 import math
@@ -109,6 +114,10 @@ MAU_HATCH = (220, 30, 30)
 MAU_VIEN = (255, 0, 255)
 TEN_MAU_LUOI = "AV_Lưới NET 125 xoay 45"
 O_LON_MM = 1400.0         # ô lớn hơn 1400 x 1400 mm: vẫn hatch, liệt kê để xem lại
+# Dải dài hẹp chỉ nhận theo hình học (không tên room, không ống / shaft / dấu X): khe giữa tường kiến trúc và vách lõi,
+# không phải trục (HQV Site 2026-11-11: dải 595 × 4950 dọc lõi thang). Trục / hộp thật dài nhất đo được ~2,6 m.
+KHE_DAI_MM = 3000.0
+KHE_HEP_MM = 600.0
 DT_NHO_NHAT_M2 = 0.01     # ô nhỏ hơn coi là khe giữa 2 lớp tường (0,03 làm sót hộp ống 150 x 150 lõi–lõi: G19_A_L3-32 2026-11-04)
 O_LUOI_MM = 20.0          # cạnh ô lưới quét dấu chân tường
 LOI_MONG_MM = 30.0        # tường có lõi mỏng hơn (gạch ốp, lớp gỗ…) là lớp hoàn thiện → không coi là vách
@@ -650,15 +659,145 @@ def lk_tang(doc, view, bic):
 
 
 def lk_room_tai_diem(doc, view, p):
-    """Room trong link tại điểm p (toạ độ model chính) → LkPT hoặc None."""
+    """Room trong link tại điểm p (toạ độ model chính), CHỈ room thuộc tầng của view → LkPT hoặc None. (Link đặt chồng nhiều
+    bản lệch cao độ: bản khác tầng cũng trả room tại điểm đó → biên phòng sai, đo trên HQV Site 2026-11-11: 3 phòng xiên.)"""
+    lv = view.GenLevel
     for li, ld, tf in lk_cac_link(doc, view):
+        ids = lk_level_khop(ld, tf, lv) if lv is not None else None
+        if ids is not None and not ids:
+            continue
         try:
             r = ld.GetRoomAtPoint(tf.Inverse.OfPoint(p))
+        except Exception:
+            r = None
+        if r is not None and (ids is None or r.LevelId.Value in ids):
+            return LkPT(r, li, tf)
+    return None
+
+
+def lk_room_moi_link(doc, p, lv=None):
+    """Room trong bất kỳ link đã nạp tại điểm p (toạ độ model chính) → LkPT hoặc None (không cần view); có lv thì chỉ room
+    thuộc tầng lv (link đặt chồng nhiều bản lệch cao độ)."""
+    for li in FilteredElementCollector(doc).OfClass(RevitLinkInstance):
+        try:
+            ld = li.GetLinkDocument()
+            if ld is None:
+                continue
+            tf = li.GetTotalTransform()
+            ids = lk_level_khop(ld, tf, lv) if lv is not None else None
+            if ids is not None and not ids:
+                continue
+            r = ld.GetRoomAtPoint(tf.Inverse.OfPoint(p))
+            if r is not None and ids is not None and r.LevelId.Value not in ids:
+                r = None
         except Exception:
             r = None
         if r is not None:
             return LkPT(r, li, tf)
     return None
+
+
+def lk_level_host(doc, e):
+    """Level của model chính cùng cao độ với level của phần tử link e (đã tính Z của instance); không có thì None."""
+    try:
+        z = e.Document.GetElement(e.LevelId).Elevation + e._tf.Origin.Z
+    except Exception:
+        return None
+    ds = [l for l in FilteredElementCollector(doc).OfClass(Level) if abs(l.Elevation - z) < _lk_mm(5)]
+    return ds[0] if ds else None
+
+
+def lk_tu_id(doc, v):
+    """Id giả (id link instance × hệ số + id phần tử) → LkPT; id thường → phần tử model chính."""
+    v = int(v)
+    if v < LK_HE_SO_ID:
+        return doc.GetElement(ElementId(v))
+    li = doc.GetElement(ElementId(v // LK_HE_SO_ID))
+    ld = li.GetLinkDocument() if li is not None else None
+    e = ld.GetElement(ElementId(v % LK_HE_SO_ID)) if ld is not None else None
+    return LkPT(e, li) if e is not None else None
+
+
+class LkMat(object):
+    """PlanarFace của phần tử link: pháp tuyến / điểm đã đổi toạ độ, Reference là link reference (dùng để dim)."""
+    def __init__(self, f, tf, li, ref=None):
+        self._f, self._tf = f, tf
+        self.Reference = ref if ref is not None else f.Reference.CreateLinkReference(li)
+        self.FaceNormal = tf.OfVector(f.FaceNormal)
+        self.Origin = tf.OfPoint(f.Origin)
+
+    def GetBoundingBox(self):
+        return self._f.GetBoundingBox()
+
+    def Evaluate(self, uv):
+        return self._tf.OfPoint(self._f.Evaluate(uv))
+
+    def Project(self, p):
+        return self._f.Project(self._tf.Inverse.OfPoint(p))
+
+    def GetType(self):
+        return self._f.GetType()
+
+
+def lk_mat_phang(e, opt):
+    """Các PlanarFace (có reference) của phần tử link e dạng LkMat; hình học lấy trong file link rồi đổi toạ độ."""
+    kq = []
+
+    def duyet(geo, tf):
+        for g in geo:
+            tn = g.GetType().Name
+            if tn == "GeometryInstance":
+                duyet(g.GetInstanceGeometry(), tf)
+            elif tn == "Solid" and g.Volume > 0:
+                for f in g.Faces:
+                    if f.GetType().Name == "PlanarFace" and f.Reference is not None:
+                        try:
+                            kq.append(LkMat(f, tf, e._li))
+                        except Exception:
+                            pass
+    geo = e._e.get_Geometry(opt)
+    if geo is not None:
+        duyet(geo, e._tf)
+    return kq
+
+
+def lk_an_bang_filter(doc, view, ten_f, bics, giu_tu=()):
+    """Ẩn đối tượng trong link theo hạng mục bằng view filter (Revit không Hide in View từng phần tử link): filter tên ten_f,
+    hạng mục bics, giữ lại đối tượng có Family Name chứa một chữ trong giu_tu. Filter cũng áp cho đối tượng model chính.
+    View có template điều khiển filter thì KHÔNG sửa template, chỉ báo. Gọi TRONG transaction. Trả về câu báo cáo."""
+    from System.Collections.Generic import List as _List
+    f = None
+    for x in FilteredElementCollector(doc).OfClass(ParameterFilterElement):
+        if x.Name == ten_f:
+            f = x
+            break
+    if f is None:
+        cats = _List[ElementId]()
+        for b in bics:
+            cats.Add(ElementId(b))
+        pid = ElementId(BuiltInParameter.ALL_MODEL_FAMILY_NAME)
+        loc_duoc = any(i.Value == pid.Value for i in ParameterFilterUtilities.GetFilterableParametersInCommon(doc, cats))
+        luat = _List[FilterRule]()
+        if loc_duoc:
+            for k in giu_tu:
+                luat.Add(ParameterFilterRuleFactory.CreateNotContainsRule(pid, k))
+        if luat.Count:
+            f = ParameterFilterElement.Create(doc, ten_f, cats, ElementParameterFilter(luat))
+        else:
+            f = ParameterFilterElement.Create(doc, ten_f, cats)
+    tpl = doc.GetElement(view.ViewTemplateId) if view.ViewTemplateId != ElementId.InvalidElementId else None
+    if tpl is not None:
+        vg = BuiltInParameter.VIS_GRAPHICS_FILTERS
+        if not any(i.Value == int(vg) for i in tpl.GetNonControlledTemplateParameterIds()):
+            return (u"CẦN XEM LẠI: đối tượng trong link chưa ẩn – template '%s' điều khiển filter (công cụ không sửa template): "
+                    u"thêm filter '%s' vào template và tắt hiển thị." % (tpl.Name, ten_f))
+    try:
+        if not view.IsFilterApplied(f.Id):
+            view.AddFilter(f.Id)
+        view.SetFilterVisibility(f.Id, False)
+        return u"Ẩn đối tượng trong link bằng filter '%s' trong view." % ten_f
+    except Exception as ex:
+        return u"CẦN XEM LẠI: không gắn được filter '%s' vào view (%s)." % (ten_f, (u"%s" % ex).splitlines()[0][:120])
 
 
 def lk_khoa_tag(tg):
@@ -1331,7 +1470,7 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
     x_dung = set()            # chỉ số dấu X đã nằm trong ô được nhận
 
     # ---- phân loại ----
-    se_ve, da_co, bi_loai, xem_lai, khong_x = [], 0, [], [], []
+    se_ve, da_co, bi_loai, xem_lai, khong_x, khe_dai = [], 0, [], [], [], []
     for v in room_hkt + khe:
         pts = v["pts"]
         x, y = v["diem"]
@@ -1363,6 +1502,9 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
             nguon = "ống đứng"
         elif (not trong(cua_so) and not any(trong_vung(x, y, s_) for s_ in san)
               and v["m2"] <= DT_MAX_M2 and v["kt"][0] >= RONG_MIN_MM):
+            if v["kt"][1] >= KHE_DAI_MM and v["kt"][0] <= KHE_HEP_MM:
+                khe_dai.append(v)       # dải dài hẹp (khe giữa tường kiến trúc và vách / lõi) – không phải trục, liệt kê
+                continue
             if co_cad:
                 khong_x.append(v)       # CAD đã đánh dấu đủ trục mà ô này không có dấu X → không vẽ, liệt kê
                 continue
@@ -1398,6 +1540,10 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         se_ve.append(v)
         if v["kt"][0] > O_LON_MM:
             xem_lai.append(v)
+    if khe_dai:
+        bao_cao.append("KHÔNG VẼ %d dải dài hẹp (dài ≥ %d, rộng ≤ %d mm: khe giữa tường và vách / lõi, Cần xác nhận lại): %s" % (
+            len(khe_dai), KHE_DAI_MM, KHE_HEP_MM, "; ".join("%.2f m2 %dx%d tại %s" % (
+                v["m2"], round(v["kt"][0]), round(v["kt"][1]), toa_do(v["diem"])) for v in khe_dai)))
     if khong_x:
         bao_cao.append("KHÔNG VẼ %d ô kín nhỏ không có dấu X trong CAD (khe tường, hốc – Cần xác nhận lại): %s" % (
             len(khong_x), "; ".join("%.2f m2 %dx%d tại %s" % (v["m2"], round(v["kt"][0]), round(v["kt"][1]),
@@ -1440,14 +1586,32 @@ def chon_hoac_tao_view():
     """IN[0] có tên → view đó. Không thì: view đang mở là view ngăn cháy lan → dùng; view đang mở là mặt bằng tầng → view
     ngăn cháy lan CÙNG TẦNG (tên view / template có chữ "ngăn cháy lan"), chưa có thì tạo (IN[18], sh_tao_view); còn lại như cũ."""
     v = chon_view_tang()
-    if v is None or (v.Id.Value in VUA_TAO) or not (TPL_CHON or TI_LE):
+    if v is None or (v.Id.Value in VUA_TAO):
         return v
+    # View có sẵn đang TẮT crop → bật crop = khung bao tường (như view công cụ tạo). Site HQV 2026-11-11: view
+    # "MẶT BẰNG CHONG CHAY LAN" có sẵn thấy cả CAD hầm → khung mặt bằng 12409 x 4555 mm giấy, sheet trống. View đã
+    # có crop (người dùng chỉnh) thì giữ nguyên.
+    try:
+        crop_tat = v.ViewType == ViewType.FloorPlan and not v.CropBoxActive
+    except Exception:
+        crop_tat = False
     if DRY_RUN:
-        bao_cao.append(u"Sẽ gán view template '%s', tỉ lệ %s cho '%s'." % (TPL_CHON or u"(giữ)",
-                                                                       u"1:%d" % TI_LE if TI_LE else u"(giữ)", v.Name))
+        if TPL_CHON or TI_LE:
+            bao_cao.append(u"Sẽ gán view template '%s', tỉ lệ %s cho '%s'." % (TPL_CHON or u"(giữ)",
+                                                                           u"1:%d" % TI_LE if TI_LE else u"(giữ)", v.Name))
+        if crop_tat:
+            bao_cao.append(u"View '%s' đang tắt crop – sẽ bật crop theo khung tường." % v.Name)
+        return v
+    if not (TPL_CHON or TI_LE or crop_tat):
         return v
     TransactionManager.Instance.EnsureInTransaction(doc)
-    bao_cao.extend(sh_ap_tpl_tl(doc, v, TPL_CHON, TI_LE))
+    if TPL_CHON or TI_LE:
+        bao_cao.extend(sh_ap_tpl_tl(doc, v, TPL_CHON, TI_LE))
+    if crop_tat:
+        try:
+            bao_cao.append(u"View có sẵn '%s' đang tắt crop → bật crop. %s" % (v.Name, sh_crop_theo_tuong(doc, v)))
+        except Exception as ex:
+            bao_cao.append(u"View '%s' đang tắt crop, không bật được crop: %s" % (v.Name, (u"%s" % ex).splitlines()[0][:150]))
     TransactionManager.Instance.TransactionTaskDone()
     return v
 
@@ -1470,6 +1634,185 @@ def chon_view_tang():
     return v
 
 
+# ---------- nguồn CAD link (người dùng yêu cầu 2026-11-11, như nút Chống thấm) ----------
+# Mặt bằng có file CAD link (ImportInstance IsLinked) → nhận trục / hộp kỹ thuật bằng bộ nhận diện của skill CAD
+# ngan-chay-truc-hkt (đã kiểm chứng HQV tháp B tầng 4: 116 ô): chay_cho_revit.ps1 chép bản sao DWG → DXF (Core Console)
+# → tim_truc_ky_thuat.py → <tên>_vung.json (ô: dinh = 4+ đỉnh, toạ độ DWG mm; trang_thai se_hatch / loai / da_co).
+# Chỉ vẽ ô "se_hatch"; ô "loai" (trùng cabin thang máy, lỗ mở không ống) chỉ báo. Kết quả lưu theo (đường dẫn, cỡ, giờ
+# sửa) DWG ở <THU_MUC>\cad\ → bấm lại không chạy lại AutoCAD. Xref chưa bind trong DWG: DXFOUT không có nội dung xref
+# (giới hạn của skill CAD) → trục trong xref không thấy.
+CAD_NGUON = not bool(gia_tri(21, False))
+CAD_CHO_TOI_DA_S = 2400
+
+
+def cad_tim(views, lv=None):
+    """[(view, ImportInstance, đường dẫn DWG)] của CAD link trong view đầu tiên có CAD link (CAD "Current view only" ưu
+    tiên). Không view nào có: CAD đặt riêng cho mặt bằng khác CÙNG TẦNG lv; ≥ 2 file khác nhau thì dừng, báo."""
+    def cua(ii):
+        if not ii.IsLinked:
+            return None
+        try:
+            t = doc.GetElement(ii.GetTypeId())
+            p = ModelPathUtils.ConvertModelPathToUserVisiblePath(t.GetExternalFileReference().GetAbsolutePath())
+        except Exception:
+            return None
+        return p if p and p.lower().endswith(".dwg") else None
+    for v in views:
+        if v is None:
+            continue
+        ds = [(v, ii, cua(ii)) for ii in FilteredElementCollector(doc, v.Id).OfClass(ImportInstance) if cua(ii)]
+        rieng = [x for x in ds if x[1].ViewSpecific and x[1].OwnerViewId.Value == v.Id.Value]
+        if rieng or ds:
+            return rieng or ds
+    if lv is not None:
+        ds = []
+        for ii in FilteredElementCollector(doc).OfClass(ImportInstance):
+            if not ii.ViewSpecific or not cua(ii):
+                continue
+            ov = doc.GetElement(ii.OwnerViewId)
+            if (ov is not None and getattr(ov, "GenLevel", None) is not None and not ov.IsTemplate
+                    and ov.ViewType == ViewType.FloorPlan and ov.GenLevel.Id.Value == lv.Id.Value):
+                if not any(x[2].lower() == cua(ii).lower() for x in ds):
+                    ds.append((ov, ii, cua(ii)))
+        if len(ds) > 1:
+            raise Exception(u"Tầng %s có %d file CAD link đặt ở các mặt bằng khác nhau (%s) – không biết dựa theo bản nào. "
+                            u"Mở mặt bằng có đúng file CAD cần dùng rồi bấm lại (hoặc bật IN[21] Không dùng CAD link)." % (
+                                lv.Name, len(ds), u"; ".join(u"'%s' trong view '%s'" % (os.path.basename(x[2]), x[0].Name)
+                                                            for x in ds)))
+        return ds
+    return []
+
+
+def cad_script():
+    """chay_cho_revit.ps1 của skill ngan-chay-truc-hkt (không gắn cứng ổ / thư mục)."""
+    goc = []
+    if os.environ.get("ARCHIVINA_AI"):
+        goc.append(os.environ["ARCHIVINA_AI"])
+    goc.append(os.path.expanduser("~"))
+    for o in "CDEFGHIJKLMNOPQRSTUVWXYZ":
+        if os.path.isdir(o + ":\\AI"):
+            goc.append(o + ":\\AI")
+    for g in goc:
+        p = os.path.join(g, ".claude", "skills", "ngan-chay-truc-hkt", "scripts", "chay_cho_revit.ps1")
+        if os.path.isfile(p):
+            return p
+    return None
+
+
+def io_doc(p):
+    import io
+    with io.open(p, encoding="utf-8", errors="replace") as f_:
+        return f_.read()
+
+
+def cad_nhan_dien(duong):
+    """Chạy (hoặc lấy kết quả đã có) bộ nhận diện cho 1 DWG → (dict json, thư mục, đã có sẵn?)."""
+    import glob
+    import hashlib
+    import json
+    import subprocess
+    st = os.stat(duong)
+    khoa = hashlib.md5((u"%s|%d|%d" % (duong.lower(), st.st_size, int(st.st_mtime))).encode("utf-8")).hexdigest()[:10]
+    ten_f = "".join(c if (c.isalnum() and ord(c) < 128) or c in "-_" else "_" for c in os.path.splitext(os.path.basename(duong))[0])
+    od = os.path.join(THU_MUC, "cad", "%s_%s" % (ten_f[:40], khoa))
+    xong = os.path.join(od, "xong.txt")
+    js = glob.glob(os.path.join(od, "*_vung.json"))
+    if js and os.path.isfile(xong) and io_doc(xong).strip().startswith("OK"):
+        return json.loads(io_doc(js[0])), od, True
+    ps1 = cad_script()
+    if ps1 is None:
+        raise Exception(u"Không tìm thấy bộ nhận diện ngăn cháy CAD (chay_cho_revit.ps1 của skill ngan-chay-truc-hkt trong "
+                        u"<ổ>:\\AI\\.claude\\skills). Chép thư mục skill của máy chính sang, hoặc bật IN[21] Không dùng CAD link.")
+    os.makedirs(od, exist_ok=True)
+    if os.path.isfile(xong):
+        os.rename(xong, xong + ".%s" % datetime.now().strftime("%H%M%S"))     # lần trước lỗi: giữ lại, không xoá
+    cmd = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", ps1, "-Dwg", duong, "-OutDir", od]
+    try:
+        subprocess.run(cmd, timeout=CAD_CHO_TOI_DA_S, creationflags=0x08000000,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+    except subprocess.TimeoutExpired:
+        raise Exception(u"Nhận diện CAD quá %d phút: %s (nhật ký %s)" % (CAD_CHO_TOI_DA_S // 60, duong, os.path.join(od, "nhat_ky.txt")))
+    kq = io_doc(xong).strip() if os.path.isfile(xong) else u"không có xong.txt"
+    js = glob.glob(os.path.join(od, "*_vung.json"))
+    if not kq.startswith("OK") or not js:
+        raise Exception(u"Nhận diện CAD lỗi (%s) – xem %s" % (kq[:200], os.path.join(od, "nhat_ky.txt")))
+    return json.loads(io_doc(js[0])), od, False
+
+
+def cad_truc(view, lv, da_lam):
+    """Trục / hộp kỹ thuật theo CAD link → (se_ve, da_co, bi_loai, xem_lai) như tim_truc; None = không có CAD link."""
+    ds = cad_tim([doc.ActiveView, view], lv)
+    if not ds:
+        return None
+    z = lv.Elevation
+    del VIEW_LINK[:]
+    VIEW_LINK.append(view)
+    se_ve, da_co, bi_loai, xem_lai = [], 0, [], []
+
+    def diem(tf, q):
+        p = tf.OfPoint(XYZ(mm(q[0]), mm(q[1]), 0))
+        return XYZ(p.X, p.Y, z)
+    for v_, ii, duong in ds:
+        bao_cao.append(u"NGUỒN CAD: '%s' (view '%s') – nhận trục / hộp theo CAD, không quét tường / room / ống Revit." % (
+            duong, v_.Name))
+        if not os.path.isfile(duong):
+            raise Exception(u"Không thấy file CAD link: %s (Reload CAD trong Manage Links, hoặc bật IN[21] Không dùng CAD link)" % duong)
+        js, od, san = cad_nhan_dien(duong)
+        bao_cao.append(u"   Kết quả nhận diện %s: %s" % (u"đã có (DWG không đổi)" if san else u"mới chạy", od))
+        tf = ii.GetTotalTransform()
+        dem = {}
+        for o in js.get("vung", []):
+            tt = o.get("trang_thai")
+            ps = [diem(tf, q) for q in o.get("dinh", [])]
+            if len(ps) > 2 and ps[0].DistanceTo(ps[-1]) < mm(1):
+                ps = ps[:-1]
+            if len(ps) < 3:
+                continue
+            pts = [(p.X, p.Y) for p in ps]
+            cx, cy = sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)
+            v = {"pts": [pts], "m2": float(o.get("dien_tich_m2") or 0), "diem": (cx, cy), "ten": "",
+                 "kt": tuple(sorted((float(o.get("rong") or 0), float(o.get("dai") or 0)))),
+                 "nguon": u"CAD: %s" % (o.get("kieu") or u"")}
+            if tt == "loai":
+                bi_loai.append((v, u"CAD: %s" % (o.get("ghi_chu") or o.get("kieu") or u"loại")))
+                continue
+            if tt == "da_co":
+                da_co += 1
+                continue
+            if tt != "se_hatch":
+                continue
+            try:
+                v["loops"] = [[Line.CreateBound(ps[k], ps[(k + 1) % len(ps)]) for k in range(len(ps))
+                               if ps[k].DistanceTo(ps[(k + 1) % len(ps)]) >= mm(1)]]
+            except Exception as ex:
+                bao_cao.append(u"   Ô CAD %s: không dựng được biên (%s)" % (o.get("id"), ex))
+                continue
+            if da_lam(v):
+                da_co += 1
+                continue
+            se_ve.append(v)
+            dem[o.get("kieu") or u"?"] = dem.get(o.get("kieu") or u"?", 0) + 1
+            if v["kt"][0] > O_LON_MM:
+                xem_lai.append(v)
+        bao_cao.append(u"   Ô sẽ hatch: %d (%s)" % (sum(dem.values()), u"; ".join(u"%s %d" % kv for kv in sorted(dem.items())) or u"-"))
+        if js.get("ong_chua_bo"):
+            bao_cao.append(u"   CẦN XEM LẠI: %d ống đứng trong CAD chưa có khung / dấu X (không vẽ)" % len(js["ong_chua_bo"]))
+    bao_cao.append(u"Trục / hộp kỹ thuật cần hatch (theo CAD): %d; đã có hatch: %d; loại: %d" % (len(se_ve), da_co, len(bi_loai)))
+    for v in sorted(se_ve, key=lambda v: -v["m2"]):
+        bao_cao.append(u"   %5.2f m2  %4d x %4d mm  %-30s tại %s" % (v["m2"], round(v["kt"][0]), round(v["kt"][1]), v["nguon"],
+                                                                   toa_do(v["diem"])))
+    if xem_lai:
+        bao_cao.append(u"CẦN XEM LẠI (ô lớn hơn %d x %d mm, vẫn nhận): %s" % (
+            O_LON_MM, O_LON_MM, u"; ".join(u"%.2f m2 tại %s" % (v["m2"], toa_do(v["diem"])) for v in xem_lai)))
+    dem_l = {}
+    for _, ly in bi_loai:
+        dem_l[ly] = dem_l.get(ly, 0) + 1
+    if dem_l:
+        bao_cao.append(u"Loại: %s" % u"; ".join(u"%s %d" % kv for kv in sorted(dem_l.items())))
+    TransactionManager.Instance.EnsureInTransaction(doc)     # như tim_truc: transaction mở tới cuối chinh()
+    return se_ve, da_co, bi_loai, xem_lai
+
+
 # ---------- chạy ----------
 def chinh():
     view = chon_hoac_tao_view()
@@ -1486,9 +1829,14 @@ def chinh():
                 da_hatch.append([diem_loop(list(cl)) for cl in r.GetBoundaries()])
             except Exception:
                 pass
-    se_ve, da_co, bi_loai, xem_lai = tim_truc(
-        view, lv, lambda v: any(trong_vung(v["diem"][0], v["diem"][1], h) for h in da_hatch), "hatch",
-        "hatch ngăn cháy đã có trong view: %d" % len(da_hatch))
+    da_lam = lambda v: any(trong_vung(v["diem"][0], v["diem"][1], h) for h in da_hatch)
+    cad = cad_truc(view, lv, da_lam) if CAD_NGUON else None
+    if cad is not None:
+        se_ve, da_co, bi_loai, xem_lai = cad
+        bao_cao.append("hatch ngăn cháy đã có trong view: %d" % len(da_hatch))
+    else:
+        se_ve, da_co, bi_loai, xem_lai = tim_truc(
+            view, lv, da_lam, "hatch", "hatch ngăn cháy đã có trong view: %d" % len(da_hatch))
     an = []
     if AN_THIET_BI:
         for cat in CAT_AN:
@@ -1538,6 +1886,11 @@ def chinh():
             bao_cao.append("ĐÃ ẨN %d thiết bị vệ sinh / nội thất trong view" % len(an))
         except Exception as ex:
             bao_cao.append("Không ẩn được thiết bị: %s" % ex)
+    if AN_THIET_BI and any(lk_thay(doc, view, c_, True) for c_ in CAT_AN):
+        try:
+            bao_cao.append(lk_an_bang_filter(doc, view, u"ARV_Ẩn thiết bị vệ sinh, nội thất (link)", list(CAT_AN)))
+        except Exception as ex:
+            bao_cao.append("Không ẩn được thiết bị trong link: %s" % ex)
     TransactionManager.Instance.TransactionTaskDone()
     bao_cao.append("ĐÃ VẼ %d hatch ngăn cháy lan (Filled Region)%s" % (
         len(moi), (" – group '%s'" % nhom) if nhom else ""))

@@ -484,20 +484,27 @@ def hoi_chi_tiet_cua(doc, view, uidoc=None):
                 n_cua += 1
             else:
                 n_khac += 1
+        try:          # cửa / vách kính trong file link đang chọn (Tab chọn trong link)
+            for rf in uidoc.Selection.GetReferences():
+                if rf.LinkedElementId == DB.ElementId.InvalidElementId:
+                    continue
+                li = doc.GetElement(rf.ElementId)
+                e = li.GetLinkDocument().GetElement(rf.LinkedElementId) if li is not None else None
+                c = e.Category.Id.Value if e is not None and e.Category is not None else None
+                if la_vach(e):
+                    vach.add((li.Id.Value, e.Id.Value))
+                elif c in loai_cua:
+                    n_cua += 1
+                else:
+                    n_khac += 1
+        except Exception:
+            pass
     if n_cua or vach:
         ds = ([u"%d cửa đi / cửa sổ" % n_cua] if n_cua else []) + ([u"%d vách kính" % len(vach)] if vach else [])
         dong_dau = u"Đã chọn %s%s. Mỗi type / vách làm 1 lần, 6 chi tiết / bản vẽ." % (
             u" + ".join(ds), u" (bỏ qua %d đối tượng khác)" % n_khac if n_khac else u"")
     else:
-        dong_dau = u"Chưa chọn cửa / vách kính: bấm Chạy rồi chọn trên màn hình, bấm Finish để xong."
-        try:          # cửa nằm trong file link: nút này chưa làm được (không ẩn được đối tượng khác trong link để vẽ mặt đứng chỉ có cửa)
-            import arv_lk
-            n_lk = len(arv_lk.doi_tuong_link(doc, view, DB.BuiltInCategory.OST_Doors)) + \
-                len(arv_lk.doi_tuong_link(doc, view, DB.BuiltInCategory.OST_Windows))
-            if n_lk:
-                dong_dau += u" Mặt bằng này có %d cửa trong file link: nút chỉ làm được cửa của model chính, cửa trong link phải mở file link để làm." % n_lk
-        except Exception:
-            pass
+        dong_dau = u"Chưa chọn cửa / vách kính: bấm Chạy rồi chọn trên màn hình (mặt bằng chỉ có link thì chọn trong link), bấm Finish để xong."
     pid_gd, pid_hm = _gd_hm(doc)
     cua_cong_cu = []
     for s in DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet):
