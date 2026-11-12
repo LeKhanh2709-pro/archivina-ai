@@ -733,12 +733,32 @@ def khu_wc_chung(diem, chains, ents, dong=()):
         ln = [l for l in ln + phu if l.intersects(P)]        # chi net tuong that, khong dung doan dong / noi dai
         than = []
         for m in polygonize(unary_union(ln)):
-            if m.area < 0.01e6 or not than_tuong(m) or m.intersection(P).area < 0.5 * m.area:
+            # than tuong: moi cho rong <= 420 mm (ca chu L / T khi tuong duoi dinh chan tuong giua), bo dai trat 15 mm
+            if m.area < 0.01e6 or m.intersection(P).area < 0.02e6:
                 continue
-            r = m.minimum_rotated_rectangle
-            if min(math.dist(r.exterior.coords[k], r.exterior.coords[k + 1]) for k in range(2)) < 50:
-                continue                                 # dai lop trat 15 mm
+            if not m.buffer(-210, join_style="mitre").is_empty or m.buffer(-25, join_style="mitre").is_empty:
+                continue
             than.append(m.intersection(P))
+        # dai hep (<= 320 mm) giua net tuong va bien khu, cham bien >= 1 m = than tuong bao / lop trat bi gop vao do khung
+        # thiet bi cat qua mat ngoai tuong (Site tang 3 tuong duoi): khoet khoi bo -> bo sat mat trong tuong
+        for _ in range(4):                               # lop trat, than tuong, lop trat ... (moi vong 1 dai)
+            cat_ = [l.intersection(P) for l in ln]
+            cat_ = [g for g in cat_ if not g.is_empty and g.length > 0]
+            doc_bien = [m for m in polygonize(unary_union([P.exterior] + cat_))
+                        if m.buffer(-160, join_style="mitre").is_empty and
+                        P.exterior.intersection(m.buffer(1)).length >= 1000]
+            if os.environ.get("ARV_DBG_WC"):
+                print("DBG than", len(than), "doc_bien", [[round(v) for v in b.bounds] for b in doc_bien])
+            if not doc_bien:
+                break
+            P2 = P.difference(unary_union(doc_bien))
+            P2 = max(P2.geoms, key=lambda g: g.area) if P2.geom_type == "MultiPolygon" else P2
+            if P2.geom_type == "Polygon" and P2.area >= 0.8 * P.area and all(
+                    P2.buffer(1).contains(Point(p)) for p in diem):
+                P = Polygon(P2.exterior.coords)
+                than = [b.intersection(P) for b in than if b.intersection(P).area >= 0.01e6]
+            else:
+                break
         TUONG_KHU_WC[id(P)] = than
         return [P]
     return out
@@ -1419,6 +1439,19 @@ def main():
             if Polygon(bo.exterior).buffer(300).intersects(LineString(pts) if len(pts) > 1 else Point(pts[0])):
                 d = dai_cat_cua(bo, c)
                 if d is not None:
+                    # canh phong trung mat tuong that (net tuong de len canh >= 300 mm) khong cat: cua nam ben kia tuong
+                    # (Site tang 3: cua mat dung 7,3 m sau tuong duoi khu WC cong cong lam mat ca vén chan tuong duoi)
+                    vien = bo.exterior.buffer(20)
+                    de = [net[int(k)].intersection(vien) for k in cay_net.query(d)]
+                    de = [t for t in de if not t.is_empty and t.length >= 300]
+                    if de:
+                        d = d.difference(unary_union([t.buffer(300, cap_style="flat") for t in de]))
+                        if d.is_empty or d.area < 300 * 100:
+                            d = None
+                if os.environ.get("CT_DEBUG") and d is not None:
+                    print("  [debug] cua", [r1(v) for v in LineString(pts).bounds] if len(pts) > 1 else pts,
+                          "mo", c.get("mo"), "cat", [r1(v) for v in d.bounds])
+                if d is not None:
                     cut.append(d)
                     n_cua += 1
         # cua thang may (o tuong khong hatch canh thang may co text tai trong) sat bien phong
@@ -1457,6 +1490,9 @@ def main():
                 tuong = [net[int(k)] for k in cay_net.query(br.buffer(20))]
                 tuong = [t for t in tuong if t.intersection(br.buffer(20)).length >= 300]
                 con = br.difference(unary_union([t.buffer(21, cap_style="flat") for t in tuong])) if tuong else br
+                if os.environ.get("CT_DEBUG"):
+                    print("  [debug] dong", [r1(v) for v in br.bounds], "de tuong", len(tuong),
+                          [[r1(v) for v in net[int(k)].bounds] for k in cay_net.query(br.buffer(40))][:12])
                 for p_ in (list(con.geoms) if hasattr(con, "geoms") else [con]):
                     if p_.is_empty or p_.length < 300:
                         continue
