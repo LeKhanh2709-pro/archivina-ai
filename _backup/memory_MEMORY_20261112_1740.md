@@ -1,0 +1,3 @@
+- [cad-layer-clean skill](cad-layer-clean-skill.md) — vị trí skill làm sạch DWG, LISPSYS, map CAD STANDARD đã khởi tạo
+- [Chỉ làm 1 bản vẽ](chi-lam-1-ban-ve.md) — sửa quy tắc thì chỉ vẽ lại bản đang bàn, không tự chạy lại bản vẽ khác
+- [Không bind, chỉ đổi màu layer](khong-bind-chi-doi-mau-layer.md) — làm mờ bản vẽ chỉ qua bảng layer; không bind xref/block/link, không sửa màu từng đối tượng

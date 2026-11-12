@@ -52,6 +52,12 @@ Quy tắc nhận diện, thông số hatch, cách phân biệt thang máy: đọ
 - Không ghi trị số giới hạn chịu lửa (EI…) hay điều khoản QCVN nếu người dùng chưa cung cấp (`[Chờ bổ sung]`).
 
 - **Nút Revit Ngăn cháy lan dùng skill này** (2026-11-11): mặt bằng Revit có CAD link → nút gọi `scripts\chay_cho_revit.ps1 -Dwg <dwg> -OutDir <thư mục>` (bước 1 + 2, `--khong-excel`, ghi `xong.txt` OK / LOI) rồi đọc `<tên>_vung.json`. Sửa quy tắc nhận diện ở đây thì nút Revit tự dùng bản mới (kết quả cũ lưu theo DWG: DWG không đổi thì nút không chạy lại). Cờ `--khong-excel`: không ghi `.xlsx`.
+- **Sửa 2026-11-12** theo góp ý người dùng trên Site HQV (nút Revit; bản trước
+  `_backup\tim_truc_ky_thuat_20261112_1118_truoc_lo_mo.py`): dấu X trên layer `A-Lo mo` cũng là trục (trục TA / BK / HKT lõi
+  thang vẽ X trên layer này → trước sót nhiều trục); ô có chữ tải trọng `…KG` hoặc ô X ≥ 3 m², cạnh ngắn ≥ 1500, không ống
+  = giếng thang máy → loại (người dùng: không hatch thang máy); vùng trục chạm nhau ≤ 30 mm gộp 1 (người dùng: "chỗ đó chỉ
+  có 1 trục"). Đối chiếu chữ diện tích trục (`0.35`…) trên CAD: T2 thiếu 14 → 0 (trong mặt bằng), T1 / T3 0. Kết quả
+  `_tmp\ct_cad\nc_v2\`. Nút Revit: khoá đệm kết quả nay gồm nội dung script nhận diện → sửa skill là bấm lại tự chạy lại.
 
 ## Báo cáo cho người dùng
 - Số vùng: sẽ hatch / đã có / loại; số hatch đã tạo; đường dẫn bản sao DWG + Excel + PNG.

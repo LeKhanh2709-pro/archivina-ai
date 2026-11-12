@@ -1,3 +1,32 @@
 - [cad-layer-clean skill](cad-layer-clean-skill.md) — vị trí skill làm sạch DWG, LISPSYS, map CAD STANDARD đã khởi tạo
 - [Chỉ làm 1 bản vẽ](chi-lam-1-ban-ve.md) — sửa quy tắc thì chỉ vẽ lại bản đang bàn, không tự chạy lại bản vẽ khác
+- [Layer lỗ mở luôn A-MEP](layer-lo-mo-a-mep.md) — block A-MEP + LO MO MEP luôn trên layer "A-MEP" (gạch ngang), tuyệt đối; lệnh LOMO, file Lomo.lsp
 - [Không bind, chỉ đổi màu layer](khong-bind-chi-doi-mau-layer.md) — làm mờ bản vẽ chỉ qua bảng layer; không bind xref/block/link, không sửa màu từng đối tượng
+- [Skill / LISP dùng nhiều máy](skill-lisp-dung-nhieu-may.md) — không gắn cứng đường dẫn; moi_truong.ps1, LISP tự tìm file, UCS World, lưới NET đo thực
+- [Không tạo Excel](khong-tao-excel.md) — kết quả chỉ DWG + PNG; Excel chỉ khi người dùng yêu cầu (chống thấm: cờ --excel)
+- [Revit 2027 chạy Dynamo tự động](revit-2027-dynamo-tu-dong.md) — journal + bấm Run bằng UI Automation; PythonNet3, không isinstance
+- [Bộ Dynamo ARV_* file mẫu](bo-dynamo-arv-file-mau.md) — 20 tool dựng Revit từ DWG ở file mau revit\dynamo; dùng lại trước khi viết mới, chưa duyệt, viết cho Revit 2026
+- [pyRevit ARVTools trên Revit 2027](pyrevit-arvtools-revit2027.md) — pyRevit 6.5.5 (6.4 lỗi CPython), tab Archivina (đổi tên + bỏ MEP 2026-11-04, 40 nút), thử bằng journal + nút ARVTest
+- [Ngăn cháy lan Revit](ngan-chay-lan-revit-dang-do.md) — nút một chạm; bản v4 bo lõi tường (38 ô G19) người dùng đã duyệt 2026-10-28, chưa áp G19 thật
+- [Bo sát tường thô](bo-sat-tuong-tho.md) — hatch / nét chống thấm + ngăn cháy lan bo mặt lõi tường, không bo lớp trát / hoàn thiện
+- [Gửi link bản vẽ sau test](gui-link-ban-ve-sau-test.md) — test xong luôn gửi link bấm được tới DWG / DXF / PNG kết quả
+- [Mặt đứng vách kính MDVK](vk-mat-dung-dang-do.md) — MDVK duyệt OK; VK có pick 2 điểm + block động CHỈ kéo điểm cuối (người dùng chốt 2026-10-29, sau khi thử bản kéo 2 đầu); sửa LISP phải build lại K-TOOL.dll; vách nhiều tầng để sau
+- [Thử LISP nạp như APPLOAD](thu-lisp-nap-nhu-appload.md) — bọc file trong (progn) khi thử bằng .scr; lỗi nạp dữ liệu VKMD 2026-10-29 đã lọt qua
+- [K-TOOL tab ribbon](k-tool-thanh-cong-cu.md) — K-TOOL.dll (.NET 10, LISP nhúng) + K-TOOL.lsp, build.ps1; Claude tự thử 6 nút OK bằng UIA 2026-10-29
+- [Reactor LISP an toàn](lisp-reactor-an-toan.md) — không sửa CSDL trong commandEnded (SendCommand), không entget trong objectModified; block động bằng -BEDIT/BPARAMETER/BACTION
+- [Hộp thoại WPF VK / MDVK](hop-thoai-wpf-vk-mdvk.md) — WPF trong K-TOOL.dll, sáng / tối, DCL dự phòng; bố cục đã chốt; sửa quy tắc chia phải sửa cả C#
+- [Không làm phiền máy người dùng](khong-lam-phien-may-nguoi-dung.md) — Claude chạy phần mềm ở chế độ nền (quy tắc 9), không mở cửa sổ chiếm bàn phím, không chụp toàn màn hình
+- [Vách kính Revit](vach-kinh-revit.md) — nút pyRevit Vách kính (VK/MDVK trên curtain wall, góc vuông, updater) làm 2026-11-01, chưa được người dùng bấm thử
+- [Cửa kính bản lề sàn](cua-kinh-ban-le-san.md) — chỉ cần bản vẽ CAD (không LISP); file mau\06_CuaKinh, script ezdxf trong _tmp\cua_kinh
+- [Tag cửa Revit](tag-cua-revit.md) — nút Định vị + tag cửa (gộp, đã build 2026-11-03); tag 2 ô mã / rộngXcao mm đã duyệt; + đặt lên sheet + bảng thống kê (đã build); gửi ảnh duyệt trước khi build
+- [Chi tiết cửa Revit](chi-tiet-cua-revit.md) — nút Chi tiết cửa: chọn cửa → MB/MĐ/MC 1/25 vào sheet 6 ô, thông tin người dùng tự điền; chưa bấm thử
+- [Bộ AI REVIT đồng nghiệp](ai-revit-dong-nghiep.md) — đã áp dụng 2026-11-03: MCP revit-archivina, skill bim-qaqc / dung-ket-cau-revit, +17 Dynamo, chuẩn ISO 19650
+- [Trình bày bản vẽ chống thấm / cháy lan](trinh-bay-ban-ve-chong-tham-chay-lan.md) — 2 nút tự tạo view + template theo tầng, tự đặt lên sheet; 2026-11-04 chưa duyệt
+- [Tường xây Revit](tuong-xay-revit.md) — nút HS TKBVTC > Tường xây từ graph đồng nghiệp ARV_MBTuongXayTang_v1, thử bản sao L3-32 OK 2026-11-04, chưa duyệt
+- [Ảnh duyệt trước khi build](anh-duyet-truoc-khi-build.md) — đổi giao diện nút / ribbon: gửi ảnh xem trước, duyệt rồi mới sửa builder + build
+- [Thống kê cửa Revit](thong-ke-cua-revit.md) — nút Thống kê cửa: bảng loại cửa tên hiện tại / tên đổi / dài / cao → đổi Type Mark; thử nút thật OK 2026-11-04, chưa duyệt
+- [Định vị + thống kê lan can, louver](dinh-vi-lan-can-louver.md) — 2 nút HS TKBVTC tag / đặt tên theo Mark LK / LV, luôn nạp family; nút thật thử OK 2026-11-05, người dùng chưa bấm bản sửa
+- [Vách kính bọc ngoài HQV T1](vach-kinh-hqv-t1.md) — dựng từ CAD KT-T1 theo lõi nút Vách kính, cao 4000, cửa đi 3000; bản sao xong 2026-11-10, chưa vào model thật
+- [Không tự tạo view template](khong-tu-tao-view-template.md) — 5 nút HS TKBVTC hỏi View template + Tỉ lệ (tỉ lệ theo template, khoá nếu template khoá), lõi không tạo / sửa template
+- [Hatch 1 đối tượng](hatch-1-doi-tuong.md) — chống thấm / ngăn cháy lan Revit: cả view 1 Filled Region; gộp vùng cũ chỉ khi người dùng đồng ý
+- [Nút HS TKBVTC nhận link](nut-hs-tkbvtc-nhan-link.md) — 9 nút đọc đối tượng trong file link (Link_chung.py); bảng có link là drafting; dim link bám nét ẩn

@@ -262,6 +262,11 @@ def sh_thu_truc(doc, view):
         if bb is not None:
             xs += [bb.Min.X, bb.Max.X]
             ys += [bb.Min.Y, bb.Max.Y]
+    # Cả hatch / nét chi tiết đã vẽ trong view (vẽ theo CAD link có thể nằm ngoài tường Revit – model chưa dựng xong,
+    # link không nạp được: Site HQV Tầng 5BA 2026-11-12) → trục không bị cắt ngang qua phần đã vẽ.
+    for x, y in sh_diem_da_ve(doc, view):
+        xs.append(x)
+        ys.append(y)
     if not xs:
         return u"Không có tường trong view – không thu trục."
     goc_bb = [XYZ(x, y, 0) for x in (min(xs), max(xs)) for y in (min(ys), max(ys))]
@@ -305,6 +310,301 @@ def sh_dien_tich(doc, view, id_kieu):
 
 def sh_chu_dt(m2):
     return u"%.1f m²" % m2 if m2 is not None else u"[Chờ bổ sung]"
+
+
+# ---- Hatch 1 đối tượng cho cả view (người dùng yêu cầu 2026-11-12: "các đường bo chỉ trong 1 lệnh để kiểm soát được
+#   diện tích, không tách mỗi trục / mỗi WC thành 1 hatch"): mọi vòng biên chống thấm / ngăn cháy lan của view nằm trong
+#   MỘT Filled Region. Thử trên bản sao Site: API KHÔNG sửa được sketch Filled Region (SketchEditScope.Start báo "Sketch
+#   does not support editing") → bấm lại có vùng mới, hoặc view còn nhiều vùng cũ tách rời, thì tạo 1 vùng chứa đủ biên
+#   cũ + mới rồi XOÁ vùng cũ, CHỈ khi người dùng đồng ý trong hộp thoại (liệt kê id). Vòng chồng / chạm nhau (Site
+#   Tầng 1, 5BA: FilledRegion.Create báo "curve loops intersect") được hợp bằng khối đùn mỏng + BooleanOperationsUtils,
+#   chỗ chồng chỉ tính 1 lần. Vùng cũ nằm trong group không phải của công cụ thì giữ nguyên, không gộp.
+SH_DAY_KHOI = 1.0            # bề dày khối đùn tạm để hợp vòng (feet, không tạo phần tử)
+SH_NAN_MM = 1.0              # nắn đỉnh lệch < 1 mm trước khi hợp (sh_nan)
+
+
+def sh_cl(loops):
+    """[[Curve]] → list CurveLoop"""
+    kq = []
+    for l in loops:
+        cl = CurveLoop()
+        for c in l:
+            cl.Append(c)
+        kq.append(cl)
+    return kq
+
+
+def sh_ds_cl(cls):
+    ds = NetList[CurveLoop]()
+    for cl in cls:
+        ds.Add(cl)
+    return ds
+
+
+def sh_doi_goc(muc):
+    """Phép dời điểm đầu của các mục về gốc toạ độ: Boolean của Revit mất chính xác khi hình cách gốc xa (thử Site HQV
+    ~2,4 km: hợp 1 ô hộp kỹ thuật 500 x 1600 báo lỗi, dời về gần gốc thì được)"""
+    for m in muc:
+        for l in m:
+            for c in l:
+                return Transform.CreateTranslation(c.GetEndPoint(0).Negate())
+    return Transform.Identity
+
+
+def sh_nan(muc, tol_mm=SH_NAN_MM):
+    """Nắn toạ độ X / Y các đỉnh lệch nhau < tol_mm về cùng 1 giá trị (vòng toàn đoạn thẳng; vòng có cung giữ nguyên).
+    Lý do (thử Site HQV Tầng 1): ô CAD cạnh 500 mm lệch 0,5 mm chạm đỉnh ô bên cạnh → mảnh chồng siêu mỏng, Boolean
+    Revit báo lỗi, ô không hợp được. Hình dời tối đa tol_mm."""
+    tol = sh_ft(tol_mm)
+
+    def bang(vals):
+        m, nhom = {}, None
+        for v in sorted(set(vals)):
+            if nhom is None or v - nhom > tol:
+                nhom = v
+            m[v] = nhom
+        return m
+    xs, ys = [], []
+    for m in muc:
+        for l in m:
+            for c in l:
+                p = c.GetEndPoint(0)
+                xs.append(p.X)
+                ys.append(p.Y)
+    bx, by = bang(xs), bang(ys)
+    kq = []
+    for m in muc:
+        moi = []
+        for l in m:
+            try:
+                if any(c.GetType().Name != "Line" for c in l):
+                    raise Exception("có cung")
+                pts = []
+                for c in l:
+                    p = c.GetEndPoint(0)
+                    q = XYZ(bx[p.X], by[p.Y], p.Z)
+                    if not pts or q.DistanceTo(pts[-1]) > tol * 0.01:
+                        pts.append(q)
+                if len(pts) > 1 and pts[0].DistanceTo(pts[-1]) <= tol * 0.01:
+                    pts.pop()
+                if len(pts) < 3:
+                    raise Exception("suy biến")
+                moi.append([Line.CreateBound(pts[k], pts[(k + 1) % len(pts)]) for k in range(len(pts))])
+            except Exception:
+                moi.append(list(l))
+        kq.append(moi)
+    return kq
+
+
+def sh_khoi(m, T):
+    """Mục [[Curve]] → khối đùn mỏng đã dời bằng T (chỉ để tính hình học, không tạo phần tử)"""
+    ds = NetList[CurveLoop]()
+    for cl in sh_cl(m):
+        ds.Add(CurveLoop.CreateViaTransform(cl, T))
+    return GeometryCreationUtilities.CreateExtrusionGeometry(ds, XYZ.BasisZ, SH_DAY_KHOI)
+
+
+def sh_hop_khoi(muc, T):
+    """Hợp khối các mục (đã dời bằng T) → (khối hợp | None, list chỉ số mục không dựng / hợp được)"""
+    khoi, loi = None, []
+    for i, m in enumerate(muc):
+        try:
+            s = sh_khoi(m, T)
+            khoi = s if khoi is None else BooleanOperationsUtils.ExecuteBooleanOperation(
+                khoi, s, BooleanOperationsType.Union)
+        except Exception:
+            loi.append(i)
+    return khoi, loi
+
+
+def sh_mat_day(khoi, T):
+    """Vòng biên mặt đáy (= mặt phẳng hatch) của khối hợp, dời ngược T về chỗ cũ"""
+    vong = []
+    if khoi is not None:
+        for fc in khoi.Faces:
+            try:
+                bb = fc.GetBoundingBox()
+                if fc.ComputeNormal((bb.Min + bb.Max) / 2.0).Z < -0.99:
+                    vong.extend(CurveLoop.CreateViaTransform(cl, T.Inverse) for cl in fc.GetEdgesAsCurveLoops())
+            except Exception:
+                pass
+    return vong
+
+
+def sh_vi_tri(m):
+    """Chữ vị trí + diện tích gần đúng của 1 mục để báo cáo"""
+    try:
+        p = m[0][0].GetEndPoint(0)
+        return u"(%.0f, %.0f)" % (sh_mm(p.X), sh_mm(p.Y))
+    except Exception:
+        return u"?"
+
+
+def sh_tao_vung(doc, kieu_id, view, muc, bao, giu=0):
+    """Tạo MỘT Filled Region chứa mọi mục: thử nguyên vòng; lỗi (vòng chồng / chạm) thì hợp khối; mục không hợp được thì
+    thử thêm nguyên vòng của nó vào vùng gộp, vẫn lỗi thì để riêng: mục cũ (chỉ số < giu) giữ nguyên vùng cũ, mục mới vẽ
+    riêng. Trả về (list id đã tạo, list chỉ số mục không vào vùng gộp, có vùng gộp hay không)."""
+    if not muc:
+        return [], [], False
+    tat_ca = [cl for m in muc for cl in sh_cl(m)]
+    try:
+        fr = FilledRegion.Create(doc, kieu_id, view.Id, sh_ds_cl(tat_ca))
+        bao.append(u"Gộp 1 Filled Region: %d vùng / %d vòng." % (len(muc), len(tat_ca)))
+        return [fr.Id], [], True
+    except Exception:
+        pass
+    muc = sh_nan(muc)            # nắn đỉnh lệch < 1 mm rồi hợp (vùng đã vẽ có thể dời tối đa 1 mm)
+    T = sh_doi_goc(muc)
+    khoi, loi = sh_hop_khoi(muc, T)
+    vong = sh_mat_day(khoi, T)
+    ids, co_gop = [], False
+    if loi:                      # thử thêm nguyên vòng mục lỗi (không chồng lên phần đã hợp thì vẫn tạo được)
+        try:
+            ids.append(FilledRegion.Create(doc, kieu_id, view.Id, sh_ds_cl(
+                vong + [cl for i in loi for cl in sh_cl(muc[i])])).Id)
+            bao.append(u"Gộp 1 Filled Region: %d vùng, có vòng chồng / chạm nhau → hợp lại (chỗ chồng tính 1 lần); "
+                       u"%d vùng không hợp được, thêm nguyên vòng." % (len(muc), len(loi)))
+            return ids, [], True
+        except Exception:
+            pass
+    try:
+        if not vong:
+            raise Exception(u"không có vòng sau khi hợp")
+        ids.append(FilledRegion.Create(doc, kieu_id, view.Id, sh_ds_cl(vong)).Id)
+        co_gop = True
+        bao.append(u"Gộp 1 Filled Region: %d vùng, có vòng chồng / chạm nhau → hợp lại còn %d vòng (chỗ chồng tính 1 lần)."
+                   % (len(muc) - len(loi), len(vong)))
+    except Exception as ex:
+        bao.append(u"KHÔNG GỘP ĐƯỢC thành 1 Filled Region (%s) → vẽ riêng từng vùng." % str(ex).splitlines()[0])
+        loi = list(range(len(muc)))
+    for i in loi:
+        if i < giu:
+            continue
+        try:
+            ids.append(FilledRegion.Create(doc, kieu_id, view.Id, sh_ds_cl(sh_cl(muc[i]))).Id)
+        except Exception as ex:
+            bao.append(u"Không hatch được 1 vùng tại %s: %s" % (sh_vi_tri(muc[i]), str(ex).splitlines()[0]))
+    if loi and co_gop:
+        bao.append(u"CẦN XEM LẠI: %d vùng không hợp được vào vùng gộp, để riêng (%s)." % (
+            len(loi), u"; ".join((u"cũ " if i < giu else u"mới ") + sh_vi_tri(muc[i]) for i in loi)))
+    return ids, loi, co_gop
+
+
+def sh_hoi_gop(view, ten_kieu, cu, n_moi, m2_cu):
+    """Hỏi có thay các Filled Region cũ bằng 1 vùng gộp không. Biến môi trường ARV_GOP_HATCH = 1 / 0 trả lời sẵn (chạy
+    thử nền, không hiện hộp thoại)."""
+    tl = os.environ.get("ARV_GOP_HATCH", "")
+    if tl in ("1", "0"):
+        return tl == "1"
+    clr.AddReference("RevitAPIUI")
+    from Autodesk.Revit.UI import TaskDialog, TaskDialogCommonButtons, TaskDialogResult
+    td = TaskDialog(u"Gộp hatch thành 1 đối tượng")
+    td.MainInstruction = u"View '%s' đang có %d Filled Region '%s' (tổng %s)." % (
+        view.Name, len(cu), ten_kieu, sh_chu_dt(m2_cu))
+    td.MainContent = (u"Gộp %s thành 1 Filled Region để kiểm soát diện tích?\n\n"
+                      u"Yes: %d Filled Region cũ bị XOÁ, thay bằng 1 vùng có đúng các biên đó (chỗ chồng nhau chỉ tính "
+                      u"1 lần). Ctrl+Z để hoàn tác.\nNo: giữ nguyên vùng cũ%s." % (
+                          (u"chúng cùng %d vùng mới" % n_moi) if n_moi else u"chúng", len(cu),
+                          (u", %d vùng mới vẽ thành 1 Filled Region riêng" % n_moi) if n_moi else u""))
+    td.ExpandedContent = u"Id các Filled Region cũ: " + u", ".join(str(r.Id.Value) for r in cu)
+    td.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No
+    td.DefaultButton = TaskDialogResult.Yes
+    return td.Show() == TaskDialogResult.Yes
+
+
+def sh_ve_hatch_gop(doc, view, kieu_id, muc_moi, tien_to_nhom, bao, gs_id=None, dry=False):
+    """Vẽ hatch kiểu kieu_id của view thành 1 Filled Region. muc_moi: list mục mới ([[Curve]] mỗi mục).
+    Vùng cũ cùng kiểu (ngoài group hoặc trong group tên bắt đầu bằng tien_to_nhom): mục mới đã nằm trọn trong vùng cũ thì
+    bỏ (so khối, tránh bấm lại lần nào cũng thấy "ô mới"); ≥ 2 vùng cũ, hoặc có vùng cũ + có mục mới → hỏi gộp
+    (sh_hoi_gop); đồng ý thì 1 vùng chứa biên cũ + mới, xong mới xoá các vùng cũ đã vào vùng gộp. Gọi TRONG transaction.
+    Trả về list id Filled Region mới tạo."""
+    cu, ngoai = [], 0
+    for r in FilteredElementCollector(doc, view.Id).OfClass(FilledRegion):
+        if r.GetTypeId().Value != kieu_id.Value:
+            continue
+        if r.GroupId.Value != -1 and not sh_ten(doc.GetElement(doc.GetElement(r.GroupId).GetTypeId())).startswith(
+                tien_to_nhom):
+            ngoai += 1
+            continue
+        cu.append(r)
+    ten_kieu = sh_ten(doc.GetElement(kieu_id))
+    if ngoai:
+        bao.append(u"%d Filled Region '%s' nằm trong group khác (không phải của công cụ) → giữ nguyên, không gộp." % (
+            ngoai, ten_kieu))
+    muc_cu = [[list(cl) for cl in r.GetBoundaries()] for r in cu]
+    muc_moi = list(muc_moi)
+    if cu and muc_moi:
+        nan = sh_nan(muc_cu + muc_moi)
+        T = sh_doi_goc(muc_cu)
+        khoi_cu, _ = sh_hop_khoi(nan[:len(muc_cu)], T)
+        if khoi_cu is not None:
+            con, bo = [], 0
+            for m, mn in zip(muc_moi, nan[len(muc_cu):]):
+                try:
+                    s = sh_khoi(mn, T)
+                    du = BooleanOperationsUtils.ExecuteBooleanOperation(s, khoi_cu, BooleanOperationsType.Difference)
+                    if du.Volume < 0.01 * s.Volume:
+                        bo += 1
+                        continue
+                except Exception:
+                    pass
+                con.append(m)
+            if bo:
+                bao.append(u"%d vùng mới đã nằm trọn trong hatch cũ → không vẽ thêm." % bo)
+            muc_moi = con
+    can_hoi = len(cu) >= 2 or (cu and muc_moi)
+    if dry:
+        bao.append(u"Sẽ vẽ %d vùng mới vào 1 Filled Region '%s'%s." % (
+            len(muc_moi), ten_kieu, (u"; view có %d vùng cũ → sẽ hỏi gộp thành 1" % len(cu)) if can_hoi else u""))
+        return []
+    gop = False
+    if can_hoi:
+        m2 = 0.0
+        for r in cu:
+            p = r.get_Parameter(BuiltInParameter.HOST_AREA_COMPUTED)
+            m2 = None if (m2 is None or p is None or not p.HasValue) else (
+                m2 + UnitUtils.ConvertFromInternalUnits(p.AsDouble(), UnitTypeId.SquareMeters))
+        gop = sh_hoi_gop(view, ten_kieu, cu, len(muc_moi), m2)
+        bao.append(u"View có %d Filled Region '%s' cũ → người dùng chọn %s." % (
+            len(cu), ten_kieu, u"GỘP thành 1" if gop else u"giữ nguyên"))
+    muc = (muc_cu if gop else []) + muc_moi
+    if not muc:
+        return []
+    # gs_id None (chống thấm): giữ viền mặc định của kiểu (API không có hàm đọc line style viền của Filled Region)
+    st = SubTransaction(doc)
+    st.Start()
+    ids, loi, co_gop = sh_tao_vung(doc, kieu_id, view, muc, bao, giu=len(muc_cu) if gop else 0)
+    if gop and not co_gop:             # không tạo được vùng gộp → bỏ lần thử, giữ vùng cũ, chỉ vẽ mục mới
+        st.RollBack()
+        bao.append(u"Không gộp được vùng cũ + mới → giữ nguyên %d Filled Region cũ (không xoá)." % len(cu))
+        gop = False
+        st = SubTransaction(doc)
+        st.Start()
+        ids, loi, co_gop = sh_tao_vung(doc, kieu_id, view, muc_moi, bao)
+    st.Commit()
+    for i in ids:
+        if gs_id is not None:
+            try:
+                doc.GetElement(i).SetLineStyleId(gs_id)
+            except Exception:
+                pass
+    if gop:                            # vùng gộp tạo xong mới xoá các vùng cũ đã vào vùng gộp
+        xoa = [r for k, r in enumerate(cu) if k not in loi]
+        nhom = {}
+        for r in xoa:
+            if r.GroupId.Value != -1:
+                nhom[r.GroupId.Value] = doc.GetElement(r.GroupId)
+        for g in nhom.values():
+            g.UngroupMembers()
+        ds = NetList[ElementId]()
+        for r in xoa:
+            ds.Add(r.Id)
+        if xoa:
+            doc.Delete(ds)
+        bao.append(u"ĐÃ XOÁ %d Filled Region cũ (%d group cũ đã rã), thay bằng 1 vùng gộp %d%s." % (
+            len(xoa), len(nhom), ids[0].Value,
+            (u"; giữ %d vùng cũ không hợp được" % (len(cu) - len(xoa))) if len(xoa) < len(cu) else u""))
+    return ids
 
 
 def sh_cap_nhat_bang(doc, v, muc):
@@ -771,6 +1071,56 @@ def sh_crop_theo_tuong(doc, view):
     view.CropBoxVisible = False
     return u"Crop view mới = khung bao tường + %g mm giấy (%d x %d mm giấy)." % (
         SH_CROP_DU_MM, sh_mm(moi.Max.X - moi.Min.X) / view.Scale, sh_mm(moi.Max.Y - moi.Min.Y) / view.Scale)
+
+
+def sh_diem_da_ve(doc, view):
+    """Góc khung bao (toạ độ model, X / Y) của Filled Region + nét chi tiết (Detail Line) thuộc riêng view."""
+    kq = []
+    ds = list(FilteredElementCollector(doc, view.Id).OfClass(FilledRegion))
+    ds += [c for c in FilteredElementCollector(doc, view.Id).OfClass(CurveElement)
+           if c.CurveElementType == CurveElementType.DetailCurve]
+    for e in ds:
+        try:
+            if e.OwnerViewId.Value != view.Id.Value:
+                continue
+            bb = e.get_BoundingBox(view)
+        except Exception:
+            continue
+        if bb is not None:
+            kq += [(bb.Min.X, bb.Min.Y), (bb.Max.X, bb.Max.Y)]
+    return kq
+
+
+def sh_mo_crop_theo_ve(doc, view):
+    """Nới crop (chỉ nới, không thu) cho đủ Filled Region / nét chi tiết đã vẽ + SH_CROP_DU_MM giấy. Chỉ gọi cho view
+    công cụ vừa tạo / vừa bật crop: crop lúc tạo view lấy theo tường Revit, phần vẽ theo CAD link có thể nằm ngoài
+    (Site HQV 2026-11-12: link L5-L15 không nạp → crop Tầng 5BA còn 156 x 111 mm, cắt mất hatch). Gọi TRONG transaction."""
+    if not view.CropBoxActive:
+        return None
+    diem = sh_diem_da_ve(doc, view)
+    if not diem:
+        return None
+    cb = view.CropBox
+    tf = cb.Transform
+    inv = tf.Inverse
+    xs, ys = [], []
+    for x, y in diem:
+        q = inv.OfPoint(XYZ(x, y, 0))
+        xs.append(q.X)
+        ys.append(q.Y)
+    du = sh_ft(SH_CROP_DU_MM * view.Scale)
+    x0, y0 = min(min(xs) - du, cb.Min.X), min(min(ys) - du, cb.Min.Y)
+    x1, y1 = max(max(xs) + du, cb.Max.X), max(max(ys) + du, cb.Max.Y)
+    nho = sh_ft(1.0)
+    if x0 > cb.Min.X - nho and y0 > cb.Min.Y - nho and x1 < cb.Max.X + nho and y1 < cb.Max.Y + nho:
+        return None
+    moi = BoundingBoxXYZ()
+    moi.Transform = tf
+    moi.Min = XYZ(x0, y0, cb.Min.Z)
+    moi.Max = XYZ(x1, y1, cb.Max.Z)
+    view.CropBox = moi
+    return u"Nới crop cho đủ phần đã vẽ (vẽ theo CAD nằm ngoài tường Revit): %d x %d mm giấy." % (
+        sh_mm(x1 - x0) / view.Scale, sh_mm(y1 - y0) / view.Scale)
 
 
 def dat_mat_bang_len_sheet(doc, view, gd, hm, kho, khung, so_hieu, ten_sheet, so_mac_dinh, muc_chu_thich):

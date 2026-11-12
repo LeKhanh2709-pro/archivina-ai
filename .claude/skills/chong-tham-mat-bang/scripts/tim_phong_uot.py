@@ -57,7 +57,12 @@ bo_dau, layer_goc = tpp.bo_dau, tpp.layer_goc
 
 LAYER_VE = "A-Material"
 # Layer lam ranh phong. A-Material: thanh phan tuong ACA sau khi no (loi + trat) nam tren layer nay o du an 254HQV.
-LAYER_RANH = ["A-Wall", "A-Material", "A-Column", "A-Line", "S-Wall", "A-Lancan", "A_Wall BT", "A-Vua trat"]
+LAYER_RANH = ["A-Wall", "A-Material", "A-Column", "A-Line", "S-Wall", "A-Lancan", "A_Wall BT", "A-Vua trat",
+              "S-Cot vach", "S-Cot vach dung"]   # 'S-Cot vach': cot / vach KC bind tu MBCV (Thap B HQV 2026-11-12)
+# Block bo qua khi dung luoi net: nhu dien-tich-ch NHUNG KHONG bo block "loi thang". Phong rac, buong dem, phong KT nuoc,
+# WC sat loi nam trong / giap block loi thang (Site HQV 2026-11-12: 'xf-TB loi thang T1' bi bo -> mat tuong loi, phong
+# "N" / "R" khong khep, nguoi dung bao thieu KT nuoc + phong rac moi tang).
+BLOCK_BO_QUA = re.compile(r"\b(ghi ?ch[uú]|note|legend|chu giai|khung|luoi|tran)\b", re.I)
 LAYER_CUA = tpp.LAYER_CUA
 LAYER_WC = "A-Interior WC"
 # Ten block (khong dau, chu thuong) thiet bi ve sinh / lo gia
@@ -68,6 +73,7 @@ RE_TB_BO = r"^pipe|^ong\b|ong dung|piped|^ta\d*$"
 RE_LAN_CAN = r"lan ?can|railing|balustrade|louver"  # block lan can / lam: phong sat lan can la lo gia / ban cong
 NOI_DAI = 40.0       # mm: noi dai dau net ho toi net gan nhat (net tuong lung ngan hut 15 mm so voi tuong vuong goc)
 LG_DT = (1.0, 12.0)  # m2: lo gia nhan theo cua truot / lan can
+LG_XA_KG = 2500.0    # mm: o cach thang rac '300KG' gan hon muc nay thuoc loi thang, khong nhan lo gia (Site HQV 2026-11-12)
 # Text ten phong (khong dau, chu thuong)
 RE_TEN = [("phong_rac", r"phong rac|p\.? ?rac\b|kho rac"),
           ("phong_kt_nuoc", r"(phong|p\.)? ?(ky thuat|k\.?t\.?) ?(cap |thoat )?nuoc|bom nuoc|phong bom"),
@@ -79,6 +85,12 @@ RE_TEN_BO = r"^\s*(truc|hop|ong|o thoang|gieng)"     # "Truc ky thuat nuoc", "Tr
 # CT1 tang 5A-10 ghi phong ky thuat nuoc la "KTN" (nguoi dung bo sung 23/10/2026)
 KY_HIEU = "R=phong_rac,N=phong_kt_nuoc,KTN=phong_kt_nuoc"
 DT_BUONG_DEM = 10.0  # m2: buong dem phong rac lon nhat
+# Thung rac ghi kich thuoc 3 so "470x330x540" nam gan thang may rac (text "300KG", <= 3 m) -> hat phong rac. Site HQV Thap B
+# (2026-11-12): loi thang tren moi tang khong ghi "R" nhung co thung rac + thang rac 300KG (nguoi dung bao thieu phong rac).
+RE_THUNG_RAC = r"^\s*\d{3,4}\s*[x×*]\s*\d{3,4}\s*[x×*]\s*\d{3,4}\s*$"
+RE_KG = r"^\s*\d+\s*kg\s*$"
+TR_GAN_KG = 3000.0   # mm
+KG_RAC_MAX = 500     # kg: thang may rac / thang hang nho (thang khach >= 630 kg)
 # Layer net mat ngoai (lan can, mep san) dung de khep lo gia khi thiet bi khong nam trong o kin nao
 LAYER_MAT_NGOAI = r"^(0|a-line\d*)$"
 # Layer net dao trong phong: truc / hop ky thuat, cot, vach
@@ -240,8 +252,15 @@ def doc_hat_giong(ents, a):
         seeds.append((loai, p, name.split("$")[-1], ma_can(name)))
     re_bo = re.compile(RE_TEN_BO)
     ky = dict(kv.split("=") for kv in a.ky_hieu.split(",") if "=" in kv)
+    kg = diem_kg(ents)
+    re_thung = re.compile(RE_THUNG_RAC, re.I)
     for e in duyet_text(ents):
         goc = (e.plain_text() if e.dxftype() == "MTEXT" else e.dxf.text).strip()
+        if kg and re_thung.match(bo_dau(goc)):           # thung rac canh thang rac (khong ghi "R")
+            p, _ = tam_bbox(e)
+            if any(math.dist(p, k) <= TR_GAN_KG for k in kg):
+                seeds.append(("phong_rac", p, "thùng rác " + goc + " cạnh thang rác", ""))
+            continue
         if goc in ky:                                  # ky hieu 1 chu "R", "N" (so nguyen van, phan biet hoa thuong)
             p, _ = tam_bbox(e)
             seeds.append((ky[goc], p, "ký hiệu: " + goc, ""))
@@ -255,6 +274,19 @@ def doc_hat_giong(ents, a):
                 seeds.append((loai, (p.x, p.y), "text: " + s, ""))
                 break
     return seeds
+
+
+def diem_kg(ents):
+    """Tam text tai trong thang nho ('300KG' <= KG_RAC_MAX): vi tri thang may rac."""
+    rx = re.compile(RE_KG)
+    out = []
+    for e in duyet_text(ents):
+        s = bo_dau(e.plain_text() if e.dxftype() == "MTEXT" else e.dxf.text)
+        if rx.match(s) and int(re.sub(r"\D", "", s)) <= KG_RAC_MAX:
+            p, _ = tam_bbox(e)
+            if not any(math.dist(p, q) < 50 for q in out):
+                out.append(p)
+    return out
 
 
 def doc_dao(ents):
@@ -504,6 +536,212 @@ def khep_lai(diem, chains, khung, mat_ngoai, gap_max, r=6000.0):
         if any(f.contains(Point(p)) for p in diem) and (best is None or f.area < best.area):
             best = f
     return best, br
+
+
+CUM_WC_KC = 5000.0   # mm: thiet bi ve sinh cach nhau <= muc nay cung 1 cum
+CUM_WC_MIN = 3
+KHU_WC_CHUNG = "khu WC công cộng: bao các thiết bị + 900 mm, cắt theo tường"
+
+
+WC_GOP_MM = 350.0    # mm: lap khe giua cac manh khu WC cong cong <= 2 x muc nay (tuong giua 150, vach ngan buong)
+
+
+def dong_dau_tuong(chains, vung, them=(), dmax=1500.0):
+    """O mo giua dau mot doan tuong va mat tuong khac: noi dai 2 canh dai cua than tuong tu dau tuong toi net gan nhat
+    (300 – dmax mm, hai tia chenh <= 60 mm; bo net lop trat sat dau tuong). Than tuong = o hinh chu nhat hep (canh ngan
+    50 – 400) tu polygonize cac net (tuong da no thanh LINE roi). Site HQV tang 3: tuong tren khu WC cong cong dung cach
+    tuong giua 1050 mm, khong co tia doi dien nen build_faces khong dong. Tra list cap (LineString, LineString)."""
+    segs = []
+    for closed, pts in chains:
+        q = pts + ([pts[0]] if closed else [])
+        if len(q) > 1 and LineString(q).intersects(vung):
+            segs += [LineString([q[j], q[j + 1]]) for j in range(len(q) - 1) if math.dist(q[j], q[j + 1]) > 0.5]
+    for l in them:
+        q = list(l.coords)
+        segs += [LineString([q[j], q[j + 1]]) for j in range(len(q) - 1) if math.dist(q[j], q[j + 1]) > 0.5]
+    if not segs:
+        return []
+    cay = shapely.STRtree(segs)
+    out = []
+    for m in polygonize(unary_union(segs)):
+        q = list(m.simplify(1.0).exterior.coords)[:-1]
+        if len(q) != 4 or m.minimum_rotated_rectangle.area > m.area * 1.02:
+            continue
+        canh = [(q[k], q[(k + 1) % 4]) for k in range(4)]
+        dai = [math.dist(a, b) for a, b in canh]
+        k_ngan = 0 if dai[0] <= dai[1] else 1
+        ngan, dai_ = dai[k_ngan], dai[1 - k_ngan]
+        if ngan > 400 or ngan < 50 or dai_ < 2 * ngan:
+            continue
+        for e in (k_ngan, k_ngan + 2):                       # moi dau tuong (canh ngan)
+            a, b = canh[e]
+            tia = []
+            for p, tr in ((a, canh[(e - 1) % 4][0]), (b, canh[(e + 1) % 4][1])):
+                L = math.dist(p, tr)
+                ux, uy = (p[0] - tr[0]) / L, (p[1] - tr[1]) / L
+                t = LineString([(p[0] + ux * 0.5, p[1] + uy * 0.5), (p[0] + ux * dmax, p[1] + uy * dmax)])
+                best = None
+                for k in cay.query(t, predicate="intersects"):
+                    x = t.intersection(segs[int(k)])
+                    if not x.is_empty:
+                        d = Point(p).distance(x)
+                        if d >= 300.0 and (best is None or d < best):
+                            best = d
+                tia.append(None if best is None else LineString([p, (p[0] + ux * best, p[1] + uy * best)]))
+            if None in tia or abs(tia[0].length - tia[1].length) > 60:
+                continue
+            out.append((tia[0], tia[1]))
+    return out
+
+
+WC_SANH_MAX = 15.0e6   # mm2: o kin khong thiet bi noi voi khu qua dai noi dai dau tuong (sanh vao WC) toi da
+DONG_KHU_WC = []       # doan noi dai dau tuong khu_wc_chung da dung (them vao bridges de cat net ven o o mo)
+TUONG_KHU_WC = {}      # id(vong bo khu) -> than tuong / vach nam trong khu (ve vén 2 mat)
+
+
+def khu_wc_chung(diem, chains, ents, dong=()):
+    """Khung = pham vi cac doi tuong layer A-Interior WC (bon, vach ngan buong, ban lavabo) quanh cum thiet bi, cat theo
+    net tuong; giu cac manh chua thiet bi, bo than tuong. Tra list Polygon (co the rong)."""
+    xs, ys = [p[0] for p in diem], [p[1] for p in diem]
+    tim = box(min(xs), min(ys), max(xs), max(ys)).buffer(1500, join_style="mitre")
+    hop = []
+    for e in tpp.walk(ents, max_depth=4):
+        if layer_goc(e.dxf.layer) != layer_goc(LAYER_WC) or e.dxftype() in ("TEXT", "MTEXT", "HATCH", "DIMENSION"):
+            continue
+        try:
+            b = ezbbox.extents([e], fast=True)
+        except Exception:
+            continue
+        if not b.has_data or max(b.size.x, b.size.y) > 6000:
+            continue
+        g = box(b.extmin.x, b.extmin.y, b.extmax.x, b.extmax.y)
+        if g.intersects(tim):
+            hop.append(g)
+    if not hop:
+        return []
+    x0, y0, x1, y1 = unary_union(hop + [Point(p).buffer(300) for p in diem]).bounds
+    bao = box(x0, y0, x1, y1)
+    net = [bao.exterior]
+    for closed, pts in chains:
+        q = pts + ([pts[0]] if closed else [])
+        if len(q) > 1 and LineString(q).intersects(bao):
+            net.append(LineString(q))
+    out = []
+    for m in polygonize(unary_union(net)):
+        if not bao.buffer(5).contains(m) or m.area < 1e6:
+            continue
+        if Polygon(m.exterior).buffer(-250, join_style="mitre").is_empty:
+            continue
+        if any(m.buffer(1).contains(Point(p)) for p in diem):
+            out.append(Polygon(m.exterior.coords))
+    if not out:
+        return out
+    # Ca khu = MOT vong bo theo tuong bao ngoai (nguoi dung chot 2026-11-12, Site HQV tang 3: khung do tu tuong cong
+    # tren cung xuong tuong duoi, gom ca 2 ben tuong giua va vach ngan buong). Luoi net trong khung rong 3 m + doan dong
+    # o mo (bridges, khung cua) + noi dai dau tuong; lay cac o kin (khong cham bien khung rong) chua thiet bi, roi lan sang
+    # o kin khong thiet bi <= WC_SANH_MAX noi voi chung qua dai noi dai dau tuong (sanh vao WC phia tren vach ngang); hop
+    # voi cac manh cu, lap khe <= 2 x WC_GOP_MM (tuong giua, vach ngan buong) va bo lo ben trong.
+    bao2 = bao.buffer(3000, join_style="mitre")
+    net2 = [bao2.exterior] + [g for g in dong if g.intersects(bao2)]
+    for closed, pts in chains:
+        q = pts + ([pts[0]] if closed else [])
+        if len(q) > 1 and LineString(q).intersects(bao2):
+            net2.append(LineString(q))
+    # Luoi tuong (doc_chains) khong doc ARC: tuong cong goc khu WC (Site tang 3) de ho -> them ARC layer tuong; vach kinh
+    # / cua so mat ngoai (layer cua so) khep canh khu giap mat dung.
+    rx_ks = re.compile(r"window|glaz|kinh")
+    ranh = {layer_goc(x) for x in LAYER_RANH}
+    phu = []
+    for e in tpp.walk(ents, max_depth=4):
+        t, lg = e.dxftype(), layer_goc(e.dxf.layer)
+        try:
+            if t == "ARC" and lg in ranh:
+                q = [(v.x, v.y) for v in e.flattening(5.0)]
+            elif t in ("LINE", "LWPOLYLINE") and rx_ks.search(lg):
+                q = ([(e.dxf.start.x, e.dxf.start.y), (e.dxf.end.x, e.dxf.end.y)] if t == "LINE" else
+                     diem_wcs(e) + (diem_wcs(e)[:1] if e.closed else []))
+            else:
+                continue
+        except Exception:
+            continue
+        if len(q) > 1 and LineString(q).intersects(bao2):
+            phu.append(LineString(q))
+    net2 += phu
+    cap = dong_dau_tuong(chains, bao2, phu)
+    net2 += [l for c in cap for l in c]
+    DONG_KHU_WC.extend(l for c in cap for l in c)        # o mo khong cua -> ngat net ven (nhu bridges)
+    dai = [Polygon([c[0].coords[0], c[0].coords[1], c[1].coords[1], c[1].coords[0]]) for c in cap]
+    dai = [g if g.is_valid else g.buffer(0) for g in dai]
+    kin = [Polygon(m.exterior.coords) for m in polygonize(unary_union(net2))
+           if m.area >= 0.3e6 and m.exterior.distance(bao2.exterior) >= 1]
+    chon = [m for m in kin if any(m.buffer(1).contains(Point(p)) for p in diem)]
+
+    def chung(g, m):
+        return g.buffer(1).intersection(m.exterior).length >= 50
+
+    def than_tuong(m):                                   # o hep dai (than tuong / cot ve bang net vien): khong lan vao
+        r = m.minimum_rotated_rectangle
+        c = sorted(math.dist(r.exterior.coords[k], r.exterior.coords[k + 1]) for k in range(2))
+        return c[0] <= 700 and c[1] >= 3 * c[0]
+
+    noi_o = dai + [d.buffer(1) for d in dong if d.intersects(bao2)]
+    them = True
+    while them:
+        them = False
+        for m in kin:
+            if any(m is c for c in chon) or m.area > WC_SANH_MAX or than_tuong(m):
+                continue
+            if any(chung(g, m) and any(chung(g, c) for c in chon) for g in noi_o):
+                chon.append(m)
+                them = True
+    # Chi mo rong khu ra ngoai khung thiet bi VE PHIA CO O VAO (dai noi dai dau tuong / doan dong cua cham o da chon):
+    # tren / duoi khung -> dai rong bang khung theo phuong X, trai / phai -> theo phuong Y. Site tang 3: sanh vao WC o
+    # phia tren; hai truc TA ben phai noi voi khu qua khe 640 mm khong bi lay.
+    E = [bao]
+    for g in dai + [d.buffer(1) for d in dong if d.intersects(bao2)]:
+        if not any(chung(g, c) or g.intersects(c) for c in chon) or bao.buffer(-1).contains(g):
+            continue
+        gx0, gy0, gx1, gy1 = g.bounds
+        cx, cy = (gx0 + gx1) / 2, (gy0 + gy1) / 2
+        if x0 <= cx <= x1 and (cy > y1 or cy < y0):
+            E.append(box(x0, min(y0, gy0), x1, max(y1, gy1)))
+        elif y0 <= cy <= y1 and (cx > x1 or cx < x0):
+            E.append(box(min(x0, gx0), y0, max(x1, gx1), y1))
+    E = unary_union(E)
+    chon = [m.intersection(E) for m in chon]
+    chon = [m for m in chon if not m.is_empty]
+    if os.environ.get("ARV_DBG_WC"):
+        print("DBG bao", [round(v) for v in bao.bounds], "cap", len(cap), "kin chua TB",
+              [(round(m.area / 1e6, 1), [round(v) for v in m.bounds]) for m in chon])
+        with open(os.environ.get("ARV_DBG_WC_JSON", "dbg_wc.json"), "w", encoding="utf-8") as f_:
+            json.dump(dict(bao=list(bao.bounds), cap=[[list(l.coords) for l in c] for c in cap],
+                           kin=[list(m.exterior.coords) for m in kin],
+                           chon=[list(g.exterior.coords) for m in chon for g in getattr(m, "geoms", [m])
+                                 if g.geom_type == "Polygon"],
+                           ho=[list(m.exterior.coords) for m in polygonize(unary_union(net2))
+                               if m.area >= 0.3e6 and m.exterior.distance(bao2.exterior) < 1 and
+                               any(m.buffer(1).contains(Point(p)) for p in diem)],
+                           net=[list(g.coords) for g in net2 if g.geom_type == "LineString"]), f_)
+    tat = list(out) + chon
+    if unary_union(tat).area > 4 * bao.area:
+        tat = list(out)
+    gop = unary_union(tat).buffer(WC_GOP_MM, join_style="mitre").buffer(-WC_GOP_MM, join_style="mitre")
+    if gop.geom_type == "Polygon" and all(gop.buffer(1).contains(Point(p)) for p in diem):
+        P = Polygon(gop.exterior.coords)
+        # than tuong / vach (o hep dai tu luoi tuong) nam trong khu -> vén 2 mat
+        ln = [LineString(pts + ([pts[0]] if closed else [])) for closed, pts in chains if len(pts) > 1]
+        ln = [l for l in ln + phu if l.intersects(P)]        # chi net tuong that, khong dung doan dong / noi dai
+        than = []
+        for m in polygonize(unary_union(ln)):
+            if m.area < 0.01e6 or not than_tuong(m) or m.intersection(P).area < 0.5 * m.area:
+                continue
+            r = m.minimum_rotated_rectangle
+            if min(math.dist(r.exterior.coords[k], r.exterior.coords[k + 1]) for k in range(2)) < 50:
+                continue                                 # dai lop trat 15 mm
+            than.append(m.intersection(P))
+        TUONG_KHU_WC[id(P)] = than
+        return [P]
+    return out
 
 
 def doc_cua_thang(ents):
@@ -883,6 +1121,7 @@ def main():
     a = ap.parse_args()
 
     os.makedirs(a.out_dir, exist_ok=True)
+    tpp._BO_QUA[0] = BLOCK_BO_QUA
     ten = os.path.splitext(os.path.basename(a.dxf))[0]
     print("Doc DXF...", flush=True)
     doc = ezdxf.readfile(a.dxf)
@@ -929,6 +1168,7 @@ def main():
           f"{len(dao_all)} o dao", flush=True)
 
     seeds = doc_hat_giong(ents, a)
+    kg_all = diem_kg(ents)
     for s in [x for x in a.them.split(";") if x.strip()]:
         loai, xy = s.split(":")
         if loai.strip() not in TEN_LOAI:
@@ -952,10 +1192,22 @@ def main():
         # o hep < 500 mm / < 0,5 m2 (khe tuong, dai mep san) khong phai phong: CT2 cuc nong roi vao dai 1400 x 150
         # thanh "lo gia" 0,21 m2 (23/10/2026)
         cands = [f for f in cands if f.area >= 0.5e6 and not Polygon(f.exterior).buffer(-250, join_style="mitre").is_empty]
-        if not cands:
+        f = None
+        if cands:
+            f = min(cands, key=lambda g: g.area)
+        elif nguon.startswith("ký hiệu") or nguon.startswith("thùng rác"):
+            # Ky hieu / chu ghi de len tuong (Site HQV tang 2, 3: "R" nam trong be day tuong giua buong dem va phong rac):
+            # lay o sat do (<= 350 mm); phong rac uu tien o gan thang rac '300KG' nhat.
+            gan = [faces[int(k)] for k in cay_face.query(P.buffer(350))]
+            gan = [g for g in gan if g.distance(P) <= 350 and g.area >= 0.5e6 and
+                   not Polygon(g.exterior).buffer(-250, join_style="mitre").is_empty and g.area <= 60e6]
+            if gan:
+                kg_r = [Point(q) for q in kg_all if math.dist(q, p) <= 6000] if loai == "phong_rac" else []
+                f = min(gan, key=lambda g: (min(g.distance(k) for k in kg_r) if kg_r else g.distance(P), g.area))
+                nguon = nguon + " (chữ nằm trên tường, lấy ô sát)"
+        if f is None:
             khong_vao.append((loai, p, nguon))
             continue
-        f = min(cands, key=lambda g: g.area)
         k = id(f)
         z = phong.setdefault(k, dict(face=f, loai=set(), nguon=[], can=set()))
         z["loai"].add(loai)
@@ -977,10 +1229,19 @@ def main():
             continue                                    # rong < 800 mm: dai bau / khe tuong, khong phai lo gia
         vien = Polygon(f.exterior).buffer(250)
         ly_do = []
-        if any(vien.intersects(t) and Polygon(f.exterior).buffer(-50).disjoint(t) for t in truot):
+        # Cua truot phai mo vao PHONG O (o ben kia cua >= 8 m2): cua mat dung / vach kinh (hoc giua cot va mat dung) va cua
+        # thang may trong loi khong tinh (Site HQV 2026-11-12: cot S-Cot vach khep hoc 1350 x 1000 o mat ngoai, o "Kho" loi
+        # thang thanh lo gia nham)
+        def vao_phong(t):
+            vt = t.buffer(300)
+            return any(g is not f and g.area >= 8e6 and g.intersects(vt) and not g.intersects(f.buffer(-50))
+                       for g in (faces[int(k)] for k in cay_face.query(vt)))
+        if any(vien.intersects(t) and Polygon(f.exterior).buffer(-50).disjoint(t) and vao_phong(t) for t in truot):
             ly_do.append("cửa trượt")
         if any(vien.intersects(l) for l in lan_can):
             ly_do.append("lan can")
+        if ly_do and kg_all and min(f.distance(Point(q)) for q in kg_all) <= LG_XA_KG:
+            continue                                    # o trong loi thang canh thang rac (kho, hop TA): khong phai lo gia
         if ly_do and giap_ngoai_nha(Polygon(f.exterior), cay_face, faces):
             phong[id(f)] = dict(face=f, loai={"lo_gia"}, nguon=["giáp ngoài nhà + " + " + ".join(ly_do)], can=set())
 
@@ -1008,6 +1269,42 @@ def main():
         z["loai"].update(g["loai"])
         z["nguon"] += g["nguon"] + ["khép bằng nét mặt ngoài (layer 0 / A-line)"]
         bridges = list(bridges) + list(br)
+
+    # Cum WC cong cong (>= 3 thiet bi ve sinh cach nhau <= 5 m van khong khep duoc: vach ngan buong khong nam tren layer
+    # tuong, mot canh mo ra hanh lang): lay CA KHU = bao loi cac thiet bi + 900 mm, cat theo tuong. Nguoi dung chot
+    # 2026-11-12 (Site HQV tang 3): "vi tri nay ve sinh hatch toan bo".
+    con = [x for x in khong_vao if x[0] == "wc"]
+    khong_vao = [x for x in khong_vao if x[0] != "wc"]
+    cum = []
+    for l, p, n in con:
+        g = [c for c in cum if any(math.dist(q, p) <= CUM_WC_KC for q in c["diem"])]
+        if g:
+            for c in g[1:]:
+                g[0]["diem"] += c["diem"]
+                g[0]["nguon"] += c["nguon"]
+                cum.remove(c)
+            g[0]["diem"].append(p)
+            g[0]["nguon"].append(n)
+        else:
+            cum.append(dict(diem=[p], nguon=[n]))
+    for c in cum:
+        ds = khu_wc_chung(c["diem"], chains, ents, list(bridges) + list(khung)) if len(c["diem"]) >= CUM_WC_MIN else []
+        if ds:
+            bridges = list(bridges) + DONG_KHU_WC
+        DONG_KHU_WC.clear()
+        ds = [f for f in ds if not any(z["face"].intersection(f).area > 0.5 * f.area for z in phong.values())]
+        if not ds:
+            khong_vao += [("wc", p, n) for p, n in zip(c["diem"], c["nguon"])]
+            continue
+        for f in ds:
+            z = dict(face=f, loai={"wc"}, nguon=c["nguon"] + [KHU_WC_CHUNG], can={"Khu chung"},
+                     tuong_trong=TUONG_KHU_WC.pop(id(f), []))
+            # buong WC da khep rieng nam trong khu: gop vao khu (1 vong bo, khong ve chong)
+            for k in [k for k, y in phong.items() if y["face"].intersection(f).area > 0.8 * y["face"].area]:
+                z["loai"] |= phong[k]["loai"]
+                z["nguon"] += phong[k]["nguon"]
+                del phong[k]
+            phong[id(f)] = z
 
     # Phong rac / phong KT nuoc nhan theo ky hieu, ten: o phai co cua di, khong thi la hop ky thuat -> bo
     for k in list(phong):
@@ -1155,21 +1452,41 @@ def main():
                 continue
             if bo.exterior.buffer(5).contains(br) and not any(
                     LineString([p for s in c["doan"] for p in s][:2]).buffer(300).intersects(br) for c in cuas):
-                cut.append(br.buffer(300, cap_style="flat"))
-                s = f"ô mở không vẽ cửa {br.length:.0f} mm"
-                if s not in ghi:
-                    ghi.append(s)
+                # phan doan dong nam de len mat tuong that khong phai o mo (Site tang 3: doan dong 7,3 m doc mat tuong
+                # duoi khu WC cong cong lam mat ca net ven chan tuong duoi; nguoi dung bao 2026-11-12)
+                tuong = [net[int(k)] for k in cay_net.query(br.buffer(20))]
+                tuong = [t for t in tuong if t.intersection(br.buffer(20)).length >= 300]
+                con = br.difference(unary_union([t.buffer(21, cap_style="flat") for t in tuong])) if tuong else br
+                for p_ in (list(con.geoms) if hasattr(con, "geoms") else [con]):
+                    if p_.is_empty or p_.length < 300:
+                        continue
+                    cut.append(p_.buffer(300, cap_style="flat"))
+                    s = f"ô mở không vẽ cửa {p_.length:.0f} mm"
+                    if s not in ghi:
+                        ghi.append(s)
         if os.environ.get("CT_DEBUG"):
             print("  [debug]", loai, [r1(v) for v in bo.bounds], "cat:", [[r1(v) for v in c.bounds] for c in cut])
         if bo.area < 0.5e6 or Polygon(bo.exterior).buffer(-250, join_style="mitre").is_empty:
             khong_vao.append((loai, (bo.centroid.x, bo.centroid.y), "ô hẹp < 500 mm sau khi khoét, không phải phòng"))
             continue
         ven = net_ven(bo, unary_union(cut) if cut else None, a.cach_ven)
+        if z.get("tuong_trong"):
+            # khu WC cong cong: vén ca 2 mat tuong giua / vach ngang ben trong khu (nguoi dung ve tay 2026-11-12)
+            W = unary_union(z["tuong_trong"]).buffer(a.cach_ven, join_style="mitre")
+            W = unary_union([Polygon(g.exterior) for g in (W.geoms if hasattr(W, "geoms") else [W])])  # bo lo o giao tuong
+            L = W.boundary.intersection(bo.buffer(-a.cach_ven + 0.5, join_style="mitre"))
+            if cut:
+                L = L.difference(unary_union(cut))
+            L = linemerge(L) if L.geom_type == "MultiLineString" else L
+            for p_ in (list(L.geoms) if hasattr(L, "geoms") else [L]):
+                if p_.geom_type == "LineString" and p_.length >= 100:
+                    ven.append((False, [(r1(x), r1(y)) for x, y in shapely.simplify(p_, 0.5).coords]))
+            ghi.append(f"vén quanh {len(z['tuong_trong'])} đoạn tường / vách trong khu")
         dt = bo.area / 1e6
         trang = "se_ve"
         if da_co is not None and vung_hatch.intersection(da_co).area >= 0.9 * vung_hatch.area:
             trang = "da_co"
-        elif dt > a.dien_tich_max:
+        elif dt > a.dien_tich_max and KHU_WC_CHUNG not in z["nguon"]:
             trang = "can_xem"
             ghi.append(f"phòng lớn {dt:.1f} m² (có thể gộp nhầm với phòng khác)")
         elif n_cua == 0 and not any("ô mở" in s for s in ghi):

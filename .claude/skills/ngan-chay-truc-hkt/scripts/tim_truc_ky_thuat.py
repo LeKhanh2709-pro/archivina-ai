@@ -28,7 +28,15 @@ from ezdxf import path as ezpath
 from shapely.geometry import Point, Polygon, box
 from shapely.ops import unary_union
 
-LAYER_X = ["A-Wall-Open", "A-Material", "A-Truc*", "A-Hidden", "A-Mep"]
+# "A-Lo mo": Site HQV Thap B (2026-11-12) ve dau X truc tang ap / BK / HKT trong loi thang tren layer nay (nguoi dung bao
+# thieu rat nhieu truc)
+LAYER_X = ["A-Wall-Open", "A-Material", "A-Truc*", "A-Hidden", "A-Mep", "A-Lo mo"]
+# O X la gieng thang may (khong hatch): co chu tai trong "300KG" trong o, hoac o X lon khong co ong dung (Site HQV: thang
+# may nho trong block loi thang, thang rac 300KG bi hatch nham)
+RE_KG = r"^\s*\d+\s*kg\s*$"
+TM_DT_MIN = 3.0e6     # mm2
+TM_CANH_MIN = 1500    # mm, canh ngan
+GOP_CHAM = 30         # mm: o truc cach nhau <= muc nay (khong co tuong giua) gop thanh 1 truc
 # Khi dò mọi layer (--layer-x "*"): bỏ các layer chắc chắn không phải trục
 LAYER_BO = ["A-Interior*", "A-Noi that*", "*Furn*", "A-Door*", "A-Cua*", "A-Window*", "A-Glaz*", "A-Dim*", "A-Text*",
             "A-Symbol*", "A-Ki hieu*", "A-axis", "Defpoints", "*Xref*|*"]
@@ -280,9 +288,34 @@ def dung_vung(o_x, ong, khung, block_lo_mo):
             continue
         g = Polygon(g.exterior.coords) if g.geom_type == "Polygon" else max(g.geoms, key=lambda x: x.area)
         vung.append(dict(g=g, tp=[k], kieu="Khung lỗ mở MEP có ống (không có X)", tt=None, ghi=""))
+    vung = gop_cham(vung)
     for v in vung + loai:
         v["so_ong"] = so_ong(v["g"])
     return vung + loai
+
+
+def gop_cham(vung, d=GOP_CHAM):
+    """Vung truc cham nhau (cach <= d, khong co be day tuong giua) la 1 truc: gop lai (Site HQV tang 1: khung lo mo
+    500 x 350 + 500 x 1600 sat nhau canh thang bo, nguoi dung bao 'cho do chi co 1 truc')."""
+    con = list(vung)
+    doi = True
+    while doi:
+        doi = False
+        for i in range(len(con)):
+            for j in range(i + 1, len(con)):
+                a, b = con[i], con[j]
+                if a["g"].distance(b["g"]) <= d:
+                    g = unary_union([a["g"].buffer(d, join_style=2), b["g"].buffer(d, join_style=2)]).buffer(-d, join_style=2)
+                    if g.geom_type != "Polygon":
+                        g = max(g.geoms, key=lambda x: x.area)
+                    con[i] = dict(g=Polygon(g.exterior.coords).simplify(1), tp=a["tp"] + b["tp"], kieu=a["kieu"], tt=None,
+                                  ghi="Gộp các ô trục chạm nhau")
+                    del con[j]
+                    doi = True
+                    break
+            if doi:
+                break
+    return con
 
 
 def nguon(path):
@@ -365,6 +398,10 @@ def main():
         trang_thai, ghi_chu = v["tt"] or "se_hatch", v["ghi"]
         if trang_thai == "loai":
             pass
+        elif any(re.match(RE_KG, t, re.I) for t in nhan):
+            trang_thai, ghi_chu = "loai", "Thang máy (chữ tải trọng trong ô)"
+        elif v["so_ong"] == 0 and g.area >= TM_DT_MIN and min(x1 - x0, y1 - y0) >= TM_CANH_MIN:
+            trang_thai, ghi_chu = "loai", "Ô X lớn không có ống đứng: giếng thang máy"
         elif cabin_u is not None and g.intersection(cabin_u).area > 0.2 * g.area:
             trang_thai, ghi_chu = "loai", "Trùng cabin thang máy"
         elif hatch_u is not None and g.intersection(hatch_u).area > 0.5 * g.area:

@@ -3,7 +3,7 @@
 Claude Code lưu memory (ghi nhớ quy tắc, phản hồi của người dùng) ngoài repo, tại:
 `C:\Users\<tên user>\.claude\projects\D--AI\memory\`
 
-Thư mục này là bản sao để mang sang máy khác (chép ngày 2026-10-22).
+Thư mục này là bản sao để mang sang máy khác (chép lần đầu 2026-10-22, cập nhật đủ 33 file 2026-11-12).
 
 ## Khôi phục trên máy mới
 1. Clone repo về đúng `D:\AI` (tên thư mục project quyết định tên `D--AI`).

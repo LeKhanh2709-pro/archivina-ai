@@ -59,6 +59,31 @@ Quy tắc nhận diện, ranh, đảo, cửa, thông số vẽ và số liệu k
   - **Không tạo file Excel** (chốt 23/10/2026): mặc định không xuất `.xlsx`, kể cả lệnh LISP; người dùng cần thì tự yêu cầu → chạy `tim_phong_uot.py` với `--excel`.
   - Không vẽ bảng ghi chú (đã có trong file). Luồng Python vẽ vào bản sao không làm mờ / tắt layer; lệnh LISP thì có (xem trên).
 - Không ghi chiều cao vén, vật liệu, số hiệu chi tiết nếu người dùng chưa cung cấp (`[Chờ bổ sung]`); bảng ghi chú trong file mẫu ghi vén cao 300, lưới thủy tinh, chi tiết A.17,01 — chỉ trích khi người dùng hỏi.
+- **Sửa 2026-11-12** theo góp ý người dùng trên Site HQV tháp B (nút Revit Chống thấm dựa theo CAD link 254HQV tầng 1–4,
+  `tim_phong_uot.py`; bản trước `_backup\tim_phong_uot_20261112_1107_truoc_loi_thang.py`):
+  - Lưới tường KHÔNG bỏ block `loi thang` nữa (riêng skill này, `BLOCK_BO_QUA` riêng; `dien-tich-ch` giữ nguyên). Block
+    `xf-TB loi thang T1` chứa tường lõi nên phòng KT nước N, phòng rác, WC sát lõi trước đó không khép.
+  - Thêm layer ranh `S-Cot vach`, `S-Cot vach dung` (cột vách KC bind từ MBCV).
+  - Phòng rác không ghi `R`: chữ kích thước thùng rác `470x530x940` cách thang rác (`300KG`, ≤ 500 kg) ≤ 3 m (`RE_THUNG_RAC`).
+  - Ký hiệu `R` / `N` ghi đè lên tường: lấy ô sát ≤ 350 mm, phòng rác thì lấy ô gần thang rác nhất.
+  - Lô gia theo "giáp ngoài nhà + cửa trượt": cửa trượt phải mở vào ô ≥ 8 m² (bỏ hốc giữa cột và mặt dựng); ô cách thang rác
+    ≤ 2,5 m là lõi thang, không nhận lô gia.
+  - Cụm WC công cộng (≥ 3 thiết bị cách nhau ≤ 5 m mà không khép được ô): vùng = phạm vi đối tượng layer `A-Interior WC`
+    quanh cụm, cắt theo tường, giữ phần có thiết bị; không giới hạn 15 m² (người dùng: "vệ sinh hatch toàn bộ").
+  - Kết quả 4 tầng (`_tmp\ct_cad\v7\`): T1 27 WC + 2 KT nước; T2 11 WC + 2 KT nước + 2 rác + 2 đệm; T3 25 WC + 11 lô gia
+    + 2 + 2 + 2; T4 47 WC + 31 lô gia + 2 + 2 + 2; 0 chỗ cần xem. Hồi quy tầng 4 tháp B cũ / CT1: không mất vùng, thêm 1 buồng
+    đệm + phòng rác. LISP `CHONGTHAM.lsp` / K-TOOL CHƯA gộp lại bản này (`Cần xác nhận lại`). Phòng rác lõi trên còn trùm
+    thang rác (không có dấu X) – `Cần xác nhận lại`.
+  - **Khu WC công cộng = 1 vòng bo theo tường bao** (người dùng khoanh ảnh 2026-11-12 chiều, Site tầng 3: từ tường cong trên
+    xuống tường dưới, gồm cả 2 bên tường giữa, vách ngăn buồng; bản trước `_backup\tim_phong_uot_20261112_1651_*`):
+    mảnh cũ (cắt theo khung thiết bị) + ô kín trong khung rộng 3 m có thiết bị, rồi lan sang ô kín không thiết bị ≤ 15 m²
+    qua dải nối dài đầu tường / đoạn đóng ô mở (sảnh vào WC); chỉ mở rộng ra ngoài khung thiết bị về phía có ô vào (không
+    lấy 2 trục TA bên phải nối với khu qua khe 640 mm); không lan vào ô hẹp dài (thân tường / cột); lấp khe ≤ 700 mm, bỏ
+    lỗ; buồng WC đã khép riêng nằm trong khu được gộp vào khu. Lưới thêm ARC layer tường (`doc_chains` không đọc ARC →
+    tường cong để hở) và nét layer cửa sổ / kính (mặt dựng). `dong_dau_tuong`: thân tường = ô chữ nhật hẹp 50–400 từ
+    polygonize (tường đã nổ thành LINE), nối dài 2 cạnh dài 300–1500 mm tới nét gần nhất (bỏ nét trát 15 mm); các đoạn này
+    thêm vào `bridges` để vén ngắt ở ô vào không cửa. Site T3: 1 vùng WC 54,6 m²; T1 / T2 / T4 không đổi. Biến môi trường
+    `ARV_DBG_WC` (+ `ARV_DBG_WC_JSON`) chỉ để soát (`_tmp\ct_cad\dbg\xem_wc_dbg.py`).
 
 ## Báo cáo cho người dùng
 - Số vùng theo loại (WC / lô gia / phòng rác / KT nước) và trạng thái; số bo, hatch, nét vén đã vẽ; đường dẫn bản sao DWG + PNG (Excel chỉ khi người dùng yêu cầu).

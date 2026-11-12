@@ -153,6 +153,38 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     `_backup\tim_truc_ky_thuat_20261111_*.py`.
   - Người dùng xem bản sao thử chống thấm + ngăn cháy lan: "có vẻ ổn rồi" (2026-11-11 trưa), sẽ Reload pyRevit và tự bấm
     trên model thật; kết quả bấm thật chưa có (`Cần xác nhận lại`).
+  - **Hatch 1 đối tượng / view** (người dùng yêu cầu 2026-11-12: "các đường bo chỉ trong 1 lệnh để kiểm soát diện tích, không
+    tách mỗi trục / mỗi WC thành nhiều hatch"): chống thấm + ngăn cháy lan vẽ MỌI vùng của view vào MỘT Filled Region nhiều
+    vòng (`sh_ve_hatch_gop` trong `DatSheet_chung.py`, chép bằng `gop_dat_sheet.py`). API KHÔNG sửa được sketch Filled
+    Region (`SketchEditScope.Start` báo "Sketch does not support editing") → view đã có ≥ 2 vùng cũ, hoặc vùng cũ + vùng mới,
+    thì hộp thoại hỏi gộp (liệt kê id); Yes = tạo 1 vùng chứa đủ biên rồi mới xoá vùng cũ (rã group `ARV_*` cũ), No = giữ
+    vùng cũ, vùng mới thành 1 vùng riêng. Vùng trong group không phải của công cụ: không gộp. Vòng chồng / chạm nhau: hợp
+    bằng khối đùn + Boolean (chỗ chồng tính 1 lần), trước đó nắn đỉnh lệch < 1 mm (`sh_nan`; Site Tầng 1 có ô CAD cạnh lệch
+    0,5 mm làm Boolean lỗi); vùng mới đã nằm trọn trong hatch cũ thì bỏ. Biến môi trường `ARV_GOP_HATCH` = 1 / 0 trả lời sẵn
+    khi thử nền. Thử nút thật trên bản sao Site (`_tmp\gop_hatch\`, `gop_chay.py`): ngăn cháy 4 tầng 23 / 18 / 38 / 117 vùng
+    → 1 vùng mỗi tầng (3BA 26,20 m², 5BA 48,83 m² khớp tổng cũ), chống thấm vẽ mới 1 vùng (Tầng 1 21 phòng 73,2 m²),
+    gộp cũ 21 / 6 / 28 / 54 → 1, chọn No giữ đúng; bấm lại không thêm. Nút ChongTham + NganChay + LanCanLouver (khối chung)
+    sinh lại 2026-11-12 12:40, `.dyn` chưa sinh lại; người dùng chưa bấm (`Cần xác nhận lại`). Bản trước:
+    `_backup\*_20261112_1125_truoc_gop_hatch.py`.
+  - **Sửa nhận diện CAD theo góp ý người dùng 2026-11-12** (ảnh Site: tầng 1 thiếu KT nước "N", tầng 2 thiếu KT nước + phòng
+    rác, WC chưa hatch, tầng 3 khu WC công cộng phải hatch hết, thêm phòng rác + đệm rác mọi tầng; ngăn cháy thiếu nhiều
+    trục, KHÔNG hatch thang máy): sửa trong 2 skill (`tim_phong_uot.py`, `tim_truc_ky_thuat.py`, chi tiết ở mục "Sửa
+    2026-11-12" của SKILL.md; bản trước `_backup\tim_phong_uot_20261112_1107_*`, `tim_truc_ky_thuat_20261112_1118_*`).
+    Khoá đệm kết quả CAD trong 2 lõi Revit nay gồm nội dung script nhận diện (sửa script → nhận diện lại). Crop view công
+    cụ vừa tạo / vừa bật crop được NỚI cho đủ hatch / nét đã vẽ, thu trục tính cả phần đã vẽ (`sh_mo_crop_theo_ve`,
+    `sh_diem_da_ve` trong `DatSheet_chung.py`; trước đó Tầng 3BA hatch bị cắt mép dưới, Tầng 5BA crop 156 × 111 mm vì
+    link L5-L15 không nạp được). Thử nút thật bản sao Site (`_tmp\ct_cad\kq\`, `kq_nc\`): chống thấm Tầng 1(1) 29 / 2(1)
+    17 / 3BA 42 / 5BA(1) 84 phòng (A.CD.19.15 – .18), ngăn cháy 24 / 33 / 36 / 114 ô (ACD.18.15 – .18; thang máy loại
+    23 / 21 / 22 / 2), bấm lại không trùng. Lần thử 12/11 link `2.HQV_A_ThapB_L5-L15.rvt` báo không đọc được (11/11 vẫn
+    nạp). Revit nền văng (`Unmarshaller.cpp` 357) ở lần chuyển view đầu khoảng 1/2 số phiên, chạy lại thì qua. Nút
+    ChongTham + NganChay + LanCanLouver sinh lại 13:21, Revit phải Reload pyRevit; view đã vẽ bằng bản cũ: nét vén cũ
+    giữ nguyên (nút không vẽ lại khi view đã có nét) → muốn vẽ lại thì người dùng tự xoá group `ARV_ChongTham_Ven*`
+    cũ. Người dùng chưa duyệt (`Cần xác nhận lại`). Lệnh LISP CHONGTHAM / K-TOOL chưa gộp lại bản nhận diện mới.
+    **Khu WC công cộng Tầng 3 = 1 vòng bo** (người dùng khoanh ảnh 2026-11-12 chiều: từ tường cong xuống tường dưới, gồm
+    2 bên tường giữa, không tách theo vách ngăn): sửa `khu_wc_chung` trong `tim_phong_uot.py` (chi tiết trong SKILL.md,
+    bản trước `_backup\tim_phong_uot_20261112_1651_*`). Bấm nút thật bản sao Site Tầng 3BA (`_tmp\ct_cad\kq_3ba\`,
+    `ct_chay_3ba.py`): 39 phòng (khu WC 54,6 m², 1 vùng), 1 Filled Region 232,7 m², A.CD.19.17, bấm lại không trùng;
+    Tầng 1 / 2 / 5BA nhận diện không đổi. Không cần sinh lại nút (lõi gọi script skill, khoá đệm theo nội dung script).
 - **Hỏi View template + Tỉ lệ, KHÔNG tự tạo template** (người dùng yêu cầu 2026-11-05, áp cho 5 nút Chống thấm, Ngăn cháy
   lan, Định vị + tag cửa, Định vị lan can louver, Tường xây):
   - Hộp thoại `arv_hoi_sheet._bang(tpl_view=...)` thêm 2 ô ngay sau ô "Đặt lên bản vẽ": View template (template mặt bằng
