@@ -597,6 +597,7 @@ def dong_dau_tuong(chains, vung, them=(), dmax=1500.0):
 WC_SANH_MAX = 15.0e6   # mm2: o kin khong thiet bi noi voi khu qua dai noi dai dau tuong (sanh vao WC) toi da
 DONG_KHU_WC = []       # doan noi dai dau tuong khu_wc_chung da dung (them vao bridges de cat net ven o o mo)
 TUONG_KHU_WC = {}      # id(vong bo khu) -> than tuong / vach nam trong khu (ve vén 2 mat)
+CUA_DAI_MAT_DUNG = 3000.0   # mm: cua / doan dong o mo dai tu muc nay (mat dung) moi xet "canh trung tuong that thi khong cat vén"
 
 
 def khu_wc_chung(diem, chains, ents, dong=()):
@@ -1438,9 +1439,11 @@ def main():
             pts = [p for s in c["doan"] for p in s]
             if Polygon(bo.exterior).buffer(300).intersects(LineString(pts) if len(pts) > 1 else Point(pts[0])):
                 d = dai_cat_cua(bo, c)
-                if d is not None:
-                    # canh phong trung mat tuong that (net tuong de len canh >= 300 mm) khong cat: cua nam ben kia tuong
-                    # (Site tang 3: cua mat dung 7,3 m sau tuong duoi khu WC cong cong lam mat ca vén chan tuong duoi)
+                if d is not None and len(pts) > 1 and max(LineString(pts).bounds[2] - LineString(pts).bounds[0],
+                                                          LineString(pts).bounds[3] - LineString(pts).bounds[1]) >= CUA_DAI_MAT_DUNG:
+                    # cua / vach cua mat dung dai >= 3 m: canh phong trung mat tuong that (net tuong de len canh >= 300 mm)
+                    # khong cat – cua nam ben kia tuong (Site tang 3: cua mat dung 7,3 m sau tuong duoi khu WC cong cong
+                    # lam mat ca vén chan tuong duoi). Cua thuong KHONG ap: o cua di / cua truot van co net tuong chay qua.
                     vien = bo.exterior.buffer(20)
                     de = [net[int(k)].intersection(vien) for k in cay_net.query(d)]
                     de = [t for t in de if not t.is_empty and t.length >= 300]
@@ -1487,7 +1490,7 @@ def main():
                     LineString([p for s in c["doan"] for p in s][:2]).buffer(300).intersects(br) for c in cuas):
                 # phan doan dong nam de len mat tuong that khong phai o mo (Site tang 3: doan dong 7,3 m doc mat tuong
                 # duoi khu WC cong cong lam mat ca net ven chan tuong duoi; nguoi dung bao 2026-11-12)
-                tuong = [net[int(k)] for k in cay_net.query(br.buffer(20))]
+                tuong = [net[int(k)] for k in cay_net.query(br.buffer(20))] if br.length >= CUA_DAI_MAT_DUNG else []
                 tuong = [t for t in tuong if t.intersection(br.buffer(20)).length >= 300]
                 con = br.difference(unary_union([t.buffer(21, cap_style="flat") for t in tuong])) if tuong else br
                 if os.environ.get("CT_DEBUG"):

@@ -84,6 +84,14 @@ Quy tắc nhận diện, ranh, đảo, cửa, thông số vẽ và số liệu k
     polygonize (tường đã nổ thành LINE), nối dài 2 cạnh dài 300–1500 mm tới nét gần nhất (bỏ nét trát 15 mm); các đoạn này
     thêm vào `bridges` để vén ngắt ở ô vào không cửa. Site T3: 1 vùng WC 54,6 m²; T1 / T2 / T4 không đổi. Biến môi trường
     `ARV_DBG_WC` (+ `ARV_DBG_WC_JSON`) chỉ để soát (`_tmp\ct_cad\dbg\xem_wc_dbg.py`).
+  - **Vén khu WC công cộng** (người dùng vẽ tay 2026-11-12 tối "thiếu"): vén chạy cả 2 mặt tường giữa + quanh các vách
+    ngang trong khu (thân tường = ô từ lưới tường rộng ≤ 420 mm, kể cả chữ L / T; bỏ dải trát < 50 mm) và dọc tường dưới.
+    Dải hẹp ≤ 320 mm giữa nét tường và biên khu, chạm biên ≥ 1 m (lớp trát / thân tường bao bị khung thiết bị cắt qua) được
+    khoét khỏi bo, lặp tới 4 lớp → bo sát mặt trong tường bao. Cửa / đoạn đóng ô mở dài ≥ 3 m (`CUA_DAI_MAT_DUNG`, mặt
+    dựng): cắt vén BỎ phần cạnh phòng trùng mặt tường thật (nét tường đè cạnh ≥ 300 mm trong 20 mm) – Site T3 cửa mặt dựng
+    7,3 m sau tường dưới làm mất cả vén chân tường dưới. KHÔNG áp cho cửa thường: thử áp chung thì vén WC chạy kín qua cửa
+    đi, vén lô gia chạy qua cửa trượt (ô cửa vẫn có nét tường chạy qua). Site T3 sau sửa: chỉ khu WC đổi vén (22,9 → 65,6 m),
+    38 phòng còn lại giữ nguyên. Mép giáp vách kính mặt dựng (15,6–16,7 m) vẫn không vén.
 
 ## Báo cáo cho người dùng
 - Số vùng theo loại (WC / lô gia / phòng rác / KT nước) và trạng thái; số bo, hatch, nét vén đã vẽ; đường dẫn bản sao DWG + PNG (Excel chỉ khi người dùng yêu cầu).

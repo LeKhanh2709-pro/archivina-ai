@@ -1,0 +1,51 @@
+TAB ARV TOOLS (pyRevit) - CÀI SANG MÁY KHÁC
+==========================================
+
+YÊU CẦU
+- Revit 2027 (đã thử trên Revit 2027.3). Revit 2025 / 2026: chưa thử (Cần xác nhận lại);
+  riêng nút Vách kính chắc chắn KHÔNG chạy trên bản cũ hơn 2027 vì 3 family đi kèm lưu định dạng Revit 2027.
+- pyRevit >= 6.5.5, bản cài cho user (bộ cài pyRevit_6.5.5..._signed.exe kèm trong gói nếu có).
+  pyRevit 6.4 lỗi engine CPython trên Revit 2027.
+- Các nút đọc chữ trong CAD (Tạo trục, Dầm, Bao sàn, Sàn hoàn thiện, Ống thoát nước / Ống gió từ CAD...)
+  cần AutoCAD trên máy (tự tìm C:\Program Files\Autodesk\AutoCAD *\accoreconsole.exe, lấy bản mới nhất).
+  Không có AutoCAD thì nút báo dừng hoặc đặt tên tự động.
+
+CÀI
+1. Đóng Revit.
+2. Giải nén gói vào chỗ cố định, ví dụ D:\ARVTools_<ngày>\  (KHÔNG để trong Downloads / Temp, cài xong không di chuyển;
+   có di chuyển thì chạy lại bước 3).
+3. Bấm đúp CAI_DAT.bat:
+   - Chưa có pyRevit: hỏi cài bằng bộ cài đi kèm (Y), cài xong tự đăng ký tiếp.
+   - Đăng ký thư mục ARVTools\ của gói vào Extension Search Path của pyRevit.
+   - Máy đã có bản ARVTools.extension khác (bản cũ) thì hỏi gỡ đăng ký bản cũ (chỉ gỡ đăng ký, không xoá file).
+4. Mở Revit → tab Archivina.
+
+Cập nhật bản mới: giải nén gói mới, chạy CAI_DAT.bat của gói mới, trả lời Y để gỡ đăng ký gói cũ.
+Gỡ: CAI_DAT.bat -Go   (hoặc: pyrevit extensions paths forget "<thư mục gói>\ARVTools")
+
+CÁC NÚT
+- Kết cấu:  Tạo trục / Cột vách / Dầm / Bao sàn từ CAD, Cắt tường theo dầm sàn
+- Kiến trúc: Tường / Cửa đi / Cửa sổ từ CAD, Gờ logia, Lan can louver logia
+- Hoàn thiện: Sàn hoàn thiện (có hatch), Sàn căn hộ từ CAD, Trần căn hộ, Ốp tường WC, Len gỗ, Len gạch logia, Dàn trang căn hộ
+- MEP: Thiết bị WC từ CAD, Ống thoát nước WC, Ống thoát nước từ CAD, Ống gió từ CAD
+- Hồ sơ (nút một chạm, có dấu • = Shift+bấm mở hộp thoại đầy đủ):
+    Chống thấm, Ngăn cháy lan, Lỗ mở shaft, MB định vị cửa, Tag cửa
+- Vách kính: Vách kính (curtain wall chia đố 65 theo quy tắc VK / MDVK)
+
+LƯU Ý KHI DÙNG Ở DỰ ÁN KHÁC
+- Nút thường: bấm → hộp thoại IN[0..n], ô Dry-run luôn bật lại mỗi lần mở (chỉ báo cáo). Tắt Dry-run mới ghi vào mô hình,
+  1 Transaction "ARV - ..." (Ctrl+Z được).
+- Giá trị mặc định trong hộp thoại lấy theo dự án mẫu G19 (level "Tầng 1", type "AV-...", đường dẫn thư viện MEP
+  C:\ProgramData\Autodesk\RVT 2021\...) → dự án / máy khác phải sửa trong hộp thoại. Giá trị đã nhập được nhớ riêng
+  từng máy ở %APPDATA%\pyRevit\ARVTools\.
+- Mô hình cần có các type / line style / filled region của template công ty (AV_...). Ví dụ Ống thoát nước WC cần
+  pipe type "AV_u.PVC PN6".
+- Chống thấm / Ngăn cháy lan: vẽ trên view có chữ "chống thấm" / "cháy lan" trong tên view hoặc tên view template
+  (người dùng tự tạo view + đặt sheet). Nhiều view thì hỏi chọn.
+- Lỗ mở shaft: làm trên mặt bằng tầng đang mở. Dấu X cần 1 shaft MẪU vẽ tay có 2 Symbolic Line chéo
+  (chưa có thì vẫn tạo lỗ mở, báo cách vẽ mẫu).
+- Luôn lưu / sao lưu file dự án trước khi chạy nút sửa mô hình.
+
+TRẠNG THÁI
+- Người dùng đã duyệt: Chống thấm, Ngăn cháy lan (bản bo lõi tường).
+- Các nút còn lại: chưa duyệt / chưa thử đủ trong Revit thật (Cần xác nhận lại).

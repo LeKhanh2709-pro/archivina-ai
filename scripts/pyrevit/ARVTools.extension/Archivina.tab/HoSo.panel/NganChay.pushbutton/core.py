@@ -2786,6 +2786,12 @@ def sh_tao_view(doc, goc, tu_khoa, ten_mau, dry, ten_tpl=u"", ti_le=0):
         bao.append(sh_crop_theo_tuong(doc, moi))
     except Exception as ex:
         bao.append(u"Không đặt được crop: %s" % (u"%s" % ex).splitlines()[0][:150])
+    try:
+        b_ = sh_an_ky_hieu_ngoai_crop(doc, moi)
+        if b_:
+            bao.append(b_)
+    except Exception as ex:
+        bao.append(u"Không ẩn được ký hiệu view ngoài crop: %s" % (u"%s" % ex).splitlines()[0][:150])
     TransactionManager.Instance.TransactionTaskDone()
     return moi, bao
 
@@ -2978,6 +2984,36 @@ def sh_crop_theo_tuong(doc, view):
     view.CropBoxVisible = False
     return u"Crop view mới = khung bao tường + %g mm giấy (%d x %d mm giấy)." % (
         SH_CROP_DU_MM, sh_mm(moi.Max.X - moi.Min.X) / view.Scale, sh_mm(moi.Max.Y - moi.Min.Y) / view.Scale)
+
+
+def sh_an_ky_hieu_ngoai_crop(doc, view):
+    """Ẩn (Hide in View từng phần tử, KHÔNG sửa view template) ký hiệu mặt cắt / mặt đứng / callout của view khác có khung
+    bao vượt ra ngoài khung crop của view công cụ vừa tạo. Site HQV 2026-11-12: template ACD.14.1_MatBangDinhViLanCanLouver
+    hiện ký hiệu mặt cắt nằm xa ngoài nhà → khung viewport 1144 x 989 mm, mặt bằng bị đẩy ra ngoài tờ A1. Ký hiệu nằm trọn
+    trong crop thì giữ (template của dự án quyết định). Gọi TRONG transaction, sau khi đặt crop. Trả về dòng báo / None."""
+    if not view.CropBoxActive:
+        return None
+    doc.Regenerate()
+    cb = view.CropBox
+    inv = cb.Transform.Inverse
+    nho = sh_ft(1.0)
+    ds = NetList[ElementId]()
+    for e in FilteredElementCollector(doc, view.Id).OfCategory(BuiltInCategory.OST_Viewers).WhereElementIsNotElementType():
+        try:
+            bb = e.get_BoundingBox(view)
+            if bb is None or not e.CanBeHidden(view) or e.IsHidden(view):
+                continue
+            qs = [inv.OfPoint(XYZ(x, y, 0)) for x in (bb.Min.X, bb.Max.X) for y in (bb.Min.Y, bb.Max.Y)]
+            if (min(q.X for q in qs) < cb.Min.X - nho or max(q.X for q in qs) > cb.Max.X + nho
+                    or min(q.Y for q in qs) < cb.Min.Y - nho or max(q.Y for q in qs) > cb.Max.Y + nho):
+                ds.Add(e.Id)
+        except Exception:
+            pass
+    if not ds.Count:
+        return None
+    view.HideElements(ds)
+    return (u"Ẩn %d ký hiệu mặt cắt / mặt đứng / callout vượt ra ngoài khung crop (Hide in View, không sửa template)."
+            % ds.Count)
 
 
 def sh_diem_da_ve(doc, view):

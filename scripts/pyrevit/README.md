@@ -65,7 +65,7 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
 | Nội thất | Máy giặt / Cục nóng ĐH / Giường / Tủ đầu giường / Bàn làm việc / Tủ ti vi / Nội thất bếp / Tủ quần áo / Sofa / Bàn ăn | `ARV_TaoMayGiatTuCAD_v1`, `ARV_TaoCucNongDHTuCAD_v1`, `ARV_TaoGiuongTuCAD_v1`, `ARV_TaoTuDauGiuongTuCAD_v1`, `ARV_TaoBanLamViecTuCAD_v1`, `ARV_TaoTuTiViTuCAD_v1`, `ARV_TaoNoiThatBepTuCAD_v1`, `ARV_TaoTuQuanAoTuCAD_v1`, `ARV_TaoSofaTuCAD_v1`, `ARV_TaoBanAnTuCAD_v1` (AI REVIT) |
 | HS TKBVTC | Chống thấm | `scripts\dynamo\ChongTham_VeVenChanTuong` (nét vén + hatch Filled Region trên view chống thấm; người dùng duyệt trên G19 2026-10-27) |
 | HS TKBVTC | Ngăn cháy lan | `scripts\dynamo\NganChay_TrucHKT` (hatch Filled Region lưới NET 125 / 45° đỏ trong lòng trục / hộp kỹ thuật trên view chống cháy lan; 2026-10-28, người dùng đã duyệt bản bo lõi tường) |
-| HS TKBVTC | Lỗ mở shaft | `scripts\dynamo\LoMo_ShaftOpening` (Shaft Opening cho mọi trục / hộp kỹ thuật trên mặt bằng tầng đang mở; file gộp, xem dưới; 2026-10-28) |
+| ~~HS TKBVTC~~ | ~~Lỗ mở shaft~~ | **Đã bỏ khỏi tab 2026-11-12** (người dùng yêu cầu; thư mục nút ở `_backup\LoMoShaft.pushbutton_20261112_1946\`, graph `scripts\dynamo\LoMo_ShaftOpening` vẫn còn, chạy bằng Dynamo được). Muốn lấy lại: bỏ dấu `#` dòng `LoMoShaft` trong `BUTTONS` + `MOT_CHAM` của builder rồi sinh lại `--chi LoMoShaft` |
 | HS TKBVTC | Định vị + tag cửa | `scripts\dynamo\TagCua_TuDong` (một chạm trên mặt bằng tầng đang mở: tạo / mở `MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>` (template `MẶT BẰNG ĐỊNH VỊ CỬA`: tường + sàn Halftone, ẩn nội thất / thiết bị vệ sinh / Mechanical Equipment) rồi tag cửa đi / cửa sổ không đè; gộp nút MB định vị cửa 2026-11-03; ô tag khung 2 ô mã / rộngXcao mm; bấm nút hỏi đặt lên bản vẽ (giai đoạn, hạng mục, khổ A1/A0) → sheet + 2 bảng thống kê cửa, tỉ lệ tự chọn (hộp thoại `lib\arv_hoi_sheet.py`); family nguồn nhãn ở `lib	ag_cua\`; skill `tag-cua-revit`; chưa duyệt) |
 | HS TKBVTC | Tường xây | `scripts\dynamo\ARV_MBTuongXayTang_v1` (bộ AI REVIT `TUONG XAY` của đồng nghiệp, áp dụng 2026-11-04: view mặt bằng tường xây cả tầng + dim trục + chuỗi định vị tường thô + legend ký hiệu tường + sheet A1; nút MỘT CHẠM: bấm trên mặt bằng tầng → bảng đặt lên bản vẽ `arv_hoi_sheet.hoi_tuong_xay` như Chống thấm (chỉ A1) → view `MẶT BẰNG TƯỜNG XÂY - <tầng>`; Shift+bấm = hộp thoại 18 ô, Dry-run; chưa duyệt) |
 | Vách kính | Vách kính | **Viết tay** (không từ Dynamo): `VachKinh.panel\VachKinh.pushbutton\script.py` + `lib\arv_vach_kinh*.py` + `startup.py` (updater). Xem dưới. |
@@ -98,7 +98,7 @@ Một số công cụ lấy đối tượng đang chọn (sàn, Room) hoặc lev
 - Ngăn cháy lan: quét theo dải lõi tường, rồi bắt cạnh vùng vào đúng mép lõi.
 - Khe hộp gen G19 ra đúng 150×800 mm (lõi–lõi).
 
-**Nút Lỗ mở shaft** (2026-10-28, một chạm, làm trên **mặt bằng tầng đang mở**; không mở mặt bằng tầng thì nút báo và không làm gì):
+**Nút Lỗ mở shaft** (ĐÃ BỎ KHỎI TAB 2026-11-12, mô tả dưới chỉ để tham khảo graph) (2026-10-28, một chạm, làm trên **mặt bằng tầng đang mở**; không mở mặt bằng tầng thì nút báo và không làm gì):
 - **MỘT Shaft Opening cho cả tầng**, mỗi trục / hộp kỹ thuật là một vòng biên trong sketch (người dùng chốt 2026-10-28, theo mẫu tự vẽ: "1 lệnh shaft để dễ kiểm soát").
   - Nhận trục giống hệt nút Ngăn cháy lan (dùng chung hàm `tim_truc`).
   - Tầng đã có shaft lỗ mở cục bộ (Base và Top cùng là level đó) thì thêm vòng vào shaft đó (shaft nhiều vòng nhất); chưa có thì tạo 1 shaft mới.

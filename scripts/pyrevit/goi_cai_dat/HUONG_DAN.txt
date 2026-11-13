@@ -29,7 +29,7 @@ CÁC NÚT
 - Hoàn thiện: Sàn hoàn thiện (có hatch), Sàn căn hộ từ CAD, Trần căn hộ, Ốp tường WC, Len gỗ, Len gạch logia, Dàn trang căn hộ
 - MEP: Thiết bị WC từ CAD, Ống thoát nước WC, Ống thoát nước từ CAD, Ống gió từ CAD
 - Hồ sơ (nút một chạm, có dấu • = Shift+bấm mở hộp thoại đầy đủ):
-    Chống thấm, Ngăn cháy lan, Lỗ mở shaft, MB định vị cửa, Tag cửa
+    Chống thấm, Ngăn cháy lan, MB định vị cửa, Tag cửa
 - Vách kính: Vách kính (curtain wall chia đố 65 theo quy tắc VK / MDVK)
 
 LƯU Ý KHI DÙNG Ở DỰ ÁN KHÁC
@@ -42,8 +42,6 @@ LƯU Ý KHI DÙNG Ở DỰ ÁN KHÁC
   pipe type "AV_u.PVC PN6".
 - Chống thấm / Ngăn cháy lan: vẽ trên view có chữ "chống thấm" / "cháy lan" trong tên view hoặc tên view template
   (người dùng tự tạo view + đặt sheet). Nhiều view thì hỏi chọn.
-- Lỗ mở shaft: làm trên mặt bằng tầng đang mở. Dấu X cần 1 shaft MẪU vẽ tay có 2 Symbolic Line chéo
-  (chưa có thì vẫn tạo lỗ mở, báo cách vẽ mẫu).
 - Luôn lưu / sao lưu file dự án trước khi chạy nút sửa mô hình.
 
 TRẠNG THÁI

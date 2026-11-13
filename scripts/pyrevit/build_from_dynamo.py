@@ -61,7 +61,9 @@ BUTTONS = [
     ("NoiThat", "TaoBanAnTuCAD", u"Bàn ăn\ntừ CAD", "ARV_TaoBanAnTuCAD_v1"),
     ("HoSo", "ChongTham", u"Chống\nthấm", "../dynamo/ChongTham_VeVenChanTuong"),
     ("HoSo", "NganChay", u"Ngăn\ncháy lan", "../dynamo/NganChay_TrucHKT"),
-    ("HoSo", "LoMoShaft", u"Lỗ mở\nshaft", "../dynamo/LoMo_ShaftOpening"),
+    # Nút Lỗ mở shaft bỏ khỏi HS TKBVTC theo yêu cầu người dùng 2026-11-12 (graph LoMo_ShaftOpening.dyn vẫn còn,
+    # thư mục nút cũ ở _backup\LoMoShaft.pushbutton_20261112_1946\)
+    # ("HoSo", "LoMoShaft", u"Lỗ mở\nshaft", "../dynamo/LoMo_ShaftOpening"),
     ("HoSo", "TagCua", u"Định vị\n+ tag cửa", "../dynamo/TagCua_TuDong"),
     # Mặt bằng định vị lan can, louver: tag theo Mark LK / LV (người dùng yêu cầu + duyệt ảnh, icon PA1 2026-11-05)
     ("HoSo", "LanCanLouver", u"Định vị\nlan can, louver", "../dynamo/LanCanLouver_TuDong"),
@@ -87,7 +89,7 @@ MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"
                           "hoi": u"arv_hoi_sheet.hoi_chong_tham", "tao_view": 18},
             "NganChay": {"view_in": 0, "tu_khoa": u"chay lan", "ten_view": u"chống cháy lan",
                          "hoi": u"arv_hoi_sheet.hoi_ngan_chay", "tao_view": 18},
-            "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},
+            # "LoMoShaft": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng"},   # nút đã bỏ 2026-11-12
             "TagCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng", "hoi": u"arv_hoi_sheet.hoi"},
             # Định vị lan can, louver (2026-11-05): mặt bằng tầng đang mở → lõi tạo / mở mặt bằng định vị rồi tag;
             # hoi_lan_can_louver trả về IN[17] – IN[23] (đặt lên bản vẽ)

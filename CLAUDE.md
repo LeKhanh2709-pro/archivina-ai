@@ -185,6 +185,10 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     bản trước `_backup\tim_phong_uot_20261112_1651_*`). Bấm nút thật bản sao Site Tầng 3BA (`_tmp\ct_cad\kq_3ba\`,
     `ct_chay_3ba.py`): 39 phòng (khu WC 54,6 m², 1 vùng), 1 Filled Region 232,7 m², A.CD.19.17, bấm lại không trùng;
     Tầng 1 / 2 / 5BA nhận diện không đổi. Không cần sinh lại nút (lõi gọi script skill, khoá đệm theo nội dung script).
+    Tối 12/11 thêm vén quanh tường giữa + vách ngang trong khu, bo lùi về mặt trong tường dưới, cửa mặt dựng ≥ 3 m sau tường
+    không cắt vén (người dùng vẽ tay "thiếu"; xem SKILL.md): bấm nút thật bản sao Site (chép lại từ ổ A: 18:00, người dùng
+    cho phép, sau khi phiên dọn file xoá hết DXF / .rvt trong `_tmp\ct_cad`) Tầng 3BA: 282 nét / 350,1 m, chỉ khu WC đổi;
+    ảnh `_tmp\ct_cad\kq_3ba\3BA_khu_WC_ven.png`. Tầng 1 / 2 / 5BA chưa chạy lại với bản này (DXF đã bị xoá).
 - **Hỏi View template + Tỉ lệ, KHÔNG tự tạo template** (người dùng yêu cầu 2026-11-05, áp cho 5 nút Chống thấm, Ngăn cháy
   lan, Định vị + tag cửa, Định vị lan can louver, Tường xây):
   - Hộp thoại `arv_hoi_sheet._bang(tpl_view=...)` thêm 2 ô ngay sau ô "Đặt lên bản vẽ": View template (template mặt bằng
@@ -208,7 +212,7 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     xây `TC.04.MatBangTuongXay` (khoá 1:150) → view 1/150, A.TX.01 (10 chữ dim còn chồng). Số template trước = sau
     (G19 57, L3-32 52). Tường xây trên G19 dừng vì thiếu dim type (có từ trước). Nút sinh lại 2026-11-05 14:15, Revit
     phải Reload pyRevit; người dùng chưa bấm thử (`Cần xác nhận lại`).
-- `LoMo_ShaftOpening.dyn` (2026-10-28): tạo **Shaft Opening** cho mọi trục / hộp kỹ thuật trên **mặt bằng tầng đang mở**, nhận trục giống hệt Ngăn cháy lan (hàm `tim_truc` trong khối `PHẦN CHUNG` của `NganChay_TrucHKT.py`), biên = mép tường thô; Base Constraint = Top Constraint = level mặt bằng, Base Offset -100, Top Offset 1500 mm (người dùng chốt); bấm lại không tạo trùng. `LoMo_ShaftOpening.py` là FILE GỘP bằng `scripts\dynamo\gop_lomo_shaft.py` từ `LoMo_ShaftOpening_nguon.py` + phần chung, không sửa tay. Nút một chạm `Archivina` → `HS TKBVTC` → `Lỗ mở shaft` (`MOT_CHAM` từ khoá rỗng = mặt bằng tầng đang mở). Thử bản sao G19 Tầng 1: 38 lỗ mở, đọc lại đúng ràng buộc / offset; bản lưu `_tmp\pyrevit_lomo\G19_lo_mo_ngan_chay_thu.rvt`. **Đã tạo lên G19 thật 2026-10-28 10:04** (Tầng 1, 38 lỗ mở, đọc lại đúng Base Tầng 1 / -100, Top Tầng 1 / 1500; bản trước `_backup\G19_20261028_1003.rvt`, graph `_tmp\revit_g19_goc\chay_g19_lomo.dyn`). Người dùng chưa duyệt trong Revit (`Cần xác nhận lại`).
+- `LoMo_ShaftOpening.dyn` (2026-10-28): tạo **Shaft Opening** cho mọi trục / hộp kỹ thuật trên **mặt bằng tầng đang mở**, nhận trục giống hệt Ngăn cháy lan (hàm `tim_truc` trong khối `PHẦN CHUNG` của `NganChay_TrucHKT.py`), biên = mép tường thô; Base Constraint = Top Constraint = level mặt bằng, Base Offset -100, Top Offset 1500 mm (người dùng chốt); bấm lại không tạo trùng. `LoMo_ShaftOpening.py` là FILE GỘP bằng `scripts\dynamo\gop_lomo_shaft.py` từ `LoMo_ShaftOpening_nguon.py` + phần chung, không sửa tay. Nút một chạm `Archivina` → `HS TKBVTC` → `Lỗ mở shaft` (`MOT_CHAM` từ khoá rỗng = mặt bằng tầng đang mở) **đã bỏ khỏi tab 2026-11-12** (người dùng yêu cầu): dòng `LoMoShaft` trong `BUTTONS` / `MOT_CHAM` của builder để dạng chú thích, thư mục nút ở `_backup\LoMoShaft.pushbutton_20261112_1946\`; graph + `.py` vẫn còn; Revit phải Reload pyRevit mới mất nút. Thử bản sao G19 Tầng 1: 38 lỗ mở, đọc lại đúng ràng buộc / offset; bản lưu `_tmp\pyrevit_lomo\G19_lo_mo_ngan_chay_thu.rvt`. **Đã tạo lên G19 thật 2026-10-28 10:04** (Tầng 1, 38 lỗ mở, đọc lại đúng Base Tầng 1 / -100, Top Tầng 1 / 1500; bản trước `_backup\G19_20261028_1003.rvt`, graph `_tmp\revit_g19_goc\chay_g19_lomo.dyn`). Người dùng chưa duyệt trong Revit (`Cần xác nhận lại`).
 - **Dấu X lỗ mở** (người dùng chốt 2026-10-28): mỗi shaft opening có 2 Symbolic Line chéo. API KHÔNG tạo được Symbolic Line trong file dự án (`NewModelCurve` trong sketch luôn là nét biên; Symbolic Line = `ModelLine` trong sketch mang line style khác `<Sketch>`) → chép 2 nét X từ một shaft MẪU vẽ tay (`SketchEditScope` + `CopyElements` + `SetGeometryCurve`), phải `ForceCloseTransaction` trước `SketchEditScope.Start`. G19 thật 2026-10-28 10:28: gắn X cho 38 lỗ, mẫu = shaft 1063635 người dùng vẽ tay tại khe (7000, 29950), trùng chỗ shaft 1063177 của công cụ → người dùng yêu cầu xoá 1063177, đã xoá 10:30 (còn 38 shaft, bản trước `_backup\G19_20261028_1030.rvt`; shaft mẫu 1063635 Base Offset -150 → người dùng yêu cầu đặt -100, đã sửa 10:33, bản trước `_backup\G19_20261028_1032.rvt`); bản trước `_backup\G19_20261028_1024.rvt`.
 - **1 shaft cho cả tầng** (người dùng chốt 2026-10-28 11:00, mẫu tự vẽ: "1 lệnh shaft openings để dễ kiểm soát"): nút Lỗ mở shaft gộp mọi trục của tầng thành các vòng biên trong MỘT Shaft Opening (tầng đã có shaft Base = Top = level đó thì thêm vòng vào shaft nhiều vòng nhất), dấu X mỗi vòng. Người dùng đã tự xoá 38 shaft lẻ và vẽ shaft 1064060 (2 vòng + X). G19 thật 11:04: thêm 36 vòng + 36 X vào 1064060 → 38 vòng, 76 nét X, -100 / 1500; bản trước `_backup\G19_20261028_1102.rvt`.
 - `TagCua_TuDong.dyn` (2026-11-02, skill `tag-cua-revit`, quy tắc + bẫy xem skill): tự tag cửa đi `AV_Door Tag`, cửa sổ `AV_Window Tag` trên mặt bằng đang mở; **bản 2 theo góp ý người dùng 2026-11-02 trưa**: (1) không tag đối tượng Type Comments `Louver` (tag cũ trên đó chỉ xoá khi bật ô Xoá), (2) tag ưu tiên NGAY GIỮA cửa (cửa đi phía không mở cánh, cửa sổ phía ngoài), không đè cửa / cánh mở / tường / chữ, (3) tag lệch khỏi giữa cửa thì có leader gắn vào cửa, (4) tag hiện đúng Type Mark: bỏ tiền tố `S3.` bằng cách thay nhãn trong family bằng nhãn Type Mark trơn chép từ family tag cùng hạng mục (`AV_Door Tag_Full` / `AV_Window Tag_Full`) vì Revit 2027.3 không sửa được Prefix nhãn qua API; nội thất ẩn bằng view template mới `<gốc> (ẩn nội thất)` (không sửa template gốc); EI chưa có cách hiện (`Cần xác nhận lại`); bấm lại không trùng, ô "Đặt lại" dời tag cũ. **Nút một chạm** `Archivina` → `HS TKBVTC` → `Tag cửa`. Thử bản sao G19: G19 sạch 93 cửa đi + 44 cửa sổ (34 leader), không đè; bản sao đã tag bằng bản 1: bỏ tiền tố 3 family, xoá 17 tag lam, dời 137 tag. Ảnh `_tmp\pyrevit_tagcua\Tang1_tag_cua_v2_*.png`. Người dùng chưa bấm thử bản 2 (`Cần xác nhận lại`).
@@ -348,6 +352,51 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     (4) Tường xây: mặt đầu tường link lấy bằng `lk_mat_phang` (GetTransformed làm mất reference); vách kính nối tường xây trên tuyến = ô mở (Tầng 2: 0 → 6 chuỗi); room link dò theo tầng có bộ nhớ đệm `_link_tang` (bản không đệm chạy > 7 phút); trục model chính không hiện ở tầng gom 1 dòng cảnh báo.
     (5) Lệch nét vén 646 / 651: link L5-L15 trong Site tính biên 3 lô gia thiếu vách (nghi do link kết cấu lồng không nạp) → cạnh xiên. Nay room link có cạnh lệch > 1° khỏi mọi phương tường thì KHÔNG vẽ, liệt kê (Logia 5BA.CAN-01.06 / 10.03 / 23.07). Sau sửa 633 đoạn qua link trùng 100 % bản chạy thẳng trên L5-L15 (651 = 633 + 18 đoạn của 3 lô gia). Thử dựng room tạm trong model chính làm Revit thoát → bỏ, bản lỗi `_backup\ChongTham_VeVenChanTuong_*_roomtam_loi.py`.
     Room link lọc theo tầng (`lk_room_tai_diem`, `lk_room_moi_link(…, lv)`); `ARV_DUMP_VEN` (biến môi trường) chỉ để thử: ghi nét vén + biên phòng ra JSON. Nút sinh lại 2026-11-11 09:35, Revit phải Reload pyRevit; người dùng chưa bấm trong Revit của mình (`Cần xác nhận lại`). Ảnh `_tmp\hs_site_link\anh_ket_qua_2\`.
+- **Chạy 4 nút trên Site HQV để duyệt** (người dùng yêu cầu 2026-11-12 tối: chống thấm, ngăn cháy lan, định vị lan can louver,
+  định vị cửa trên Tầng 3BA + Tầng 5BA(1), "ra file khác, duyệt thì sinh 1 nút bấm ra các mặt bằng đã duyệt"):
+  - Bản sao model chép từ ổ A: 19:5x (bản 18:43) → `_tmp\site_duyet\rvt\Site.rvt`; script `_tmp\site_duyet\chay.py` (nút thử
+    `ARVTestHS`, `hs_site_link\buoc.txt`); kết quả `_tmp\site_duyet\kq2\` + thư mục gửi duyệt `_tmp\site_duyet\duyet\`
+    (8 ảnh sheet + `09_Site_HS_TKBVTC_duyet.rvt`).
+  - Hộp thoại điền: giai đoạn `02_HoSoThietKeBanVeThiCong`, A1, `KhungTen_A1 : KienTruc`; chống thấm `ACD.19.1` 1:200 hạng mục
+    `19. ChiTietChongTham` A.CD.19.17 / .18; ngăn cháy `ACD.18` 1:200 `18. ChiTietChongChayLan` ACD.18.17 / .18; lan can
+    template mặc định `ACD.14.1_MatBangDinhViLanCanLouver` 1:200, hạng mục `14. ChiTietLanCanLouver`, ACD.14.02 (sheet trống
+    có sẵn `ĐỊNH VỊ LAN CAN`) / ACD.14.03; tag cửa mặc định `ACD.07_MatBangDinhViCua` 1:100, `07. ChiTietCua`, ACD.07.03 / .04.
+  - Kết quả: 3BA chống thấm 39 phòng / 282 nét / 232,2 m², ngăn cháy 36 ô / 19,2 m², lan can 0 tag (1 lan can chưa có Mark),
+    tag 41 cửa đi + 42 cửa sổ; 5BA chống thấm 84 phòng / 619 nét / 378,2 m², ngăn cháy 114 ô / 45,2 m², lan can 5 + louver 1
+    (24 chưa có Mark, 36 Mark không tiền tố LK / LC / LV), tag 188 + 51. Tag cửa 1:100 KHÔNG vừa A1 (615 × 794, 641 × 899 mm
+    so với vùng vẽ 681 × 529) – chờ người dùng chọn tỉ lệ / khổ. Người dùng chưa duyệt, nút gộp chưa làm (`Cần xác nhận lại`).
+  - **Người dùng chốt 2026-11-13 sáng:** chống thấm, ngăn cháy lan, định vị cửa chạy CẢ 4 mặt bằng `01. MatBangChinh`
+    (Tầng 1(1), Tầng 2(1), Tầng 3BA, Tầng 5BA(1)); lan can louver CHỈ Tầng 3BA + 5BA; MỌI mặt bằng 1:200. Chạy lại trên bản
+    sao sạch → `_tmp\site_duyet\kq5\`, gửi duyệt `_tmp\site_duyet\duyet_20261113\` (14 ảnh sheet +
+    `15_Site_HS_TKBVTC_duyet_4tang.rvt`). Số hiệu: chống thấm A.CD.19.15 – .18, ngăn cháy ACD.18.15 – .18, cửa ACD.07.03 – .06,
+    lan can ACD.14.02 / .03. Thêm Tầng 1: 29 phòng / 170 nét / 88,9 m², 24 ô / 9,9 m², 94 cửa đi; Tầng 2: 17 phòng / 130 nét /
+    128,1 m², 33 ô / 15,6 m², 76 cửa đi + 70 cửa sổ; 3BA / 5BA như trên. Bẫy: dự án có 2 template định vị cửa –
+    `AF.07_MatBangDinhViCua` KHOÁ tỉ lệ 1:100 (hộp thoại tự chọn vì Tầng 1 đã có view dùng nó, rồi nhớ cho tầng sau) và
+    `ACD.07_MatBangDinhViCua` không khoá → phải chọn `ACD.07` mới ra 1:200. Tầng 1 crop theo tường bao cả khối đế + sân →
+    665 × 559 mm > vùng vẽ 681 × 529, bảng ghi chú / bảng thống kê đè góc phải dưới (chưa xử lý). Người dùng chưa duyệt
+    (`Cần xác nhận lại`).
+  - **Định vị cửa 1:200 khó nhìn** (người dùng hỏi 2026-11-13 "sắp xếp cho dễ nhìn được không", ảnh Tầng 5BA). Nguyên nhân:
+    (1) nhãn mã trong family tag hẹp → mã có dấu cách (`DA 10`, `SA 18`) xuống dòng, dòng 2 đè nét chia ô, che chữ `X` + số
+    cuối bề rộng; (2) tag 2 ô 14 × 7 mm ở 1:200 = 2,8 × 1,4 m → Tầng 5BA 117 – 134 tag còn đè tường / cửa, ~155 leader.
+    Thử bằng BẢN THỬ của lõi (`_tmp\site_duyet\thu_tag\core_thu.py`, nút thử trong `thu_tag\ext\`, lib nối junction; NÚT THẬT
+    + `TagCua_TuDong.py` CHƯA sửa): PA A = tag 2 ô, đặt `mk.Width` = bề rộng khung − 0,6 mm (`rong_nhan_dung`, trong
+    `dat_co_chu`) → mã 1 dòng, X hiện đủ, vẫn 117 tag đè; PA B = tag gọn 1 ô chỉ mã 10 × 3,5 mm (`khung_1_o`, bật bằng biến
+    môi trường `ARV_TAG_GON=1`) → 12 tag đè, 120 leader. Ảnh `duyet_20261113\16_ … 19_`. Chờ người dùng chọn rồi mới sửa lõi
+    + sinh lại nút. Lỗi có sẵn thấy thêm: lần bấm ĐẦU trên model sạch tag cửa sổ còn tiền tố `S3.` (bo_tien_to báo đã bỏ
+    nhưng family cửa sổ vẫn còn nhãn có tiền tố, lần bấm sau mới hết; `Cần xác nhận lại` nguyên nhân).
+  - **Sửa lõi 21:32** (`DatSheet_chung.py` → `sh_an_ky_hieu_ngoai_crop`, gọi trong `sh_tao_view`): view công cụ vừa tạo thì
+    ẩn (Hide in View, không sửa template) ký hiệu mặt cắt / mặt đứng / callout có khung bao vượt ngoài crop. Lý do: template
+    `ACD.14.1` hiện 2 ký hiệu mặt cắt xa ngoài nhà → viewport 1144 × 989 mm, mặt bằng bị đẩy khỏi tờ A1. Chép bằng
+    `gop_dat_sheet.py`, nút ChongTham + NganChay + LanCanLouver sinh lại 21:32 (Revit phải Reload pyRevit); bản trước
+    `_backup\DatSheet_chung_20261112_2131_truoc_an_ky_hieu.py`, `_backup\*_20261112_213204.py`.
+  - **Nguyên nhân Revit văng `Unmarshaller.cpp` 357 / `ArchiveException 105 corruptData ... ExportPatternKey`** (trước đây ghi
+    "văng ~1/2 phiên ở lần chuyển view đầu"; tối 12/11 văng 6/6 phiên): engine CPython của pyRevit đặt
+    `LC_CTYPE = English_United States.1252` cho cả tiến trình; sau đó Revit nạp phần tử ExportDWGSettings `AV-Export Cad`
+    (bảng mẫu hatch, tên có dấu) thì thứ tự so sánh chuỗi đổi → báo hỏng dữ liệu → thoát. Chữa: `import locale;
+    locale.setlocale(locale.LC_ALL, "C")` ở ĐẦU script CPython, trước khi đụng model (`_tmp\site_duyet\diag.py`: có dòng này
+    thì nạp + chuyển view được; sau khi thêm, 2 phiên 8 lượt bấm không văng). MỚI chỉ có trong script thử; các nút thật
+    (`#! python3`) CHƯA có → Revit của người dùng vẫn có thể văng trên model này (`Cần xác nhận lại`, định đưa vào
+    `lib\arv_dynamo_host.py` / builder khi làm nút gộp).
 - `ARV_MBTuongXayTang_v1.dyn` (bộ AI REVIT `AI REVIT\TUONG XAY\` của đồng nghiệp, người dùng yêu cầu áp dụng 2026-11-04;
   bản gốc giữ nguyên, bản dùng ở `scripts\dynamo\`):
   - Chức năng: mặt bằng TƯỜNG XÂY (định vị tường) cả tầng theo mẫu FPT P5 A.CD.04.07: view mới chép thông số template
