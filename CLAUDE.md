@@ -444,7 +444,8 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
       (`DA 10`) vẫn 1 dòng. Chép nguyên vào `lib\tag_rieng\AV-Tag-DOOR.rfa` (không sửa family, file trên Desktop không đụng).
       Family chỉ tag được cửa đi → cửa sổ dùng `lib\tag_rieng\AV-Tag-DOOR_CuaSo.rfa` = chính family đó đổi hạng mục sang
       Window Tags bằng API (`OwnerFamily.FamilyCategory`, nhãn Type Mark + 9 nét khung còn nguyên; lưu định dạng 2027 nên
-      KHÔNG nạp được vào Revit 2026) – Claude tự chọn, người dùng chưa duyệt (`Cần xác nhận lại`). Lõi riêng đọc biến môi
+      KHÔNG nạp được vào Revit 2026) – Claude tự chọn; người dùng xem 2 file thử rồi trả lời "OK" 2026-11-13 tối, không nói
+      riêng về bản tag cửa sổ. Lõi riêng đọc biến môi
       trường `ARV_TAG_FAM_CUA_DI` / `ARV_TAG_FAM_CUA_SO` / `ARV_TAG_FAM_THU_MUC` (nút đặt khi chọn kiểu `mau`): tên family
       thay IN[1] / IN[2]; dự án chưa có thì nạp từ `lib\tag_rieng`, đã có family cùng tên thì dùng bản trong dự án (không
       nạp đè); không bỏ tiền tố / thêm ô kích thước / vẽ khung. Tag cũ do công cụ đặt (`AV_Door Tag`, `AV_Window Tag`,
@@ -456,8 +457,14 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
       đổi + xếp lại 92 / 146 / 83 / 239 tag cũ, tạo thêm 2 + 2 tag cho cửa mới của file link, bấm lại không đổi. Tầng 1 còn
       2 tag `AV_Door Tag` MỒ CÔI (hiện `?`, cửa 1851468 / 1851475 của link L1-L3 đã bị thay sau buổi sáng): công cụ không
       xoá, không báo – người dùng tự xoá. Số cửa Tầng 2 nay 78 (sáng 76) vì file link trên ổ A: đổi trong ngày. 2 file kết
-      quả là bản central chép ra, mở nên chọn Detach from Central. Người dùng chưa duyệt, chưa bấm trên file chính
-      (`Cần xác nhận lại`).
+      quả là bản central chép ra, mở nên chọn Detach from Central.
+      **Người dùng duyệt 2026-11-13 20:00** (xem file 11 / 12: "OK, rồi đấy cập nhật lên nút bấm"): nút `Hồ sơ đã duyệt`
+      đang chứa đúng bản đã thử – file của nút sửa lần cuối 14:07 – 14:10, lần thử 17:05 chạy chính các file đó, đã vào git
+      14:20 – nên không sửa / sinh lại gì thêm; mở Revit 2027 (đang mở thì Reload pyRevit) là dùng, ô "Tag cửa" của bảng kiểm
+      chọn sẵn AV-Tag-DOOR. 2 file `.rfa` trong `lib\tag_rieng` bị `.gitignore` (`*.rfa`) bỏ qua → không lên GitHub; mang
+      extension sang máy khác phải chép cả thư mục (thiếu file thì kiểu `mau` ẩn, nút lùi về kiểu `chu`). Nút
+      `Định vị + tag cửa` của Archivina KHÔNG đổi (vẫn `AV_Door Tag` / `AV_Window Tag`) vì người dùng dặn không động đến
+      Archivina. Chưa bấm trên file chính (`Cần xác nhận lại`).
     - Thử nền nút thật (qua ARVTestHS) trên bản sao sạch mang tên file chính `_tmp\ho_so_duyet\rvt\2.HQV_A_ThapB_Site.rvt`
       (`thu.py`, kết quả `_tmp\ho_so_duyet\kq2\`): 14 mục 3 phút 27 giây, 0 lỗi, đệm CAD dùng lại 8/8, số liệu khớp file 15
       (29 / 17 / 39 / 84 phòng; 24 / 33 / 36 / 114 ô; tag 94 / 146 / 83 / 239; lan can 0 / 6), leader cửa 13 / 26 / 9 / 63;
