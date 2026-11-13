@@ -437,6 +437,27 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
       có khung do công cụ vẽ (đã bấm Định vị + tag cửa trước đó) thì kiểu `chu` không áp dụng được (không xoá nét khung).
       Chữ tag nền trong nên nét trục có thể chạy qua chữ. Kiểu `chu` bỏ khung + bỏ dòng rộngXcao trên tag (kích thước xem
       bảng thống kê trên sheet): người dùng CHƯA duyệt (`Cần xác nhận lại`).
+    - **Tag `AV-Tag-DOOR` của người dùng** (2026-11-13 chiều, người dùng gửi `C:\Users\Khanh\Desktop\AV-Tag-DOOR.rfa`: "áp dụng
+      tag này cho mặt bằng định vị cửa"): kiểu tag `mau`, nay là MẶC ĐỊNH của `HQV_ThapB_Site.json` (`"tag_cua": "mau"`; các
+      kiểu `chu` / `gon` / `2o` / `goc` vẫn chọn được trong bảng kiểm). Family: Door Tags, định dạng Revit 2026, 1 nhãn Type
+      Mark (Arial 2 mm, hệ số rộng 0,6, nền trong), khung chữ nhật 6,2 × 2,7 mm, không xoay theo cửa; mã có dấu cách
+      (`DA 10`) vẫn 1 dòng. Chép nguyên vào `lib\tag_rieng\AV-Tag-DOOR.rfa` (không sửa family, file trên Desktop không đụng).
+      Family chỉ tag được cửa đi → cửa sổ dùng `lib\tag_rieng\AV-Tag-DOOR_CuaSo.rfa` = chính family đó đổi hạng mục sang
+      Window Tags bằng API (`OwnerFamily.FamilyCategory`, nhãn Type Mark + 9 nét khung còn nguyên; lưu định dạng 2027 nên
+      KHÔNG nạp được vào Revit 2026) – Claude tự chọn, người dùng chưa duyệt (`Cần xác nhận lại`). Lõi riêng đọc biến môi
+      trường `ARV_TAG_FAM_CUA_DI` / `ARV_TAG_FAM_CUA_SO` / `ARV_TAG_FAM_THU_MUC` (nút đặt khi chọn kiểu `mau`): tên family
+      thay IN[1] / IN[2]; dự án chưa có thì nạp từ `lib\tag_rieng`, đã có family cùng tên thì dùng bản trong dự án (không
+      nạp đè); không bỏ tiền tố / thêm ô kích thước / vẽ khung. Tag cũ do công cụ đặt (`AV_Door Tag`, `AV_Window Tag`,
+      `AV_Louver Tag`) trên cửa được ĐỔI KIỂU (`ChangeTypeId`) rồi xếp lại, không xoá tag nào; tag family khác không đụng.
+      Thử nền (`_tmp\ho_so_duyet\thu_luu.py` + `chay_nen.ps1`, bản trước `_backup\*_20261113_1406.*`):
+      (A) bản sao sạch, đủ 14 mục 3 phút 32 giây, 0 lỗi → `_tmp\ho_so_duyet\xem\11_2.HQV_A_ThapB_Site_AV-Tag-DOOR.rvt`:
+      tag 94 / 148 / 83 / 239, leader 12 / 24 / 10 / 64, "tag còn đè" 0 / 3 / 0 / 1, bấm lại không đổi;
+      (B) bản sao đã có tag kiểu `chu` (file thử buổi sáng) → `xem\12_2.HQV_A_ThapB_Site_doi_tag_cu_sang_AV-Tag-DOOR.rvt`:
+      đổi + xếp lại 92 / 146 / 83 / 239 tag cũ, tạo thêm 2 + 2 tag cho cửa mới của file link, bấm lại không đổi. Tầng 1 còn
+      2 tag `AV_Door Tag` MỒ CÔI (hiện `?`, cửa 1851468 / 1851475 của link L1-L3 đã bị thay sau buổi sáng): công cụ không
+      xoá, không báo – người dùng tự xoá. Số cửa Tầng 2 nay 78 (sáng 76) vì file link trên ổ A: đổi trong ngày. 2 file kết
+      quả là bản central chép ra, mở nên chọn Detach from Central. Người dùng chưa duyệt, chưa bấm trên file chính
+      (`Cần xác nhận lại`).
     - Thử nền nút thật (qua ARVTestHS) trên bản sao sạch mang tên file chính `_tmp\ho_so_duyet\rvt\2.HQV_A_ThapB_Site.rvt`
       (`thu.py`, kết quả `_tmp\ho_so_duyet\kq2\`): 14 mục 3 phút 27 giây, 0 lỗi, đệm CAD dùng lại 8/8, số liệu khớp file 15
       (29 / 17 / 39 / 84 phòng; 24 / 33 / 36 / 114 ô; tag 94 / 146 / 83 / 239; lan can 0 / 6), leader cửa 13 / 26 / 9 / 63;
