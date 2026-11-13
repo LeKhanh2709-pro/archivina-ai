@@ -509,6 +509,22 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     Thử bản sao (`_tmp\tuongxay2\thu1\`): HQV Dry-run bản gộp = code đồng nghiệp (chỉ khác số ô trong 1 dòng thông báo), dựng
     Phía Bắc ACD.08.02 + Phía Nam ACD.08.04, 14 / 12 chuỗi, 0 chữ chồng; L3-32 đặt sheet A.TX.77 1/100, bấm lại dừng đúng. Nút
     sinh lại 17:17, Revit phải Reload pyRevit; vỏ nút chưa bấm thử, người dùng chưa duyệt (`Cần xác nhận lại`).
+- **Chi tiết CAD → legend 2D** (người dùng yêu cầu 2026-11-13, file `Desktop\CÔNG VIỆC\CT Cua khanh.dxf` 25 ô chi tiết cửa,
+  bản chép `_tmp\ct_cua_legend\CT_Cua_khanh.dxf`; quy trình + biến môi trường trong `scripts\cad_legend\README.md`):
+  - Yêu cầu: hatch = Filled Region, nét trùng 1 nét, mỗi ô 1 detail group. Người dùng chốt thêm: 1 kiểu chữ (Arial, rộng 1,
+    cỡ 2,5 / 3,5 / 5 mm), 1 kiểu dim (`CTC_Dim 2.5mm`).
+  - Cách làm: `tach_region.py` + Core Console nổ REGION / 3DSOLID (ezdxf không đọc ACIS SAB; Core Console 2027 văng khi mở
+    thẳng DXF gốc) → `trich_xuat.py` (DXF → `ct_cua.json`) → `ve_legend.py` (CPython pyRevit, nhân bản 1 legend có sẵn vì
+    API không tạo legend mới).
+  - Bẫy: dim CAD có điểm đo cách hình 15 – 120 mm, nét phụ `<Invisible lines>` vẫn hiện xám trong ảnh xuất → dim bám nét CAD
+    thật cùng vị trí theo phương đo, chỉ khi không có mới dùng nét phụ (199 / 537 dim). `NewGroup` lỗi
+    `shouldElementBeAddedToGroupByParent` khi danh sách có id đã bị xoá lúc commit → lọc id còn sống trước.
+  - Thử nền trên bản sao Site HQV (`_tmp\ct_cua_legend\rvt\Site.rvt`, link đặt không nạp): 25 ô / 25 group, 66.058 nét
+    (từ 102.765), 9.037 cung, 1.237 / 1.254 hatch, 1.002 chữ, 537 dim, ~12 phút. Còn 17 hatch lỗi biên; DFX / DF02 mới lỗi
+    sau khi nâng ngưỡng đoạn ngắn 0,8 → 1,0 mm (`Cần xác nhận lại`).
+  - Kết quả gửi duyệt: `_tmp\ct_cua_legend\duyet_20261113\`. File `06_*.rvt` có 2 legend: `(CAD)` bản 23 lỗi và
+    `(CAD) (2)` bản 17 lỗi.
+  - Chưa có nút cho model thật (sẽ làm extension riêng). Người dùng chưa duyệt (`Cần xác nhận lại`).
 
 ### Đọc file DWG không cần mở AutoCAD
 Dùng `C:\Program Files\Autodesk\AutoCAD 2027\accoreconsole.exe /i <bản sao.dwg> /s <script.scr>`:
