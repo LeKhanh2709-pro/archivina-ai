@@ -1,0 +1,4525 @@
+{
+ "dxf": "D:\\AI\\_tmp\\site_duyet\\log\\cad\\254HQV-Thap_B-Mat_bang_tang_4_8d48319a63\\254HQV-Thap B-Mat bang tang 4.dxf",
+ "layer_hatch": "A-Material",
+ "pattern": "NET",
+ "vung": [
+  {
+   "id": 1,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 32220,
+   "cy": 8424,
+   "rong": 450,
+   "dai": 650,
+   "dien_tich_m2": 0.292,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 4,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.29"
+   ],
+   "dinh": [
+    [
+     32444.6,
+     8749.0
+    ],
+    [
+     32444.6,
+     8099.0
+    ],
+    [
+     31994.6,
+     8099.0
+    ],
+    [
+     31994.6,
+     8749.0
+    ]
+   ]
+  },
+  {
+   "id": 2,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 36380,
+   "cy": 8325,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     36530.0,
+     8750.0
+    ],
+    [
+     36530.0,
+     7900.0
+    ],
+    [
+     36230.0,
+     7900.0
+    ],
+    [
+     36230.0,
+     8750.0
+    ]
+   ]
+  },
+  {
+   "id": 3,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 44355,
+   "cy": 7350,
+   "rong": 450,
+   "dai": 800,
+   "dien_tich_m2": 0.36,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.36"
+   ],
+   "dinh": [
+    [
+     44580.0,
+     7749.6
+    ],
+    [
+     44580.0,
+     6949.6
+    ],
+    [
+     44130.0,
+     6949.6
+    ],
+    [
+     44130.0,
+     7749.6
+    ]
+   ]
+  },
+  {
+   "id": 4,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 49655,
+   "cy": 5365,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.063,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     49780.0,
+     5490.0
+    ],
+    [
+     49780.0,
+     5240.0
+    ],
+    [
+     49530.0,
+     5240.0
+    ],
+    [
+     49530.0,
+     5490.0
+    ]
+   ]
+  },
+  {
+   "id": 5,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 43480,
+   "cy": 3840,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     43630.0,
+     4290.0
+    ],
+    [
+     43630.0,
+     3390.0
+    ],
+    [
+     43330.0,
+     3390.0
+    ],
+    [
+     43330.0,
+     4290.0
+    ]
+   ]
+  },
+  {
+   "id": 6,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 31995,
+   "cy": 1250,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     31545.0,
+     1400.0
+    ],
+    [
+     32445.0,
+     1400.0
+    ],
+    [
+     32445.0,
+     1100.0
+    ],
+    [
+     31545.0,
+     1100.0
+    ]
+   ]
+  },
+  {
+   "id": 7,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 29205,
+   "cy": -400,
+   "rong": 950,
+   "dai": 300,
+   "dien_tich_m2": 0.285,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.29"
+   ],
+   "dinh": [
+    [
+     28730.0,
+     -250.0
+    ],
+    [
+     29680.0,
+     -250.0
+    ],
+    [
+     29680.0,
+     -550.0
+    ],
+    [
+     28730.0,
+     -550.0
+    ]
+   ]
+  },
+  {
+   "id": 8,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 36480,
+   "cy": -275,
+   "rong": 500,
+   "dai": 550,
+   "dien_tich_m2": 0.275,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.28"
+   ],
+   "dinh": [
+    [
+     36730.0,
+     0.0
+    ],
+    [
+     36730.0,
+     -550.0
+    ],
+    [
+     36230.0,
+     -550.0
+    ],
+    [
+     36230.0,
+     0.0
+    ]
+   ]
+  },
+  {
+   "id": 9,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 49930,
+   "cy": -400,
+   "rong": 800,
+   "dai": 300,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.24"
+   ],
+   "dinh": [
+    [
+     50330.0,
+     -250.0
+    ],
+    [
+     50330.0,
+     -550.0
+    ],
+    [
+     49530.0,
+     -550.0
+    ],
+    [
+     49530.0,
+     -250.0
+    ]
+   ]
+  },
+  {
+   "id": 10,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 14850,
+   "cy": -825,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     14700.0,
+     -400.0
+    ],
+    [
+     15000.0,
+     -400.0
+    ],
+    [
+     15000.0,
+     -1250.0
+    ],
+    [
+     14700.0,
+     -1250.0
+    ]
+   ]
+  },
+  {
+   "id": 11,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 51755,
+   "cy": -1225,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.063,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     51880.0,
+     -1100.0
+    ],
+    [
+     51880.0,
+     -1350.0
+    ],
+    [
+     51630.0,
+     -1350.0
+    ],
+    [
+     51630.0,
+     -1100.0
+    ]
+   ]
+  },
+  {
+   "id": 12,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 18760,
+   "cy": -2300,
+   "rong": 300,
+   "dai": 800,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.24"
+   ],
+   "dinh": [
+    [
+     18910.0,
+     -1900.0
+    ],
+    [
+     18910.0,
+     -2700.0
+    ],
+    [
+     18610.0,
+     -2700.0
+    ],
+    [
+     18610.0,
+     -1900.0
+    ]
+   ]
+  },
+  {
+   "id": 13,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 36280,
+   "cy": -3230,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     36730.0,
+     -3080.0
+    ],
+    [
+     36730.0,
+     -3380.0
+    ],
+    [
+     35830.0,
+     -3380.0
+    ],
+    [
+     35830.0,
+     -3080.0
+    ]
+   ]
+  },
+  {
+   "id": 14,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 41730,
+   "cy": -3405,
+   "rong": 900,
+   "dai": 950,
+   "dien_tich_m2": 0.855,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.85",
+    "HKHL"
+   ],
+   "dinh": [
+    [
+     42180.0,
+     -2930.0
+    ],
+    [
+     42180.0,
+     -3880.0
+    ],
+    [
+     41280.0,
+     -3880.0
+    ],
+    [
+     41280.0,
+     -2930.0
+    ]
+   ]
+  },
+  {
+   "id": 15,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 33080,
+   "cy": -3905,
+   "rong": 800,
+   "dai": 1450,
+   "dien_tich_m2": 1.16,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "1.16",
+    "BK",
+    "TA"
+   ],
+   "dinh": [
+    [
+     33480.0,
+     -3180.0
+    ],
+    [
+     33480.0,
+     -4630.0
+    ],
+    [
+     32680.0,
+     -4630.0
+    ],
+    [
+     32680.0,
+     -3180.0
+    ]
+   ]
+  },
+  {
+   "id": 16,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 3600,
+   "cy": -5200,
+   "rong": 1100,
+   "dai": 300,
+   "dien_tich_m2": 0.33,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 4,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.33"
+   ],
+   "dinh": [
+    [
+     4150.0,
+     -5050.0
+    ],
+    [
+     4150.0,
+     -5350.0
+    ],
+    [
+     3050.0,
+     -5350.0
+    ],
+    [
+     3050.0,
+     -5050.0
+    ]
+   ]
+  },
+  {
+   "id": 17,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 44980,
+   "cy": -4930,
+   "rong": 500,
+   "dai": 500,
+   "dien_tich_m2": 0.25,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 2,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.25"
+   ],
+   "dinh": [
+    [
+     45230.0,
+     -4680.0
+    ],
+    [
+     45230.0,
+     -5180.0
+    ],
+    [
+     44730.0,
+     -5180.0
+    ],
+    [
+     44730.0,
+     -4680.0
+    ]
+   ]
+  },
+  {
+   "id": 18,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 45780,
+   "cy": -5130,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     45929.6,
+     -4680.0
+    ],
+    [
+     45929.6,
+     -5580.0
+    ],
+    [
+     45629.6,
+     -5580.0
+    ],
+    [
+     45629.6,
+     -4680.0
+    ]
+   ]
+  },
+  {
+   "id": 19,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1125,
+   "cy": -5625,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     1250.0,
+     -5500.0
+    ],
+    [
+     1250.0,
+     -5750.0
+    ],
+    [
+     1000.0,
+     -5750.0
+    ],
+    [
+     1000.0,
+     -5500.0
+    ]
+   ]
+  },
+  {
+   "id": 20,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 22030,
+   "cy": -6650,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     22180.0,
+     -6200.0
+    ],
+    [
+     22180.0,
+     -7100.0
+    ],
+    [
+     21880.0,
+     -7100.0
+    ],
+    [
+     21880.0,
+     -6200.0
+    ]
+   ]
+  },
+  {
+   "id": 21,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 52005,
+   "cy": -6660,
+   "rong": 750,
+   "dai": 300,
+   "dien_tich_m2": 0.225,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.22"
+   ],
+   "dinh": [
+    [
+     52380.0,
+     -6510.0
+    ],
+    [
+     52380.0,
+     -6810.0
+    ],
+    [
+     51630.0,
+     -6810.0
+    ],
+    [
+     51630.0,
+     -6510.0
+    ]
+   ]
+  },
+  {
+   "id": 22,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 52205,
+   "cy": -7210,
+   "rong": 550,
+   "dai": 500,
+   "dien_tich_m2": 0.275,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.28"
+   ],
+   "dinh": [
+    [
+     52480.0,
+     -6960.4
+    ],
+    [
+     52480.0,
+     -7460.4
+    ],
+    [
+     51930.0,
+     -7460.4
+    ],
+    [
+     51930.0,
+     -6960.4
+    ]
+   ]
+  },
+  {
+   "id": 23,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 8750,
+   "cy": -7580,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     8900.0,
+     -7130.0
+    ],
+    [
+     8900.0,
+     -8030.0
+    ],
+    [
+     8600.0,
+     -8030.0
+    ],
+    [
+     8600.0,
+     -7130.0
+    ]
+   ]
+  },
+  {
+   "id": 24,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 15550,
+   "cy": -7525,
+   "rong": 300,
+   "dai": 1050,
+   "dien_tich_m2": 0.315,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.32"
+   ],
+   "dinh": [
+    [
+     15700.0,
+     -7000.0
+    ],
+    [
+     15700.0,
+     -8050.0
+    ],
+    [
+     15400.0,
+     -8050.0
+    ],
+    [
+     15400.0,
+     -7000.0
+    ]
+   ]
+  },
+  {
+   "id": 25,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 32255,
+   "cy": -7555,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     32380.0,
+     -7430.0
+    ],
+    [
+     32380.0,
+     -7680.0
+    ],
+    [
+     32130.0,
+     -7680.0
+    ],
+    [
+     32130.0,
+     -7430.0
+    ]
+   ]
+  },
+  {
+   "id": 26,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16050,
+   "cy": -8500,
+   "rong": 1300,
+   "dai": 500,
+   "dien_tich_m2": 0.65,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.65",
+    "BK"
+   ],
+   "dinh": [
+    [
+     16700.0,
+     -8250.0
+    ],
+    [
+     16700.0,
+     -8750.0
+    ],
+    [
+     15400.0,
+     -8750.0
+    ],
+    [
+     15400.0,
+     -8250.0
+    ]
+   ]
+  },
+  {
+   "id": 27,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 29430,
+   "cy": -8730,
+   "rong": 600,
+   "dai": 1200,
+   "dien_tich_m2": 0.72,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 7,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.72"
+   ],
+   "dinh": [
+    [
+     29730.0,
+     -8130.0
+    ],
+    [
+     29730.0,
+     -9330.0
+    ],
+    [
+     29130.0,
+     -9330.0
+    ],
+    [
+     29130.0,
+     -8130.0
+    ]
+   ]
+  },
+  {
+   "id": 28,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 30130,
+   "cy": -8730,
+   "rong": 400,
+   "dai": 1200,
+   "dien_tich_m2": 0.48,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.48",
+    "HM"
+   ],
+   "dinh": [
+    [
+     30330.0,
+     -8130.0
+    ],
+    [
+     30330.0,
+     -9330.0
+    ],
+    [
+     29930.0,
+     -9330.0
+    ],
+    [
+     29930.0,
+     -8130.0
+    ]
+   ]
+  },
+  {
+   "id": 29,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 31505,
+   "cy": -8580,
+   "rong": 1750,
+   "dai": 1200,
+   "dien_tich_m2": 2.1,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "2.10",
+    "TA"
+   ],
+   "dinh": [
+    [
+     32380.0,
+     -7980.0
+    ],
+    [
+     32380.0,
+     -9180.0
+    ],
+    [
+     30630.0,
+     -9180.0
+    ],
+    [
+     30630.0,
+     -7980.0
+    ]
+   ]
+  },
+  {
+   "id": 30,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 28130,
+   "cy": -9380,
+   "rong": 1400,
+   "dai": 300,
+   "dien_tich_m2": 0.42,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.42"
+   ],
+   "dinh": [
+    [
+     28830.0,
+     -9230.0
+    ],
+    [
+     28830.0,
+     -9530.0
+    ],
+    [
+     27430.0,
+     -9530.0
+    ],
+    [
+     27430.0,
+     -9230.0
+    ]
+   ]
+  },
+  {
+   "id": 31,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 5920,
+   "cy": -10065,
+   "rong": 500,
+   "dai": 1700,
+   "dien_tich_m2": 0.85,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.85",
+    "HK HL"
+   ],
+   "dinh": [
+    [
+     6170.0,
+     -9215.0
+    ],
+    [
+     6170.0,
+     -10915.0
+    ],
+    [
+     5670.0,
+     -10915.0
+    ],
+    [
+     5670.0,
+     -9215.0
+    ]
+   ]
+  },
+  {
+   "id": 32,
+   "trang_thai": "loai",
+   "ghi_chu": "Thang máy (chữ tải trọng trong ô)",
+   "cx": 31605,
+   "cy": -10230,
+   "rong": 1550,
+   "dai": 1500,
+   "dien_tich_m2": 2.325,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Hidden"
+   ],
+   "nhan": [
+    "300KG"
+   ],
+   "dinh": [
+    [
+     32380.0,
+     -9480.0
+    ],
+    [
+     32380.0,
+     -10980.0
+    ],
+    [
+     30830.0,
+     -10980.0
+    ],
+    [
+     30830.0,
+     -9480.0
+    ]
+   ]
+  },
+  {
+   "id": 33,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1370,
+   "cy": -10700,
+   "rong": 850,
+   "dai": 750,
+   "dien_tich_m2": 0.39,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 4,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     1700.0,
+     -10980.0
+    ],
+    [
+     850.0,
+     -10980.0
+    ],
+    [
+     850.0,
+     -10680.0
+    ],
+    [
+     1400.0,
+     -10680.0
+    ],
+    [
+     1400.0,
+     -10230.0
+    ],
+    [
+     1700.0,
+     -10230.0
+    ]
+   ]
+  },
+  {
+   "id": 34,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 39190,
+   "cy": -10405,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.26"
+   ],
+   "dinh": [
+    [
+     39340.0,
+     -9980.0
+    ],
+    [
+     39340.0,
+     -10830.0
+    ],
+    [
+     39040.0,
+     -10830.0
+    ],
+    [
+     39040.0,
+     -9980.0
+    ]
+   ]
+  },
+  {
+   "id": 35,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1125,
+   "cy": -11555,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     1250.0,
+     -11430.0
+    ],
+    [
+     1250.0,
+     -11680.0
+    ],
+    [
+     1000.0,
+     -11680.0
+    ],
+    [
+     1000.0,
+     -11430.0
+    ]
+   ]
+  },
+  {
+   "id": 36,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 9250,
+   "cy": -11655,
+   "rong": 500,
+   "dai": 550,
+   "dien_tich_m2": 0.275,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.28"
+   ],
+   "dinh": [
+    [
+     9500.0,
+     -11380.0
+    ],
+    [
+     9500.0,
+     -11930.0
+    ],
+    [
+     9000.0,
+     -11930.0
+    ],
+    [
+     9000.0,
+     -11380.0
+    ]
+   ]
+  },
+  {
+   "id": 37,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16550,
+   "cy": -11655,
+   "rong": 500,
+   "dai": 550,
+   "dien_tich_m2": 0.275,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     16800.0,
+     -11380.0
+    ],
+    [
+     16800.0,
+     -11930.0
+    ],
+    [
+     16300.0,
+     -11930.0
+    ],
+    [
+     16300.0,
+     -11380.0
+    ]
+   ]
+  },
+  {
+   "id": 38,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 31640,
+   "cy": -11530,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     32090.0,
+     -11380.0
+    ],
+    [
+     32090.0,
+     -11680.0
+    ],
+    [
+     31190.0,
+     -11680.0
+    ],
+    [
+     31190.0,
+     -11380.0
+    ]
+   ]
+  },
+  {
+   "id": 39,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 17600,
+   "cy": -13380,
+   "rong": 600,
+   "dai": 4000,
+   "dien_tich_m2": 2.4,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "2.40",
+    "TA"
+   ],
+   "dinh": [
+    [
+     17900.0,
+     -11380.0
+    ],
+    [
+     17900.0,
+     -15380.0
+    ],
+    [
+     17300.0,
+     -15380.0
+    ],
+    [
+     17300.0,
+     -11380.0
+    ]
+   ]
+  },
+  {
+   "id": 40,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1850,
+   "cy": -15000,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     2299.6,
+     -14850.0
+    ],
+    [
+     2299.6,
+     -15150.0
+    ],
+    [
+     1399.6,
+     -15150.0
+    ],
+    [
+     1399.6,
+     -14850.0
+    ]
+   ]
+  },
+  {
+   "id": 41,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 34830,
+   "cy": -14980,
+   "rong": 800,
+   "dai": 300,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.24"
+   ],
+   "dinh": [
+    [
+     35230.0,
+     -14830.0
+    ],
+    [
+     35230.0,
+     -15130.0
+    ],
+    [
+     34430.0,
+     -15130.0
+    ],
+    [
+     34430.0,
+     -14830.0
+    ]
+   ]
+  },
+  {
+   "id": 42,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1100,
+   "cy": -15975,
+   "rong": 300,
+   "dai": 950,
+   "dien_tich_m2": 0.285,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.29"
+   ],
+   "dinh": [
+    [
+     1250.0,
+     -15500.0
+    ],
+    [
+     1250.0,
+     -16450.0
+    ],
+    [
+     950.0,
+     -16450.0
+    ],
+    [
+     950.0,
+     -15500.0
+    ]
+   ]
+  },
+  {
+   "id": 43,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 4080,
+   "cy": -20230,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     4230.0,
+     -19780.0
+    ],
+    [
+     4230.0,
+     -20680.0
+    ],
+    [
+     3930.0,
+     -20680.0
+    ],
+    [
+     3930.0,
+     -19780.0
+    ]
+   ]
+  },
+  {
+   "id": 44,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 9150,
+   "cy": -20255,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.26"
+   ],
+   "dinh": [
+    [
+     9300.0,
+     -19830.0
+    ],
+    [
+     9300.0,
+     -20680.0
+    ],
+    [
+     9000.0,
+     -20680.0
+    ],
+    [
+     9000.0,
+     -19830.0
+    ]
+   ]
+  },
+  {
+   "id": 45,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16650,
+   "cy": -20255,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     16800.0,
+     -19830.0
+    ],
+    [
+     16800.0,
+     -20680.0
+    ],
+    [
+     16500.0,
+     -20680.0
+    ],
+    [
+     16500.0,
+     -19830.0
+    ]
+   ]
+  },
+  {
+   "id": 46,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 34230,
+   "cy": -21330,
+   "rong": 1300,
+   "dai": 300,
+   "dien_tich_m2": 0.39,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 4,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.39"
+   ],
+   "dinh": [
+    [
+     34880.0,
+     -21180.0
+    ],
+    [
+     34880.0,
+     -21480.0
+    ],
+    [
+     33580.0,
+     -21480.0
+    ],
+    [
+     33580.0,
+     -21180.0
+    ]
+   ]
+  },
+  {
+   "id": 47,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 17800,
+   "cy": -22130,
+   "rong": 800,
+   "dai": 300,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.24"
+   ],
+   "dinh": [
+    [
+     18200.0,
+     -21980.0
+    ],
+    [
+     18200.0,
+     -22280.0
+    ],
+    [
+     17400.0,
+     -22280.0
+    ],
+    [
+     17400.0,
+     -21980.0
+    ]
+   ]
+  },
+  {
+   "id": 48,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 34705,
+   "cy": -22105,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     34830.0,
+     -21980.0
+    ],
+    [
+     34830.0,
+     -22230.0
+    ],
+    [
+     34580.0,
+     -22230.0
+    ],
+    [
+     34580.0,
+     -21980.0
+    ]
+   ]
+  },
+  {
+   "id": 49,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24150,
+   "cy": -22365,
+   "rong": 1700,
+   "dai": 500,
+   "dien_tich_m2": 0.85,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.85",
+    "HKHL"
+   ],
+   "dinh": [
+    [
+     25000.0,
+     -22115.0
+    ],
+    [
+     25000.0,
+     -22615.0
+    ],
+    [
+     23300.0,
+     -22615.0
+    ],
+    [
+     23300.0,
+     -22115.0
+    ]
+   ]
+  },
+  {
+   "id": 50,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 29580,
+   "cy": -25025,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     30030.0,
+     -24875.0
+    ],
+    [
+     30030.0,
+     -25175.0
+    ],
+    [
+     29130.0,
+     -25175.0
+    ],
+    [
+     29130.0,
+     -24875.0
+    ]
+   ]
+  },
+  {
+   "id": 51,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 27300,
+   "cy": -25820,
+   "rong": 300,
+   "dai": 1050,
+   "dien_tich_m2": 0.315,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     27450.0,
+     -25295.0
+    ],
+    [
+     27450.0,
+     -26345.0
+    ],
+    [
+     27150.0,
+     -26345.0
+    ],
+    [
+     27150.0,
+     -25295.0
+    ]
+   ]
+  },
+  {
+   "id": 52,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 18025,
+   "cy": -28175,
+   "rong": 350,
+   "dai": 250,
+   "dien_tich_m2": 0.087,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     18200.0,
+     -28050.0
+    ],
+    [
+     18200.0,
+     -28300.0
+    ],
+    [
+     17850.0,
+     -28300.0
+    ],
+    [
+     17850.0,
+     -28050.0
+    ]
+   ]
+  },
+  {
+   "id": 53,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24930,
+   "cy": -31130,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     25080.0,
+     -30680.0
+    ],
+    [
+     25080.0,
+     -31580.0
+    ],
+    [
+     24780.0,
+     -31580.0
+    ],
+    [
+     24780.0,
+     -30680.0
+    ]
+   ]
+  },
+  {
+   "id": 54,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 34830,
+   "cy": -31430,
+   "rong": 800,
+   "dai": 300,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.24"
+   ],
+   "dinh": [
+    [
+     35230.0,
+     -31280.0
+    ],
+    [
+     35230.0,
+     -31580.0
+    ],
+    [
+     34430.0,
+     -31580.0
+    ],
+    [
+     34430.0,
+     -31280.0
+    ]
+   ]
+  },
+  {
+   "id": 55,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 22600,
+   "cy": -32380,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     23050.0,
+     -32230.0
+    ],
+    [
+     23050.0,
+     -32530.0
+    ],
+    [
+     22150.0,
+     -32530.0
+    ],
+    [
+     22150.0,
+     -32230.0
+    ]
+   ]
+  },
+  {
+   "id": 56,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 29630,
+   "cy": -32380,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     30080.0,
+     -32230.0
+    ],
+    [
+     30080.0,
+     -32530.0
+    ],
+    [
+     29180.0,
+     -32530.0
+    ],
+    [
+     29180.0,
+     -32230.0
+    ]
+   ]
+  },
+  {
+   "id": 57,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 18025,
+   "cy": -35385,
+   "rong": 350,
+   "dai": 250,
+   "dien_tich_m2": 0.087,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.09"
+   ],
+   "dinh": [
+    [
+     18200.0,
+     -35260.0
+    ],
+    [
+     18200.0,
+     -35510.0
+    ],
+    [
+     17850.0,
+     -35510.0
+    ],
+    [
+     17850.0,
+     -35260.0
+    ]
+   ]
+  },
+  {
+   "id": 58,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 34605,
+   "cy": -35385,
+   "rong": 350,
+   "dai": 250,
+   "dien_tich_m2": 0.088,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     34780.0,
+     -35260.0
+    ],
+    [
+     34780.0,
+     -35510.0
+    ],
+    [
+     34430.0,
+     -35510.0
+    ],
+    [
+     34430.0,
+     -35260.0
+    ]
+   ]
+  },
+  {
+   "id": 59,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 17800,
+   "cy": -41530,
+   "rong": 800,
+   "dai": 300,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     18200.0,
+     -41380.0
+    ],
+    [
+     18200.0,
+     -41680.0
+    ],
+    [
+     17400.0,
+     -41680.0
+    ],
+    [
+     17400.0,
+     -41380.0
+    ]
+   ]
+  },
+  {
+   "id": 60,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 22580,
+   "cy": -41530,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     22129.6,
+     -41380.0
+    ],
+    [
+     23029.6,
+     -41380.0
+    ],
+    [
+     23029.6,
+     -41680.0
+    ],
+    [
+     22129.6,
+     -41680.0
+    ]
+   ]
+  },
+  {
+   "id": 61,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 29650,
+   "cy": -41530,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     30099.6,
+     -41380.0
+    ],
+    [
+     30099.6,
+     -41680.0
+    ],
+    [
+     29199.6,
+     -41680.0
+    ],
+    [
+     29199.6,
+     -41380.0
+    ]
+   ]
+  },
+  {
+   "id": 62,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 34830,
+   "cy": -41530,
+   "rong": 800,
+   "dai": 300,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.24"
+   ],
+   "dinh": [
+    [
+     34430.0,
+     -41380.0
+    ],
+    [
+     35230.0,
+     -41380.0
+    ],
+    [
+     35230.0,
+     -41680.0
+    ],
+    [
+     34430.0,
+     -41680.0
+    ]
+   ]
+  },
+  {
+   "id": 63,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16325,
+   "cy": -42230,
+   "rong": 950,
+   "dai": 300,
+   "dien_tich_m2": 0.285,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.29"
+   ],
+   "dinh": [
+    [
+     16800.1,
+     -42079.9
+    ],
+    [
+     16800.1,
+     -42379.9
+    ],
+    [
+     15850.1,
+     -42379.9
+    ],
+    [
+     15850.1,
+     -42079.9
+    ]
+   ]
+  },
+  {
+   "id": 64,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 28650,
+   "cy": -42230,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     29100.0,
+     -42080.0
+    ],
+    [
+     29100.0,
+     -42380.0
+    ],
+    [
+     28200.0,
+     -42380.0
+    ],
+    [
+     28200.0,
+     -42080.0
+    ]
+   ]
+  },
+  {
+   "id": 65,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24300,
+   "cy": -42530,
+   "rong": 900,
+   "dai": 900,
+   "dien_tich_m2": 0.81,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "BK"
+   ],
+   "dinh": [
+    [
+     24750.0,
+     -42080.0
+    ],
+    [
+     24750.0,
+     -42980.0
+    ],
+    [
+     23850.0,
+     -42980.0
+    ],
+    [
+     23850.0,
+     -42080.0
+    ]
+   ]
+  },
+  {
+   "id": 66,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24800,
+   "cy": -43580,
+   "rong": 500,
+   "dai": 800,
+   "dien_tich_m2": 0.4,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.40"
+   ],
+   "dinh": [
+    [
+     25050.0,
+     -43180.0
+    ],
+    [
+     25050.0,
+     -43980.0
+    ],
+    [
+     24550.0,
+     -43980.0
+    ],
+    [
+     24550.0,
+     -43180.0
+    ]
+   ]
+  },
+  {
+   "id": 67,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24600,
+   "cy": -48680,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     25050.0,
+     -48530.0
+    ],
+    [
+     25050.0,
+     -48830.0
+    ],
+    [
+     24150.0,
+     -48830.0
+    ],
+    [
+     24150.0,
+     -48530.0
+    ]
+   ]
+  },
+  {
+   "id": 68,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 35005,
+   "cy": -48680,
+   "rong": 850,
+   "dai": 300,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     35430.0,
+     -48530.0
+    ],
+    [
+     35430.0,
+     -48830.0
+    ],
+    [
+     34580.0,
+     -48830.0
+    ],
+    [
+     34580.0,
+     -48530.0
+    ]
+   ]
+  },
+  {
+   "id": 69,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 14750,
+   "cy": -49655,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.26"
+   ],
+   "dinh": [
+    [
+     14600.0,
+     -49230.0
+    ],
+    [
+     14900.0,
+     -49230.0
+    ],
+    [
+     14900.0,
+     -50080.0
+    ],
+    [
+     14600.0,
+     -50080.0
+    ]
+   ]
+  },
+  {
+   "id": 70,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 30350,
+   "cy": -49455,
+   "rong": 1800,
+   "dai": 450,
+   "dien_tich_m2": 0.81,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.81"
+   ],
+   "dinh": [
+    [
+     31249.9,
+     -49230.0
+    ],
+    [
+     31249.9,
+     -49680.0
+    ],
+    [
+     29449.9,
+     -49680.0
+    ],
+    [
+     29449.9,
+     -49230.0
+    ]
+   ]
+  },
+  {
+   "id": 71,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 32250,
+   "cy": -49530,
+   "rong": 900,
+   "dai": 600,
+   "dien_tich_m2": 0.54,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.54",
+    "TG"
+   ],
+   "dinh": [
+    [
+     32700.0,
+     -49230.0
+    ],
+    [
+     32700.0,
+     -49830.0
+    ],
+    [
+     31800.0,
+     -49830.0
+    ],
+    [
+     31800.0,
+     -49230.0
+    ]
+   ]
+  },
+  {
+   "id": 72,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 33750,
+   "cy": -49530,
+   "rong": 1700,
+   "dai": 600,
+   "dien_tich_m2": 1.02,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "1.02",
+    "TA"
+   ],
+   "dinh": [
+    [
+     34600.0,
+     -49230.0
+    ],
+    [
+     34600.0,
+     -49830.0
+    ],
+    [
+     32900.0,
+     -49830.0
+    ],
+    [
+     32900.0,
+     -49230.0
+    ]
+   ]
+  },
+  {
+   "id": 73,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 7700,
+   "cy": -50579,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     7850.0,
+     -50128.9
+    ],
+    [
+     7850.0,
+     -51028.9
+    ],
+    [
+     7550.0,
+     -51028.9
+    ],
+    [
+     7550.0,
+     -50128.9
+    ]
+   ]
+  },
+  {
+   "id": 74,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 29850,
+   "cy": -50804,
+   "rong": 2200,
+   "dai": 250,
+   "dien_tich_m2": 0.55,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.55"
+   ],
+   "dinh": [
+    [
+     30950.0,
+     -50679.4
+    ],
+    [
+     30950.0,
+     -50929.4
+    ],
+    [
+     28750.0,
+     -50929.4
+    ],
+    [
+     28750.0,
+     -50679.4
+    ]
+   ]
+  },
+  {
+   "id": 75,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 45380,
+   "cy": -51605,
+   "rong": 300,
+   "dai": 950,
+   "dien_tich_m2": 0.285,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.29"
+   ],
+   "dinh": [
+    [
+     45530.0,
+     -51130.0
+    ],
+    [
+     45530.0,
+     -52080.0
+    ],
+    [
+     45230.0,
+     -52080.0
+    ],
+    [
+     45230.0,
+     -51130.0
+    ]
+   ]
+  },
+  {
+   "id": 76,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24000,
+   "cy": -51880,
+   "rong": 600,
+   "dai": 1700,
+   "dien_tich_m2": 1.02,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "1.02",
+    "TA"
+   ],
+   "dinh": [
+    [
+     24300.0,
+     -51030.0
+    ],
+    [
+     24300.0,
+     -52730.0
+    ],
+    [
+     23700.0,
+     -52730.0
+    ],
+    [
+     23700.0,
+     -51030.0
+    ]
+   ]
+  },
+  {
+   "id": 77,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24750,
+   "cy": -51880,
+   "rong": 500,
+   "dai": 1700,
+   "dien_tich_m2": 0.85,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.85",
+    "HK HL"
+   ],
+   "dinh": [
+    [
+     25000.0,
+     -51030.0
+    ],
+    [
+     25000.0,
+     -52730.0
+    ],
+    [
+     24500.0,
+     -52730.0
+    ],
+    [
+     24500.0,
+     -51030.0
+    ]
+   ]
+  },
+  {
+   "id": 78,
+   "trang_thai": "loai",
+   "ghi_chu": "Thang máy (chữ tải trọng trong ô)",
+   "cx": 30725,
+   "cy": -51980,
+   "rong": 1550,
+   "dai": 1500,
+   "dien_tich_m2": 2.325,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Hidden"
+   ],
+   "nhan": [
+    "300KG"
+   ],
+   "dinh": [
+    [
+     29950.0,
+     -51230.0
+    ],
+    [
+     31500.1,
+     -51230.0
+    ],
+    [
+     31500.1,
+     -52730.0
+    ],
+    [
+     29950.0,
+     -52730.0
+    ]
+   ]
+  },
+  {
+   "id": 79,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 38230,
+   "cy": -51780,
+   "rong": 300,
+   "dai": 800,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     38080.0,
+     -51380.0
+    ],
+    [
+     38380.0,
+     -51380.0
+    ],
+    [
+     38380.0,
+     -52180.0
+    ],
+    [
+     38080.0,
+     -52180.0
+    ]
+   ]
+  },
+  {
+   "id": 80,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1725,
+   "cy": -52535,
+   "rong": 450,
+   "dai": 250,
+   "dien_tich_m2": 0.113,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     1950.0,
+     -52410.0
+    ],
+    [
+     1950.0,
+     -52660.0
+    ],
+    [
+     1500.0,
+     -52660.0
+    ],
+    [
+     1500.0,
+     -52410.0
+    ]
+   ]
+  },
+  {
+   "id": 81,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 28675,
+   "cy": -52605,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     28800.1,
+     -52480.0
+    ],
+    [
+     28800.1,
+     -52730.0
+    ],
+    [
+     28550.1,
+     -52730.0
+    ],
+    [
+     28550.1,
+     -52480.0
+    ]
+   ]
+  },
+  {
+   "id": 82,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16300,
+   "cy": -52830,
+   "rong": 2000,
+   "dai": 800,
+   "dien_tich_m2": 1.6,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "1.60",
+    "TA"
+   ],
+   "dinh": [
+    [
+     17300.0,
+     -52430.0
+    ],
+    [
+     17300.0,
+     -53230.0
+    ],
+    [
+     15300.0,
+     -53230.0
+    ],
+    [
+     15300.0,
+     -52430.0
+    ]
+   ]
+  },
+  {
+   "id": 83,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 27575,
+   "cy": -52830,
+   "rong": 750,
+   "dai": 400,
+   "dien_tich_m2": 0.3,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.30",
+    "HM"
+   ],
+   "dinh": [
+    [
+     27950.1,
+     -52630.0
+    ],
+    [
+     27950.1,
+     -53030.0
+    ],
+    [
+     27200.1,
+     -53030.0
+    ],
+    [
+     27200.1,
+     -52630.0
+    ]
+   ]
+  },
+  {
+   "id": 84,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 46890,
+   "cy": -53540,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     47040.0,
+     -53090.0
+    ],
+    [
+     47040.0,
+     -53990.0
+    ],
+    [
+     46740.0,
+     -53990.0
+    ],
+    [
+     46740.0,
+     -53090.0
+    ]
+   ]
+  },
+  {
+   "id": 85,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 11035,
+   "cy": -54026,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     11185.0,
+     -53575.6
+    ],
+    [
+     11185.0,
+     -54475.6
+    ],
+    [
+     10885.0,
+     -54475.6
+    ],
+    [
+     10885.0,
+     -53575.6
+    ]
+   ]
+  },
+  {
+   "id": 86,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 20305,
+   "cy": -53955,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     20430.0,
+     -53830.0
+    ],
+    [
+     20430.0,
+     -54080.0
+    ],
+    [
+     20180.0,
+     -54080.0
+    ],
+    [
+     20180.0,
+     -53830.0
+    ]
+   ]
+  },
+  {
+   "id": 87,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 32575,
+   "cy": -57180,
+   "rong": 550,
+   "dai": 1600,
+   "dien_tich_m2": 0.88,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.88",
+    "TA"
+   ],
+   "dinh": [
+    [
+     32850.0,
+     -56380.0
+    ],
+    [
+     32850.0,
+     -57980.0
+    ],
+    [
+     32300.0,
+     -57980.0
+    ],
+    [
+     32300.0,
+     -56380.0
+    ]
+   ]
+  },
+  {
+   "id": 88,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 36350,
+   "cy": -57380,
+   "rong": 2700,
+   "dai": 400,
+   "dien_tich_m2": 1.08,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 12,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "1.08"
+   ],
+   "dinh": [
+    [
+     37700.0,
+     -57180.0
+    ],
+    [
+     37700.0,
+     -57580.0
+    ],
+    [
+     35000.0,
+     -57580.0
+    ],
+    [
+     35000.0,
+     -57180.0
+    ]
+   ]
+  },
+  {
+   "id": 89,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1550,
+   "cy": -58430,
+   "rong": 800,
+   "dai": 300,
+   "dien_tich_m2": 0.24,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     1949.9,
+     -58280.0
+    ],
+    [
+     1949.9,
+     -58580.0
+    ],
+    [
+     1149.9,
+     -58580.0
+    ],
+    [
+     1149.9,
+     -58280.0
+    ]
+   ]
+  },
+  {
+   "id": 90,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 35697,
+   "cy": -58283,
+   "rong": 1600,
+   "dai": 600,
+   "dien_tich_m2": 0.57,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.09",
+    "0.48"
+   ],
+   "dinh": [
+    [
+     36600.0,
+     -58180.0
+    ],
+    [
+     36600.0,
+     -58480.0
+    ],
+    [
+     35000.0,
+     -58480.0
+    ],
+    [
+     35000.0,
+     -57880.0
+    ],
+    [
+     35300.0,
+     -57880.0
+    ],
+    [
+     35300.0,
+     -58180.0
+    ]
+   ]
+  },
+  {
+   "id": 91,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 15800,
+   "cy": -58980,
+   "rong": 1000,
+   "dai": 800,
+   "dien_tich_m2": 0.8,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.80",
+    "BK"
+   ],
+   "dinh": [
+    [
+     16300.0,
+     -58580.0
+    ],
+    [
+     16300.0,
+     -59380.0
+    ],
+    [
+     15300.0,
+     -59380.0
+    ],
+    [
+     15300.0,
+     -58580.0
+    ]
+   ]
+  },
+  {
+   "id": 92,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16950,
+   "cy": -59080,
+   "rong": 900,
+   "dai": 1000,
+   "dien_tich_m2": 0.9,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.90",
+    "HKHL"
+   ],
+   "dinh": [
+    [
+     17400.0,
+     -58580.0
+    ],
+    [
+     17400.0,
+     -59580.0
+    ],
+    [
+     16500.0,
+     -59580.0
+    ],
+    [
+     16500.0,
+     -58580.0
+    ]
+   ]
+  },
+  {
+   "id": 93,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 35650,
+   "cy": -58980,
+   "rong": 1300,
+   "dai": 600,
+   "dien_tich_m2": 0.78,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.78",
+    "BK"
+   ],
+   "dinh": [
+    [
+     36300.0,
+     -58680.0
+    ],
+    [
+     36300.0,
+     -59280.0
+    ],
+    [
+     35000.0,
+     -59280.0
+    ],
+    [
+     35000.0,
+     -58680.0
+    ]
+   ]
+  },
+  {
+   "id": 94,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 43120,
+   "cy": -58830,
+   "rong": 500,
+   "dai": 900,
+   "dien_tich_m2": 0.45,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 6,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.45"
+   ],
+   "dinh": [
+    [
+     43370.0,
+     -58380.0
+    ],
+    [
+     43370.0,
+     -59280.0
+    ],
+    [
+     42870.0,
+     -59280.0
+    ],
+    [
+     42870.0,
+     -58380.0
+    ]
+   ]
+  },
+  {
+   "id": 95,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 55405,
+   "cy": -59155,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     55530.0,
+     -59030.0
+    ],
+    [
+     55530.0,
+     -59280.0
+    ],
+    [
+     55280.0,
+     -59280.0
+    ],
+    [
+     55280.0,
+     -59030.0
+    ]
+   ]
+  },
+  {
+   "id": 96,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 14450,
+   "cy": -59510,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     14000.0,
+     -59360.0
+    ],
+    [
+     14900.0,
+     -59360.0
+    ],
+    [
+     14900.0,
+     -59660.0
+    ],
+    [
+     14000.0,
+     -59660.0
+    ]
+   ]
+  },
+  {
+   "id": 97,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 47930,
+   "cy": -60680,
+   "rong": 500,
+   "dai": 1700,
+   "dien_tich_m2": 0.85,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.85",
+    "HK HL"
+   ],
+   "dinh": [
+    [
+     48180.0,
+     -59830.0
+    ],
+    [
+     48180.0,
+     -61530.0
+    ],
+    [
+     47680.0,
+     -61530.0
+    ],
+    [
+     47680.0,
+     -59830.0
+    ]
+   ]
+  },
+  {
+   "id": 98,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 6975,
+   "cy": -61910,
+   "rong": 550,
+   "dai": 500,
+   "dien_tich_m2": 0.275,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.28"
+   ],
+   "dinh": [
+    [
+     7250.0,
+     -61660.0
+    ],
+    [
+     7250.0,
+     -62160.0
+    ],
+    [
+     6700.0,
+     -62160.0
+    ],
+    [
+     6700.0,
+     -61660.0
+    ]
+   ]
+  },
+  {
+   "id": 99,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 47780,
+   "cy": -61880,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     48229.6,
+     -61730.0
+    ],
+    [
+     48229.6,
+     -62030.0
+    ],
+    [
+     47329.6,
+     -62030.0
+    ],
+    [
+     47329.6,
+     -61730.0
+    ]
+   ]
+  },
+  {
+   "id": 100,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1675,
+   "cy": -62635,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     1800.0,
+     -62510.0
+    ],
+    [
+     1800.0,
+     -62760.0
+    ],
+    [
+     1550.0,
+     -62760.0
+    ],
+    [
+     1550.0,
+     -62510.0
+    ]
+   ]
+  },
+  {
+   "id": 101,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 38355,
+   "cy": -62360,
+   "rong": 450,
+   "dai": 700,
+   "dien_tich_m2": 0.315,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.31"
+   ],
+   "dinh": [
+    [
+     38580.0,
+     -62010.0
+    ],
+    [
+     38580.0,
+     -62710.0
+    ],
+    [
+     38130.0,
+     -62710.0
+    ],
+    [
+     38130.0,
+     -62010.0
+    ]
+   ]
+  },
+  {
+   "id": 102,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 55405,
+   "cy": -63535,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.063,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     55530.0,
+     -63410.0
+    ],
+    [
+     55530.0,
+     -63660.0
+    ],
+    [
+     55280.0,
+     -63660.0
+    ],
+    [
+     55280.0,
+     -63410.0
+    ]
+   ]
+  },
+  {
+   "id": 103,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 9900,
+   "cy": -64080,
+   "rong": 900,
+   "dai": 300,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     10350.0,
+     -63930.0
+    ],
+    [
+     10350.0,
+     -64230.0
+    ],
+    [
+     9450.0,
+     -64230.0
+    ],
+    [
+     9450.0,
+     -63930.0
+    ]
+   ]
+  },
+  {
+   "id": 104,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 45305,
+   "cy": -64010,
+   "rong": 450,
+   "dai": 1100,
+   "dien_tich_m2": 0.495,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-PKT-TĐH thapB"
+   ],
+   "layer_x": [
+    "xf-PKT-TĐH thapB$0$A-Material"
+   ],
+   "nhan": [
+    "0.50"
+   ],
+   "dinh": [
+    [
+     45530.0,
+     -63460.0
+    ],
+    [
+     45530.0,
+     -64560.0
+    ],
+    [
+     45080.0,
+     -64560.0
+    ],
+    [
+     45080.0,
+     -63460.0
+    ]
+   ]
+  },
+  {
+   "id": 105,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 22600,
+   "cy": -64935,
+   "rong": 800,
+   "dai": 450,
+   "dien_tich_m2": 0.36,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.36"
+   ],
+   "dinh": [
+    [
+     23000.0,
+     -64710.0
+    ],
+    [
+     23000.0,
+     -65160.0
+    ],
+    [
+     22200.0,
+     -65160.0
+    ],
+    [
+     22200.0,
+     -64710.0
+    ]
+   ]
+  },
+  {
+   "id": 106,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 31230,
+   "cy": -64935,
+   "rong": 800,
+   "dai": 450,
+   "dien_tich_m2": 0.36,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     31630.0,
+     -64710.0
+    ],
+    [
+     31630.0,
+     -65160.0
+    ],
+    [
+     30830.0,
+     -65160.0
+    ],
+    [
+     30830.0,
+     -64710.0
+    ]
+   ]
+  },
+  {
+   "id": 107,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 47480,
+   "cy": -65160,
+   "rong": 300,
+   "dai": 900,
+   "dien_tich_m2": 0.27,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.27"
+   ],
+   "dinh": [
+    [
+     47630.0,
+     -64710.4
+    ],
+    [
+     47630.0,
+     -65610.4
+    ],
+    [
+     47330.0,
+     -65610.4
+    ],
+    [
+     47330.0,
+     -64710.4
+    ]
+   ]
+  },
+  {
+   "id": 108,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 1375,
+   "cy": -68260,
+   "rong": 850,
+   "dai": 300,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.26"
+   ],
+   "dinh": [
+    [
+     1800.0,
+     -68110.4
+    ],
+    [
+     1800.0,
+     -68410.4
+    ],
+    [
+     950.0,
+     -68410.4
+    ],
+    [
+     950.0,
+     -68110.4
+    ]
+   ]
+  },
+  {
+   "id": 109,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 4325,
+   "cy": -70210,
+   "rong": 550,
+   "dai": 500,
+   "dien_tich_m2": 0.275,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.28"
+   ],
+   "dinh": [
+    [
+     4050.0,
+     -69960.0
+    ],
+    [
+     4600.0,
+     -69960.0
+    ],
+    [
+     4600.0,
+     -70460.0
+    ],
+    [
+     4050.0,
+     -70460.0
+    ]
+   ]
+  },
+  {
+   "id": 110,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 9600,
+   "cy": -70135,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     9750.0,
+     -69710.0
+    ],
+    [
+     9750.0,
+     -70560.0
+    ],
+    [
+     9450.0,
+     -70560.0
+    ],
+    [
+     9450.0,
+     -69710.0
+    ]
+   ]
+  },
+  {
+   "id": 111,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 15575,
+   "cy": -69835,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     15700.0,
+     -69710.0
+    ],
+    [
+     15700.0,
+     -69960.0
+    ],
+    [
+     15450.0,
+     -69960.0
+    ],
+    [
+     15450.0,
+     -69710.0
+    ]
+   ]
+  },
+  {
+   "id": 112,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16350,
+   "cy": -70135,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.26"
+   ],
+   "dinh": [
+    [
+     16499.9,
+     -69710.0
+    ],
+    [
+     16499.9,
+     -70560.0
+    ],
+    [
+     16199.9,
+     -70560.0
+    ],
+    [
+     16199.9,
+     -69710.0
+    ]
+   ]
+  },
+  {
+   "id": 113,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 37480,
+   "cy": -70135,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     37630.0,
+     -69710.0
+    ],
+    [
+     37630.0,
+     -70560.0
+    ],
+    [
+     37330.0,
+     -70560.0
+    ],
+    [
+     37330.0,
+     -69710.0
+    ]
+   ]
+  },
+  {
+   "id": 114,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 38280,
+   "cy": -70135,
+   "rong": 300,
+   "dai": 850,
+   "dien_tich_m2": 0.255,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 3,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.26"
+   ],
+   "dinh": [
+    [
+     38430.0,
+     -69710.0
+    ],
+    [
+     38430.0,
+     -70560.0
+    ],
+    [
+     38130.0,
+     -70560.0
+    ],
+    [
+     38130.0,
+     -69710.0
+    ]
+   ]
+  },
+  {
+   "id": 115,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 44395,
+   "cy": -69835,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     44520.0,
+     -69710.0
+    ],
+    [
+     44520.0,
+     -69960.0
+    ],
+    [
+     44270.0,
+     -69960.0
+    ],
+    [
+     44270.0,
+     -69710.0
+    ]
+   ]
+  },
+  {
+   "id": 116,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 54530,
+   "cy": -69810,
+   "rong": 500,
+   "dai": 900,
+   "dien_tich_m2": 0.45,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 6,
+   "nguon": [
+    "xf-truc kt nuoc tdh"
+   ],
+   "layer_x": [
+    "xf-truc kt nuoc tdh$0$A-Lo mo"
+   ],
+   "nhan": [
+    "0.45"
+   ],
+   "dinh": [
+    [
+     54780.0,
+     -69360.0
+    ],
+    [
+     54780.0,
+     -70260.0
+    ],
+    [
+     54280.0,
+     -70260.0
+    ],
+    [
+     54280.0,
+     -69360.0
+    ]
+   ]
+  }
+ ],
+ "ong_chua_bo": []
+}

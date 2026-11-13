@@ -405,9 +405,47 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     `LC_CTYPE = English_United States.1252` cho cả tiến trình; sau đó Revit nạp phần tử ExportDWGSettings `AV-Export Cad`
     (bảng mẫu hatch, tên có dấu) thì thứ tự so sánh chuỗi đổi → báo hỏng dữ liệu → thoát. Chữa: `import locale;
     locale.setlocale(locale.LC_ALL, "C")` ở ĐẦU script CPython, trước khi đụng model (`_tmp\site_duyet\diag.py`: có dòng này
-    thì nạp + chuyển view được; sau khi thêm, 2 phiên 8 lượt bấm không văng). MỚI chỉ có trong script thử; các nút thật
-    (`#! python3`) CHƯA có → Revit của người dùng vẫn có thể văng trên model này (`Cần xác nhận lại`, định đưa vào
-    `lib\arv_dynamo_host.py` / builder khi làm nút gộp).
+    thì nạp + chuyển view được; sau khi thêm, 2 phiên 8 lượt bấm không văng). 2026-11-13: nút gộp `Hồ sơ đã duyệt` (dưới)
+    có dòng này ở đầu script; các nút của tab Archivina (`#! python3`) VẪN CHƯA có → bấm riêng từng nút Archivina trên
+    model này vẫn có thể văng (`Cần xác nhận lại`). Bản `arv_dynamo_host.py` đã thêm dòng này (đã thử cùng nút gộp, chạy
+    được) nằm ở `_backup\arv_dynamo_host_20261113_1059_co_locale.py`, CHƯA áp vào Archivina vì người dùng dặn "đừng động
+    gì đến archivina" – muốn áp phải hỏi lại.
+  - **Nút gộp `Hồ sơ đã duyệt` = extension RIÊNG `scripts\pyrevit\ARVHoSoDuyet.extension`** (2026-11-13; người dùng: "sinh
+    ra 1 nút để lúc ấn có thể chuyển những gì đã trình bày … trong file chính", rồi "sinh nút mới ở trên thanh công cụ,
+    đừng động gì đến archivina, để t có thể gỡ"):
+    - Tab `Ho so duyet` → panel `Trình bày hồ sơ` → nút `Hồ sơ đã duyệt` (icon mdi `file-document-check-outline`). Viết
+      tay, KHÔNG qua `build_from_dynamo.py`. Nằm sẵn trong Extension Search Path `D:\AI\scripts\pyrevit` → Reload pyRevit
+      là hiện. Gỡ = bỏ / dời thư mục extension rồi Reload. `ARVTools.extension` (Archivina) không sửa gì, chỉ được đọc + chạy.
+    - Cách làm: KHÔNG chép phần tử giữa 2 file (tag bám đối tượng link không chép được). `lib\arv_ho_so_duyet.py` chạy lại
+      4 nút HS TKBVTC của Archivina (`script.py` của từng nút) trên từng mặt bằng, thay tạm `arv_hoi_sheet.hoi*` bằng câu
+      trả lời theo phương án đã duyệt `lib\ho_so_duyet\<mã>.json` (HQV: `HQV_ThapB_Site.json`, nhận file theo tên có
+      `HQV_A_ThapB_Site`; 14 mục: chống thấm / ngăn cháy / định vị cửa 4 tầng, lan can 3BA + 5BA, 1:200, số hiệu như file
+      15), bỏ `RequestViewChange`, cả lần bấm 1 TransactionGroup (Revit 2027.3 cho đổi view khi group đang mở).
+    - Bấm → bảng kiểm: từng mục + tình trạng trong file đang mở (tạo view / dùng view có sẵn / bản vẽ trống có sẵn / đã nằm
+      trên bản vẽ / thiếu mặt bằng nguồn = không chạy), bỏ tích mục không muốn làm, ô chọn kiểu tag cửa → Chạy → báo cáo
+      + log `Documents\ARV_Logs\ho_so_duyet\`. View đích đã nằm trên bản vẽ thì giữ template / tỉ lệ đang có.
+    - Kết quả nhận diện CAD của lần duyệt mang theo (`lib\ho_so_duyet\HQV_ThapB_Site\cad\`, chỉ json + `xong.txt`, 357 KB),
+      chép vào thư mục đệm của lõi nếu chưa có → DWG + script nhận diện chưa đổi thì không chạy lại AutoCAD.
+    - **Tag cửa xếp lại** (người dùng 2026-11-13, ảnh ACD.07.06: "bản định vị cửa sắp xếp còn rối mắt quá"): lõi RIÊNG
+      `lib\loi_rieng\TagCua_xep_lai.py` = `TagCua_TuDong.py` sáng 13/11 + sửa; nạp thay `core.py` của nút TagCua lúc chạy
+      (thay `arv_dynamo_host.load_core`, `__file__` vẫn là core gốc nên `lib\tag_cua` vẫn tìm đúng). Lõi gốc đổi thì bản này
+      KHÔNG đổi theo. Kiểu tag (ô chọn trong bảng kiểm, `ARV_TAG_GON`): `chu` (mặc định) = chỉ CHỮ mã, không khung, nền
+      trong, chỗ chiếm tính theo nét chữ; `gon` = khung 1 ô 10 × 3,5 mm; `2o` = 2 ô mã / rộngXcao; `goc` = lõi Archivina.
+      Thứ tự chỗ đặt: sát tường giữa cửa → trượt dọc tường còn phủ ≥ 50 % bề rộng cửa hoặc quay vuông góc ngay trước cửa
+      (không leader; trượt tới trước cửa khác thì có leader) → lưới gần có leader. Tỉ lệ ≥ 1:150 khe quanh tag ≤ 0,6 mm.
+      Tầng 5BA 1:200: leader 158 (2 ô gốc) → 97 (`gon`) → 63 (`chu`); "tag còn đè" 134 → 8 → 1. Family tag trong file đã
+      có khung do công cụ vẽ (đã bấm Định vị + tag cửa trước đó) thì kiểu `chu` không áp dụng được (không xoá nét khung).
+      Chữ tag nền trong nên nét trục có thể chạy qua chữ. Kiểu `chu` bỏ khung + bỏ dòng rộngXcao trên tag (kích thước xem
+      bảng thống kê trên sheet): người dùng CHƯA duyệt (`Cần xác nhận lại`).
+    - Thử nền nút thật (qua ARVTestHS) trên bản sao sạch mang tên file chính `_tmp\ho_so_duyet\rvt\2.HQV_A_ThapB_Site.rvt`
+      (`thu.py`, kết quả `_tmp\ho_so_duyet\kq2\`): 14 mục 3 phút 27 giây, 0 lỗi, đệm CAD dùng lại 8/8, số liệu khớp file 15
+      (29 / 17 / 39 / 84 phòng; 24 / 33 / 36 / 114 ô; tag 94 / 146 / 83 / 239; lan can 0 / 6), leader cửa 13 / 26 / 9 / 63;
+      bấm lần 2 (52 giây) không đổi gì. Mã cửa trên tag khác file 15 ở vài loại (DCA15 → DS01…) vì file link đã đổi Type
+      Mark sau 9:00. File chính lúc 10:47 (đọc qua MCP): đủ 4 mặt bằng nguồn, chưa có bản vẽ / view nào của công cụ.
+      Ctrl+Z 1 lần chưa thử bằng tay; người dùng chưa bấm trên file chính (`Cần xác nhận lại`).
+    - Bẫy: lần ĐẦU pyRevit nạp phiên có extension mới báo `PyRevitLoader - Error Loading pyRevit` (NullReference trong
+      `HashSet.AddIfNotPresent`, `sessionmgr.py` 431) 1 lần; nạp lại thì được (4 lần sau đều được). Gặp thì đóng hộp thoại,
+      Reload pyRevit / mở lại Revit. Thử nạp nhanh: `_tmp\ho_so_duyet\chay_thu_nap.ps1` (liệt kê tab / nút trên ribbon).
 - `ARV_MBTuongXayTang_v1.dyn` (bộ AI REVIT `AI REVIT\TUONG XAY\` của đồng nghiệp, người dùng yêu cầu áp dụng 2026-11-04;
   bản gốc giữ nguyên, bản dùng ở `scripts\dynamo\`):
   - Chức năng: mặt bằng TƯỜNG XÂY (định vị tường) cả tầng theo mẫu FPT P5 A.CD.04.07: view mới chép thông số template

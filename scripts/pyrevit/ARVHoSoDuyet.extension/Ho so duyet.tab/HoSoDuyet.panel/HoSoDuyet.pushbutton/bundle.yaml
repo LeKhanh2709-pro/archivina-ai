@@ -1,0 +1,3 @@
+title: "Hồ sơ\nđã duyệt"
+tooltip: "Bấm: hiện bảng kiểm rồi chạy lần lượt Chống thấm, Ngăn cháy lan, Định vị lan can louver, Định vị + tag cửa trên từng mặt bằng theo phương án đã duyệt (view template, tỉ lệ, số hiệu, tên bản vẽ), không hỏi lại từng nút. Không xoá gì, không sửa view template; mục đã làm rồi thì không vẽ trùng. Ctrl+Z một lần là hoàn tác cả lần bấm. Nút nằm trong extension riêng ARVHoSoDuyet (gỡ = bỏ thư mục extension rồi Reload pyRevit), cần bộ nút Archivina."
+author: Archivina BIM

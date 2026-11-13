@@ -1,0 +1,2253 @@
+{
+ "dxf": "D:\\AI\\_tmp\\site_duyet\\log\\cad\\254HQV-Thap_B-Mat_bang_tang_3_1de82e1741\\254HQV-Thap B-Mat bang tang 3.dxf",
+ "layer_hatch": "A-Material",
+ "pattern": "NET",
+ "vung": [
+  {
+   "id": 1,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 33080,
+   "cy": -3930,
+   "rong": 800,
+   "dai": 1400,
+   "dien_tich_m2": 1.12,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.40",
+    "0.72",
+    "BK",
+    "TA"
+   ],
+   "dinh": [
+    [
+     33480.0,
+     -3230.0
+    ],
+    [
+     33480.0,
+     -4630.0
+    ],
+    [
+     32680.0,
+     -4630.0
+    ],
+    [
+     32680.0,
+     -3230.0
+    ]
+   ]
+  },
+  {
+   "id": 2,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 28830,
+   "cy": -4280,
+   "rong": 2800,
+   "dai": 2200,
+   "dien_tich_m2": 6.16,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     27430.0,
+     -3180.0
+    ],
+    [
+     30230.0,
+     -3180.0
+    ],
+    [
+     30230.0,
+     -5380.0
+    ],
+    [
+     27430.0,
+     -5380.0
+    ]
+   ]
+  },
+  {
+   "id": 3,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 43180,
+   "cy": -4505,
+   "rong": 900,
+   "dai": 450,
+   "dien_tich_m2": 0.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.40",
+    "HK"
+   ],
+   "dinh": [
+    [
+     42730.0,
+     -4280.0
+    ],
+    [
+     43630.0,
+     -4280.0
+    ],
+    [
+     43630.0,
+     -4730.0
+    ],
+    [
+     42730.0,
+     -4730.0
+    ]
+   ]
+  },
+  {
+   "id": 4,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 18750,
+   "cy": -6350,
+   "rong": 500,
+   "dai": 800,
+   "dien_tich_m2": 0.4,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.40",
+    "HK"
+   ],
+   "dinh": [
+    [
+     18500.0,
+     -5950.0
+    ],
+    [
+     19000.0,
+     -5950.0
+    ],
+    [
+     19000.0,
+     -6750.0
+    ],
+    [
+     18500.0,
+     -6750.0
+    ]
+   ]
+  },
+  {
+   "id": 5,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 28830,
+   "cy": -6630,
+   "rong": 2800,
+   "dai": 2200,
+   "dien_tich_m2": 6.16,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     27430.0,
+     -5530.0
+    ],
+    [
+     30230.0,
+     -5530.0
+    ],
+    [
+     30230.0,
+     -7730.0
+    ],
+    [
+     27430.0,
+     -7730.0
+    ]
+   ]
+  },
+  {
+   "id": 6,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 21500,
+   "cy": -6780,
+   "rong": 500,
+   "dai": 1600,
+   "dien_tich_m2": 0.8,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 4,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.80"
+   ],
+   "dinh": [
+    [
+     21250.0,
+     -5980.0
+    ],
+    [
+     21750.0,
+     -5980.0
+    ],
+    [
+     21750.0,
+     -7580.0
+    ],
+    [
+     21250.0,
+     -7580.0
+    ]
+   ]
+  },
+  {
+   "id": 7,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 23374,
+   "cy": -6930,
+   "rong": 2452,
+   "dai": 1900,
+   "dien_tich_m2": 4.659,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     22147.7,
+     -5980.0
+    ],
+    [
+     24600.0,
+     -5980.0
+    ],
+    [
+     24600.0,
+     -7880.0
+    ],
+    [
+     22147.7,
+     -7880.0
+    ]
+   ]
+  },
+  {
+   "id": 8,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 36180,
+   "cy": -7430,
+   "rong": 500,
+   "dai": 1600,
+   "dien_tich_m2": 0.8,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 4,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.80"
+   ],
+   "dinh": [
+    [
+     35930.0,
+     -6630.0
+    ],
+    [
+     36430.0,
+     -6630.0
+    ],
+    [
+     36430.0,
+     -8230.0
+    ],
+    [
+     35930.0,
+     -8230.0
+    ]
+   ]
+  },
+  {
+   "id": 9,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 32255,
+   "cy": -7855,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     32130.0,
+     -7730.0
+    ],
+    [
+     32380.0,
+     -7730.0
+    ],
+    [
+     32380.0,
+     -7980.0
+    ],
+    [
+     32130.0,
+     -7980.0
+    ]
+   ]
+  },
+  {
+   "id": 10,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 29455,
+   "cy": -8730,
+   "rong": 550,
+   "dai": 1200,
+   "dien_tich_m2": 0.66,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 4,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.66"
+   ],
+   "dinh": [
+    [
+     29180.0,
+     -8130.0
+    ],
+    [
+     29730.0,
+     -8130.0
+    ],
+    [
+     29730.0,
+     -9330.0
+    ],
+    [
+     29180.0,
+     -9330.0
+    ]
+   ]
+  },
+  {
+   "id": 11,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 30130,
+   "cy": -8730,
+   "rong": 400,
+   "dai": 1200,
+   "dien_tich_m2": 0.48,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.48"
+   ],
+   "dinh": [
+    [
+     29930.0,
+     -8130.0
+    ],
+    [
+     30330.0,
+     -8130.0
+    ],
+    [
+     30330.0,
+     -9330.0
+    ],
+    [
+     29930.0,
+     -9330.0
+    ]
+   ]
+  },
+  {
+   "id": 12,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 31030,
+   "cy": -8730,
+   "rong": 500,
+   "dai": 700,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     30780.0,
+     -8380.0
+    ],
+    [
+     31280.0,
+     -8380.0
+    ],
+    [
+     31280.0,
+     -9080.0
+    ],
+    [
+     30780.0,
+     -9080.0
+    ]
+   ]
+  },
+  {
+   "id": 13,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 31930,
+   "cy": -8730,
+   "rong": 500,
+   "dai": 700,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     31680.0,
+     -8380.0
+    ],
+    [
+     32180.0,
+     -8380.0
+    ],
+    [
+     32180.0,
+     -9080.0
+    ],
+    [
+     31680.0,
+     -9080.0
+    ]
+   ]
+  },
+  {
+   "id": 14,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 28130,
+   "cy": -9380,
+   "rong": 1400,
+   "dai": 300,
+   "dien_tich_m2": 0.42,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.42"
+   ],
+   "dinh": [
+    [
+     27430.0,
+     -9230.0
+    ],
+    [
+     28830.0,
+     -9230.0
+    ],
+    [
+     28830.0,
+     -9530.0
+    ],
+    [
+     27430.0,
+     -9530.0
+    ]
+   ]
+  },
+  {
+   "id": 15,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 17600,
+   "cy": -12280,
+   "rong": 500,
+   "dai": 700,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     17350.0,
+     -11930.0
+    ],
+    [
+     17850.0,
+     -11930.0
+    ],
+    [
+     17850.0,
+     -12630.0
+    ],
+    [
+     17350.0,
+     -12630.0
+    ]
+   ]
+  },
+  {
+   "id": 16,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 21500,
+   "cy": -12655,
+   "rong": 2800,
+   "dai": 2350,
+   "dien_tich_m2": 6.58,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     20100.0,
+     -13830.0
+    ],
+    [
+     20100.0,
+     -11480.0
+    ],
+    [
+     22900.0,
+     -11480.0
+    ],
+    [
+     22900.0,
+     -13830.0
+    ]
+   ]
+  },
+  {
+   "id": 17,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 28580,
+   "cy": -12655,
+   "rong": 2300,
+   "dai": 2350,
+   "dien_tich_m2": 5.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     27430.0,
+     -11480.0
+    ],
+    [
+     29730.0,
+     -11480.0
+    ],
+    [
+     29730.0,
+     -13830.0
+    ],
+    [
+     27430.0,
+     -13830.0
+    ]
+   ]
+  },
+  {
+   "id": 18,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 30480,
+   "cy": -12430,
+   "rong": 500,
+   "dai": 1900,
+   "dien_tich_m2": 0.95,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 5,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.95"
+   ],
+   "dinh": [
+    [
+     30230.0,
+     -11480.0
+    ],
+    [
+     30730.0,
+     -11480.0
+    ],
+    [
+     30730.0,
+     -13380.0
+    ],
+    [
+     30230.0,
+     -13380.0
+    ]
+   ]
+  },
+  {
+   "id": 19,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 17600,
+   "cy": -13530,
+   "rong": 500,
+   "dai": 700,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     17350.0,
+     -13180.0
+    ],
+    [
+     17850.0,
+     -13180.0
+    ],
+    [
+     17850.0,
+     -13880.0
+    ],
+    [
+     17350.0,
+     -13880.0
+    ]
+   ]
+  },
+  {
+   "id": 20,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 21700,
+   "cy": -15205,
+   "rong": 2400,
+   "dai": 2350,
+   "dien_tich_m2": 5.64,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     20500.0,
+     -14030.0
+    ],
+    [
+     22900.0,
+     -14030.0
+    ],
+    [
+     22900.0,
+     -16380.0
+    ],
+    [
+     20500.0,
+     -16380.0
+    ]
+   ]
+  },
+  {
+   "id": 21,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 28580,
+   "cy": -15205,
+   "rong": 2300,
+   "dai": 2350,
+   "dien_tich_m2": 5.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     27430.0,
+     -14030.0
+    ],
+    [
+     29730.0,
+     -14030.0
+    ],
+    [
+     29730.0,
+     -16380.0
+    ],
+    [
+     27430.0,
+     -16380.0
+    ]
+   ]
+  },
+  {
+   "id": 22,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 21700,
+   "cy": -17755,
+   "rong": 2400,
+   "dai": 2350,
+   "dien_tich_m2": 5.64,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     20500.0,
+     -16580.0
+    ],
+    [
+     22900.0,
+     -16580.0
+    ],
+    [
+     22900.0,
+     -18930.0
+    ],
+    [
+     20500.0,
+     -18930.0
+    ]
+   ]
+  },
+  {
+   "id": 23,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 28580,
+   "cy": -17755,
+   "rong": 2300,
+   "dai": 2350,
+   "dien_tich_m2": 5.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     27430.0,
+     -16580.0
+    ],
+    [
+     29730.0,
+     -16580.0
+    ],
+    [
+     29730.0,
+     -18930.0
+    ],
+    [
+     27430.0,
+     -18930.0
+    ]
+   ]
+  },
+  {
+   "id": 24,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 21700,
+   "cy": -20305,
+   "rong": 2400,
+   "dai": 2350,
+   "dien_tich_m2": 5.64,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     20500.0,
+     -19130.0
+    ],
+    [
+     22900.0,
+     -19130.0
+    ],
+    [
+     22900.0,
+     -21480.0
+    ],
+    [
+     20500.0,
+     -21480.0
+    ]
+   ]
+  },
+  {
+   "id": 25,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 28580,
+   "cy": -20305,
+   "rong": 2300,
+   "dai": 2350,
+   "dien_tich_m2": 5.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     27430.0,
+     -19130.0
+    ],
+    [
+     29730.0,
+     -19130.0
+    ],
+    [
+     29730.0,
+     -21480.0
+    ],
+    [
+     27430.0,
+     -21480.0
+    ]
+   ]
+  },
+  {
+   "id": 26,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 27800,
+   "cy": -24280,
+   "rong": 500,
+   "dai": 800,
+   "dien_tich_m2": 0.4,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.40",
+    "HK"
+   ],
+   "dinh": [
+    [
+     27550.0,
+     -24680.0
+    ],
+    [
+     27550.0,
+     -23880.0
+    ],
+    [
+     28050.0,
+     -23880.0
+    ],
+    [
+     28050.0,
+     -24680.0
+    ]
+   ]
+  },
+  {
+   "id": 27,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 28250,
+   "cy": -39430,
+   "rong": 900,
+   "dai": 900,
+   "dien_tich_m2": 0.81,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.81",
+    "BK"
+   ],
+   "dinh": [
+    [
+     27800.0,
+     -38980.0
+    ],
+    [
+     28700.0,
+     -38980.0
+    ],
+    [
+     28700.0,
+     -39880.0
+    ],
+    [
+     27800.0,
+     -39880.0
+    ]
+   ]
+  },
+  {
+   "id": 28,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 30350,
+   "cy": -49455,
+   "rong": 1800,
+   "dai": 450,
+   "dien_tich_m2": 0.81,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.81"
+   ],
+   "dinh": [
+    [
+     29450.0,
+     -49230.0
+    ],
+    [
+     31250.0,
+     -49230.0
+    ],
+    [
+     31250.0,
+     -49680.0
+    ],
+    [
+     29450.0,
+     -49680.0
+    ]
+   ]
+  },
+  {
+   "id": 29,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 32250,
+   "cy": -49530,
+   "rong": 900,
+   "dai": 600,
+   "dien_tich_m2": 0.54,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.54",
+    "TG"
+   ],
+   "dinh": [
+    [
+     31800.0,
+     -49230.0
+    ],
+    [
+     32700.0,
+     -49230.0
+    ],
+    [
+     32700.0,
+     -49830.0
+    ],
+    [
+     31800.0,
+     -49830.0
+    ]
+   ]
+  },
+  {
+   "id": 30,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 33750,
+   "cy": -49530,
+   "rong": 700,
+   "dai": 500,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     33400.0,
+     -49280.0
+    ],
+    [
+     34100.0,
+     -49280.0
+    ],
+    [
+     34100.0,
+     -49780.0
+    ],
+    [
+     33400.0,
+     -49780.0
+    ]
+   ]
+  },
+  {
+   "id": 31,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 29850,
+   "cy": -50805,
+   "rong": 2200,
+   "dai": 250,
+   "dien_tich_m2": 0.55,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.55"
+   ],
+   "dinh": [
+    [
+     28750.0,
+     -50680.0
+    ],
+    [
+     30950.0,
+     -50680.0
+    ],
+    [
+     30950.0,
+     -50930.0
+    ],
+    [
+     28750.0,
+     -50930.0
+    ]
+   ]
+  },
+  {
+   "id": 32,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24250,
+   "cy": -51530,
+   "rong": 1600,
+   "dai": 500,
+   "dien_tich_m2": 0.8,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 4,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.80"
+   ],
+   "dinh": [
+    [
+     23450.0,
+     -51280.0
+    ],
+    [
+     25050.0,
+     -51280.0
+    ],
+    [
+     25050.0,
+     -51780.0
+    ],
+    [
+     23450.0,
+     -51780.0
+    ]
+   ]
+  },
+  {
+   "id": 33,
+   "trang_thai": "loai",
+   "ghi_chu": "Thang máy (chữ tải trọng trong ô)",
+   "cx": 30725,
+   "cy": -51988,
+   "rong": 1550,
+   "dai": 1485,
+   "dien_tich_m2": 2.302,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "(model)"
+   ],
+   "layer_x": [
+    "A-Hidden"
+   ],
+   "nhan": [
+    "300KG"
+   ],
+   "dinh": [
+    [
+     29950.0,
+     -51245.0
+    ],
+    [
+     31500.0,
+     -51245.0
+    ],
+    [
+     31500.0,
+     -52730.0
+    ],
+    [
+     29950.0,
+     -52730.0
+    ]
+   ]
+  },
+  {
+   "id": 34,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24050,
+   "cy": -52380,
+   "rong": 500,
+   "dai": 700,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     23800.0,
+     -52030.0
+    ],
+    [
+     24300.0,
+     -52030.0
+    ],
+    [
+     24300.0,
+     -52730.0
+    ],
+    [
+     23800.0,
+     -52730.0
+    ]
+   ]
+  },
+  {
+   "id": 35,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 24750,
+   "cy": -52330,
+   "rong": 500,
+   "dai": 800,
+   "dien_tich_m2": 0.4,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.40",
+    "HK"
+   ],
+   "dinh": [
+    [
+     24500.0,
+     -51930.0
+    ],
+    [
+     25000.0,
+     -51930.0
+    ],
+    [
+     25000.0,
+     -52730.0
+    ],
+    [
+     24500.0,
+     -52730.0
+    ]
+   ]
+  },
+  {
+   "id": 36,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 28650,
+   "cy": -52605,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 1,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     28525.0,
+     -52480.0
+    ],
+    [
+     28775.0,
+     -52480.0
+    ],
+    [
+     28775.0,
+     -52730.0
+    ],
+    [
+     28525.0,
+     -52730.0
+    ]
+   ]
+  },
+  {
+   "id": 37,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 15800,
+   "cy": -52830,
+   "rong": 700,
+   "dai": 500,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     15450.0,
+     -52580.0
+    ],
+    [
+     16150.0,
+     -52580.0
+    ],
+    [
+     16150.0,
+     -53080.0
+    ],
+    [
+     15450.0,
+     -53080.0
+    ]
+   ]
+  },
+  {
+   "id": 38,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16800,
+   "cy": -52830,
+   "rong": 700,
+   "dai": 500,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     16450.0,
+     -52580.0
+    ],
+    [
+     17150.0,
+     -52580.0
+    ],
+    [
+     17150.0,
+     -53080.0
+    ],
+    [
+     16450.0,
+     -53080.0
+    ]
+   ]
+  },
+  {
+   "id": 39,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 27575,
+   "cy": -52830,
+   "rong": 750,
+   "dai": 400,
+   "dien_tich_m2": 0.3,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.30",
+    "HM"
+   ],
+   "dinh": [
+    [
+     27200.1,
+     -52630.0
+    ],
+    [
+     27950.1,
+     -52630.0
+    ],
+    [
+     27950.1,
+     -53030.0
+    ],
+    [
+     27200.1,
+     -53030.0
+    ]
+   ]
+  },
+  {
+   "id": 40,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 20305,
+   "cy": -53755,
+   "rong": 250,
+   "dai": 250,
+   "dien_tich_m2": 0.062,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.06"
+   ],
+   "dinh": [
+    [
+     20180.0,
+     -53630.0
+    ],
+    [
+     20430.0,
+     -53630.0
+    ],
+    [
+     20430.0,
+     -53880.0
+    ],
+    [
+     20180.0,
+     -53880.0
+    ]
+   ]
+  },
+  {
+   "id": 41,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 16700,
+   "cy": -54730,
+   "rong": 2800,
+   "dai": 2200,
+   "dien_tich_m2": 6.16,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     15300.0,
+     -53630.0
+    ],
+    [
+     18100.0,
+     -53630.0
+    ],
+    [
+     18100.0,
+     -55830.0
+    ],
+    [
+     15300.0,
+     -55830.0
+    ]
+   ]
+  },
+  {
+   "id": 42,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 23700,
+   "cy": -54380,
+   "rong": 2300,
+   "dai": 2400,
+   "dien_tich_m2": 5.52,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     22550.0,
+     -53180.0
+    ],
+    [
+     24850.0,
+     -53180.0
+    ],
+    [
+     24850.0,
+     -55580.0
+    ],
+    [
+     22550.0,
+     -55580.0
+    ]
+   ]
+  },
+  {
+   "id": 43,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 30300,
+   "cy": -54380,
+   "rong": 2300,
+   "dai": 2400,
+   "dien_tich_m2": 5.52,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     29150.0,
+     -53180.0
+    ],
+    [
+     31450.0,
+     -53180.0
+    ],
+    [
+     31450.0,
+     -55580.0
+    ],
+    [
+     29150.0,
+     -55580.0
+    ]
+   ]
+  },
+  {
+   "id": 44,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 16700,
+   "cy": -57080,
+   "rong": 2800,
+   "dai": 2200,
+   "dien_tich_m2": 6.16,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     15300.0,
+     -55980.0
+    ],
+    [
+     18100.0,
+     -55980.0
+    ],
+    [
+     18100.0,
+     -58180.0
+    ],
+    [
+     15300.0,
+     -58180.0
+    ]
+   ]
+  },
+  {
+   "id": 45,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 23700,
+   "cy": -56930,
+   "rong": 2300,
+   "dai": 2400,
+   "dien_tich_m2": 5.52,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     22550.0,
+     -55730.0
+    ],
+    [
+     24850.0,
+     -55730.0
+    ],
+    [
+     24850.0,
+     -58130.0
+    ],
+    [
+     22550.0,
+     -58130.0
+    ]
+   ]
+  },
+  {
+   "id": 46,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 30550,
+   "cy": -56930,
+   "rong": 2800,
+   "dai": 2400,
+   "dien_tich_m2": 6.72,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     29150.0,
+     -55730.0
+    ],
+    [
+     31950.0,
+     -55730.0
+    ],
+    [
+     31950.0,
+     -58130.0
+    ],
+    [
+     29150.0,
+     -58130.0
+    ]
+   ]
+  },
+  {
+   "id": 47,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 32575,
+   "cy": -57180,
+   "rong": 500,
+   "dai": 700,
+   "dien_tich_m2": 0.35,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.35",
+    "TA"
+   ],
+   "dinh": [
+    [
+     32325.0,
+     -56830.0
+    ],
+    [
+     32825.0,
+     -56830.0
+    ],
+    [
+     32825.0,
+     -57530.0
+    ],
+    [
+     32325.0,
+     -57530.0
+    ]
+   ]
+  },
+  {
+   "id": 48,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 36450,
+   "cy": -57430,
+   "rong": 2500,
+   "dai": 500,
+   "dien_tich_m2": 1.25,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 6,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "1.25"
+   ],
+   "dinh": [
+    [
+     35200.0,
+     -57180.0
+    ],
+    [
+     37700.0,
+     -57180.0
+    ],
+    [
+     37700.0,
+     -57680.0
+    ],
+    [
+     35200.0,
+     -57680.0
+    ]
+   ]
+  },
+  {
+   "id": 49,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 35700,
+   "cy": -58330,
+   "rong": 1000,
+   "dai": 300,
+   "dien_tich_m2": 0.3,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.30"
+   ],
+   "dinh": [
+    [
+     35200.0,
+     -58480.0
+    ],
+    [
+     35200.0,
+     -58180.0
+    ],
+    [
+     36200.0,
+     -58180.0
+    ],
+    [
+     36200.0,
+     -58480.0
+    ]
+   ]
+  },
+  {
+   "id": 50,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 15800,
+   "cy": -58980,
+   "rong": 1000,
+   "dai": 800,
+   "dien_tich_m2": 0.8,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.80",
+    "BK"
+   ],
+   "dinh": [
+    [
+     15300.0,
+     -58580.0
+    ],
+    [
+     16300.0,
+     -58580.0
+    ],
+    [
+     16300.0,
+     -59380.0
+    ],
+    [
+     15300.0,
+     -59380.0
+    ]
+   ]
+  },
+  {
+   "id": 51,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 16950,
+   "cy": -59080,
+   "rong": 900,
+   "dai": 1000,
+   "dien_tich_m2": 0.9,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.90",
+    "HK"
+   ],
+   "dinh": [
+    [
+     16500.0,
+     -58580.0
+    ],
+    [
+     17400.0,
+     -58580.0
+    ],
+    [
+     17400.0,
+     -59580.0
+    ],
+    [
+     16500.0,
+     -59580.0
+    ]
+   ]
+  },
+  {
+   "id": 52,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 35750,
+   "cy": -58980,
+   "rong": 1100,
+   "dai": 600,
+   "dien_tich_m2": 0.66,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.66",
+    "BK"
+   ],
+   "dinh": [
+    [
+     35200.0,
+     -58680.0
+    ],
+    [
+     36300.0,
+     -58680.0
+    ],
+    [
+     36300.0,
+     -59280.0
+    ],
+    [
+     35200.0,
+     -59280.0
+    ]
+   ]
+  },
+  {
+   "id": 53,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 47930,
+   "cy": -60680,
+   "rong": 500,
+   "dai": 1700,
+   "dien_tich_m2": 0.85,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.40",
+    "0.45",
+    "HK"
+   ],
+   "dinh": [
+    [
+     48180.0,
+     -61530.0
+    ],
+    [
+     47680.0,
+     -61530.0
+    ],
+    [
+     47680.0,
+     -59830.0
+    ],
+    [
+     48180.0,
+     -59830.0
+    ]
+   ]
+  },
+  {
+   "id": 54,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 21825,
+   "cy": -63160,
+   "rong": 2350,
+   "dai": 2300,
+   "dien_tich_m2": 5.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     20650.0,
+     -64310.0
+    ],
+    [
+     20650.0,
+     -62010.0
+    ],
+    [
+     23000.0,
+     -62010.0
+    ],
+    [
+     23000.0,
+     -64310.0
+    ]
+   ]
+  },
+  {
+   "id": 55,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 24325,
+   "cy": -63160,
+   "rong": 2350,
+   "dai": 2300,
+   "dien_tich_m2": 5.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     23150.0,
+     -62010.0
+    ],
+    [
+     25500.0,
+     -62010.0
+    ],
+    [
+     25500.0,
+     -64310.0
+    ],
+    [
+     23150.0,
+     -64310.0
+    ]
+   ]
+  },
+  {
+   "id": 56,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 29505,
+   "cy": -63160,
+   "rong": 2350,
+   "dai": 2300,
+   "dien_tich_m2": 5.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     28330.0,
+     -62010.0
+    ],
+    [
+     30680.0,
+     -62010.0
+    ],
+    [
+     30680.0,
+     -64310.0
+    ],
+    [
+     28330.0,
+     -64310.0
+    ]
+   ]
+  },
+  {
+   "id": 57,
+   "trang_thai": "loai",
+   "ghi_chu": "Ô X lớn không có ống đứng: giếng thang máy",
+   "cx": 32005,
+   "cy": -63160,
+   "rong": 2350,
+   "dai": 2300,
+   "dien_tich_m2": 5.405,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$1$A-Hidden"
+   ],
+   "nhan": [],
+   "dinh": [
+    [
+     30830.0,
+     -62010.0
+    ],
+    [
+     33180.0,
+     -62010.0
+    ],
+    [
+     33180.0,
+     -64310.0
+    ],
+    [
+     30830.0,
+     -64310.0
+    ]
+   ]
+  },
+  {
+   "id": 58,
+   "trang_thai": "se_hatch",
+   "ghi_chu": "",
+   "cx": 45305,
+   "cy": -64010,
+   "rong": 450,
+   "dai": 1100,
+   "dien_tich_m2": 0.495,
+   "kieu": "Dấu X trục / hộp",
+   "so_ong": 0,
+   "nguon": [
+    "xf-TB loi thang T3"
+   ],
+   "layer_x": [
+    "xf-TB loi thang T3$0$A-Material"
+   ],
+   "nhan": [
+    "0.50",
+    "HMR"
+   ],
+   "dinh": [
+    [
+     45080.0,
+     -63460.0
+    ],
+    [
+     45530.0,
+     -63460.0
+    ],
+    [
+     45530.0,
+     -64560.0
+    ],
+    [
+     45080.0,
+     -64560.0
+    ]
+   ]
+  }
+ ],
+ "ong_chua_bo": []
+}
