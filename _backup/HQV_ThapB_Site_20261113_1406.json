@@ -1,0 +1,38 @@
+{
+ "ten": "HQV Tháp B – Site: chống thấm, ngăn cháy lan, lan can louver, định vị cửa (duyệt 2026-11-13)",
+ "ghi_chu": "Phương án người dùng duyệt theo file _tmp\\site_duyet\\duyet_20261113\\15_Site_HS_TKBVTC_duyet_4tang.rvt (chạy 2026-11-13 09:03, log _tmp\\site_duyet\\kq5\\ket_qua.txt). Chống thấm, ngăn cháy lan, định vị cửa: 4 mặt bằng 01. MatBangChinh; lan can louver: chỉ Tầng 3BA + 5BA; mọi mặt bằng 1:200.",
+ "nhan_file": ["HQV_A_ThapB_Site"],
+ "tag_cua": "chu",
+ "chung": {
+  "giai_doan": "02_HoSoThietKeBanVeThiCong",
+  "kho": "A1",
+  "khung_ten": "KhungTen_A1 : KienTruc",
+  "ti_le": 200
+ },
+ "nut": {
+  "ChongTham": {"template": "ACD.19.1_MatBangChongTham", "hang_muc": "19. ChiTietChongTham"},
+  "NganChay": {"template": "ACD.18_MatBangChongChayLan", "hang_muc": "18. ChiTietChongChayLan"},
+  "LanCanLouver": {"template": "ACD.14.1_MatBangDinhViLanCanLouver", "hang_muc": "14. ChiTietLanCanLouver"},
+  "TagCua": {"template": "ACD.07_MatBangDinhViCua", "hang_muc": "07. ChiTietCua"}
+ },
+ "mat_bang": [
+  {"view": "Tầng 1(1)", "viec": {
+    "ChongTham": {"so": "A.CD.19.15", "ten": "MẶT BẰNG CHỐNG THẤM TẦNG 1"},
+    "NganChay": {"so": "ACD.18.15", "ten": "MẶT BẰNG NGĂN CHÁY LAN TẦNG 1"},
+    "TagCua": {"so": "ACD.07.03", "ten": "MẶT BẰNG ĐỊNH VỊ CỬA TẦNG 1"}}},
+  {"view": "Tầng 2(1)", "viec": {
+    "ChongTham": {"so": "A.CD.19.16", "ten": "MẶT BẰNG CHỐNG THẤM TẦNG 2"},
+    "NganChay": {"so": "ACD.18.16", "ten": "MẶT BẰNG NGĂN CHÁY LAN TẦNG 2"},
+    "TagCua": {"so": "ACD.07.04", "ten": "MẶT BẰNG ĐỊNH VỊ CỬA TẦNG 2"}}},
+  {"view": "Tầng 3BA", "viec": {
+    "ChongTham": {"so": "A.CD.19.17", "ten": "MẶT BẰNG CHỐNG THẤM TẦNG 3BA"},
+    "NganChay": {"so": "ACD.18.17", "ten": "MẶT BẰNG NGĂN CHÁY LAN TẦNG 3BA"},
+    "LanCanLouver": {"so": "ACD.14.02", "ten": "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER TẦNG 3BA"},
+    "TagCua": {"so": "ACD.07.05", "ten": "MẶT BẰNG ĐỊNH VỊ CỬA TẦNG 3BA"}}},
+  {"view": "Tầng 5BA(1)", "viec": {
+    "ChongTham": {"so": "A.CD.19.18", "ten": "MẶT BẰNG CHỐNG THẤM TẦNG 5BA"},
+    "NganChay": {"so": "ACD.18.18", "ten": "MẶT BẰNG NGĂN CHÁY LAN TẦNG 5BA"},
+    "LanCanLouver": {"so": "ACD.14.03", "ten": "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER TẦNG 5BA"},
+    "TagCua": {"so": "ACD.07.06", "ten": "MẶT BẰNG ĐỊNH VỊ CỬA TẦNG 5BA"}}}
+ ]
+}

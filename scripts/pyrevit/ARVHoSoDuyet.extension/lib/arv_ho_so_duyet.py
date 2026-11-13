@@ -27,7 +27,7 @@
 #   - Log đầy đủ: Documents\ARV_Logs\ho_so_duyet\ho_so_duyet_<giờ>.txt
 # Biến môi trường chỉ dùng khi thử nền: ARV_HO_SO_DUYET_LOG (thư mục log gốc), ARV_HOI_ANH (vẽ bảng kiểm ra PNG, coi như
 # bấm Chạy), ARV_HO_SO_DUYET_KHONG_NHOM=1 (không dùng TransactionGroup), ARV_HO_SO_DUYET_CHI = "<view>|<nút>;..." (chỉ
-# chạy các mục đó), ARV_HO_SO_DUYET_TAG = gon / 2o / goc (kiểu tag thay lựa chọn trong bảng).
+# chạy các mục đó), ARV_HO_SO_DUYET_TAG = mau / chu / gon / 2o / goc (kiểu tag thay lựa chọn trong bảng).
 import io
 import os
 import sys
@@ -71,13 +71,31 @@ DONG_CHINH = (u"ĐÃ VẼ", u"ĐÃ ĐẶT", u"Đã đặt mặt bằng", u"Đã 
               u"LỖI", u"Traceback", u"Phòng ướt theo CAD", u"Trục / hộp kỹ thuật cần hatch", u"Không có ", u"Chưa có ",
               u"Bản xếp lại")
 _DANG = {}          # mục đang chạy (hàm trả lời hộp thoại đọc ở đây)
-# Kiểu tag cửa: (mã, chữ hiện trong bảng kiểm). "gon" / "2o" chạy lõi riêng xếp lại; "goc" = lõi của Archivina
-KIEU_TAG = (("chu", u"Chỉ chữ mã, không khung – gọn nhất, tag nằm sát cửa (kích thước xem bảng thống kê)"),
+# Kiểu tag cửa: (mã, chữ hiện trong bảng kiểm). "mau" / "chu" / "gon" / "2o" chạy lõi riêng xếp lại; "goc" = lõi của
+# Archivina. "mau" = family tag người dùng cấp 2026-11-13 ("áp dụng tag này cho mặt bằng định vị cửa"): lib\tag_rieng\
+# AV-Tag-DOOR.rfa (cửa đi, dùng nguyên) + AV-Tag-DOOR_CuaSo.rfa (bản của chính family đó đổi hạng mục sang Window Tags để
+# tag cửa sổ, vì family gốc chỉ tag được cửa đi); chỉ hiện khi có đủ file .rfa.
+KIEU_TAG = (("mau", u"Tag AV-Tag-DOOR (family bạn cấp, khung nhỏ chỉ mã) – xếp lại; tag cũ của công cụ đổi sang kiểu này"),
+            ("chu", u"Chỉ chữ mã, không khung – gọn nhất, tag nằm sát cửa (kích thước xem bảng thống kê)"),
             ("gon", u"Khung 1 ô 10 × 3,5 mm, chỉ mã – xếp lại"),
             ("2o", u"Khung 2 ô mã / rộngXcao – xếp lại"),
             ("goc", u"Như nút Định vị + tag cửa của Archivina (2 ô, cách xếp cũ)"))
 ENV_TAG = {"chu": "2", "gon": "1"}      # giá trị ARV_TAG_GON cho lõi riêng
 LOI_TAG_RIENG = os.path.join(_HERE, "loi_rieng", "TagCua_xep_lai.py")
+THU_MUC_TAG_RIENG = os.path.join(_HERE, "tag_rieng")
+TAG_MAU = {"cua_di": u"AV-Tag-DOOR", "cua_so": u"AV-Tag-DOOR_CuaSo"}      # tên family = tên file .rfa
+ENV_TAG_MAU = ("ARV_TAG_FAM_CUA_DI", "ARV_TAG_FAM_CUA_SO", "ARV_TAG_FAM_THU_MUC")
+
+
+def co_tag_mau():
+    return os.path.isfile(LOI_TAG_RIENG) and all(
+        os.path.isfile(os.path.join(THU_MUC_TAG_RIENG, TAG_MAU[k] + u".rfa")) for k in ("cua_di", "cua_so"))
+
+
+def kieu_tag_dung():
+    """Các kiểu tag chọn được trên máy này (thiếu file thì ẩn kiểu tương ứng)."""
+    return tuple((k, c) for k, c in KIEU_TAG
+                 if k == "goc" or (k == "mau" and co_tag_mau()) or (k != "mau" and os.path.isfile(LOI_TAG_RIENG)))
 
 
 def kd(s):
@@ -321,15 +339,14 @@ def hoi_ke_hoach(ch, ten_f, muc_ds, khop_ten, ghi_chu_tag=u""):
         lb4.Size = Size(56, 20)
         f.Controls.Add(lb4)
         cb_tag.DropDownStyle = ComboBoxStyle.DropDownList
-        for _, chu in KIEU_TAG:
+        kieu_ds = kieu_tag_dung()
+        for _, chu in kieu_ds:
             cb_tag.Items.Add(chu)
-        ma_ds = [k for k, _ in KIEU_TAG]
-        mac_dinh = ch.get("tag_cua") if ch.get("tag_cua") in ma_ds else "chu"
-        if not os.path.isfile(LOI_TAG_RIENG):
-            mac_dinh = "goc"
+        ma_ds = [k for k, _ in kieu_ds]
+        mac_dinh = ch.get("tag_cua") if ch.get("tag_cua") in ma_ds else ("chu" if "chu" in ma_ds else "goc")
         cb_tag.SelectedIndex = ma_ds.index(mac_dinh)
         cb_tag.Location = Point(72, y + 3)
-        cb_tag.Size = Size(520, 24)
+        cb_tag.Size = Size(600, 24)
         f.Controls.Add(cb_tag)
         if ghi_chu_tag:
             lb5 = Label()
@@ -370,7 +387,7 @@ def hoi_ke_hoach(ch, ten_f, muc_ds, khop_ten, ghi_chu_tag=u""):
         f.Hide()
     elif f.ShowDialog() != DialogResult.OK:
         return None, None
-    kieu = KIEU_TAG[cb_tag.SelectedIndex][0] if co_tag and cb_tag.SelectedIndex >= 0 else "goc"
+    kieu = kieu_ds[cb_tag.SelectedIndex][0] if co_tag and cb_tag.SelectedIndex >= 0 else "goc"
     return [m for i, m in enumerate(muc_ds) if m["duoc"] and lv.Items[i].Checked], kieu
 
 
@@ -554,27 +571,36 @@ def _thay_loi_tag(kieu_tag, ghi):
     đúng). Trả về hàm trả lại như cũ."""
     import arv_dynamo_host
     goc = arv_dynamo_host.load_core
-    cu_gon = os.environ.get("ARV_TAG_GON")
-    if kieu_tag in ("chu", "gon", "2o") and os.path.isfile(LOI_TAG_RIENG):
+    ten_env = ("ARV_TAG_GON",) + ENV_TAG_MAU
+    cu_env = dict((k, os.environ.get(k)) for k in ten_env)
+    if kieu_tag == "mau" and not co_tag_mau():
+        ghi(u"Tag cửa: thiếu file family trong %s → dùng kiểu 'chỉ chữ'." % THU_MUC_TAG_RIENG)
+        kieu_tag = "chu"
+    if kieu_tag in ("mau", "chu", "gon", "2o") and os.path.isfile(LOI_TAG_RIENG):
         def nap(core_path):
             if os.path.basename(os.path.dirname(core_path)) == "TagCua.pushbutton":
                 return goc(LOI_TAG_RIENG)
             return goc(core_path)
         arv_dynamo_host.load_core = nap
+        for k in ten_env:
+            os.environ.pop(k, None)
         if kieu_tag in ENV_TAG:
             os.environ["ARV_TAG_GON"] = ENV_TAG[kieu_tag]
-        else:
-            os.environ.pop("ARV_TAG_GON", None)
+        if kieu_tag == "mau":       # family tag người dùng cấp: lõi riêng đọc 3 biến này
+            os.environ["ARV_TAG_FAM_CUA_DI"] = TAG_MAU["cua_di"]
+            os.environ["ARV_TAG_FAM_CUA_SO"] = TAG_MAU["cua_so"]
+            os.environ["ARV_TAG_FAM_THU_MUC"] = THU_MUC_TAG_RIENG
         ghi(u"Tag cửa: kiểu '%s' – lõi riêng %s" % (kieu_tag, LOI_TAG_RIENG))
     else:
         ghi(u"Tag cửa: lõi của Archivina (không xếp lại)")
 
     def tra_lai():
         arv_dynamo_host.load_core = goc
-        if cu_gon is None:
-            os.environ.pop("ARV_TAG_GON", None)
-        else:
-            os.environ["ARV_TAG_GON"] = cu_gon
+        for k, v in cu_env.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
     return tra_lai
 
 
@@ -608,7 +634,8 @@ def chay(uiapp, panel_dir):
         if any(s.FamilyName in (u"AV_Door Tag", u"AV_Window Tag") for s in DB.FilteredElementCollector(doc).OfClass(DB.FamilySymbol)
                if s.Category is not None and s.Category.Id.Value in (int(DB.BuiltInCategory.OST_DoorTags),
                                                                     int(DB.BuiltInCategory.OST_WindowTags))):
-            ghi_chu_tag = u"File đã có family tag AV_Door / AV_Window Tag: khung tag giữ kiểu đang có."
+            ghi_chu_tag = (u"File đã có family tag AV_Door / AV_Window Tag: kiểu 'chỉ chữ' / 'khung 1 ô' giữ khung đang có; "
+                           u"kiểu AV-Tag-DOOR đổi tag cũ sang family mới.")
     except Exception:
         pass
     chon, kieu_tag = hoi_ke_hoach(ch, ten_file(doc), muc_ds, khop_ten, ghi_chu_tag)

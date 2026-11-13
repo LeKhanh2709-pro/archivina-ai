@@ -2,7 +2,7 @@
  "ten": "HQV Tháp B – Site: chống thấm, ngăn cháy lan, lan can louver, định vị cửa (duyệt 2026-11-13)",
  "ghi_chu": "Phương án người dùng duyệt theo file _tmp\\site_duyet\\duyet_20261113\\15_Site_HS_TKBVTC_duyet_4tang.rvt (chạy 2026-11-13 09:03, log _tmp\\site_duyet\\kq5\\ket_qua.txt). Chống thấm, ngăn cháy lan, định vị cửa: 4 mặt bằng 01. MatBangChinh; lan can louver: chỉ Tầng 3BA + 5BA; mọi mặt bằng 1:200.",
  "nhan_file": ["HQV_A_ThapB_Site"],
- "tag_cua": "chu",
+ "tag_cua": "mau",
  "chung": {
   "giai_doan": "02_HoSoThietKeBanVeThiCong",
   "kho": "A1",

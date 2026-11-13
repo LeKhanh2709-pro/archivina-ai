@@ -8,6 +8,11 @@
 #   - Chỗ đặt tag: sau "sát tường ngay giữa cửa" thử TRƯỢT dọc tường (còn phủ ≥ 50 % bề rộng cửa) và QUAY VUÔNG GÓC
 #     tường ngay trước cửa, cả hai KHÔNG leader; hết chỗ mới ra lưới xa có leader như cũ.
 #   - Tỉ lệ ≥ 1:150: khoảng hở quanh tag tối đa 0,6 mm giấy.
+#   - Family tag người dùng cấp (2026-11-13 chiều: "áp dụng tag này cho mặt bằng định vị cửa", file AV-Tag-DOOR.rfa):
+#     biến môi trường ARV_TAG_FAM_CUA_DI / ARV_TAG_FAM_CUA_SO = tên family tag cửa đi / cửa sổ dùng thay IN[1] / IN[2],
+#     ARV_TAG_FAM_THU_MUC = thư mục chứa <tên>.rfa để nạp khi dự án chưa có (dự án đã có family cùng tên thì dùng bản
+#     trong dự án, không ghi đè). Family này dùng NGUYÊN: không bỏ tiền tố, không thêm ô kích thước, không vẽ / tắt khung.
+#     Tag cũ do công cụ đặt (family IN[1] / IN[2] / IN[3]) trên cửa được ĐỔI KIỂU sang family mới rồi xếp lại (không xoá).
 # Lõi gốc đổi thì bản này KHÔNG tự đổi theo.
 #
 # Tự động tag cửa đi + cửa sổ trên mặt bằng đang mở của Revit (người dùng chốt 2026-11-02, sửa theo góp ý cùng ngày):
@@ -108,6 +113,11 @@ TAM_XA_MM_GIAY = 8.0        # tag đặt xa nhất cách mép tường / cánh c
 PHU_CUA_TOI_THIEU = 0.5     # tag trượt dọc tường không cần leader khi bề dài tag còn phủ ≥ 50 % bề rộng cửa
 PHAT_VUONG_MM_GIAY = 3.0    # phạt tag quay vuông góc tường (mm giấy): trượt ngắn dọc tường được ưu tiên hơn
 KHE_TL_NHO_MM = 0.6         # tỉ lệ ≥ 1:150: khoảng hở quanh tag tối đa (mm giấy)
+# Family tag người dùng cấp (xem đầu file): tên family thay IN[1] / IN[2] + thư mục .rfa để nạp khi dự án chưa có
+FAM_MAU_CUA = (os.environ.get("ARV_TAG_FAM_CUA_DI") or u"").strip()
+FAM_MAU_CS = (os.environ.get("ARV_TAG_FAM_CUA_SO") or u"").strip()
+THU_MUC_FAM_MAU = (os.environ.get("ARV_TAG_FAM_THU_MUC") or u"").strip()
+TAG_MAU = bool(FAM_MAU_CUA)
 
 
 def doc_in(i):
@@ -298,6 +308,8 @@ def _chinh():
         """Dự án chưa có family tag (vd. model HQV tháp B, người dùng báo 2026-11-05) → nạp bản đóng gói
         <extension>\\lib\\tag_cua\\<tên>.rfa (chép từ G19). Ngoài transaction của phần ghi."""
         duong = os.path.join(thu_muc_nhan(), ten_fam + u".rfa") if ten_fam else u""
+        if TAG_MAU and ten_fam and THU_MUC_FAM_MAU and os.path.isfile(os.path.join(THU_MUC_FAM_MAU, ten_fam + u".rfa")):
+            duong = os.path.join(THU_MUC_FAM_MAU, ten_fam + u".rfa")      # family người dùng cấp
         if not duong or not os.path.isfile(duong):
             return None, u"không thấy file đóng gói '%s'" % (duong or u"-")
         if dry:
@@ -312,19 +324,29 @@ def _chinh():
         s = tim_kieu_tag(ten_fam, bic)
         return s, (u"đã nạp từ %s" % duong) if s is not None else u"nạp xong mà không thấy kiểu tag"
 
-    kieu_cua = tim_kieu_tag(doc_in(1), BuiltInCategory.OST_DoorTags)
-    kieu_cs = tim_kieu_tag(doc_in(2), BuiltInCategory.OST_WindowTags)
-    for i_in, bic in ((1, BuiltInCategory.OST_DoorTags), (2, BuiltInCategory.OST_WindowTags)):
-        if tim_kieu_tag(doc_in(i_in), bic) is None:
-            s_, msg_ = nap_tag_dong_goi(doc_in(i_in), bic)
-            p(u"Family tag '%s': %s." % (doc_in(i_in), msg_))
-            if i_in == 1:
+    # Tên family tag: family người dùng cấp (TAG_MAU) thay IN[1] / IN[2]; lam / louver dùng chung tag cửa sổ
+    ten_tag_cua = FAM_MAU_CUA if TAG_MAU else doc_in(1)
+    ten_tag_cs = (FAM_MAU_CS or doc_in(2)) if TAG_MAU else doc_in(2)
+    ten_tag_lam = u"" if TAG_MAU else doc_in(3)
+    fam_cu_cong_cu = set(x for x in (doc_in(1), doc_in(2), doc_in(3)) if x) - set((ten_tag_cua, ten_tag_cs)) \
+        if TAG_MAU else set()
+    kieu_cua = tim_kieu_tag(ten_tag_cua, BuiltInCategory.OST_DoorTags)
+    kieu_cs = tim_kieu_tag(ten_tag_cs, BuiltInCategory.OST_WindowTags)
+    if TAG_MAU:
+        for ten_, k_ in ((ten_tag_cua, kieu_cua), (ten_tag_cs, kieu_cs)):
+            if k_ is not None:
+                p(u"Family tag '%s': dự án đã có – dùng bản trong dự án (không nạp đè)." % ten_)
+    for ten_, bic in ((ten_tag_cua, BuiltInCategory.OST_DoorTags), (ten_tag_cs, BuiltInCategory.OST_WindowTags)):
+        if tim_kieu_tag(ten_, bic) is None:
+            s_, msg_ = nap_tag_dong_goi(ten_, bic)
+            p(u"Family tag '%s': %s." % (ten_, msg_))
+            if bic == BuiltInCategory.OST_DoorTags:
                 kieu_cua = s_
             else:
                 kieu_cs = s_
-    kieu_lam = tim_kieu_tag(doc_in(3), BuiltInCategory.OST_WindowTags) or kieu_cs
+    kieu_lam = (tim_kieu_tag(ten_tag_lam, BuiltInCategory.OST_WindowTags) if ten_tag_lam else None) or kieu_cs
     tk_lam = [khong_dau(x) for x in tach(doc_in(4))]
-    for ten_fam, k in ((doc_in(1), kieu_cua), (doc_in(2), kieu_cs)):
+    for ten_fam, k in ((ten_tag_cua, kieu_cua), (ten_tag_cs, kieu_cs)):
         if k is None and not dry:
             p(u"CHƯA CÓ family tag '%s' trong dự án → bỏ qua hạng mục này (Load family rồi chạy lại)." % ten_fam)
 
@@ -344,7 +366,7 @@ def _chinh():
                 tag_co.setdefault(k_tag, []).append(tg)
         except Exception:
             pass
-    ten_fam_tag = set(x for x in (doc_in(1), doc_in(2), doc_in(3)) if x)
+    ten_fam_tag = set(x for x in (ten_tag_cua, ten_tag_cs, ten_tag_lam) if x)
 
     def fam_cua_tag(tg):
         try:
@@ -453,25 +475,25 @@ def _chinh():
 
     # ---------- Bỏ tiền tố nhãn Type Mark trong family tag (sửa family, nạp lại; ngoài transaction) ----------
     tien_to_msg = u""
-    if doc_in(12):
+    if doc_in(12) and not TAG_MAU:          # family người dùng cấp: dùng nguyên, không sửa family
         fams = []
         for s in (kieu_cua, kieu_cs, kieu_lam):
             if s is not None and s.Family.Id.Value not in [f_.Id.Value for f_ in fams]:
                 fams.append(s.Family)
         tien_to_msg = bo_tien_to(doc, fams, dry)
         # family vừa nạp lại → lấy lại kiểu tag
-        kieu_cua = tim_kieu_tag(doc_in(1), BuiltInCategory.OST_DoorTags)
-        kieu_cs = tim_kieu_tag(doc_in(2), BuiltInCategory.OST_WindowTags)
-        kieu_lam = tim_kieu_tag(doc_in(3), BuiltInCategory.OST_WindowTags) or kieu_cs
+        kieu_cua = tim_kieu_tag(ten_tag_cua, BuiltInCategory.OST_DoorTags)
+        kieu_cs = tim_kieu_tag(ten_tag_cs, BuiltInCategory.OST_WindowTags)
+        kieu_lam = tim_kieu_tag(ten_tag_lam, BuiltInCategory.OST_WindowTags) or kieu_cs
     # ---------- Dòng 2 "rộng x cao" trong family tag cửa đi / cửa sổ (sửa family, nạp lại; ngoài transaction) ----------
-    if TAG_GON or doc_in(19):
+    if (TAG_GON or doc_in(19)) and not TAG_MAU:
         fams = [s.Family for s in (kieu_cua, kieu_cs) if s is not None]
         kt_msg = khung_1_o(doc, fams, dry) if TAG_GON else them_kich_thuoc(doc, fams, dry, thu_muc_nhan())
         if kt_msg:
             tien_to_msg = (tien_to_msg + u" | " if tien_to_msg else u"") + kt_msg
-        kieu_cua = tim_kieu_tag(doc_in(1), BuiltInCategory.OST_DoorTags)
-        kieu_cs = tim_kieu_tag(doc_in(2), BuiltInCategory.OST_WindowTags)
-        kieu_lam = tim_kieu_tag(doc_in(3), BuiltInCategory.OST_WindowTags) or kieu_cs
+        kieu_cua = tim_kieu_tag(ten_tag_cua, BuiltInCategory.OST_DoorTags)
+        kieu_cs = tim_kieu_tag(ten_tag_cs, BuiltInCategory.OST_WindowTags)
+        kieu_lam = tim_kieu_tag(ten_tag_lam, BuiltInCategory.OST_WindowTags) or kieu_cs
 
     # ---------- Ghi ----------
     TransactionManager.Instance.EnsureInTransaction(doc)
@@ -483,6 +505,7 @@ def _chinh():
     so_leader = 0
     can_chinh = []        # BẢN XẾP LẠI: (tag đã quay vuông góc tường, tâm khung u, v) – chỉnh lại sau Regenerate
     so_xoay = [0]
+    so_doi = [0]          # tag cũ của công cụ đã đổi kiểu sang family người dùng cấp
     tag_moi = []
     ei_thieu = []
     tpl_msg = u""
@@ -537,11 +560,17 @@ def _chinh():
             if e.Id.Value in id_loai:
                 continue
             tg_cu = None
+            doi_kieu = False
             co = tag_co.get(e.Id.Value, [])
             if co:
                 cung_fam = [x for x in co if fam_cua_tag(x) in ten_fam_tag]
+                # family người dùng cấp: tag cũ do công cụ đặt (family IN[1] / IN[2] / IN[3]) → đổi kiểu + xếp lại
+                cu_khac = [x for x in co if fam_cua_tag(x) in fam_cu_cong_cu] if not cung_fam else []
                 if doc_in(14) and cung_fam:
                     tg_cu = cung_fam[0]          # đặt lại tag đã có (không xoá, không tạo mới)
+                elif cu_khac:
+                    tg_cu = cu_khac[0]
+                    doi_kieu = True
                 else:
                     bo_qua += 1
                     continue
@@ -568,6 +597,19 @@ def _chinh():
                 tg = IndependentTag.Create(doc, kieu.Id, view.Id, lk_tham_chieu(e), False, huong, goc)
             else:
                 tg = tg_cu
+                if doi_kieu:
+                    try:
+                        id_moi = tg.ChangeTypeId(kieu.Id)
+                        if id_moi is not None and id_moi.Value > 0 and id_moi.Value != tg.Id.Value:
+                            tg = doc.GetElement(id_moi)
+                            tg_cu = tg
+                    except Exception as ex:
+                        xem_lai.append(u"%d (Mark %s): không đổi được tag cũ %d sang '%s' (%s) → giữ tag cũ" % (
+                            e.Id.Value, mark(e), tg.Id.Value, kieu.FamilyName, (u"%s" % ex).splitlines()[0][:120]))
+                        bo_qua += 1
+                        continue
+                    so_doi[0] += 1
+                    bo_vat_can.add(u"chữ / tag %d" % tg_cu.Id.Value)      # sắp dời: thôi là vật cản của tag khác
                 tg.HasLeader = False
                 tg.TagOrientation = huong
                 tg.TagHeadPosition = goc
@@ -817,7 +859,12 @@ def _chinh():
       u"đã có tag; không tag %d đối tượng có Type Comments '%s'" %
       (tao["cua"], tao["cs"], tao["lam"], dat_lai, so_leader, bo_qua, len(loai_tru), ten_loai))
     p(u"Bản xếp lại: tag %s; %d tag quay vuông góc tường ngay trước cửa (không leader)." % (
-        u"chỉ chữ mã, không khung" if TAG_CHU else (u"gọn 1 ô chỉ mã" if TAG_GON else u"2 ô mã / rộngXcao"), so_xoay[0]))
+        (u"family người dùng cấp '%s' (cửa đi) / '%s' (cửa sổ), dùng nguyên family" % (ten_tag_cua, ten_tag_cs)) if TAG_MAU
+        else (u"chỉ chữ mã, không khung" if TAG_CHU else (u"gọn 1 ô chỉ mã" if TAG_GON else u"2 ô mã / rộngXcao")),
+        so_xoay[0]))
+    if so_doi[0]:
+        p(u"Đã đổi %d tag cũ do công cụ đặt (family %s) sang family mới và xếp lại – không xoá tag nào." % (
+            so_doi[0], u", ".join(sorted(fam_cu_cong_cu))))
     if tien_to_msg:
         p(tien_to_msg)
     if xoa_msg:
