@@ -17,6 +17,10 @@
 #     bảng thống kê để bảng hiện tên mới. IN[8] = có tạo / cập nhật bảng thống kê Revit không.
 #   - Báo CẦN XEM LẠI: cửa chưa có Type Mark, cùng Type Mark mà khác kích thước (Revit để trống ô), số cửa thấy trong
 #     mặt bằng khác số cửa của tầng.
+#   - Vách kính (người dùng yêu cầu + duyệt 2026-11-13: "1 cửa sổ đặt tên cửa đi cửa sổ, 1 cửa sổ tag vách kính bằng mark"):
+#     bảng lib/arv_bang_cua.py có thêm cửa sổ "Vách kính" (curtain wall thấy trong mặt bằng, tên = MARK của từng vách) →
+#     IN[9] = JSON đặt Mark, IN[10] = tag mỗi vách 1 tag tường hiện Mark (family ARV_Tag Vach Kinh Mark, chưa có thì nạp bản
+#     đóng gói lib/tag_vach_kinh); xem khối VÁCH KÍNH bên dưới.
 # Dry-run chỉ báo cáo, không sửa mô hình.
 # INPUT
 #   IN[0] (str)  Tên view mặt bằng (để trống = view đang mở)
@@ -28,8 +32,14 @@
 #   IN[6] (bool) Chỉ đếm cửa thấy trên sheet đặt bảng (Filter by sheet; dùng cho mặt bằng crop 1 phần tầng)
 #   IN[7] (str)  Đổi tên cửa: JSON {"<id type>": "<Type Mark mới>"} (trống = không đổi; nút điền từ bảng cửa)
 #   IN[8] (bool) Tạo / cập nhật bảng thống kê Revit (THỐNG KÊ CỬA ĐI / CỬA SỔ - <tầng>)
+#   IN[9] (str)  Đặt tên vách kính: JSON [{"ids": [id vách], "moi": "<Mark mới>"}] (trống = không đặt; nút điền từ bảng)
+#   IN[10] (bool) Tag vách kính (curtain wall) của mặt bằng bằng Mark
+#   IN[11] (str)  Kiểu tag vách kính "Family : Type" (trống = ARV_Tag Vach Kinh Mark, chưa có thì nạp bản đóng gói)
+#   IN[12] (str)  Thư mục family tag vách kính đóng gói (trống = <extension>/lib/tag_vach_kinh)
 # OUTPUT
 #   OUT (list[str])  Báo cáo
+import os
+import json
 import traceback
 import unicodedata
 import clr
@@ -43,7 +53,7 @@ from RevitServices.Persistence import DocumentManager
 from RevitServices.Transactions import TransactionManager
 
 TRANSACTION_NAME = u"ARV - Thống kê cửa"
-MAC_DINH = ["", u"Cửa đi;Cửa sổ", u"Louver;Lam thép;Lam nhôm", True, u"THỐNG KÊ {loai} - {tang}", True, False, "", True]
+MAC_DINH = ["", u"Cửa đi;Cửa sổ", u"Louver;Lam thép;Lam nhôm", True, u"THỐNG KÊ {loai} - {tang}", True, False, "", True, "", False, "", ""]
 # (từ khoá không dấu nhận trong IN[1], hạng mục, nhãn, tham số rộng, tham số cao)
 HANG_MUC = [(u"cua di", BuiltInCategory.OST_Doors, u"CỬA ĐI", BuiltInParameter.DOOR_WIDTH, BuiltInParameter.DOOR_HEIGHT),
             (u"cua so", BuiltInCategory.OST_Windows, u"CỬA SỔ", BuiltInParameter.WINDOW_WIDTH,
@@ -852,6 +862,380 @@ def doi_ten(doc, json_doi, dry, bao, xem_lai):
         doc.Regenerate()
 
 
+# ==== VÁCH KÍNH: đặt Mark + tag bằng Mark (người dùng yêu cầu 2026-11-13: "1 cửa sổ tag vách kính bằng mark") ====
+# Tên vách kính = MARK của từng curtain wall (model HQV: T1-VK.02 …). Tag = family tag TƯỜNG hiện Mark
+# "ARV_Tag Vach Kinh Mark" (dựng từ family tag Mark lan can của người dùng, đổi hạng mục sang Wall Tags vì API không tạo
+# được nhãn); dự án chưa có thì nạp bản đóng gói lib\tag_vach_kinh. Mỗi vách 1 tag, không leader, nằm theo phương vách
+# (vách dọc trên view → tag đứng), giữa vách, phía ngoài nhà (phía không có room; không rõ thì theo mặt ngoài của tường),
+# cách mép vách VK_KHE_MM giấy; vướng tag / chữ / tường khác / cửa (kể cả cánh mở) thì dịch dọc vách, hết chỗ mới sang
+# phía trong; vẫn vướng thì để chỗ đầu và báo. Phía ngoài = phía có nhiều tia dò (0°, ±30°, xa VK_TIA_M) không chạm tường. Vách đã có tag tường trong view thì không tag thêm; vách chưa có Mark thì liệt kê, không tag.
+VK_TAG = u"ARV_Tag Vach Kinh Mark"
+VK_KHE_MM = 1.0           # khe giữa mép vách và khung tag (mm giấy)
+VK_NUA_DAY_MM = 100.0     # nửa bề dày vách kính khi tường không có Width (đố 65 x ~190)
+VK_SO_NAC = 6             # số nấc đẩy tag ra xa vách khi sát vách không còn chỗ (mỗi nấc = bề dày tag + 1 mm giấy)
+VK_TIA_M = 25.0           # tia dò phía ngoài nhà: đi xa chừng này mà không chạm tường khác = phía ngoài
+
+
+def vk_la_vach(e):
+    try:
+        return e.WallType.Kind == WallKind.Curtain
+    except Exception:
+        return False
+
+
+def vk_trong_view(doc, view):
+    """Curtain wall thấy trong view: model chính + file link đúng tầng (LkPT)."""
+    kq = [e for e in FilteredElementCollector(doc, view.Id).OfClass(Wall) if vk_la_vach(e)]
+    lv = view.GenLevel
+    for li, ld, tf in lk_cac_link(doc, view):
+        ids = lk_level_khop(ld, tf, lv) if lv is not None else None
+        if ids is not None and not ids:
+            continue
+        for e in FilteredElementCollector(doc, view.Id, li.Id).OfClass(Wall):
+            if vk_la_vach(e) and (ids is None or e.LevelId.Value in ids):
+                kq.append(LkPT(e, li, tf))
+    return kq
+
+
+def vk_mark(e):
+    p = e.get_Parameter(BuiltInParameter.ALL_MODEL_MARK)
+    return (p.AsString() or u"").strip() if p is not None else u""
+
+
+def vk_dat_mark(doc, json_dat, dry, bao, xem_lai):
+    """Đặt Mark cho vách kính theo JSON [{"ids": [...], "moi": "T1-VK.61"}]."""
+    if not json_dat:
+        return
+    try:
+        ds = json.loads(json_dat)
+    except Exception as ex:
+        bao.append(u"IN[9] không phải JSON hợp lệ: %s" % ex)
+        return
+    if not ds:
+        return
+    bao.append(u"")
+    bao.append(u"== ĐẶT TÊN VÁCH KÍNH (Mark) – %d dòng%s" % (len(ds), u" (DRY-RUN)" if dry else u""))
+    dang_doi = set(int(i) for d in ds for i in d.get("ids", []))
+    khac = {}
+    for e in FilteredElementCollector(doc).OfClass(Wall):
+        if vk_la_vach(e) and e.Id.Value not in dang_doi and vk_mark(e):
+            khac.setdefault(vk_mark(e), []).append(e.Id.Value)
+    if not dry:
+        TransactionManager.Instance.EnsureInTransaction(doc)
+    for d in ds:
+        moi = (u"%s" % d.get("moi", u"")).strip()
+        if not moi:
+            continue
+        n = 0
+        for i in d.get("ids", []):
+            e = doc.GetElement(ElementId(int(i)))
+            p = e.get_Parameter(BuiltInParameter.ALL_MODEL_MARK) if e is not None else None
+            if p is None or p.IsReadOnly:
+                bao.append(u"   KHÔNG đặt được Mark cho vách id %s (không có / chỉ đọc)" % i)
+                continue
+            if not dry:
+                p.Set(moi)
+            n += 1
+        bao.append(u"   %s → %s  (%d vách: %s)" % (d.get("cu") or u"(trống)", moi, n,
+                                                    u", ".join(u"%s" % i for i in d.get("ids", [])[:8])))
+        if moi in khac:
+            xem_lai.append(u"Mark '%s' đã có ở vách kính khác (id %s) – 2 vách cùng tên." % (
+                moi, u", ".join(u"%d" % i for i in khac[moi][:5])))
+    if not dry:
+        doc.Regenerate()
+
+
+def vk_thu_muc_tag():
+    d = (doc_in(12) or u"").strip()
+    if d:
+        return d
+    try:
+        f = globals().get("__file__")
+        if f:
+            return os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(f)), u"..", u"..", u"..", u"lib",
+                                                 u"tag_vach_kinh"))
+    except Exception:
+        pass
+    return u""
+
+
+def vk_tuy_chon_nap():
+    """IFamilyLoadOptions: family đã có thì giữ nguyên. Tên lớp .NET riêng mỗi lần gọi."""
+    import uuid
+    ns = "ARV.VachKinh.N" + uuid.uuid4().hex
+
+    class _Nap(_RevitDB.IFamilyLoadOptions):
+        __namespace__ = ns
+
+        def OnFamilyFound(self, familyInUse, overwriteParameterValues):
+            return (True, False)
+
+        def OnSharedFamilyFound(self, sharedFamily, familyInUse, source, overwriteParameterValues):
+            return (True, _RevitDB.FamilySource.Family, False)
+
+    return _Nap()
+
+
+def vk_ten_kieu(s):
+    p = s.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM)
+    return u"%s : %s" % (s.FamilyName, p.AsString() if p is not None else u"")
+
+
+def vk_kieu_tag(doc, ten_kieu, dry, bao):
+    """Kiểu tag tường để tag vách: theo tên "Family : Type" (IN[11]); trống → family VK_TAG, chưa có thì nạp bản đóng gói."""
+    ds = list(FilteredElementCollector(doc).OfClass(FamilySymbol).OfCategory(BuiltInCategory.OST_WallTags))
+    ten_kieu = (ten_kieu or u"").strip()
+    if ten_kieu:
+        for s in ds:
+            if vk_ten_kieu(s) == ten_kieu or s.FamilyName == ten_kieu:
+                return s
+        bao.append(u"Không thấy kiểu tag '%s' trong dự án → dùng '%s'." % (ten_kieu, VK_TAG))
+    for s in ds:
+        if s.FamilyName == VK_TAG:
+            return s
+    duong = os.path.join(vk_thu_muc_tag(), VK_TAG + u".rfa")
+    if not os.path.isfile(duong):
+        bao.append(u"CHƯA CÓ family tag '%s' trong dự án và không thấy file đóng gói '%s' → không tag." % (VK_TAG, duong))
+        return None
+    if dry:
+        bao.append(u"Sẽ nạp family tag '%s' từ %s." % (VK_TAG, duong))
+        return None
+    TransactionManager.Instance.EnsureInTransaction(doc)
+    try:
+        doc.LoadFamily(duong, vk_tuy_chon_nap())
+    except Exception as ex:
+        bao.append(u"KHÔNG nạp được family tag '%s' từ %s: %s" % (VK_TAG, duong, (u"%s" % ex).splitlines()[0][:200]))
+        return None
+    finally:
+        TransactionManager.Instance.TransactionTaskDone()
+    for s in FilteredElementCollector(doc).OfClass(FamilySymbol).OfCategory(BuiltInCategory.OST_WallTags):
+        if s.FamilyName == VK_TAG:
+            bao.append(u"Nạp family tag '%s' từ %s." % (VK_TAG, duong))
+            return s
+    bao.append(u"Nạp '%s' xong nhưng KHÔNG thấy kiểu tag." % duong)
+    return None
+
+
+def vk_tag(doc, view, ten_kieu, dry, bao, xem_lai):
+    vs = vk_trong_view(doc, view)
+    bao.append(u"")
+    bao.append(u"== TAG VÁCH KÍNH BẰNG MARK%s: %d vách kính thấy trong mặt bằng" % (u" (DRY-RUN)" if dry else u"", len(vs)))
+    if not vs:
+        return
+    da_tag = set()
+    for tg in FilteredElementCollector(doc, view.Id).OfClass(IndependentTag):
+        if tg.Category is not None and tg.Category.Id.Value == int(BuiltInCategory.OST_WallTags):
+            da_tag.update(lk_khoa_tag(tg))
+    da = [e for e in vs if e.Id.Value in da_tag]
+    con = [e for e in vs if e.Id.Value not in da_tag]
+    thieu = [e for e in con if not vk_mark(e)]
+    can = [e for e in con if vk_mark(e)]
+    bao.append(u"   đã có tag: %d | sẽ tag: %d | chưa có Mark (không tag): %d" % (len(da), len(can), len(thieu)))
+    if thieu:
+        xem_lai.append(u"%d vách kính chưa có Mark nên chưa tag (id %s) – đặt tên ở cửa sổ Vách kính rồi bấm lại." % (
+            len(thieu), u", ".join(u"%s" % e.Id.Value for e in thieu[:12])))
+    dem = {}
+    for e in vs:
+        if vk_mark(e):
+            dem.setdefault(vk_mark(e), []).append(e.Id.Value)
+    for mk in sorted(dem):
+        if len(dem[mk]) > 1:
+            xem_lai.append(u"Mark '%s' đặt cho %d vách kính (id %s)." % (mk, len(dem[mk]), u", ".join(u"%s" % i for i in dem[mk][:6])))
+    try:
+        if view.GetCategoryHidden(ElementId(BuiltInCategory.OST_WallTags)):
+            xem_lai.append(u"Hạng mục Wall Tags đang TẮT trong view / view template – tag vách kính tạo ra sẽ không hiện.")
+    except Exception:
+        pass
+    if not can:
+        return
+    kieu = vk_kieu_tag(doc, ten_kieu, dry, bao)
+    if kieu is None:
+        return
+    bao.append(u"   kiểu tag: %s" % vk_ten_kieu(kieu))
+    if dry:
+        return
+    sc = float(view.Scale)
+    ft = lambda v_mm: UnitUtils.ConvertToInternalUnits(v_mm, UnitTypeId.Millimeters)
+    R, U = view.RightDirection, view.UpDirection
+    uv = lambda p: (p.DotProduct(R), p.DotProduct(U))
+    z_room = (view.GenLevel.Elevation if view.GenLevel is not None else 0.0) + ft(500)
+
+    def co_phong(p):
+        q = XYZ(p.X, p.Y, z_room)
+        try:
+            if doc.GetRoomAtPoint(q) is not None:
+                return True
+        except Exception:
+            pass
+        return lk_room_moi_link(doc, q, view.GenLevel) is not None
+
+    # vật cản: tag + chữ đang có (khung bao trong view), tim mọi tường thấy trong view (kèm nửa bề dày)
+    hop = []          # (u0, v0, u1, v1)
+    for cls in (IndependentTag, TextNote):
+        for x in FilteredElementCollector(doc, view.Id).OfClass(cls):
+            bb = x.get_BoundingBox(view)
+            if bb is not None:
+                a, b = uv(bb.Min), uv(bb.Max)
+                hop.append((min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])))
+    for bic in (BuiltInCategory.OST_Doors, BuiltInCategory.OST_Windows):
+        for x in FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType():
+            bb = x.get_BoundingBox(view)
+            if bb is not None:
+                a, b = uv(bb.Min), uv(bb.Max)
+                hop.append((min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])))
+    doan = []         # (id, (u, v) đầu, (u, v) cuối, nửa dày)
+    tuong = list(FilteredElementCollector(doc, view.Id).OfClass(Wall)) + [e for e in vs if la_link(e)]
+    for x in tuong:
+        try:
+            c = x.Location.Curve
+            nd = max(x.Width / 2.0, ft(VK_NUA_DAY_MM) if vk_la_vach(x) else 0.0)
+            ds_p = [c.GetEndPoint(0), c.GetEndPoint(1)] if c.GetType().Name == "Line" else list(c.Tessellate())
+            for i in range(len(ds_p) - 1):
+                doan.append((x.Id.Value, uv(ds_p[i]), uv(ds_p[i + 1]), nd))
+        except Exception:
+            pass
+
+    def cat_doan(h, a, b, nd):
+        """Hình chữ nhật h (nới nd) có chạm đoạn a-b không (Liang–Barsky)."""
+        x0, y0, x1, y1 = h[0] - nd, h[1] - nd, h[2] + nd, h[3] + nd
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        t0, t1 = 0.0, 1.0
+        for p_, q_ in ((-dx, a[0] - x0), (dx, x1 - a[0]), (-dy, a[1] - y0), (dy, y1 - a[1])):
+            if abs(p_) < 1e-12:
+                if q_ < 0:
+                    return False
+                continue
+            r_ = q_ / p_
+            if p_ < 0:
+                t0 = max(t0, r_)
+            else:
+                t1 = min(t1, r_)
+            if t0 > t1:
+                return False
+        return True
+
+    def vuong(h, bo_id):
+        for k in hop:
+            if h[0] < k[2] and k[0] < h[2] and h[1] < k[3] and k[1] < h[3]:
+                return True
+        for i, a, b, nd in doan:
+            if i != bo_id and cat_doan(h, a, b, nd):
+                return True
+        return False
+
+    def tia_thoat(g, hu, hv, bo_id):
+        """Số tia (0°, ±30°) từ điểm g theo hướng (hu, hv) đi VK_TIA_M mét mà không chạm tường nào khác."""
+        import math
+        xa_ = ft(VK_TIA_M * 1000.0)
+        so_ = 0
+        for goc_ in (0.0, math.radians(30), -math.radians(30)):
+            cu_, su_ = math.cos(goc_), math.sin(goc_)
+            du_, dv_ = hu * cu_ - hv * su_, hu * su_ + hv * cu_
+            cham = False
+            for i, a, b, nd in doan:
+                if i == bo_id:
+                    continue
+                ex, ey = b[0] - a[0], b[1] - a[1]
+                mau = du_ * ey - dv_ * ex
+                if abs(mau) < 1e-12:
+                    continue
+                t_ = ((a[0] - g[0]) * ey - (a[1] - g[1]) * ex) / mau
+                s_ = ((a[0] - g[0]) * dv_ - (a[1] - g[1]) * du_) / mau
+                if 1e-6 < t_ < xa_ and -1e-9 <= s_ <= 1 + 1e-9:
+                    cham = True
+                    break
+            if not cham:
+                so_ += 1
+        return so_
+
+    TransactionManager.Instance.EnsureInTransaction(doc)
+    if not kieu.IsActive:
+        kieu.Activate()
+    viec = []
+    for e in can:
+        try:
+            c = e.Location.Curve
+            giua = c.Evaluate(0.5, True)
+            d = c.ComputeDerivatives(0.5, True).BasisX.Normalize()
+            du, dv = uv(d)
+            huong = TagOrientation.Vertical if abs(dv) > abs(du) else TagOrientation.Horizontal
+            tg = IndependentTag.Create(doc, kieu.Id, view.Id, lk_tham_chieu(e), False, huong, giua)
+            viec.append((e, c, d, tg, giua))
+        except Exception as ex:
+            xem_lai.append(u"Vách id %s (Mark %s): không tag được – %s" % (e.Id.Value, vk_mark(e), (u"%s" % ex).splitlines()[0][:120]))
+    doc.Regenerate()
+    so, vuong_ds = 0, []
+    for e, c, d, tg, giua in viec:
+        bb = tg.get_BoundingBox(view)
+        if bb is None:
+            xem_lai.append(u"Vách id %s: tag không hiện trong view (hạng mục / template ẩn?)." % e.Id.Value)
+            so += 1
+            continue
+        a, b = uv(bb.Min), uv(bb.Max)
+        nu, nv = abs(b[0] - a[0]) / 2.0, abs(b[1] - a[1]) / 2.0            # nửa rộng / nửa cao khung tag trên view
+        tam0 = ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)
+        dau0 = uv(tg.TagHeadPosition)
+        lech = (tam0[0] - dau0[0], tam0[1] - dau0[1])                     # tâm khung so với điểm đặt
+        n = XYZ(-d.Y, d.X, 0.0)
+        nu_, nv_ = uv(n)
+        nua_tag = abs(nu_) * nu + abs(nv_) * nv                           # nửa khung tag theo phương vuông góc vách
+        nd = max(e.Width / 2.0, ft(VK_NUA_DAY_MM))
+        xa = nd + ft(VK_KHE_MM) * sc + nua_tag
+        # phía ngoài nhà: phía có nhiều tia đi xa mà không chạm tường khác; bằng nhau thì phía không có room; vẫn không rõ
+        # thì theo mặt ngoài của tường
+        gu, gv = uv(giua)
+        le_ = nd + ft(50)
+        ta = tia_thoat((gu + nu_ * le_, gv + nv_ * le_), nu_, nv_, e.Id.Value)
+        tb = tia_thoat((gu - nu_ * le_, gv - nv_ * le_), -nu_, -nv_, e.Id.Value)
+        if ta != tb:
+            ngoai = 1.0 if ta > tb else -1.0
+        else:
+            pa, pb = co_phong(giua + n * ft(700)), co_phong(giua - n * ft(700))
+            if pa != pb:
+                ngoai = -1.0 if pa else 1.0
+            else:
+                try:
+                    ngoai = 1.0 if e.Orientation.DotProduct(n) >= 0 else -1.0
+                except Exception:
+                    ngoai = 1.0
+        chon = None
+        ung = []
+        for t_ in (0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8, 0.12, 0.88):
+            for phia in (ngoai, -ngoai):
+                ung.append((t_, phia))
+        ung.sort(key=lambda k: (k[1] != ngoai, abs(k[0] - 0.5)))       # phía ngoài trước, gần giữa vách trước
+        ung = [(t_, phia, xa) for t_, phia in ung]
+        # vách ngắn bị cửa chiếm hết chiều dài: đẩy tag ra xa dần (vượt cung mở cửa), giữa vách, phía ngoài rồi phía trong
+        buoc = 2.0 * nua_tag + ft(1.0) * sc
+        for phia in (ngoai, -ngoai):
+            for k_ in range(1, VK_SO_NAC + 1):
+                ung.append((0.5, phia, xa + k_ * buoc))
+        for t_, phia, xa_ in ung:
+            p = c.Evaluate(t_, True) + n * (phia * xa_)
+            pu, pv = uv(p)
+            h = (pu - nu, pv - nv, pu + nu, pv + nv)
+            if not vuong(h, e.Id.Value):
+                chon = (p, h)
+                break
+        if chon is None:
+            p = giua + n * (ngoai * xa)
+            pu, pv = uv(p)
+            chon = (p, (pu - nu, pv - nv, pu + nu, pv + nv))
+            vuong_ds.append(u"%s (id %s)" % (vk_mark(e), e.Id.Value))
+        p, h = chon
+        # điểm đặt = tâm mong muốn - độ lệch tâm khung
+        dich = XYZ(p.X, p.Y, tg.TagHeadPosition.Z) - R * lech[0] - U * lech[1]
+        tg.TagHeadPosition = XYZ(dich.X, dich.Y, tg.TagHeadPosition.Z)
+        hop.append(h)
+        so += 1
+    doc.Regenerate()
+    TransactionManager.Instance.TransactionTaskDone()
+    bao.append(u"   đã tag %d vách kính." % so)
+    if vuong_ds:
+        xem_lai.append(u"%d tag vách kính không tìm được chỗ trống (đang đè tường / tag / chữ khác), cần dời tay: %s" % (
+            len(vuong_ds), u", ".join(vuong_ds[:15])))
+
+
 def _chinh():
     doc = DocumentManager.Instance.CurrentDBDocument
     bao = []
@@ -883,6 +1267,7 @@ def _chinh():
     xem_lai = []
     bang_tao = []
     doi_ten(doc, doc_in(7), dry, bao, xem_lai)
+    vk_dat_mark(doc, doc_in(9), dry, bao, xem_lai)
     lam_bang = bool(doc_in(8))
     if not lam_bang:
         hang_muc = []
@@ -946,6 +1331,8 @@ def _chinh():
                 st.RollBack()
             bao.append(u"   KHÔNG tạo được bảng '%s': %s" % (ten_bang, (u"%s" % ex).splitlines()[0][:200]))
     TransactionManager.Instance.TransactionTaskDone()
+    if doc_in(10):
+        vk_tag(doc, view, doc_in(11), dry, bao, xem_lai)
     if xem_lai:
         bao.append(u"")
         bao.append(u"CẦN XEM LẠI:")

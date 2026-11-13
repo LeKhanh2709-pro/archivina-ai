@@ -308,6 +308,17 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     Tên đổi / Chiều dài / Chiều cao / SL mặt bằng / SL cả dự án) → Đổi tên = đổi Type Mark (cả dự án, báo trùng) +
     ô tuỳ chọn tạo bảng thống kê Revit (IN[7] / IN[8]). Thử nút thật bản sao: 80 → D1, VKD03-F2E → D2, bảng Revit hiện
     tên mới. Người dùng chưa bấm thử (`Cần xác nhận lại`).
+  - **Cửa sổ "Vách kính": đặt Mark + tag vách kính bằng Mark** (người dùng yêu cầu + duyệt ảnh bản thử 2026-11-13: "1 cửa sổ
+    đặt tên cửa đi cửa sổ, 1 cửa sổ tag vách kính bằng mark"; chi tiết + cách thử trong skill): hộp thoại có 2 tab, bấm nút ở
+    tab nào làm việc của tab đó. Tab Vách kính: curtain wall thấy trong mặt bằng (cùng kiểu + dài + cao + Mark 1 dòng), tên
+    = MARK từng vách (IN[9]), tag mỗi vách 1 tag tường hiện Mark (IN[10] / IN[11]): theo phương vách, phía ngoài nhà (dò
+    tia tới tường), tránh tag / chữ / tường / cửa, không leader; đã có tag thì không tag thêm; chưa có Mark thì liệt kê.
+    Family tag `ARV_Tag Vach Kinh Mark` (kiểu `Mark`) ở `lib\tag_vach_kinh\` = family tag Mark lan can của người dùng đổi
+    hạng mục sang Wall Tags bằng API, dự án chưa có thì tự nạp. Bấm NÚT THẬT qua journal trên bản sao
+    `2.HQV_A_ThapB_L1-L3.rvt` (`_tmp\tk_vach_kinh\`, Tầng 1): 53 vách (47 có Mark `T1-VK.xx`), tag 53 / 53, bấm lại không
+    trùng; ảnh `_tmp\tk_vach_kinh\kq_that\`. Chưa thử vách trong link / vách cong; KHÔNG làm bảng thống kê Revit cho vách kính
+    (người dùng chốt 2026-11-13: "Không cần"). Nút + `.dyn` sinh lại 2026-11-13 10:13, Revit phải Reload pyRevit; người dùng chưa
+    bấm (`Cần xác nhận lại`). Bản trước: `_backup\*_20261113_1012_truoc_vach_kinh*`.
 - `LanCanLouver_TuDong.dyn` (2026-11-05, skill `dinh-vi-lan-can-louver-revit`, quy tắc + bẫy xem skill): người dùng yêu cầu
   "mặt bằng định vị lan can, louver, dựa vào Mark để nhận diện tên, giống nút định vị + tag cửa".
   - Bấm trên mặt bằng tầng → tạo / mở `MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>` (khối chung `DatSheet_chung.py`,

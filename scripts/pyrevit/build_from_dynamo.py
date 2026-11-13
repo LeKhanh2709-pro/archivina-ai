@@ -101,12 +101,14 @@ MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"
                                     u"bấm lại không trùng; kèm bảng thống kê lan can / louver. Ctrl+Z một lần là hoàn tác. "
                                     u"Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run."},
             # Thống kê cửa: mặt bằng tầng đang mở → bảng cửa (mỗi loại 1 dòng: tên hiện tại / tên đổi / dài / cao, người
-            # dùng yêu cầu 2026-11-04 tối) → đổi Type Mark (IN[7]) + tuỳ chọn bảng thống kê Revit (IN[8])
+            # dùng yêu cầu 2026-11-04 tối) → đổi Type Mark (IN[7]) + tuỳ chọn bảng thống kê Revit (IN[8]); cửa sổ thứ 2
+            # "Vách kính" (người dùng duyệt 2026-11-13): đặt Mark vách kính (IN[9]) + tag vách kính bằng Mark (IN[10], IN[11])
             "ThongKeCua": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng",
                            "hoi": u"arv_bang_cua.hoi_thong_ke_cua",
-                           "tip": u"Mở mặt bằng tầng rồi bấm: hiện bảng các loại cửa đi / cửa sổ trong mặt bằng (cửa trùng hiện "
-                                  u"1 lần): tên hiện tại, tên đổi, chiều dài, chiều cao, số lượng. Gõ tên mới rồi bấm Đổi tên "
-                                  u"(đổi Type Mark, Ctrl+Z một lần là hoàn tác); tuỳ chọn tạo bảng thống kê Revit. Shift+bấm: "
+                           "tip": u"Mở mặt bằng tầng rồi bấm: hiện bảng 2 cửa sổ. 'Cửa đi, cửa sổ': các loại cửa trong mặt bằng "
+                                  u"(cửa trùng hiện 1 lần): tên hiện tại, tên đổi, chiều dài, chiều cao, số lượng; gõ tên mới "
+                                  u"rồi bấm Đổi tên (đổi Type Mark); tuỳ chọn tạo bảng thống kê Revit. 'Vách kính': đặt tên "
+                                  u"(Mark) cho vách kính và tag vách kính bằng Mark. Ctrl+Z một lần là hoàn tác. Shift+bấm: "
                                   u"hộp thoại đầy đủ, mặc định Dry-run."},
             # Thống kê lan can, louver: mặt bằng tầng đang mở → bảng đặt tên (IN[7] = JSON [{ids, moi}], IN[8] = bảng Revit)
             "ThongKeLanCan": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng",

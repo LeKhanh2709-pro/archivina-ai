@@ -96,5 +96,45 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
   `CỬA LAM NHÔM LOGIA`, `lam nhôm sơn tĩnh điện` + các dạng lam thép / louver đều bị bỏ ở cả 2 bảng (cửa đi 112, cửa sổ 19);
   `Cửa lam gỗ`, `Cửa nhôm kính`, `Cửa thép` vẫn còn.
 
+## Cửa sổ "Vách kính" (2026-11-13)
+Người dùng yêu cầu: "1 cửa sổ đặt tên cửa đi cửa sổ, 1 cửa sổ tag vách kính bằng mark"; duyệt ảnh bản thử rồi mới build.
+- Hộp thoại nút có 2 tab: **Cửa đi, cửa sổ** (như trên) và **Vách kính**. Bấm nút ở tab nào thì làm việc của tab đó
+  (tab cửa: bảng thống kê Revit; tab vách: tag); tên đã gõ ở tab kia vẫn được đặt. Tab mở lần trước được nhớ.
+- Tab Vách kính (`lay_dong_vk`): curtain wall (`WallType.Kind == Curtain`) thấy trong mặt bằng, kể cả trong file link đúng
+  tầng (dòng link chỉ đọc); cùng kiểu + cùng dài + cùng cao + cùng Mark = 1 dòng. Cột: Loại / Vách kính (kiểu tường) / Tên
+  hiện tại (Mark) / Tên đổi / Chiều dài / Chiều cao (Unconnected Height) / SL mặt bằng / Đã tag (n / m). Dòng vàng: chưa có
+  Mark hoặc trùng Mark với dòng khác.
+- **Tên vách = MARK của từng vách** (model HQV: `T1-VK.02`, có tiền tố tầng) → chỉ đặt cho vách của mặt bằng đang mở,
+  không có ô "cả dự án". Mark mới trùng vách khác thì hỏi Yes / No.
+- **Tag** (`vk_tag` trong lõi, IN[10]): mỗi vách 1 tag TƯỜNG hiện Mark, không leader, nằm theo phương vách (vách dọc → tag
+  đứng), giữa vách, phía ngoài nhà, cách mép vách 1 mm giấy. Phía ngoài = phía có nhiều tia dò (0°, ±30°, xa 25 m) không
+  chạm tường khác; bằng nhau thì phía không có room; vẫn không rõ thì theo `Orientation` của tường. Tránh tag / chữ đang
+  có, tim tường khác (kèm nửa bề dày), khung bao cửa đi / cửa sổ (cả cánh mở): dịch dọc vách (0,5 → 0,12 / 0,88 chiều dài),
+  hết chỗ thì đẩy ra xa dần 6 nấc (vượt cung mở cửa), phía ngoài trước rồi phía trong; vẫn vướng thì để chỗ đầu và báo.
+  Không tránh đường trục / nét mặt cắt. Vách đã có tag tường trong view: không tag thêm. Vách chưa có Mark: không tag, liệt kê.
+  Hạng mục Wall Tags tắt trong view / template thì báo.
+- **Family tag** `ARV_Tag Vach Kinh Mark` (kiểu `Mark`), đóng gói ở `lib\tag_vach_kinh\`: dựng từ family
+  `AV-Railing Tag- Mark-lan can` của người dùng bằng cách đổi hạng mục family sang Wall Tags qua API
+  (`OwnerFamily.FamilyCategory`), nhãn Mark giữ nguyên (API không tạo được nhãn). Dự án chưa có thì lõi tự nạp. Ô "Family
+  tag" trong bảng liệt kê thêm các kiểu tag tường của dự án (IN[11]); model HQV L1-L3 không có family tag tường nào.
+
+- **Không tạo bảng thống kê Revit cho vách kính** (người dùng chốt 2026-11-13: "Không cần"); ô bảng thống kê Revit chỉ
+  dành cho cửa đi / cửa sổ.
+
+| IN | Ý nghĩa | Mặc định |
+|---|---|---|
+| 9 | Đặt tên vách kính: JSON `[{"ids": [id vách], "moi": "<Mark>"}]` | trống |
+| 10 | Tag vách kính bằng Mark | False (nút lấy theo ô trong bảng, lần đầu bật) |
+| 11 | Kiểu tag `Family : Type` (trống = `ARV_Tag Vach Kinh Mark`) | trống |
+| 12 | Thư mục family tag đóng gói (trống = `<extension>\lib\tag_vach_kinh`) | trống |
+
+Cách thử (`_tmp\tk_vach_kinh\`, bản sao `rvt\L1-L3.rvt` chép từ ổ A: `2.HQV_A_ThapB_L1-L3.rvt` do người dùng đưa): nút thử
+`ARVTestHS` (`hs_site_link\buoc.txt` → `chay_that.py`, exec `script.py` của NÚT THẬT 2 lần trên view nhân bản có crop) +
+`pyrevit_test\chay_test.ps1 -Journal tk_vach_kinh\journal.txt`. Biến thử: `ARV_HOI_ANH` (PNG tab cửa + `_vk.png` tab vách),
+`ARV_HOI_TAB` = 1, `ARV_VK_THU` = `{"@trong": "T1-VK.THU%d"}` (điền tên cho dòng chưa có Mark). Kết quả Tầng 1: 53 vách (47
+có Mark, 6 chưa), đặt 5 dòng tên thử, tag 53 / 53 chữ đúng Mark, bấm lại không tag thêm; ảnh `kq_that\`. Phiên thử không
+đặt `locale` mà Revit không văng. Chưa thử: vách kính trong file link, vách cong, mặt bằng xoay.
+
 ## Trạng thái
-Người dùng chưa bấm thử trong Revit của mình, chưa duyệt (`Cần xác nhận lại`). Revit phải Reload pyRevit mới thấy nút.
+Người dùng duyệt ảnh bản thử cửa sổ Vách kính 2026-11-13, nút sinh lại 10:13; chưa bấm trong Revit của mình
+(`Cần xác nhận lại`). Revit phải Reload pyRevit mới thấy bản mới.
