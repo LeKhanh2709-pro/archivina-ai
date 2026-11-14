@@ -1979,7 +1979,13 @@ def vk_bang_ve(doc, ten_view, tieu_de, cot, rong_cot, dong):
                   u"Id chữ: %s\nId nét: %s" % (u", ".join(u"%d" % x.Id.Value for x in chu[:200]),
                                                u", ".join(u"%d" % x.Id.Value for x in net[:200]))):
         return v, cach
-    vps = [(vp, vp.GetBoxOutline()) for vp in FilteredElementCollector(doc).OfClass(Viewport)
+    def goc_nhan(vp):
+        """Góc dưới trái của nhãn tên viewport trên bản vẽ (None nếu viewport không có nhãn)."""
+        try:
+            return vp.GetLabelOutline().MinimumPoint
+        except Exception:
+            return None
+    vps = [(vp, vp.GetBoxOutline(), goc_nhan(vp)) for vp in FilteredElementCollector(doc).OfClass(Viewport)
            if vp.ViewId.Value == v.Id.Value]
     from System.Collections.Generic import List
     ids = List[ElementId]()
@@ -1988,11 +1994,20 @@ def vk_bang_ve(doc, ten_view, tieu_de, cot, rong_cot, dong):
     doc.Delete(ids)
     vk_ve_bang(doc, v, tieu_de, cot, rong_cot, dong)
     doc.Regenerate()
-    for vp, o in vps:           # giữ góc phải dưới của bảng trên bản vẽ
+    for vp, o, nhan0 in vps:    # giữ góc phải dưới của bảng trên bản vẽ; nhãn tên viewport (nếu có) ở yên chỗ cũ
         try:
             n = vp.GetBoxOutline()
             c = vp.GetBoxCenter()
             vp.SetBoxCenter(XYZ(c.X + (o.MaximumPoint.X - n.MaximumPoint.X), c.Y + (o.MinimumPoint.Y - n.MinimumPoint.Y), c.Z))
+        except Exception:
+            pass
+        try:
+            if nhan0 is not None:
+                doc.Regenerate()
+                nhan1 = goc_nhan(vp)
+                if nhan1 is not None:
+                    lo = vp.LabelOffset
+                    vp.LabelOffset = XYZ(lo.X + (nhan0.X - nhan1.X), lo.Y + (nhan0.Y - nhan1.Y), lo.Z)
         except Exception:
             pass
     return v, u"vẽ lại bảng đã có (xoá %d chữ + %d nét cũ, vẽ theo số liệu mới)" % (len(chu), len(net))

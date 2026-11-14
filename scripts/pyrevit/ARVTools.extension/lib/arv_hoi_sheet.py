@@ -196,6 +196,13 @@ def _mac_dinh_tpl(doc, view, tu_khoa, luu):
         return (_ten(t) if t is not None else KHONG_TPL), (t.Scale if t is not None and _tpl_khoa_tl(t) else v.Scale)
 
     lv = view.GenLevel.Id.Value if view is not None and view.GenLevel is not None else None
+    # Đang đứng ngay trên view đích (bấm lại trên mặt bằng đã làm): giữ template / tỉ lệ của CHÍNH view đó. (2026-11-14: HQV
+    # Site có 2 view định vị cửa Tầng 1; hộp thoại lấy view gặp trước – template AF.07 khoá 1:100 – làm mặt bằng 1:200 đang
+    # nằm trên bản vẽ bị đổi sang 1:100 nếu bấm OK.)
+    if k and view is not None:
+        t0 = doc.GetElement(view.ViewTemplateId) if view.ViewTemplateId != DB.ElementId.InvalidElementId else None
+        if k in _kd_gon(view.Name) or (t0 is not None and k in _kd_gon(_ten(t0))):
+            return cua_view(view)
     if k and lv is not None:
         for v in DB.FilteredElementCollector(doc).OfClass(DB.ViewPlan):
             if v.IsTemplate or v.GenLevel is None or v.GenLevel.Id.Value != lv:
