@@ -1,3 +1,3 @@
 title: "Thống kê\ncửa"
-tooltip: "Mở mặt bằng tầng rồi bấm: hiện bảng 2 cửa sổ. 'Cửa đi, cửa sổ': các loại cửa trong mặt bằng (cửa trùng hiện 1 lần): tên hiện tại, tên đổi, chiều dài, chiều cao, số lượng; gõ tên mới rồi bấm Đổi tên (đổi Type Mark); tuỳ chọn tạo bảng thống kê Revit. 'Vách kính': đặt tên (Mark) cho vách kính và tag vách kính bằng Mark. Ctrl+Z một lần là hoàn tác. Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. Nguồn: ThongKeCua_TuDong.dyn."
+tooltip: "Mở mặt bằng tầng rồi bấm: hiện bảng 2 cửa sổ. 'Cửa đi, cửa sổ': các loại cửa trong mặt bằng (cửa trùng hiện 1 lần): tên hiện tại, tên đổi, chiều dài, chiều cao, số lượng; gõ tên mới rồi bấm Đổi tên (đổi Type Mark); tuỳ chọn tạo bảng thống kê Revit. 'Vách kính': đặt tên (Mark) cho vách kính và tag vách kính bằng Mark. Cửa nằm trong vách kính không liệt kê, không thống kê. Ctrl+Z một lần là hoàn tác. Shift+bấm: hộp thoại đầy đủ, mặc định Dry-run. Nguồn: ThongKeCua_TuDong.dyn."
 author: Archivina BIM

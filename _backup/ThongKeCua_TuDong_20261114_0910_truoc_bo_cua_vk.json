@@ -1,0 +1,72 @@
+{
+  "ten": "ThongKeCua_TuDong",
+  "mo_ta": "Bảng thống kê cửa đi / cửa sổ của mặt bằng đang mở: cột Ký hiệu (Type Mark) / Rộng / Cao / Số lượng, gộp theo Type Mark (cửa trùng hiện 1 dòng), lọc theo tầng của mặt bằng, bỏ cửa có Type Comments chứa chữ Louver, Lam thép hoặc Lam nhôm; bấm lại thì cập nhật bảng cũ, không tạo trùng. Thêm: đặt Mark + tag vách kính (curtain wall) bằng Mark. Mặc định Dry-run.",
+  "py": "ThongKeCua_TuDong.py",
+  "dau_vao": [
+    {
+      "ten": "Tên view mặt bằng (trống = view đang mở)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Hạng mục thống kê (;)",
+      "kieu": "string",
+      "gia_tri": "Cửa đi;Cửa sổ"
+    },
+    {
+      "ten": "Type Comments có chữ này thì không thống kê (;)",
+      "kieu": "string",
+      "gia_tri": "Louver;Lam thép;Lam nhôm"
+    },
+    {
+      "ten": "Dry-run (True = chỉ báo cáo)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Mẫu tên bảng ({loai}, {tang}, {view})",
+      "kieu": "string",
+      "gia_tri": "THỐNG KÊ {loai} - {tang}"
+    },
+    {
+      "ten": "Mở bảng vừa tạo",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Chỉ đếm cửa thấy trên sheet đặt bảng (Filter by sheet)",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Đổi tên cửa: JSON {id type: Type Mark mới} (trống = không đổi)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tạo / cập nhật bảng thống kê Revit",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Đặt tên vách kính: JSON [{ids, moi}] (trống = không đặt)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tag vách kính bằng Mark",
+      "kieu": "bool",
+      "gia_tri": false
+    },
+    {
+      "ten": "Kiểu tag vách kính Family : Type (trống = ARV_Tag Vach Kinh Mark)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Thư mục family tag vách kính đóng gói (trống = lib/tag_vach_kinh)",
+      "kieu": "string",
+      "gia_tri": ""
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
  "key": "TagCua",
  "title": "Định vị + tag cửa",
- "summary": "Tự động tag cửa đi + cửa sổ trên mặt bằng đang mở của Revit (người dùng chốt 2026-11-02, sửa theo góp ý cùng ngày): - Cửa đi: family tag \"AV_Door Tag\"; cửa sổ: \"AV_Window Tag\"; cửa sổ có tên family / type chứa từ khoá lam: \"AV_Louver Tag\". Đối tượng có Type Comments \"Louver\", \"Cửa nhôm\" hoặc \"Cửa lam thép\" thì KHÔNG tag (người dùng chốt 2026-11-09). - Tag hiện đúng Type Mark: nhãn family có tiền tố (vd. \"S3.\") thì thay bằng nhãn Type Mark trơn chép từ family tag cùng hạng mục trong dự án (Revit 2027.3 không sửa được tiền tố nhãn qua API), rồi nạp lại family. - Tag nằm ngang, ưu tiên NGAY GIỮA cửa (cửa đi phía không mở cánh, cửa sổ phía ngoài theo FacingOrientation); KHÔNG đè cửa (kể cả cánh mở), cửa sổ, tường, cột, tag / chữ khác. Lưới vị trí quanh cửa xếp theo điểm = lùi xa + 4 × dịch khỏi giữa cửa + phạt phía kia; không chỗ nào trống thì đặt chỗ ít đè nhất và liệt kê để xem lại. - Leader: tag lệch khỏi giữa cửa (hoặc xa hơn 1 bề cao tag) thì bật leader gắn vào cửa. - Nội thất không né mà ẩn: tạo view template riêng \"<template gốc> (ẩn nội thất)\" (tạo từ view vì API không nhân bản được view template), ẩn các hạng mục nội thất, gán cho view. KHÔNG sửa template gốc. - Cửa có EI (tham số chống cháy có giá trị) thì EI phải hiện trên tag: tag đã đặt mà chữ tag không chứa giá trị EI → báo family tag chưa có nhãn EI. - Cửa / cửa sổ đã có tag trong view thì bỏ qua: bấm lại không tạo trùng. Chỉ khi bật IN[14] mới dời tag đã có (cùng family tag); chỉ khi bật IN[15] mới xoá tag đang gắn trên đối tượng Type Comments \"Louver\". Dry-run chỉ báo cáo (đặt thử trong SubTransaction rồi huỷ), không sửa mô hình. - Mặt bằng định vị cửa (gộp từ nút \"MB định vị cửa\" theo yêu cầu người dùng 2026-11-03): view gốc đã là mặt bằng định vị cửa (mang template IN[17] hoặc tên theo mẫu IN[18]) thì tag luôn; không thì nhân bản view gốc (Duplicate, không kèm chú thích) thành \"MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>\" (đã có thì dùng view đó), gán template IN[17] rồi tag trên đó. Template chưa có thì tạo từ template của view gốc: tường + sàn Halftone, sàn tắt mẫu tô, cửa đi / cửa sổ bỏ Halftone, ẩn các hạng mục IN[7], hiện tag cửa. Template đã có thì dùng nguyên. Không sửa view gốc / template gốc.",
+ "summary": "Tự động tag cửa đi + cửa sổ trên mặt bằng đang mở của Revit (người dùng chốt 2026-11-02; 2026-11-13 người dùng chốt \"Đổi cả Archivina\": tag AV-Tag-DOOR + cách xếp lại đã duyệt ở nút Hồ sơ đã duyệt): - Family tag: cửa đi \"AV-Tag-DOOR\" (family người dùng cấp, khung nhỏ chỉ mã Type Mark), cửa sổ \"AV-Tag-DOOR_CuaSo\" (chính family đó đổi hạng mục sang Window Tags) – ô nhập 31 / 32. Dùng NGUYÊN family: không bỏ tiền tố, không thêm ô kích thước, không vẽ khung. Dự án chưa có thì nạp từ <extension>\\lib\\tag_cua\\<tên>.rfa; đã có family cùng tên thì dùng bản trong dự án (không nạp đè). Tag cũ do công cụ đặt (family ô nhập 1 / 2 / 3) trên cửa được ĐỔI KIỂU sang family mới rồi xếp lại, không xoá tag nào. - Bật ô nhập 30 = dùng lại tag 2 ô kiểu cũ: cửa đi \"AV_Door Tag\", cửa sổ \"AV_Window Tag\", cửa sổ có tên family / type chứa từ khoá lam: \"AV_Louver Tag\"; nhãn có tiền tố (vd. \"S3.\") thì thay bằng nhãn Type Mark trơn chép từ family tag cùng hạng mục trong dự án (Revit 2027.3 không sửa được tiền tố nhãn qua API), thêm ô dưới rộngXcao (ô nhập 19). - Đối tượng có Type Comments \"Louver\", \"Cửa nhôm\" hoặc \"Cửa lam thép\" thì KHÔNG tag (người dùng chốt 2026-11-09). - Chỗ đặt tag: sát tường NGAY GIỮA cửa (cửa đi phía không mở cánh, cửa sổ phía ngoài theo FacingOrientation) → TRƯỢT dọc tường (bề dài tag còn phủ ≥ 50 % bề rộng cửa) hoặc QUAY VUÔNG GÓC tường ngay trước cửa, cả hai không leader → lưới gần có leader gắn vào cửa. KHÔNG đè cửa (kể cả cánh mở), cửa sổ, tường, cột, tag / chữ khác; không chỗ nào trống thì đặt chỗ ít đè nhất và liệt kê để xem lại. Tỉ lệ ≥ 1:150: khoảng hở quanh tag tối đa 0,6 mm giấy. - Nội thất không né mà ẩn: tạo view template riêng \"<template gốc> (ẩn nội thất)\" (tạo từ view vì API không nhân bản được view template), ẩn các hạng mục nội thất, gán cho view. KHÔNG sửa template gốc. - Cửa có EI (tham số chống cháy có giá trị) thì EI phải hiện trên tag: tag đã đặt mà chữ tag không chứa giá trị EI → báo family tag chưa có nhãn EI. - Cửa / cửa sổ đã có tag trong view thì bỏ qua: bấm lại không tạo trùng. Chỉ khi bật IN[14] mới dời tag đã có (cùng family tag); chỉ khi bật IN[15] mới xoá tag đang gắn trên đối tượng Type Comments \"Louver\". - Biến môi trường (nút Hồ sơ đã duyệt đặt): ARV_TAG_FAM_CUA_DI / ARV_TAG_FAM_CUA_SO = tên family dùng nguyên thay ô nhập 31 / 32, ARV_TAG_FAM_THU_MUC = thư mục chứa <tên>.rfa; ARV_TAG_GON = 1 / 2 = tag gọn 1 ô / chỉ chữ trên family kiểu cũ. Dry-run chỉ báo cáo (đặt thử trong SubTransaction rồi huỷ), không sửa mô hình. - Mặt bằng định vị cửa (gộp từ nút \"MB định vị cửa\" theo yêu cầu người dùng 2026-11-03): view gốc đã là mặt bằng định vị cửa (mang template IN[17] hoặc tên theo mẫu IN[18]) thì tag luôn; không thì nhân bản view gốc (Duplicate, không kèm chú thích) thành \"MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>\" (đã có thì dùng view đó), gán template IN[17] rồi tag trên đó. Template chưa có thì tạo từ template của view gốc: tường + sàn Halftone, sàn tắt mẫu tô, cửa đi / cửa sổ bỏ Halftone, ẩn các hạng mục IN[7], hiện tag cửa. Template đã có thì dùng nguyên. Không sửa view gốc / template gốc. VÁCH KÍNH (người dùng chốt 2026-11-14: \"không tag các cửa, và thống kê các cửa (cửa đi, cửa sổ) khi nằm trong vách kính\"; \"tag vách kính bằng mark\" làm ngay ở nút này): - Cửa đi / cửa sổ có host là curtain wall (kể cả tấm vách kính là family cửa) KHÔNG tag cửa, KHÔNG vào bảng thống kê trên bản vẽ. Tag cửa cũ do công cụ đặt trên các cửa đó: liệt kê + HỎI Yes / No rồi mới xoá (ARV_XOA_TAG_VK = 1 / 0 trả lời sẵn khi thử nền). IN[34] bật = làm như cũ (vẫn tag + thống kê). - Vách kính (curtain wall) thấy trong mặt bằng được tag bằng MARK (family tag tường ARV_Tag Vach Kinh Mark, khối PHẦN CHUNG VÁCH KÍNH – nguồn VachKinh_chung.py): sau khi tag cửa, mỗi vách 1 tag, đã có tag thì không tag thêm, chưa có Mark thì liệt kê. IN[33] bật = không tag vách kính. - Bảng thống kê trên bản vẽ: tầng có cửa nằm trong vách kính thì dùng bảng vẽ (drafting) vì bảng thống kê Revit không lọc được theo vách chủ. View đã nằm trên bản vẽ: bấm lại thì 2 bảng vẽ của tầng được cập nhật; số dòng đổi thì HỎI rồi vẽ lại ngay trong view đó (ARV_VE_LAI_BANG = 1 / 0), giữ góc phải dưới.",
  "transaction": "ARV - Định vị + tag cửa",
  "source": "TagCua_TuDong.py",
  "inputs": [
@@ -17,7 +17,7 @@
    "index": 1,
    "type": "str",
    "decl": "str",
-   "label": "Family tag cửa đi",
+   "label": "Family tag cửa đi KIỂU CŨ (tag 2 ô; chỉ dùng khi bật IN[30]; tag cũ loại này được đổi sang tag IN[31])",
    "default": "AV_Door Tag",
    "kind": "normal"
   },
@@ -25,7 +25,7 @@
    "index": 2,
    "type": "str",
    "decl": "str",
-   "label": "Family tag cửa sổ",
+   "label": "Family tag cửa sổ KIỂU CŨ (như IN[1]; tag cũ loại này được đổi sang tag IN[32])",
    "default": "AV_Window Tag",
    "kind": "normal"
   },
@@ -33,7 +33,7 @@
    "index": 3,
    "type": "str",
    "decl": "str",
-   "label": "Family tag lam / louver",
+   "label": "Family tag lam / louver KIỂU CŨ (như IN[2])",
    "default": "AV_Louver Tag",
    "kind": "normal"
   },
@@ -105,7 +105,7 @@
    "index": 12,
    "type": "bool",
    "decl": "bool",
-   "label": "Bỏ tiền tố nhãn Type Mark trong family tag (vd. \"S3.\") để tag hiện đúng Type Mark",
+   "label": "Bỏ tiền tố nhãn Type Mark trong family tag (vd. \"S3.\") để tag hiện đúng Type Mark – chỉ với tag kiểu cũ (IN[30] bật)",
    "default": true,
    "kind": "normal"
   },
@@ -161,7 +161,7 @@
    "index": 19,
    "type": "bool",
    "decl": "bool",
-   "label": "Thêm ô dưới \"rộngXcao\" (mm) vào family tag cửa đi / cửa sổ, khung chữ nhật 2 ô (như mẫu CAD, người dùng duyệt 2026-11-03); nhãn Width / Height mm chép từ lib\\tag_cua\\ARV_TagNguon_Door / _Window.rfa",
+   "label": "Thêm ô dưới \"rộngXcao\" (mm) vào family tag cửa đi / cửa sổ, khung chữ nhật 2 ô (như mẫu CAD, người dùng duyệt 2026-11-03); nhãn Width / Height mm chép từ lib\\tag_cua\\ARV_TagNguon_Door / _Window.rfa – chỉ với tag kiểu cũ (IN[30] bật)",
    "default": true,
    "kind": "normal"
   },
@@ -243,6 +243,62 @@
    "decl": "float",
    "label": "Tỉ lệ mặt bằng, mẫu số (0 = tự chọn như cũ 1:100; template khoá tỉ lệ thì theo template)",
    "default": 0.0,
+   "kind": "normal"
+  },
+  {
+   "index": 30,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dùng tag 2 ô kiểu cũ IN[1] / IN[2] / IN[3] (mã / rộngXcao) thay cho tag AV-Tag-DOOR (mặc định tắt = dùng tag AV-Tag-DOOR, người dùng chốt 2026-11-13)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 31,
+   "type": "str",
+   "decl": "str",
+   "label": "Family tag cửa đi dùng nguyên, không sửa family (mặc định AV-Tag-DOOR; file .rfa nạp từ lib\\tag_cua)",
+   "default": "AV-Tag-DOOR",
+   "kind": "normal"
+  },
+  {
+   "index": 32,
+   "type": "str",
+   "decl": "str",
+   "label": "Family tag cửa sổ dùng nguyên, không sửa family (mặc định AV-Tag-DOOR_CuaSo)",
+   "default": "AV-Tag-DOOR_CuaSo",
+   "kind": "normal"
+  },
+  {
+   "index": 33,
+   "type": "bool",
+   "decl": "bool",
+   "label": "KHÔNG tag vách kính bằng Mark (mặc định tắt = có tag vách kính)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 34,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Vẫn tag + thống kê cửa đi / cửa sổ nằm trong vách kính như cũ (mặc định tắt = không tag, không thống kê)",
+   "default": false,
+   "kind": "normal"
+  },
+  {
+   "index": 35,
+   "type": "str",
+   "decl": "str",
+   "label": "Kiểu tag vách kính \"Family : Type\" (trống = ARV_Tag Vach Kinh Mark, chưa có thì nạp bản đóng gói)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 36,
+   "type": "str",
+   "decl": "str",
+   "label": "Thư mục family tag vách kính đóng gói (trống = <extension>/lib/tag_vach_kinh)",
+   "default": "",
    "kind": "normal"
   }
  ]

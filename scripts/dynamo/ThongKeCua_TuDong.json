@@ -67,6 +67,11 @@
       "ten": "Thư mục family tag vách kính đóng gói (trống = lib/tag_vach_kinh)",
       "kieu": "string",
       "gia_tri": ""
+    },
+    {
+      "ten": "Vẫn thống kê cửa đi / cửa sổ nằm trong vách kính (mặc định tắt)",
+      "kieu": "bool",
+      "gia_tri": false
     }
   ]
 }

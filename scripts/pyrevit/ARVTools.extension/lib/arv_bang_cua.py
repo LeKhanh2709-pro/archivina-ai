@@ -93,15 +93,30 @@ def _ghi_luu(d):
         pass
 
 
+def _trong_vach_kinh(e):
+    """Cửa đi / cửa sổ nằm trong vách kính: host là curtain wall (kể cả tấm vách kính là family cửa). Người dùng chốt
+    2026-11-14: các cửa này không tag, không thống kê – vách kính có tên riêng (Mark, cửa sổ "Vách kính")."""
+    try:
+        h = e.Host
+        return h is not None and h.WallType.Kind == DB.WallKind.Curtain
+    except Exception:
+        return False
+
+
 def lay_dong(doc, view):
-    """Mỗi loại cửa (type) thấy trong mặt bằng 1 dòng: dict loai / cua / ten / dai / cao / sl / sl_da / id / cat."""
+    """Mỗi loại cửa (type) thấy trong mặt bằng 1 dòng: dict loai / cua / ten / dai / cao / sl / sl_da / id / cat.
+    Bỏ cửa có Type Comments loại trừ và cửa nằm trong vách kính (số cửa bỏ vì vách kính ghi vào lay_dong.so_vk)."""
     dong = []
+    lay_dong.so_vk = 0
     for bic, loai, b_rong, b_cao in _HANG_MUC:
         nhom = {}
         for e in list(DB.FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType()) + \
                 arv_lk.doi_tuong_link(doc, view, bic):
             t = e.Document.GetElement(e.GetTypeId())
             if t is None or _loai_tru(t):
+                continue
+            if _trong_vach_kinh(e):
+                lay_dong.so_vk += 1
                 continue
             k_nhom = t.Id.Value if not e.Document.IsLinked else (e.Document.Title, t.Id.Value)
             g = nhom.setdefault(k_nhom, {"t": t, "sl": 0, "dai": set(), "cao": set(), "link": e.Document.IsLinked})
@@ -113,7 +128,7 @@ def lay_dong(doc, view):
         sl_da = {}
         for e in DB.FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType():
             k = e.GetTypeId().Value
-            if k in nhom:
+            if k in nhom and not _trong_vach_kinh(e):
                 sl_da[k] = sl_da.get(k, 0) + 1
         for k, g in nhom.items():
             t = g["t"]
@@ -311,8 +326,12 @@ def hoi_thong_ke_cua(doc, view):
     lb.Text = (u"Mỗi loại cửa thấy trong mặt bằng 1 dòng (cửa trùng hiện 1 lần). Gõ tên mới vào cột 'Tên đổi' (để trống = "
                u"giữ nguyên). Đổi tên = đổi Type Mark của loại cửa: áp cho MỌI cửa cùng loại trong dự án (cột 'SL cả dự "
                u"án'); tag cửa tự hiện tên mới. Dòng vàng: chưa có tên hoặc cùng tên với loại cửa khác.")
+    so_vk = getattr(lay_dong, "so_vk", 0)
+    if so_vk:           # người dùng chốt 2026-11-14: cửa nằm trong vách kính không tag, không thống kê
+        lb.Text += (u" Không liệt kê %d cửa đi / cửa sổ nằm trong vách kính (không tag, không thống kê) – vách kính đặt "
+                    u"tên ở cửa sổ 'Vách kính'." % so_vk)
     lb.Dock = DockStyle.Top
-    lb.Height = 42
+    lb.Height = 58 if so_vk else 42
     d1 = Panel()
     d1.Dock = DockStyle.Bottom
     d1.Height = 32

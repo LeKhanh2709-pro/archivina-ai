@@ -21,6 +21,10 @@
 #     bảng lib/arv_bang_cua.py có thêm cửa sổ "Vách kính" (curtain wall thấy trong mặt bằng, tên = MARK của từng vách) →
 #     IN[9] = JSON đặt Mark, IN[10] = tag mỗi vách 1 tag tường hiện Mark (family ARV_Tag Vach Kinh Mark, chưa có thì nạp bản
 #     đóng gói lib/tag_vach_kinh); xem khối VÁCH KÍNH bên dưới.
+#   - Cửa nằm trong vách kính (người dùng chốt 2026-11-14: "không tag các cửa và thống kê các cửa (cửa đi, cửa sổ) khi nằm
+#     trong vách kính"): cửa đi / cửa sổ có host là curtain wall (kể cả tấm vách kính là family cửa) KHÔNG vào bảng đổi tên,
+#     KHÔNG vào bảng thống kê – vách kính có tên riêng (Mark). Tầng có cửa như vậy thì bảng thống kê là bảng vẽ (drafting
+#     view) như trường hợp file link, vì bảng thống kê Revit không lọc được theo vách chủ. IN[13] bật = đếm như cũ.
 # Dry-run chỉ báo cáo, không sửa mô hình.
 # INPUT
 #   IN[0] (str)  Tên view mặt bằng (để trống = view đang mở)
@@ -36,6 +40,7 @@
 #   IN[10] (bool) Tag vách kính (curtain wall) của mặt bằng bằng Mark
 #   IN[11] (str)  Kiểu tag vách kính "Family : Type" (trống = ARV_Tag Vach Kinh Mark, chưa có thì nạp bản đóng gói)
 #   IN[12] (str)  Thư mục family tag vách kính đóng gói (trống = <extension>/lib/tag_vach_kinh)
+#   IN[13] (bool) Vẫn thống kê cửa đi / cửa sổ nằm trong vách kính (mặc định tắt = không thống kê)
 # OUTPUT
 #   OUT (list[str])  Báo cáo
 import os
@@ -53,7 +58,8 @@ from RevitServices.Persistence import DocumentManager
 from RevitServices.Transactions import TransactionManager
 
 TRANSACTION_NAME = u"ARV - Thống kê cửa"
-MAC_DINH = ["", u"Cửa đi;Cửa sổ", u"Louver;Lam thép;Lam nhôm", True, u"THỐNG KÊ {loai} - {tang}", True, False, "", True, "", False, "", ""]
+MAC_DINH = ["", u"Cửa đi;Cửa sổ", u"Louver;Lam thép;Lam nhôm", True, u"THỐNG KÊ {loai} - {tang}", True, False, "", True, "", False, "", "", False]
+VK_IN_THU_MUC = 12
 # (từ khoá không dấu nhận trong IN[1], hạng mục, nhãn, tham số rộng, tham số cao)
 HANG_MUC = [(u"cua di", BuiltInCategory.OST_Doors, u"CỬA ĐI", BuiltInParameter.DOOR_WIDTH, BuiltInParameter.DOOR_HEIGHT),
             (u"cua so", BuiltInCategory.OST_Windows, u"CỬA SỔ", BuiltInParameter.WINDOW_WIDTH,
@@ -636,17 +642,20 @@ def lk_dat_bang_len_sheet(doc, sh, vs, x0, y1):
 # ==== HẾT PHẦN CHUNG FILE LINK ====
 
 
-def dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru):
+def dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru, bo_vk=True):
     """Cửa thấy trong mặt bằng: {Type Mark: {"so": n, "kt": set((rộng, cao)), "type": set(tên)}}, số bị loại, các Type
-    Comments bị loại, số khác tầng (thấy trong view nhưng Level khác tầng → bảng không đếm)."""
+    Comments bị loại, số khác tầng (thấy trong view nhưng Level khác tầng → bảng không đếm), số nằm trong vách kính (bỏ)."""
     lv = view.GenLevel
-    nhom, bo, bo_tc, khac_tang = {}, 0, set(), []
+    nhom, bo, bo_tc, khac_tang, so_vk = {}, 0, set(), [], 0
     for e in list(FilteredElementCollector(doc, view.Id).OfCategory(bic).WhereElementIsNotElementType()) + lk_thay(doc, view, bic, True):
         t = e.Document.GetElement(e.GetTypeId())
         tc = chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_COMMENTS)
         if co_chu(tc, loai_tru):
             bo += 1
             bo_tc.add(tc)
+            continue
+        if bo_vk and vk_trong_vach(e):
+            so_vk += 1
             continue
         if lv is not None and not la_link(e) and e.LevelId != lv.Id:
             khac_tang.append(e)
@@ -657,22 +666,29 @@ def dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru):
         g["kt"].add((gia_tri_kt(e, t, (rong_bip, BuiltInParameter.FAMILY_WIDTH_PARAM)),
                      gia_tri_kt(e, t, (cao_bip, BuiltInParameter.FAMILY_HEIGHT_PARAM))))
         g["type"].add(u"%s : %s" % (t.FamilyName if t is not None else u"?", ten(t)))
-    return nhom, bo, bo_tc, khac_tang
+    return nhom, bo, bo_tc, khac_tang, so_vk
 
 
-def dem_theo_tang(doc, lv, bic, loai_tru, view=None):
-    n = 0
+def dem_theo_tang(doc, lv, bic, loai_tru, view=None, bo_vk=True):
+    """(số cửa của tầng – đã bỏ loại trừ + cửa nằm trong vách kính, số cửa model chính của tầng nằm trong vách kính)."""
+    n, n_vk = 0, 0
     for e in (lk_tang(doc, view, bic) if view is not None else []):
-        if not co_chu(chuoi_type(e.Document.GetElement(e.GetTypeId()), BuiltInParameter.ALL_MODEL_TYPE_COMMENTS), loai_tru):
-            n += 1
+        if co_chu(chuoi_type(e.Document.GetElement(e.GetTypeId()), BuiltInParameter.ALL_MODEL_TYPE_COMMENTS), loai_tru):
+            continue
+        if bo_vk and vk_trong_vach(e):
+            continue
+        n += 1
     for e in FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType():
         if e.LevelId != lv.Id:
             continue
         t = doc.GetElement(e.GetTypeId())
         if co_chu(chuoi_type(t, BuiltInParameter.ALL_MODEL_TYPE_COMMENTS), loai_tru):
             continue
+        if bo_vk and vk_trong_vach(e):
+            n_vk += 1
+            continue
         n += 1
-    return n
+    return n, n_vk
 
 
 def lap_bang(doc, bic, ten_bang, level, loai_tru_tc, rong_bip, cao_bip, theo_sheet=False):
@@ -862,13 +878,20 @@ def doi_ten(doc, json_doi, dry, bao, xem_lai):
         doc.Regenerate()
 
 
-# ==== VÁCH KÍNH: đặt Mark + tag bằng Mark (người dùng yêu cầu 2026-11-13: "1 cửa sổ tag vách kính bằng mark") ====
-# Tên vách kính = MARK của từng curtain wall (model HQV: T1-VK.02 …). Tag = family tag TƯỜNG hiện Mark
-# "ARV_Tag Vach Kinh Mark" (dựng từ family tag Mark lan can của người dùng, đổi hạng mục sang Wall Tags vì API không tạo
-# được nhãn); dự án chưa có thì nạp bản đóng gói lib\tag_vach_kinh. Mỗi vách 1 tag, không leader, nằm theo phương vách
-# (vách dọc trên view → tag đứng), giữa vách, phía ngoài nhà (phía không có room; không rõ thì theo mặt ngoài của tường),
-# cách mép vách VK_KHE_MM giấy; vướng tag / chữ / tường khác / cửa (kể cả cánh mở) thì dịch dọc vách, hết chỗ mới sang
-# phía trong; vẫn vướng thì để chỗ đầu và báo. Phía ngoài = phía có nhiều tia dò (0°, ±30°, xa VK_TIA_M) không chạm tường. Vách đã có tag tường trong view thì không tag thêm; vách chưa có Mark thì liệt kê, không tag.
+# ==== PHẦN CHUNG VÁCH KÍNH (nguồn: VachKinh_chung.py, chép vào công cụ bằng gop_vach_kinh.py – không sửa tay trong công cụ) ====
+# Dùng chung cho nút Thống kê cửa (cửa sổ "Vách kính") và nút Định vị + tag cửa. Cần sẵn trong công cụ: khối PHẦN CHUNG FILE
+# LINK, doc_in, os, clr, _RevitDB, TransactionManager; biến VK_IN_THU_MUC = chỉ số IN[] "thư mục family tag vách kính".
+#   - Tên vách kính = MARK của từng curtain wall (model HQV: T1-VK.02, DVKT1-01 …). Tag = family tag TƯỜNG hiện Mark
+#     "ARV_Tag Vach Kinh Mark" (dựng từ family tag Mark lan can của người dùng, đổi hạng mục sang Wall Tags vì API không tạo
+#     được nhãn); dự án chưa có thì nạp bản đóng gói lib\tag_vach_kinh.
+#   - Mỗi vách 1 tag, không leader, nằm theo phương vách (vách dọc trên view → tag đứng), giữa vách, phía ngoài nhà, cách mép
+#     vách VK_KHE_MM giấy; vướng tag / chữ / tường khác / cửa (kể cả cánh mở) thì dịch dọc vách, hết chỗ thì đẩy ra xa dần,
+#     rồi mới sang phía trong; vẫn vướng thì để chỗ đầu và báo. Phía ngoài = phía có nhiều tia dò (0°, ±30°, xa VK_TIA_M)
+#     không chạm tường; bằng nhau thì phía không có room; vẫn không rõ thì theo mặt ngoài của tường.
+#   - Vách đã có tag tường trong view thì không tag thêm; vách chưa có Mark thì liệt kê, không tag.
+#   - Người dùng chốt 2026-11-14: cửa đi / cửa sổ NẰM TRONG vách kính (host là curtain wall, kể cả tấm vách là family cửa)
+#     KHÔNG tag cửa, KHÔNG thống kê – vách kính đã có tên riêng (Mark). vk_trong_vach nhận các cửa đó.
+#   - Việc có xoá (tag cửa cũ trên cửa trong vách kính, chữ + nét của bảng vẽ lại) luôn hỏi Yes / No trước (vk_hoi).
 VK_TAG = u"ARV_Tag Vach Kinh Mark"
 VK_KHE_MM = 1.0           # khe giữa mép vách và khung tag (mm giấy)
 VK_NUA_DAY_MM = 100.0     # nửa bề dày vách kính khi tường không có Width (đố 65 x ~190)
@@ -881,6 +904,33 @@ def vk_la_vach(e):
         return e.WallType.Kind == WallKind.Curtain
     except Exception:
         return False
+
+
+def vk_trong_vach(e):
+    """Cửa đi / cửa sổ nằm trong vách kính: host là curtain wall (kể cả tấm vách kính là family cửa đi / cửa sổ)."""
+    try:
+        h = e.Host
+    except Exception:
+        return False
+    return h is not None and vk_la_vach(h)
+
+
+def vk_hoi(bien_mt, tieu_de, chinh, noi_dung, mo_rong=u""):
+    """Hỏi Yes / No trước khi xoá (quy tắc: có xoá thì liệt kê + chờ xác nhận). Biến môi trường <bien_mt> = 1 / 0 trả lời
+    sẵn (chạy thử nền, không hiện hộp thoại)."""
+    tl = os.environ.get(bien_mt, "")
+    if tl in ("1", "0"):
+        return tl == "1"
+    clr.AddReference("RevitAPIUI")
+    from Autodesk.Revit.UI import TaskDialog, TaskDialogCommonButtons, TaskDialogResult
+    td = TaskDialog(tieu_de)
+    td.MainInstruction = chinh
+    td.MainContent = noi_dung
+    if mo_rong:
+        td.ExpandedContent = mo_rong
+    td.CommonButtons = TaskDialogCommonButtons.Yes | TaskDialogCommonButtons.No
+    td.DefaultButton = TaskDialogResult.Yes
+    return td.Show() == TaskDialogResult.Yes
 
 
 def vk_trong_view(doc, view):
@@ -906,6 +956,7 @@ def vk_dat_mark(doc, json_dat, dry, bao, xem_lai):
     """Đặt Mark cho vách kính theo JSON [{"ids": [...], "moi": "T1-VK.61"}]."""
     if not json_dat:
         return
+    import json
     try:
         ds = json.loads(json_dat)
     except Exception as ex:
@@ -946,7 +997,8 @@ def vk_dat_mark(doc, json_dat, dry, bao, xem_lai):
 
 
 def vk_thu_muc_tag():
-    d = (doc_in(12) or u"").strip()
+    i_ = globals().get("VK_IN_THU_MUC")
+    d = (u"%s" % (doc_in(i_) or u"")).strip() if i_ is not None else u""
     if d:
         return d
     try:
@@ -1032,7 +1084,7 @@ def vk_tag(doc, view, ten_kieu, dry, bao, xem_lai):
     can = [e for e in con if vk_mark(e)]
     bao.append(u"   đã có tag: %d | sẽ tag: %d | chưa có Mark (không tag): %d" % (len(da), len(can), len(thieu)))
     if thieu:
-        xem_lai.append(u"%d vách kính chưa có Mark nên chưa tag (id %s) – đặt tên ở cửa sổ Vách kính rồi bấm lại." % (
+        xem_lai.append(u"%d vách kính chưa có Mark nên chưa tag (id %s) – đặt Mark (nút Thống kê cửa → cửa sổ Vách kính) rồi bấm lại." % (
             len(thieu), u", ".join(u"%s" % e.Id.Value for e in thieu[:12])))
     dem = {}
     for e in vs:
@@ -1083,8 +1135,27 @@ def vk_tag(doc, view, ten_kieu, dry, bao, xem_lai):
             if bb is not None:
                 a, b = uv(bb.Min), uv(bb.Max)
                 hop.append((min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])))
+        # cửa trong file link: không lấy được khung bao theo view (thiếu nét cánh mở) → khung bao khối, cửa đi nới thêm bán
+        # kính cánh mở ước lượng theo phương vuông góc (rộng ≤ 1100: 1 cánh = bề rộng; rộng hơn: 2 cánh = nửa bề rộng)
+        for x in lk_thay(doc, view, bic, True):
+            try:
+                bb = x.get_BoundingBox(None)
+                if bb is None:
+                    continue
+                a, b = uv(bb.Min), uv(bb.Max)
+                u0, v0, u1, v1 = min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])
+                if bic == BuiltInCategory.OST_Doors:
+                    dai = max(u1 - u0, v1 - v0)
+                    r_ = dai if dai <= ft(1100) else dai / 2.0
+                    if (u1 - u0) >= (v1 - v0):
+                        v0, v1 = v0 - r_, v1 + r_
+                    else:
+                        u0, u1 = u0 - r_, u1 + r_
+                hop.append((u0, v0, u1, v1))
+            except Exception:
+                pass
     doan = []         # (id, (u, v) đầu, (u, v) cuối, nửa dày)
-    tuong = list(FilteredElementCollector(doc, view.Id).OfClass(Wall)) + [e for e in vs if la_link(e)]
+    tuong = list(FilteredElementCollector(doc, view.Id).OfClass(Wall)) + lk_thay(doc, view, BuiltInCategory.OST_Walls, True)
     for x in tuong:
         try:
             c = x.Location.Curve
@@ -1236,6 +1307,73 @@ def vk_tag(doc, view, ten_kieu, dry, bao, xem_lai):
             len(vuong_ds), u", ".join(vuong_ds[:15])))
 
 
+def vk_ve_bang(doc, v, tieu_de, cot, rong_cot, dong):
+    """Vẽ nội dung bảng vào drafting view v (cùng cách trình bày với lk_bang_ve)."""
+    cao_dong, cao_dau = _lk_mm(8), _lk_mm(10)
+    kieu = sorted(FilteredElementCollector(doc).OfClass(TextNoteType), key=lambda t: t.Id.Value)
+
+    def diem_kieu(t):
+        ten_k = (t.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString() or u"").lower()
+        co = t.get_Parameter(BuiltInParameter.TEXT_SIZE).AsDouble()
+        return (0 if u"arial" in ten_k else 1, abs(co - _lk_mm(2.5)))
+    kt = min(kieu, key=diem_kieu)
+    tong = sum(_lk_mm(x) for x in rong_cot)
+    tao_chu = lambda x_, y_, s_: TextNote.Create(doc, v.Id, XYZ(x_, y_, 0), s_, kt.Id)
+    tao_net = lambda a_, b_: doc.Create.NewDetailCurve(v, Line.CreateBound(a_, b_))
+    tao_chu(_lk_mm(2), cao_dau * 1.5, tieu_de)
+    xs = [0.0]
+    for r_ in rong_cot:
+        xs.append(xs[-1] + _lk_mm(r_))
+    y_day = -cao_dong * len(dong)
+    for i_ in range(len(dong) + 2):
+        y_ = cao_dau if i_ == 0 else -cao_dong * (i_ - 1)
+        tao_net(XYZ(0, y_, 0), XYZ(tong, y_, 0))
+    for x_ in xs:
+        tao_net(XYZ(x_, cao_dau, 0), XYZ(x_, y_day, 0))
+    for c_ in range(len(cot)):
+        tao_chu(xs[c_] + _lk_mm(2), cao_dau - _lk_mm(3), cot[c_])
+    for r_i, d in enumerate(dong):
+        for c_ in range(len(cot)):
+            if d[c_] != u"":
+                tao_chu(xs[c_] + _lk_mm(2), -cao_dong * r_i - _lk_mm(2), d[c_])
+
+
+def vk_bang_ve(doc, ten_view, tieu_de, cot, rong_cot, dong):
+    """Như lk_bang_ve; riêng bảng đã có mà số ô đã đổi (vd. bỏ cửa nằm trong vách kính) thì HỎI rồi vẽ lại ngay trong view
+    đó: xoá chữ + nét cũ của bảng, vẽ theo số liệu mới, giữ nguyên góc phải dưới của bảng trên bản vẽ. Gọi TRONG
+    transaction. Biến môi trường ARV_VE_LAI_BANG = 1 / 0 trả lời sẵn. Trả về (view, cách làm)."""
+    v, cach = lk_bang_ve(doc, ten_view, tieu_de, cot, rong_cot, dong)
+    if u"CHƯA cập nhật" not in cach:
+        return v, cach
+    chu = list(FilteredElementCollector(doc, v.Id).OfClass(TextNote))
+    net = list(FilteredElementCollector(doc, v.Id).OfClass(CurveElement))
+    if not vk_hoi("ARV_VE_LAI_BANG", u"Vẽ lại bảng thống kê", u"Bảng '%s' đã có nhưng số dòng đã đổi." % ten_view,
+                  u"Vẽ lại bảng ngay trong view đó?\n\nYes: XOÁ %d chữ + %d nét cũ của bảng rồi vẽ lại theo số liệu mới "
+                  u"(view và chỗ đặt trên bản vẽ giữ nguyên, góc phải dưới không đổi). Ctrl+Z để hoàn tác.\n"
+                  u"No: giữ nguyên bảng cũ." % (len(chu), len(net)),
+                  u"Id chữ: %s\nId nét: %s" % (u", ".join(u"%d" % x.Id.Value for x in chu[:200]),
+                                               u", ".join(u"%d" % x.Id.Value for x in net[:200]))):
+        return v, cach
+    vps = [(vp, vp.GetBoxOutline()) for vp in FilteredElementCollector(doc).OfClass(Viewport)
+           if vp.ViewId.Value == v.Id.Value]
+    from System.Collections.Generic import List
+    ids = List[ElementId]()
+    for x in chu + net:
+        ids.Add(x.Id)
+    doc.Delete(ids)
+    vk_ve_bang(doc, v, tieu_de, cot, rong_cot, dong)
+    doc.Regenerate()
+    for vp, o in vps:           # giữ góc phải dưới của bảng trên bản vẽ
+        try:
+            n = vp.GetBoxOutline()
+            c = vp.GetBoxCenter()
+            vp.SetBoxCenter(XYZ(c.X + (o.MaximumPoint.X - n.MaximumPoint.X), c.Y + (o.MinimumPoint.Y - n.MinimumPoint.Y), c.Z))
+        except Exception:
+            pass
+    return v, u"vẽ lại bảng đã có (xoá %d chữ + %d nét cũ, vẽ theo số liệu mới)" % (len(chu), len(net))
+# ==== HẾT PHẦN CHUNG VÁCH KÍNH ====
+
+
 def _chinh():
     doc = DocumentManager.Instance.CurrentDBDocument
     bao = []
@@ -1273,15 +1411,18 @@ def _chinh():
         hang_muc = []
         bao.append(u"Không tạo bảng thống kê Revit (IN[8] tắt).")
     for _, bic, nhan, rong_bip, cao_bip in hang_muc:
-        nhom, bo, bo_tc, khac_tang = dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru_thuong)
+        bo_vk = not bool(doc_in(13))
+        nhom, bo, bo_tc, khac_tang, so_vk = dem_trong_view(doc, view, bic, rong_bip, cao_bip, loai_tru_thuong, bo_vk)
         tong = sum(g["so"] for g in nhom.values())
-        theo_tang = dem_theo_tang(doc, lv, bic, loai_tru_thuong, view)
+        theo_tang, vk_tang = dem_theo_tang(doc, lv, bic, loai_tru_thuong, view, bo_vk)
         co_link = bool(lk_thay(doc, view, bic, True))
+        ve_tay = co_link or vk_tang > 0      # bảng vẽ: có cửa trong file link, hoặc tầng có cửa nằm trong vách kính phải bỏ
         ten_bang = mau.replace(u"{loai}", nhan).replace(u"{tang}", lv.Name.upper()).replace(u"{view}", view.Name)
         bao.append(u"")
         bao.append(u"== %s: %d cái thấy trong mặt bằng, %d ký hiệu (mỗi ký hiệu 1 dòng)%s" % (
             nhan, tong, len(nhom), (u", bỏ %d cái Type Comments có chữ %s (%s)" % (
-                bo, u" / ".join(loai_tru), u"; ".join(sorted(bo_tc))[:200])) if bo else u""))
+                bo, u" / ".join(loai_tru), u"; ".join(sorted(bo_tc))[:200])) if bo else u"") + (
+                (u", bỏ %d cái nằm trong vách kính (vách kính có tên riêng theo Mark)" % so_vk) if so_vk else u""))
         for mk in sorted(nhom, key=lambda k: (k == u"", k)):
             g = nhom[mk]
             kt = sorted(g["kt"], key=lambda x: (x[0] or 0, x[1] or 0))
@@ -1307,7 +1448,7 @@ def _chinh():
         st = SubTransaction(doc)            # bảng lỗi giữa chừng thì huỷ riêng bảng đó
         st.Start()
         try:
-            if co_link:
+            if ve_tay:
                 dong_bang = []
                 for mk in sorted(nhom, key=lambda k: (k == u"", k)):
                     g = nhom[mk]
@@ -1315,16 +1456,23 @@ def _chinh():
                     r_, c_ = (kt[0] if len(kt) == 1 else (None, None))
                     dong_bang.append([mk or u"(trống)", u"%s" % r_ if r_ else u"", u"%s" % c_ if c_ else u"", u"%d" % g["so"]])
                 dong_bang.append([u"TỔNG", u"", u"", u"%d" % tong])
-                vs, cach = lk_bang_ve(doc, ten_bang, ten_bang, COT, [34, 22, 22, 20], dong_bang)
-                bao.append(u"   Bảng lấy từ file link: Revit không lọc được bảng thống kê theo tầng cho đối tượng trong link nên vẽ "
-                           u"thành bảng rời; đổi cửa thì bấm lại nút để cập nhật.")
+                vs, cach = vk_bang_ve(doc, ten_bang, ten_bang, COT, [34, 22, 22, 20], dong_bang)
+                if co_link:
+                    bao.append(u"   Bảng lấy từ file link: Revit không lọc được bảng thống kê theo tầng cho đối tượng trong link "
+                               u"nên vẽ thành bảng rời; đổi cửa thì bấm lại nút để cập nhật.")
+                else:
+                    bao.append(u"   Tầng có %d cửa nằm trong vách kính (không thống kê): bảng thống kê Revit không lọc được theo "
+                               u"vách chủ nên vẽ thành bảng rời; đổi cửa thì bấm lại nút để cập nhật." % vk_tang)
+                    if any(not x.IsTemplate and x.Name == ten_bang for x in FilteredElementCollector(doc).OfClass(ViewSchedule)):
+                        xem_lai.append(u"Bảng thống kê Revit '%s' có từ trước vẫn đếm cả cửa nằm trong vách kính – công cụ "
+                                       u"không xoá; dùng bảng vẽ cùng tên (Drafting Views)." % ten_bang)
             else:
                 vs, cach = lap_bang(doc, bic, ten_bang, lv, loai_tru, rong_bip, cao_bip, bool(doc_in(6)))
             doc.Regenerate()
             st.Commit()
             bang_tao.append(vs)
             bao.append(u"   Bảng '%s' (%s):" % (ten_bang, cach))
-            for d_ in ([] if co_link else doc_bang(vs)):
+            for d_ in ([] if ve_tay else doc_bang(vs)):
                 bao.append(u"      " + d_)
         except Exception as ex:
             if st.HasStarted() and not st.HasEnded():

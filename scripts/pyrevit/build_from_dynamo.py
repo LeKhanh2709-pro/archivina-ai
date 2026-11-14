@@ -108,8 +108,9 @@ MOT_CHAM = {"ChongTham": {"view_in": 0, "tu_khoa": u"chong tham", "ten_view": u"
                            "tip": u"Mở mặt bằng tầng rồi bấm: hiện bảng 2 cửa sổ. 'Cửa đi, cửa sổ': các loại cửa trong mặt bằng "
                                   u"(cửa trùng hiện 1 lần): tên hiện tại, tên đổi, chiều dài, chiều cao, số lượng; gõ tên mới "
                                   u"rồi bấm Đổi tên (đổi Type Mark); tuỳ chọn tạo bảng thống kê Revit. 'Vách kính': đặt tên "
-                                  u"(Mark) cho vách kính và tag vách kính bằng Mark. Ctrl+Z một lần là hoàn tác. Shift+bấm: "
-                                  u"hộp thoại đầy đủ, mặc định Dry-run."},
+                                  u"(Mark) cho vách kính và tag vách kính bằng Mark. Cửa nằm trong vách kính không liệt kê, "
+                                  u"không thống kê. Ctrl+Z một lần là hoàn tác. Shift+bấm: hộp thoại đầy đủ, mặc định "
+                                  u"Dry-run."},
             # Thống kê lan can, louver: mặt bằng tầng đang mở → bảng đặt tên (IN[7] = JSON [{ids, moi}], IN[8] = bảng Revit)
             "ThongKeLanCan": {"view_in": 0, "tu_khoa": u"", "ten_view": u"mặt bằng tầng",
                               "hoi": u"arv_bang_lan_can.hoi_thong_ke_lan_can",

@@ -6,14 +6,18 @@
           <Centerline> (theo lineweight + linetype CAD). Nét trùng đã gộp còn 1 nét ở bước trích xuất.
 - Hatch -> Filled Region (viền <Invisible lines>), kiểu `CTC_<mẫu>`; mẫu hatch CAD -> fill pattern Model `CTC_<mẫu>`
           dựng đúng định nghĩa đường mẫu của CAD; hatch đặc giữ màu.
-- Wipeout -> Filled Region trắng (che), theo thứ tự vẽ của CAD.
-- Chữ  -> Text Note kiểu `CTC_<font> <cỡ>mm` (cỡ giấy = cỡ CAD / tỉ lệ legend).
-- Dim tuyến tính -> Dimension kiểu `CTC_Dim <cỡ>mm`, bám 2 đầu một nét <Invisible lines>; chữ dim CAD khác số đo thì ghi đè.
+          Revit không nhận biên gốc (vùng hẹp / cạnh ngắn hơn 0,78 mm, tự cắt) thì thử lần lượt các mức biên dự phòng
+          `du_phong` của bước trích xuất (nắn biên -> nở 0,25 -> nở 0,5 mm -> hình bao), log ghi số vùng theo mức.
+- Wipeout + nền che chữ của MULTILEADER -> Filled Region trắng (che), theo thứ tự vẽ của CAD.
+- Chữ  -> Text Note kiểu `CTC_Arial <cỡ>mm` (1 kiểu chữ, 3 cỡ); MTEXT có khung, nhiều dòng / dài thì xuống dòng theo khung.
+- Dim tuyến tính -> Dimension kiểu `CTC_Dim <cỡ>mm`, mỗi điểm đo bám 1 nét vuông góc với phương đo (nét CAD thật đúng vị
+          trí, không có thì nét phụ 2 mm <Invisible lines>); chữ dim CAD khác số Revit đo thì ghi đè.
 - Mỗi ô chi tiết -> 1 detail group `CTC_<mã ô>`.
 Không xoá, không sửa phần tử / kiểu có sẵn; chỉ tạo mới. Kiểu đã có cùng tên thì dùng lại.
 
 Biến môi trường: ARV_CTC_JSON (đường dẫn json), ARV_CTC_LOG (file log), ARV_CTC_ANH (thư mục xuất ảnh, trống = không),
-ARV_CTC_CHI (danh sách tên ô cách nhau |, trống = tất cả), ARV_CTC_TEN (tên legend).
+ARV_CTC_CHI (danh sách tên ô cách nhau |, trống = tất cả), ARV_CTC_TEN (tên legend), ARV_CTC_LUU=1 (lưu file, chỉ cho
+bản sao), ARV_CTC_RONG_CHU (hệ số rộng chữ, mặc định 0.8), ARV_CTC_PX (bề rộng ảnh xuất, mặc định 12000), ARV_CTC_KHONG_GROUP=1 (bỏ bước group, chỉ khi vẽ thử lấy ảnh).
 """
 import locale
 locale.setlocale(locale.LC_ALL, "C")   # tránh Revit văng khi nạp ExportDWGSettings (xem CLAUDE.md)
@@ -37,6 +41,9 @@ def w(s):
 MM = 1.0 / 304.8
 # Chữ / dim (người dùng chốt 2026-11-13: 1 kiểu chữ, 1 kiểu dim, ít cỡ chữ nhất). Cỡ giấy mm = cỡ CAD / tỉ lệ legend.
 FONT_CHUNG = u"Arial"
+# Hệ số rộng của kiểu chữ + kiểu dim chung. Sửa 2026-11-13 tối: 0,8 thay cho 1,0. Chữ trong CAD 73 % là Arial rộng 0,8, còn
+# lại 0,65 - 0,75 (ISO công ty cho 0,8 - 1,0); để rộng 1 thì chữ dài hơn CAD ~25 %: đè lên đường dẫn, tràn khỏi khung ô.
+RONG_CHU = float(os.environ.get("ARV_CTC_RONG_CHU") or 0.8)
 CO_CHU = [(3.3, 2.5), (4.6, 3.5), (1e9, 5.0)]   # < 3,3 mm -> 2,5; < 4,6 -> 3,5; còn lại -> 5 (cỡ chuẩn ISO)
 CHU_BO_DUOI = 1.0                                # chữ CAD < 1 mm giấy (gần như không đọc được) thì bỏ, có báo
 CO_DIM = 2.5
@@ -290,7 +297,7 @@ try:
     def kieu_chu(font, h, wf):
         # người dùng chốt 2026-11-13: 1 kiểu chữ (Arial, rộng 1), ít cỡ nhất -> bỏ qua font / hệ số rộng của CAD
         hg = co_chu(h)
-        font, wf = FONT_CHUNG, 1.0
+        font, wf = FONT_CHUNG, RONG_CHU
         ten_t = u"CTC_{} {:g}mm".format(font, hg)
         if ten_t in KIEU_CHU:
             return KIEU_CHU[ten_t]
@@ -335,7 +342,7 @@ try:
             e = goc_dt.Duplicate(ten_t)
             dat(e, DB.BuiltInParameter.TEXT_SIZE, hg * MM)
             dat(e, DB.BuiltInParameter.TEXT_FONT, u"Arial")
-            dat(e, DB.BuiltInParameter.TEXT_WIDTH_SCALE, 1.0)
+            dat(e, DB.BuiltInParameter.TEXT_WIDTH_SCALE, RONG_CHU)
             dat(e, DB.BuiltInParameter.TEXT_BACKGROUND, 1)
             dt_ten[ten_t] = e
         KIEU_DIM[ten_t] = e.Id
@@ -396,6 +403,24 @@ try:
                 pass
         return fr
 
+    def tao_muc(muc, typ):
+        """Tạo mọi mảnh của 1 mức biên dự phòng (mỗi mảnh 1 Filled Region); hỏng 1 mảnh thì hoàn tác cả mức.
+        Trả về danh sách id, None nếu không được."""
+        if not muc:
+            return None
+        st = DB.SubTransaction(doc)
+        st.Start()
+        try:
+            ds = [tao_vung(manh_, typ).Id for manh_ in muc]
+            st.Commit()
+            return ds
+        except Exception:
+            st.RollBack()
+            return None
+
+    TEN_MUC = d.get("muc_du_phong") or []
+    DU_PHONG_O = {}      # tên ô -> {mức: số vùng} để ghi log
+
     TONG = {"net": 0, "cung": 0, "vung": 0, "che": 0, "chu": 0, "dim": 0}
     TONG["chu_qua_nho_bo"] = CHU_BO[0]
     LOI = {"net": 0, "cung": 0, "vung": 0, "che": 0, "chu": 0, "dim": 0}
@@ -425,32 +450,39 @@ try:
             net_thang.append((dc, a.X / MM, a.Y / MM, b.X / MM, b.Y / MM))
 
         def tim_tham_chieu(p, u, xa=400.0):
-            """Reference của nét CAD thật cùng vị trí với điểm đo p theo phương đo u (sai ≤ 0,3 mm),
-            gần đường gióng nhất (≤ xa mm): đầu mút nét, hoặc nét vuông góc với dim. Trả về (khoá, Reference)."""
+            """Reference của nét CAD thật VUÔNG GÓC với phương đo u và đi qua vị trí điểm đo p (sai ≤ 0,3 mm theo phương
+            đo), gần điểm đo nhất (≤ xa mm). Trả về (id nét, Reference) hoặc None.
+            Sửa 2026-11-13 tối: KHÔNG bám đầu mút nét nữa. Dim giữa 2 tham chiếu điểm bị Revit vẽ theo đường nối 2 điểm
+            (xiên) chứ không theo phương đo; dim giữa 2 nét song song mới luôn đúng phương."""
             nx, ny = -u[1], u[0]
             tot = None
             for (dc, x1, y1, x2, y2) in net_thang:
-                for j, (qx, qy) in enumerate(((x1, y1), (x2, y2))):
-                    a = abs((qx - p[0]) * u[0] + (qy - p[1]) * u[1])
-                    if a < 0.3:
-                        bb = abs((qx - p[0]) * nx + (qy - p[1]) * ny)
-                        if bb <= xa and (tot is None or bb < tot[0]):
-                            tot = (bb, (dc.Id.Value, j), dc, j)
                 dx, dy = x2 - x1, y2 - y1
                 L = math.hypot(dx, dy)
-                if L > 0 and abs((dx * u[0] + dy * u[1]) / L) < 1e-3:       # nét vuông góc với dim
+                if L > 0 and abs((dx * u[0] + dy * u[1]) / L) < 2e-4:       # nét vuông góc với phương đo
                     a = abs((x1 - p[0]) * u[0] + (y1 - p[1]) * u[1])
                     if a < 0.3:
                         s1 = (x1 - p[0]) * nx + (y1 - p[1]) * ny
                         s2 = (x2 - p[0]) * nx + (y2 - p[1]) * ny
                         bb = 0.0 if min(s1, s2) <= 0 <= max(s1, s2) else min(abs(s1), abs(s2))
-                        if bb <= xa and (tot is None or bb < tot[0]):
-                            tot = (bb, (dc.Id.Value, -1), dc, -1)
+                        khoa = (a > 0.02, bb)          # ưu tiên nét trùng đúng vị trí, rồi tới nét gần nhất
+                        if bb <= xa and (tot is None or khoa < tot[0]):
+                            tot = (khoa, dc)
             if tot is None:
                 return None
-            dc, j = tot[2], tot[3]
-            ref = dc.GeometryCurve.Reference if j < 0 else dc.GeometryCurve.GetEndPointReference(j)
-            return tot[1], ref
+            return tot[1].Id.Value, tot[1].GeometryCurve.Reference
+
+        def net_giong(p, u, p1):
+            """Nét phụ <Invisible lines> dài 2 mm (0,1 mm trên giấy), vuông góc với phương đo, đặt tại điểm đo p và
+            hướng về phía đường kích thước: làm tham chiếu khi không có nét CAD thật nào đúng vị trí."""
+            nx, ny = -u[1], u[0]
+            s = (p1[0] - p[0]) * nx + (p1[1] - p[1]) * ny
+            k = 2.0 if s >= 0 else -2.0
+            dc_ = doc.Create.NewDetailCurve(lg, DB.Line.CreateBound(XYZ(p[0], p[1]), XYZ(p[0] + nx * k, p[1] + ny * k)))
+            if AN is not None:
+                dc_.LineStyle = AN
+            TONG["dim_net_phu"] = TONG.get("dim_net_phu", 0) + 1
+            return dc_
 
         def xa_lo():
             if not lo:
@@ -505,37 +537,45 @@ try:
                     xa_lo()
                 continue
             xa_lo()
+            typ_ = KIEU_HATCH[it["kieu"]] if loai == "vung" else KIEU_CHE
             try:
-                fr = tao_vung(it["loops"], KIEU_HATCH[it["kieu"]] if loai == "vung" else KIEU_CHE)
+                if not it["loops"]:
+                    raise Exception(u"vùng quá nhỏ, không còn biên gốc")
+                fr = tao_vung(it["loops"], typ_)
                 ids.Add(fr.Id); TONG[loai] += 1
             except Exception as ex:
-                # 1) biên dự phòng đã nắn (tô chẵn lẻ, bỏ tự cắt) từ bước trích xuất
-                if it.get("sua"):
-                    ok_s = 0
-                    for manh_ in it["sua"]:           # mỗi mảnh 1 Filled Region
-                        try:
-                            fr = tao_vung(manh_, KIEU_HATCH[it["kieu"]] if loai == "vung" else KIEU_CHE)
-                            ids.Add(fr.Id); ok_s += 1
-                        except Exception:
-                            pass
-                    if ok_s:
+                # 1) các mức biên dự phòng từ bước trích xuất (nắn biên -> nở nhẹ -> hình bao), lấy mức đầu tiên
+                #    Revit nhận ĐỦ mọi mảnh; json bản cũ chỉ có 1 mức 'sua'
+                muc_ds = it.get("du_phong") or ([it["sua"]] if it.get("sua") else [])
+                xong = False
+                for im, muc_ in enumerate(muc_ds):
+                    ds = tao_muc(muc_, typ_)
+                    if ds:
+                        for i_ in ds:
+                            ids.Add(i_)
                         TONG[loai] += 1
                         TONG["vung_bien_sua"] = TONG.get("vung_bien_sua", 0) + 1
-                        continue
-                # 2) thử từng vòng riêng
+                        DU_PHONG_O.setdefault(o["ten"], {})
+                        DU_PHONG_O[o["ten"]][im] = DU_PHONG_O[o["ten"]].get(im, 0) + 1
+                        xong = True
+                        break
+                if xong:
+                    continue
+                # 2) json bản cũ (không có 'du_phong'): thử từng vòng riêng
                 ok = 0
-                for l in it["loops"]:
-                    try:
-                        fr = tao_vung([l], KIEU_HATCH[it["kieu"]] if loai == "vung" else KIEU_CHE)
-                        ids.Add(fr.Id); ok += 1
-                    except Exception:
-                        pass
+                if not it.get("du_phong"):
+                    for l in it["loops"]:
+                        try:
+                            fr = tao_vung([l], typ_)
+                            ids.Add(fr.Id); ok += 1
+                        except Exception:
+                            pass
                 if ok:
                     TONG[loai] += 1
                 else:
                     LOI[loai] += 1
-                    if len(loi_mau_vd) < 15:
-                        loi_mau_vd.append(u"{} | {} | {}".format(o["ten"], loai, str(ex)[:120]))
+                    if len(loi_mau_vd) < 40:
+                        loi_mau_vd.append(u"{} | {} z {} | {}".format(o["ten"], loai, it["z"], str(ex)[:120]))
         xa_lo()
         t_c = time.time()
         # chữ
@@ -545,74 +585,104 @@ try:
                 op.HorizontalAlignment = HA[c["ngang"]]
                 op.VerticalAlignment = VA[c["doc"]]
                 op.Rotation = math.radians(c["rot"])
-                tn = DB.TextNote.Create(doc, lg.Id, XYZ(c["x"], c["y"]), c["t"], op)
+                # đoạn chữ MTEXT có khung (nhiều dòng / dài): xuống dòng trong đúng bề rộng khung CAD, không thì chữ
+                # chạy tràn sang hình bên cạnh. Nhãn ngắn 1 dòng giữ nguyên 1 dòng.
+                rong = c.get("rong") or 0
+                tn = None
+                if rong > 0 and (u"\n" in c["t"] or len(c["t"]) >= 40):
+                    try:
+                        wd = rong * 1.03 / TL * MM      # dư 3 % để dòng vừa khít trong CAD không bị rớt chữ cuối
+                        wd = min(max(wd, DB.TextNote.GetMinimumAllowedWidth(doc, op.TypeId)),
+                                 DB.TextNote.GetMaximumAllowedWidth(doc, op.TypeId))
+                        tn = DB.TextNote.Create(doc, lg.Id, XYZ(c["x"], c["y"]), wd, c["t"], op)
+                        TONG["chu_xuong_dong_theo_khung"] = TONG.get("chu_xuong_dong_theo_khung", 0) + 1
+                    except Exception:
+                        tn = None
+                if tn is None:
+                    tn = DB.TextNote.Create(doc, lg.Id, XYZ(c["x"], c["y"]), c["t"], op)
                 ids.Add(tn.Id); TONG["chu"] += 1
             except Exception as ex:
                 LOI["chu"] += 1
                 if len(loi_mau_vd) < 30:
                     loi_mau_vd.append(u"{} | chữ '{}' | {}".format(o["ten"], c["t"][:30], str(ex)[:100]))
         bam("chu", t_c); t_d = time.time()
-        # dim
+        # dim: mỗi điểm đo bám 1 nét VUÔNG GÓC với phương đo (nét CAD thật đúng vị trí, không có thì nét phụ 2 mm
+        # <Invisible lines>) -> dim luôn nằm đúng phương đo như CAD, số đo = khoảng cách giữa 2 nét song song
+        dim_moi = []
         for dm in o["dim"]:
             try:
-                p2 = XYZ(*dm["p2"]); p3 = XYZ(*dm["p3"]); p1 = XYZ(*dm["p1"])
-                # ưu tiên bám đầu mút nét CAD thật; không có thì 1 nét phụ <Invisible lines> nối 2 điểm đo
                 a = math.radians(dm["ang"])
                 u = DB.XYZ(math.cos(a), math.sin(a), 0)
                 uu = (math.cos(a), math.sin(a))
+                p1 = XYZ(*dm["p1"])
                 v2 = tim_tham_chieu(dm["p2"], uu); v3 = tim_tham_chieu(dm["p3"], uu)
-                dc = None
+                if v2 is not None and v3 is not None and v2[0] == v3[0]:
+                    v3 = None                   # 2 điểm đo rơi vào cùng 1 nét: không đo được trên nét đó
+                phu = {}
+
+                def tham_chieu(k_, v_):
+                    if v_ is not None:
+                        return v_[1]
+                    if k_ not in phu:
+                        phu[k_] = net_giong(dm[k_], uu, dm["p1"])
+                    return phu[k_].GeometryCurve.Reference
                 ra = DB.ReferenceArray()
-                if v2 is None or v3 is None or v2[0] == v3[0]:
-                    dc = doc.Create.NewDetailCurve(lg, DB.Line.CreateBound(p2, p3))
-                    if AN is not None:
-                        dc.LineStyle = AN
-                    ra.Append(dc.GeometryCurve.GetEndPointReference(0))
-                    ra.Append(dc.GeometryCurve.GetEndPointReference(1))
-                    TONG["dim_net_phu"] = TONG.get("dim_net_phu", 0) + 1
-                else:
-                    ra.Append(v2[1]); ra.Append(v3[1])
+                ra.Append(tham_chieu("p2", v2)); ra.Append(tham_chieu("p3", v3))
                 ln = DB.Line.CreateBound(p1 - u * 1.0, p1 + u * 1.0)
                 try:
                     dim = doc.Create.NewDimension(lg, ln, ra, doc.GetElement(kieu_dim(dm["h"])))
+                    if v2 is not None or v3 is not None:
+                        TONG["dim_bam_net_cad"] = TONG.get("dim_bam_net_cad", 0) + 1
                 except Exception:
-                    if dc is not None:
+                    if v2 is None and v3 is None:
                         raise
-                    # bám nét thật không được: dùng nét phụ
-                    dc = doc.Create.NewDetailCurve(lg, DB.Line.CreateBound(p2, p3))
-                    if AN is not None:
-                        dc.LineStyle = AN
+                    # bám nét CAD thật không được (vd. 2 nét không song song tuyệt đối): dùng nét phụ cho cả 2 điểm
                     ra = DB.ReferenceArray()
-                    ra.Append(dc.GeometryCurve.GetEndPointReference(0))
-                    ra.Append(dc.GeometryCurve.GetEndPointReference(1))
-                    TONG["dim_net_phu"] = TONG.get("dim_net_phu", 0) + 1
+                    ra.Append(tham_chieu("p2", None)); ra.Append(tham_chieu("p3", None))
                     dim = doc.Create.NewDimension(lg, ln, ra, doc.GetElement(kieu_dim(dm["h"])))
-                # số / chữ hiện phải đúng như CAD (Revit đo lại có thể lệch 1 do làm tròn hoặc điểm bám)
+                for dc_ in phu.values():
+                    ids.Add(dc_.Id)
+                ids.Add(dim.Id); TONG["dim"] += 1
+                dim_moi.append((dim, dm))
+            except Exception as ex:
+                LOI["dim"] += 1
+                if len(loi_mau_vd) < 45:
+                    loi_mau_vd.append(u"{} | dim | {}".format(o["ten"], str(ex)[:120]))
+        # số / chữ hiện phải đúng như CAD: tính lại model rồi mới so, chỉ ghi đè khi Revit hiện khác CAD
+        if dim_moi:
+            try:
+                doc.Regenerate()
+            except Exception:
+                pass
+        for dim, dm in dim_moi:
+            try:
                 try:
                     vs = dim.ValueString
                 except Exception:
                     vs = None
                 if dm["hien"] and dm["hien"] != vs:
+                    dim.ValueOverride = dm["hien"]
+                    TONG["dim_ghi_de_chu"] = TONG.get("dim_ghi_de_chu", 0) + 1
                     try:
-                        dim.ValueOverride = dm["hien"]
+                        lech = abs(dim.Value / MM - dm["gia_tri"])
                     except Exception:
-                        pass
+                        lech = None
+                    if lech is not None and lech > 0.6:
+                        TONG["dim_do_lech_cad"] = TONG.get("dim_do_lech_cad", 0) + 1
                 if dm["tien_to"]:
                     dim.Prefix = dm["tien_to"]
                 if dm["hau_to"]:
                     dim.Suffix = dm["hau_to"]
-                if dc is not None:
-                    ids.Add(dc.Id)
-                ids.Add(dim.Id); TONG["dim"] += 1
-            except Exception as ex:
-                LOI["dim"] += 1
-                if len(loi_mau_vd) < 45:
-                    loi_mau_vd.append(u"{} | dim | {}".format(o["ten"], str(ex)[:120]))
+            except Exception:
+                pass
         bam("dim", t_d); t_k = time.time()
         t.Commit()
         bam("commit", t_k)
         # group
         t1 = time.time()
+        if os.environ.get("ARV_CTC_KHONG_GROUP") == "1":       # chỉ dùng khi vẽ thử để xuất ảnh (bỏ bước group cho nhanh)
+            w(u"=== Ô {}: {} phần tử, KHÔNG group (vẽ thử để xuất ảnh) | vẽ {:.1f} s".format(o["ten"], ids.Count, t1 - t0))
+            continue
         t = giao_dich(u"Group " + o["ten"])
         try:
             ids = ds_id([i for i in ids if doc.GetElement(i) is not None])
@@ -667,6 +737,15 @@ try:
     tg.Assimilate()
     w(u"Tổng tạo: {}".format(TONG))
     w(u"Thời gian theo pha (s): {}".format(dict((k, round(v, 1)) for k, v in TG.items())))
+    # vùng Revit không nhận biên gốc, đã vẽ bằng biên dự phòng: ghi theo mức để biết chỗ nào không còn đúng nguyên hình CAD
+    theo_muc = {}
+    for ten_o, ds in DU_PHONG_O.items():
+        for im, n_ in ds.items():
+            theo_muc[im] = theo_muc.get(im, 0) + n_
+    for im in sorted(theo_muc):
+        ten_m = TEN_MUC[im] if im < len(TEN_MUC) else u"mức {}".format(im)
+        o_co = u", ".join(u"{} ({})".format(ten_o, ds[im]) for ten_o, ds in DU_PHONG_O.items() if im in ds)
+        w(u"Biên dự phòng mức {} - {}: {} vùng | {}".format(im, ten_m, theo_muc[im], o_co))
     w(u"Lỗi: {}".format(LOI))
     for s in loi_mau_vd:
         w(u"  lỗi: " + s)
@@ -684,7 +763,7 @@ try:
             op.HLRandWFViewsFileType = DB.ImageFileType.PNG
             op.ImageResolution = DB.ImageResolution.DPI_300
             op.ZoomType = DB.ZoomFitType.FitToPage
-            op.PixelSize = 12000
+            op.PixelSize = int(os.environ.get("ARV_CTC_PX") or 12000)
             op.FitDirection = DB.FitDirectionType.Horizontal
             doc.ExportImage(op)
             w(u"Đã xuất ảnh vào {}".format(ANH))

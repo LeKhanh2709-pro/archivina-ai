@@ -69,7 +69,7 @@ THU_TU = ("ChongTham", "NganChay", "LanCanLouver", "TagCua")
 # Dòng báo cáo của lõi đưa vào bảng tóm tắt (đủ ở file log)
 DONG_CHINH = (u"ĐÃ VẼ", u"ĐÃ ĐẶT", u"Đã đặt mặt bằng", u"Đã tag", u"Dùng sheet trống", u"Số hiệu '", u"CẦN XEM LẠI",
               u"LỖI", u"Traceback", u"Phòng ướt theo CAD", u"Trục / hộp kỹ thuật cần hatch", u"Không có ", u"Chưa có ",
-              u"Bản xếp lại")
+              u"Bản xếp lại", u"Kiểu tag", u"Đã đổi ")
 _DANG = {}          # mục đang chạy (hàm trả lời hộp thoại đọc ở đây)
 # Kiểu tag cửa: (mã, chữ hiện trong bảng kiểm). "mau" / "chu" / "gon" / "2o" chạy lõi riêng xếp lại; "goc" = lõi của
 # Archivina. "mau" = family tag người dùng cấp 2026-11-13 ("áp dụng tag này cho mặt bằng định vị cửa"): lib\tag_rieng\
@@ -79,7 +79,8 @@ KIEU_TAG = (("mau", u"Tag AV-Tag-DOOR (family bạn cấp, khung nhỏ chỉ mã
             ("chu", u"Chỉ chữ mã, không khung – gọn nhất, tag nằm sát cửa (kích thước xem bảng thống kê)"),
             ("gon", u"Khung 1 ô 10 × 3,5 mm, chỉ mã – xếp lại"),
             ("2o", u"Khung 2 ô mã / rộngXcao – xếp lại"),
-            ("goc", u"Như nút Định vị + tag cửa của Archivina (2 ô, cách xếp cũ)"))
+            # 2026-11-13 tối: người dùng chốt "Đổi cả Archivina" → lõi Archivina cũng tag AV-Tag-DOOR + xếp lại
+            ("goc", u"Như nút Định vị + tag cửa của Archivina (từ 13/11 cũng là tag AV-Tag-DOOR, xếp lại)"))
 ENV_TAG = {"chu": "2", "gon": "1"}      # giá trị ARV_TAG_GON cho lõi riêng
 LOI_TAG_RIENG = os.path.join(_HERE, "loi_rieng", "TagCua_xep_lai.py")
 THU_MUC_TAG_RIENG = os.path.join(_HERE, "tag_rieng")
@@ -592,7 +593,7 @@ def _thay_loi_tag(kieu_tag, ghi):
             os.environ["ARV_TAG_FAM_THU_MUC"] = THU_MUC_TAG_RIENG
         ghi(u"Tag cửa: kiểu '%s' – lõi riêng %s" % (kieu_tag, LOI_TAG_RIENG))
     else:
-        ghi(u"Tag cửa: lõi của Archivina (không xếp lại)")
+        ghi(u"Tag cửa: lõi của Archivina (từ 2026-11-13 cũng tag AV-Tag-DOOR + xếp lại)")
 
     def tra_lai():
         arv_dynamo_host.load_core = goc

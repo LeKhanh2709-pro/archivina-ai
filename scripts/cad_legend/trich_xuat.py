@@ -7,7 +7,7 @@
 
 Chạy: python trich_xuat.py <dxf gốc> <regions_no.dxf> <regions.json> <ra.json>
 """
-import sys, json, math, re, collections
+import sys, json, math, re, collections, hashlib
 import ezdxf
 from ezdxf.math import Matrix44, Vec3
 from ezdxf import colors as ezcolors
@@ -19,6 +19,11 @@ NGAN_NHAT = 1.0      # mm, nét ngắn hơn thì bỏ (Revit không tạo đư�
 CONG_SAI = 0.5       # mm, độ võng khi chia spline / ellipse thành nét thẳng
 KHE = 1000.0         # mm, khoảng hở giữa các ô trong legend (= 50 mm giấy ở 1:20)
 TI_LE = 20
+# Biên dự phòng của hatch (sửa 2026-11-13 tối): Revit không nhận nét ngắn hơn 0,7804 mm (Application.ShortCurveTolerance,
+# đo trong Revit 2027.3) nên vùng hatch có chỗ hẹp / cạnh ngắn hơn mức đó không vẽ đúng nguyên được -> nở nhẹ cho đủ rộng.
+CANH_NHO = 0.9       # mm, cạnh ngắn nhất của biên dự phòng dạng đa giác
+DT_NHO_NHAT = 0.01   # mm2, hatch có diện tích nhỏ hơn thì coi như không có vùng (bỏ, có báo)
+MUC_DU_PHONG = ['nắn biên (tô chẵn lẻ, bỏ tự cắt)', 'nở 0,25 mm', 'nở 0,5 mm', 'hình chữ nhật bao (chỉ vùng nhỏ / mảnh)']
 
 src_path, reg_path, regjs_path, out_path = sys.argv[1:5]
 doc = ezdxf.readfile(src_path)
@@ -101,6 +106,7 @@ dims = []         # {...}
 mau_hatch = {}    # key -> định nghĩa mẫu
 bao_cao = collections.Counter()
 Z = [0]
+EP_DEN = [0]     # > 0: đang duyệt phần nổ của đối tượng ghi chú (leader, multileader, dim): mũi tên tô đặc vẽ màu đen
 
 
 def z_moi():
@@ -201,7 +207,7 @@ def chia_duong(e, m):
 def khoa_mau(h, tt):
     """Khoá kiểu filled region + lưu định nghĩa mẫu."""
     if h.dxf.solid_fill:
-        rgb = mau_rgb(tt)
+        rgb = [0, 0, 0] if EP_DEN[0] else mau_rgb(tt)
         if h.dxf.get('hatch_style', 0) is not None and getattr(h, 'gradient', None) is not None and h.gradient:
             try:
                 rgb = list(h.gradient.color1) if h.gradient.color1 else rgb
@@ -221,7 +227,9 @@ def khoa_mau(h, tt):
     rgb = mau_rgb(tt) if tt['aci'] in XAM else [0, 0, 0]
     # bỏ điểm gốc khỏi khoá (chỉ ảnh hưởng vị trí, không ảnh hưởng hình mẫu)
     ky = json.dumps([[l[0], l[3], l[4], l[5]] for l in lines]) + str(rgb)
-    k = 'P%05d' % (abs(hash(ky)) % 100000)
+    # mã ổn định giữa các lần chạy (hash() của Python đổi theo từng phiên -> mỗi lần chạy lại sinh tên kiểu hatch khác,
+    # Revit không dùng lại được kiểu đã có)
+    k = 'P%05d' % (int(hashlib.md5(ky.encode('utf-8')).hexdigest(), 16) % 100000)
     while k in mau_hatch and mau_hatch[k]['ky'] != ky:
         k += 'b'
     if k not in mau_hatch:
@@ -310,7 +318,8 @@ def vong_hatch(h):
 
 
 def vong_sang_toa_do(prims, m):
-    """Primitive (trước m) -> danh sách đoạn {'L':[x0,y0,x1,y1]} / {'A':[x0,y0,xm,ym,x1,y1]} sau m, đã nối kín."""
+    """Primitive (trước m) -> (vòng đã nối kín + bỏ đoạn ngắn, vòng thô chưa lọc) gồm các đoạn
+    ['L', x0, y0, x1, y1] / ['A', x0, y0, xm, ym, x1, y1] sau m. Vòng thô dùng để dựng biên dự phòng."""
     dd, s = la_dong_dang(m)
     out = []
     for pr in prims:
@@ -338,7 +347,7 @@ def vong_sang_toa_do(prims, m):
                 pts = [tf(m, (cx + r * math.cos(math.radians(t)), cy + r * math.sin(math.radians(t)), 0)) for t in angs]
                 for p, q in zip(pts, pts[1:]):
                     out.append(['L', p.x, p.y, q.x, q.y])
-    return lam_kin(out)
+    return lam_kin(out), out
 
 
 def dau(sg):
@@ -412,12 +421,24 @@ def font_cua(style_name):
     return 'Arial', wf
 
 
-def them_chu(noi_dung, p, h, rot, ngang, doc_, font, wf, z):
-    noi_dung = noi_dung.replace('\r', '').replace('\t', ' ').strip('\n')
+RE_MA_U = re.compile(r'\\U\+([0-9A-Fa-f]{4})')
+
+
+def giai_ma_u(s):
+    r"""Mã Unicode kiểu AutoCAD còn nằm nguyên trong chuỗi (\U+1EEC = Ử...) -> ký tự thật. ezdxf không giải mã này trong file
+    DXF lưu UTF-8, bản đầu vẽ ra nguyên chữ "TAY CO ÂM C\U+1EECA"."""
+    return RE_MA_U.sub(lambda mm: chr(int(mm.group(1), 16)), s)
+
+
+def them_chu(noi_dung, p, h, rot, ngang, doc_, font, wf, z, rong=0.0):
+    noi_dung = giai_ma_u(noi_dung).replace('\r', '').replace('\t', ' ').strip('\n')
     if not noi_dung.strip() or h <= 0:
         return
-    chu.append({'t': noi_dung, 'x': round(p[0], 2), 'y': round(p[1], 2), 'h': round(h, 2), 'rot': round(rot % 360, 3),
-                'ngang': ngang, 'doc': doc_, 'font': font, 'wf': round(wf, 2), 'z': z})
+    it = {'t': noi_dung, 'x': round(p[0], 2), 'y': round(p[1], 2), 'h': round(h, 2), 'rot': round(rot % 360, 3),
+          'ngang': ngang, 'doc': doc_, 'font': font, 'wf': round(wf, 2), 'z': z}
+    if rong and rong > 0:
+        it['rong'] = round(rong, 1)      # bề rộng khung MTEXT (mm): chữ tự xuống dòng trong khung này
+    chu.append(it)
 
 
 def xu_ly_text(e, m, tt, z):
@@ -478,7 +499,70 @@ def xu_ly_mtext(e, m, tt, z):
         t = c.plain_text(split=False)
     except Exception:
         t = c.text
-    them_chu(t, c.dxf.insert, c.dxf.char_height, c.get_rotation(), ngang, doc_, font, wf, z)
+    if c.dxf.get('bg_fill', 0):
+        bao_cao['mtext_co_nen_che_chua_ve'] += 1
+    rong = c.dxf.get('width', 0) or 0
+    p = c.dxf.insert
+    rot = c.get_rotation()
+    # Căn lề riêng của đoạn (\pxql; \pxqc; ...) thắng điểm neo của MTEXT: chữ căn trái / giữa / phải BÊN TRONG khung rộng
+    # `width`, còn điểm neo chỉ nói khung nằm ở đâu. Vd. khối "GHI CHÚ" neo giữa nhưng đoạn căn trái: vẽ căn giữa quanh
+    # điểm neo thì dòng dài tràn khỏi ô. Dời điểm neo tới mép / tâm khung tương ứng rồi căn theo đoạn.
+    q = re.findall(r'\\p[^;]*?q([lcrjd])[^;]*;', c.text or '')
+    if q and rong > 0:
+        can = {'j': 'L', 'd': 'L'}.get(q[0].lower(), q[0].upper())
+        if can != ngang:
+            vt = {'L': 0.0, 'C': 0.5, 'R': 1.0}
+            dx = (vt[can] - vt[ngang]) * rong
+            r = math.radians(rot)
+            p = Vec3(p[0] + math.cos(r) * dx, p[1] + math.sin(r) * dx, 0)
+            ngang = can
+            bao_cao['mtext_can_le_theo_doan'] += 1
+    them_chu(t, p, c.dxf.char_height, rot, ngang, doc_, font, wf, z, rong)
+
+
+def xu_ly_mleader(e, m, tt, cha):
+    """MULTILEADER: nổ bằng ezdxf rồi duyệt tiếp. Nền che chữ (background mask) ezdxf dựng thành 1 HATCH đặc màu đen
+    đứng ngay trước chữ; nền đặt theo màu nền bản vẽ thì phải là vùng che trắng (như WIPEOUT), không phải ô đen."""
+    try:
+        ve = list(e.virtual_entities())
+    except Exception:
+        bao_cao['khong_no_duoc_MULTILEADER'] += 1
+        return
+    mt = getattr(getattr(e, 'context', None), 'mtext', None)
+    if mt is not None and getattr(mt, 'has_bg_fill', 0) and getattr(mt, 'use_window_bg_color', 0):
+        for i, v in enumerate(ve):
+            if v.dxftype() in ('TEXT', 'MTEXT'):
+                break
+            if v.dxftype() == 'HATCH' and v.dxf.solid_fill:
+                cap = [vong_sang_toa_do(vv, m) for vv in vong_hatch(v)]
+                tho = [c[1] for c in cap if c[1]]
+                if tho:
+                    che.append({'loops': [c[0] for c in cap if c[0]], 'tho': tho, 'z': z_moi()})
+                    bao_cao['mleader_nen_che'] += 1
+                del ve[i]
+                break
+    # Chữ: ezdxf nổ MTEXT của multileader thành nhiều TEXT theo từng đoạn định dạng (đổi font giữa các chữ có dấu), vị trí
+    # tính theo font CAD -> sang Revit các mảnh hở / đè nhau ("Tay ch ống"). Lấy nguyên 1 MTEXT thay cho các mảnh đó.
+    mt_ent = None
+    if mt is not None:
+        try:
+            from ezdxf.render.mleader import make_mtext
+            mt_ent = make_mtext(e)
+            mt_ent.dxf.discard('width')      # không bó theo khung của multileader (khung đo theo font CAD)
+            mt_ent.dxf.discard('bg_fill')    # nền che đã vẽ thành vùng che ở trên
+        except Exception:
+            mt_ent = None
+            bao_cao['mleader_chu_theo_manh'] += 1
+    if mt_ent is not None:
+        ve = [v for v in ve if v.dxftype() not in ('TEXT', 'MTEXT')]
+    EP_DEN[0] += 1
+    try:
+        duyet(ve, m, tt)
+    finally:
+        EP_DEN[0] -= 1
+    if mt_ent is not None:
+        xu_ly_mtext(mt_ent, m, tt, z_moi())
+        bao_cao['mleader_chu_lien'] += 1
 
 
 # ---------------------------------------------------------------- dim
@@ -531,7 +615,7 @@ def xu_ly_dim(e, m, tt, cha, z):
         tien_to = hau_to = ''
     def sach(s):
         s = re.sub(r'\\[A-Za-z][^;]*;', '', s).replace('\\P', ' ').replace('{', '').replace('}', '')
-        return s.replace('%%c', 'Ø').replace('%%C', 'Ø').replace('%%d', '°').replace('%%p', '±')
+        return giai_ma_u(s).replace('%%c', 'Ø').replace('%%C', 'Ø').replace('%%d', '°').replace('%%D', '°').replace('%%p', '±').replace('%%P', '±')
     if do_hinh < NGAN_NHAT:
         bao_cao['dim_qua_ngan'] += 1
         return
@@ -577,7 +661,11 @@ def no_ra(e, m, tt, cha):
     except Exception:
         bao_cao['khong_no_duoc_' + e.dxftype()] += 1
         return
-    duyet(ve, m, tt)
+    EP_DEN[0] += 1
+    try:
+        duyet(ve, m, tt)
+    finally:
+        EP_DEN[0] -= 1
 
 
 def duyet(ents, m, cha):
@@ -644,10 +732,12 @@ def duyet(ents, m, cha):
             them_duong_gay(chia_duong(e, m), kieu, z)
         elif t == 'HATCH':
             k = khoa_mau(e, tt)
-            loops = [vong_sang_toa_do(v, m) for v in vong_hatch(e)]
-            loops = [l for l in loops if l]
-            if loops:
-                vung.append({'loops': loops, 'kieu': k, 'z': z})
+            cap = [vong_sang_toa_do(v, m) for v in vong_hatch(e)]
+            loops = [c[0] for c in cap if c[0]]
+            tho = [c[1] for c in cap if c[1]]
+            if tho:
+                # loops có thể rỗng (hatch rất nhỏ, mọi đoạn < NGAN_NHAT): khi đó chỉ còn biên dự phòng dựng từ vòng thô
+                vung.append({'loops': loops, 'tho': tho, 'kieu': k, 'z': z})
             else:
                 bao_cao['hatch_khong_bien'] += 1
         elif t in ('SOLID', 'TRACE'):
@@ -656,18 +746,17 @@ def duyet(ents, m, cha):
             ps = [tf(m, ocs.to_wcs(Vec3(p))) for p in ps]
             sg = [['L', ps[i].x, ps[i].y, ps[(i + 1) % 4].x, ps[(i + 1) % 4].y] for i in range(4)]
             lp = lam_kin(sg)
-            if lp:
-                rgb = mau_rgb(tt)
-                k = 'SOLID_%d_%d_%d' % tuple(rgb)
-                mau_hatch.setdefault(k, {'solid': True, 'rgb': rgb, 'ten': 'Đặc %d,%d,%d' % tuple(rgb)})
-                vung.append({'loops': [lp], 'kieu': k, 'z': z})
+            rgb = [0, 0, 0] if EP_DEN[0] else mau_rgb(tt)
+            k = 'SOLID_%d_%d_%d' % tuple(rgb)
+            mau_hatch.setdefault(k, {'solid': True, 'rgb': rgb, 'ten': 'Đặc %d,%d,%d' % tuple(rgb)})
+            vung.append({'loops': [lp] if lp else [], 'tho': [sg], 'kieu': k, 'z': z})
         elif t == 'WIPEOUT':
             try:
                 ps = [tf(m, p) for p in e.boundary_path_wcs()]
                 sg = [['L', ps[i].x, ps[i].y, ps[(i + 1) % len(ps)].x, ps[(i + 1) % len(ps)].y] for i in range(len(ps))]
                 lp = lam_kin(sg)
-                if lp:
-                    che.append({'loops': [lp], 'z': z})
+                if sg:
+                    che.append({'loops': [lp] if lp else [], 'tho': [sg], 'z': z})
             except Exception:
                 bao_cao['wipeout_loi'] += 1
         elif t == 'TEXT' or t == 'ATTRIB':
@@ -676,7 +765,9 @@ def duyet(ents, m, cha):
             xu_ly_mtext(e, m, tt, z)
         elif t == 'DIMENSION':
             xu_ly_dim(e, m, tt, cha, z)
-        elif t in ('LEADER', 'MULTILEADER', 'ARC_DIMENSION'):
+        elif t == 'MULTILEADER':
+            xu_ly_mleader(e, m, tt, cha)
+        elif t in ('LEADER', 'ARC_DIMENSION'):
             no_ra(e, m, tt, cha)
         elif t in ('REGION', '3DSOLID', 'SURFACE', 'BODY'):
             xu_ly_region(e, m, tt, z)
@@ -926,6 +1017,9 @@ def diem_vong(l):
             cx, cy, r, a0, a1 = kq
             st = math.degrees(math.atan2(s[2] - cy, s[1] - cx))
             n = max(4, int((a1 - a0) / 6))
+            if r > 0.2:      # cung lớn: chia thêm để độ võng dây cung ≤ 0,1 mm
+                buoc = math.degrees(2 * math.acos(max(-1.0, 1 - 0.1 / r)))
+                n = min(720, max(n, int(math.ceil((a1 - a0) / max(buoc, 0.5)))))
             nguoc = abs(((st - a0 + 180) % 360) - 180) > 1e-3
             for i in range(n):
                 t = (a1 - i * (a1 - a0) / n) if nguoc else (a0 + i * (a1 - a0) / n)
@@ -933,54 +1027,191 @@ def diem_vong(l):
     return pts
 
 
-def vong_sua(loops):
-    """Biên dự phòng khi Revit không nhận biên gốc (tự cắt / các vòng chồng nhau): tô chẵn lẻ như CAD rồi nắn lại."""
-    from shapely.geometry import Polygon
-    from shapely.validation import make_valid
+# ---------------------------------------------------------------- biên dự phòng của hatch (Revit không nhận biên gốc)
+from shapely.geometry import Polygon
+from shapely.validation import make_valid
+
+
+def chi_da_giac(g):
+    """Phần đa giác của 1 hình shapely (bỏ nét / điểm lẻ do make_valid sinh ra); None nếu không có."""
+    if g is None or g.is_empty:
+        return None
+    if g.geom_type in ('Polygon', 'MultiPolygon'):
+        return g
+    ds = [x for x in getattr(g, 'geoms', []) if x.geom_type in ('Polygon', 'MultiPolygon') and not x.is_empty]
+    return unary_union(ds) if ds else None
+
+
+def cac_manh(g):
+    if g is None or g.is_empty:
+        return []
+    if g.geom_type == 'Polygon':
+        return [g]
+    return [x for x in getattr(g, 'geoms', []) if x.geom_type == 'Polygon' and not x.is_empty]
+
+
+def hinh_chan_le(loops):
+    """Vùng tô của hatch theo quy tắc chẵn lẻ (như CAD) từ các vòng biên; None nếu không có diện tích."""
+    hop = None
+    for l in loops:
+        p = diem_vong(l)
+        if len(p) < 3:
+            continue
+        try:
+            g = chi_da_giac(make_valid(Polygon(p)))
+        except Exception:
+            g = None
+        if g is None:
+            continue
+        try:
+            hop = g if hop is None else chi_da_giac(hop.symmetric_difference(g))
+        except Exception:
+            pass
+    if hop is None:
+        return None
     try:
-        polys = [make_valid(Polygon(diem_vong(l))) for l in loops if len(diem_vong(l)) >= 3]
+        return chi_da_giac(make_valid(hop.buffer(0)))
     except Exception:
-        return None
-    if not polys:
-        return None
-    hop = polys[0]
-    for p in polys[1:]:
-        hop = hop.symmetric_difference(p)
-    hop = make_valid(hop.buffer(0)).simplify(0.2)
-    # mỗi mảnh đa giác 1 Filled Region riêng (Revit không nhận các vòng chạm nhau tại 1 điểm)
+        return hop
+
+
+def vong_L(cs):
+    """Chuỗi đỉnh (không lặp đỉnh đầu) -> vòng kín gồm các đoạn thẳng."""
+    n = len(cs)
+    return [['L', round(cs[i][0], 3), round(cs[i][1], 3), round(cs[(i + 1) % n][0], 3), round(cs[(i + 1) % n][1], 3)]
+            for i in range(n)]
+
+
+def gon_canh(cs, nho):
+    """Bỏ cạnh ngắn hơn `nho` của 1 vòng đa giác bằng cách chập 2 đầu cạnh về trung điểm; None nếu còn < 3 đỉnh."""
+    cs = [(c[0], c[1]) for c in cs]
+    while len(cs) >= 3:
+        n = len(cs)
+        i_min, d_min = -1, nho
+        for i in range(n):
+            a, b = cs[i], cs[(i + 1) % n]
+            dd = math.hypot(b[0] - a[0], b[1] - a[1])
+            if dd < d_min:
+                i_min, d_min = i, dd
+        if i_min < 0:
+            return cs
+        a, b = cs[i_min], cs[(i_min + 1) % n]
+        cs[i_min] = ((a[0] + b[0]) / 2, (a[1] + b[1]) / 2)
+        del cs[(i_min + 1) % n]
+    return None
+
+
+def manh_da_giac(g, nho, sau=0):
+    """Hình shapely -> danh sách mảnh (mỗi mảnh = [vòng ngoài, lỗ...]) hợp lệ, không có cạnh ngắn hơn `nho`."""
+    kq = []
+    for p in cac_manh(chi_da_giac(g)):
+        ext = gon_canh(list(p.exterior.coords)[:-1], nho)
+        if ext is None:
+            continue
+        lo = [gon_canh(list(r.coords)[:-1], nho) for r in p.interiors]
+        lo = [r for r in lo if r is not None]
+        try:
+            q = Polygon(ext, lo)
+        except Exception:
+            continue
+        if not q.is_valid:
+            if sau < 2:
+                kq += manh_da_giac(q.buffer(0), nho, sau + 1)
+            continue
+        if q.area < DT_NHO_NHAT:
+            continue
+        kq.append([vong_L(ext)] + [vong_L(r) for r in lo])
+    return kq
+
+
+def muc_nan(hop):
+    """Mức 0: giữ sát hình CAD (tô chẵn lẻ, nắn chỗ tự cắt); mỗi mảnh 1 Filled Region vì Revit không nhận các vòng
+    chạm nhau tại 1 điểm. Mảnh < 1 mm2 bỏ (không thấy được ở tỉ lệ legend)."""
     manh = []
-    geoms = getattr(hop, 'geoms', [hop])
-    for g in geoms:
-        if g.geom_type != 'Polygon' or g.area < 1.0:
+    for g in cac_manh(chi_da_giac(hop.simplify(0.2))):
+        if g.area < 1.0:
             continue
         vongs = []
-        for ring in [g.exterior] + list(g.interiors):
+        for i, ring in enumerate([g.exterior] + list(g.interiors)):
             cs = list(ring.coords)[:-1]
-            sg = [['L', cs[i][0], cs[i][1], cs[(i + 1) % len(cs)][0], cs[(i + 1) % len(cs)][1]] for i in range(len(cs))]
+            sg = [['L', cs[j][0], cs[j][1], cs[(j + 1) % len(cs)][0], cs[(j + 1) % len(cs)][1]] for j in range(len(cs))]
             lp = lam_kin(sg)
-            if lp:
+            if lp and len(lp) >= 3:      # vòng chỉ còn 2 đoạn thẳng là vòng bẹt, không có diện tích
                 vongs.append(lp)
+            elif i == 0:
+                vongs = []; break        # mất vòng ngoài thì bỏ cả mảnh
         if vongs:
             manh.append(vongs)
-    return manh or None
+    return manh
 
 
-so_sua = 0
-for v in vung:
-    o = o_chua(*tam_vong(v['loops']))
-    if o is None:
-        ngoai['vung'] += 1; continue
-    it = {'loops': dich_vong(o, v['loops']), 'kieu': v['kieu'], 'z': v['z']}
-    sua = vong_sua(v['loops'])
-    if sua:
-        it['sua'] = [dich_vong(o, m) for m in sua]; so_sua += 1
-    o['vung'].append(it)
-print('vùng có biên dự phòng:', so_sua)
-for v in che:
-    o = o_chua(*tam_vong(v['loops']))
-    if o is None:
-        ngoai['che'] += 1; continue
-    o['che'].append({'loops': dich_vong(o, v['loops']), 'z': v['z']})
+def muc_no(hop, d):
+    """Mức 1 - 2: nở vùng ra d mm (góc nhọn giữ nhọn) cho chỗ hẹp đủ rộng với Revit, rồi bỏ cạnh ngắn."""
+    try:
+        g = hop.buffer(d, join_style=2, mitre_limit=2.5)
+        return manh_da_giac(g.simplify(min(0.25, d)), CANH_NHO)
+    except Exception:
+        return []
+
+
+def muc_bao(hop):
+    """Mức 3: hình chữ nhật bao nhỏ nhất của từng mảnh, cạnh ≥ 1 mm. Chỉ dùng cho vùng nhỏ / mảnh hoặc vùng vốn gần
+    là hình chữ nhật: hình bao của vùng lớn sẽ tô sai chỗ nên khi đó để trống mức này."""
+    kq = []
+    for p in cac_manh(hop):
+        try:
+            r = p.minimum_rotated_rectangle
+            if r.geom_type != 'Polygon':
+                r = r.buffer(0.5, cap_style=2, join_style=2)
+            cs = list(r.exterior.coords)[:-1]
+            canh = [math.hypot(cs[(i + 1) % len(cs)][0] - cs[i][0], cs[(i + 1) % len(cs)][1] - cs[i][1]) for i in range(len(cs))]
+            if min(canh) > 3.0 and p.area < 0.85 * r.area:
+                return []
+            if min(canh) < 1.0:
+                r = r.buffer((1.0 - min(canh)) / 2 + 0.01, join_style=2)
+                cs = list(r.exterior.coords)[:-1]
+            cs = gon_canh(cs, CANH_NHO)
+            if cs is None or len(cs) < 3:
+                return []
+            kq.append([vong_L(cs)])
+        except Exception:
+            return []
+    return kq
+
+
+def bien_du_phong(hop):
+    """Các mức biên dự phòng, thử lần lượt trong Revit khi biên gốc không được nhận. Mỗi mức = danh sách mảnh."""
+    return [muc_nan(hop), muc_no(hop, 0.25), muc_no(hop, 0.5), muc_bao(hop)]
+
+
+def xep_vung(ds, khoa, ten_bc):
+    """Gán vùng (hatch / wipeout) vào ô, kèm biên dự phòng. Vùng không có diện tích trong CAD thì bỏ, có báo."""
+    so = 0
+    for v in ds:
+        nguon = v.get('tho') or v['loops']
+        hop = hinh_chan_le(nguon)
+        if hop is None or hop.area < DT_NHO_NHAT:
+            bao_cao[ten_bc + '_khong_dien_tich'] += 1
+            xs_ = [s[1] for l in nguon for s in l]; ys_ = [s[2] for l in nguon for s in l]
+            print('  %s không có diện tích, bỏ: z %d, khung bao %.3f x %.3f mm, tại (%.0f, %.0f)'
+                  % (ten_bc, v['z'], max(xs_) - min(xs_), max(ys_) - min(ys_), min(xs_), min(ys_)))
+            continue
+        o = o_chua(*tam_vong(v['loops'] or nguon))
+        if o is None:
+            ngoai[khoa] += 1; continue
+        it = {'loops': dich_vong(o, v['loops']), 'z': v['z']}
+        if 'kieu' in v:
+            it['kieu'] = v['kieu']
+        if not v['loops']:
+            bao_cao[ten_bc + '_chi_con_du_phong'] += 1
+        it['du_phong'] = [[dich_vong(o, m) for m in muc] for muc in bien_du_phong(hop)]
+        if any(it['du_phong']):
+            so += 1
+        o[khoa].append(it)
+    return so
+
+
+print('vùng có biên dự phòng:', xep_vung(vung, 'vung', 'hatch'), '| che:', xep_vung(che, 'che', 'wipeout'))
 for t in chu:
     o = o_chua(t['x'], t['y'])
     if o is None:
@@ -1033,6 +1264,6 @@ print('ngoài ô:', dict(ngoai))
 print('báo cáo:', dict(bao_cao))
 print('mẫu hatch:', len(mau_hatch))
 
-json.dump({'ti_le': TI_LE, 'nguon': src_path, 'mau_hatch': mau_hatch, 'o': o_ds,
+json.dump({'ti_le': TI_LE, 'nguon': src_path, 'mau_hatch': mau_hatch, 'muc_du_phong': MUC_DU_PHONG, 'o': o_ds,
            'bao_cao': dict(bao_cao), 'ngoai': dict(ngoai)}, open(out_path, 'w', encoding='utf-8'), ensure_ascii=False)
 print('XONG', out_path)

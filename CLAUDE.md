@@ -215,7 +215,7 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
 - `LoMo_ShaftOpening.dyn` (2026-10-28): tạo **Shaft Opening** cho mọi trục / hộp kỹ thuật trên **mặt bằng tầng đang mở**, nhận trục giống hệt Ngăn cháy lan (hàm `tim_truc` trong khối `PHẦN CHUNG` của `NganChay_TrucHKT.py`), biên = mép tường thô; Base Constraint = Top Constraint = level mặt bằng, Base Offset -100, Top Offset 1500 mm (người dùng chốt); bấm lại không tạo trùng. `LoMo_ShaftOpening.py` là FILE GỘP bằng `scripts\dynamo\gop_lomo_shaft.py` từ `LoMo_ShaftOpening_nguon.py` + phần chung, không sửa tay. Nút một chạm `Archivina` → `HS TKBVTC` → `Lỗ mở shaft` (`MOT_CHAM` từ khoá rỗng = mặt bằng tầng đang mở) **đã bỏ khỏi tab 2026-11-12** (người dùng yêu cầu): dòng `LoMoShaft` trong `BUTTONS` / `MOT_CHAM` của builder để dạng chú thích, thư mục nút ở `_backup\LoMoShaft.pushbutton_20261112_1946\`; graph + `.py` vẫn còn; Revit phải Reload pyRevit mới mất nút. Thử bản sao G19 Tầng 1: 38 lỗ mở, đọc lại đúng ràng buộc / offset; bản lưu `_tmp\pyrevit_lomo\G19_lo_mo_ngan_chay_thu.rvt`. **Đã tạo lên G19 thật 2026-10-28 10:04** (Tầng 1, 38 lỗ mở, đọc lại đúng Base Tầng 1 / -100, Top Tầng 1 / 1500; bản trước `_backup\G19_20261028_1003.rvt`, graph `_tmp\revit_g19_goc\chay_g19_lomo.dyn`). Người dùng chưa duyệt trong Revit (`Cần xác nhận lại`).
 - **Dấu X lỗ mở** (người dùng chốt 2026-10-28): mỗi shaft opening có 2 Symbolic Line chéo. API KHÔNG tạo được Symbolic Line trong file dự án (`NewModelCurve` trong sketch luôn là nét biên; Symbolic Line = `ModelLine` trong sketch mang line style khác `<Sketch>`) → chép 2 nét X từ một shaft MẪU vẽ tay (`SketchEditScope` + `CopyElements` + `SetGeometryCurve`), phải `ForceCloseTransaction` trước `SketchEditScope.Start`. G19 thật 2026-10-28 10:28: gắn X cho 38 lỗ, mẫu = shaft 1063635 người dùng vẽ tay tại khe (7000, 29950), trùng chỗ shaft 1063177 của công cụ → người dùng yêu cầu xoá 1063177, đã xoá 10:30 (còn 38 shaft, bản trước `_backup\G19_20261028_1030.rvt`; shaft mẫu 1063635 Base Offset -150 → người dùng yêu cầu đặt -100, đã sửa 10:33, bản trước `_backup\G19_20261028_1032.rvt`); bản trước `_backup\G19_20261028_1024.rvt`.
 - **1 shaft cho cả tầng** (người dùng chốt 2026-10-28 11:00, mẫu tự vẽ: "1 lệnh shaft openings để dễ kiểm soát"): nút Lỗ mở shaft gộp mọi trục của tầng thành các vòng biên trong MỘT Shaft Opening (tầng đã có shaft Base = Top = level đó thì thêm vòng vào shaft nhiều vòng nhất), dấu X mỗi vòng. Người dùng đã tự xoá 38 shaft lẻ và vẽ shaft 1064060 (2 vòng + X). G19 thật 11:04: thêm 36 vòng + 36 X vào 1064060 → 38 vòng, 76 nét X, -100 / 1500; bản trước `_backup\G19_20261028_1102.rvt`.
-- `TagCua_TuDong.dyn` (2026-11-02, skill `tag-cua-revit`, quy tắc + bẫy xem skill): tự tag cửa đi `AV_Door Tag`, cửa sổ `AV_Window Tag` trên mặt bằng đang mở; **bản 2 theo góp ý người dùng 2026-11-02 trưa**: (1) không tag đối tượng Type Comments `Louver` (tag cũ trên đó chỉ xoá khi bật ô Xoá), (2) tag ưu tiên NGAY GIỮA cửa (cửa đi phía không mở cánh, cửa sổ phía ngoài), không đè cửa / cánh mở / tường / chữ, (3) tag lệch khỏi giữa cửa thì có leader gắn vào cửa, (4) tag hiện đúng Type Mark: bỏ tiền tố `S3.` bằng cách thay nhãn trong family bằng nhãn Type Mark trơn chép từ family tag cùng hạng mục (`AV_Door Tag_Full` / `AV_Window Tag_Full`) vì Revit 2027.3 không sửa được Prefix nhãn qua API; nội thất ẩn bằng view template mới `<gốc> (ẩn nội thất)` (không sửa template gốc); EI chưa có cách hiện (`Cần xác nhận lại`); bấm lại không trùng, ô "Đặt lại" dời tag cũ. **Nút một chạm** `Archivina` → `HS TKBVTC` → `Tag cửa`. Thử bản sao G19: G19 sạch 93 cửa đi + 44 cửa sổ (34 leader), không đè; bản sao đã tag bằng bản 1: bỏ tiền tố 3 family, xoá 17 tag lam, dời 137 tag. Ảnh `_tmp\pyrevit_tagcua\Tang1_tag_cua_v2_*.png`. Người dùng chưa bấm thử bản 2 (`Cần xác nhận lại`).
+- `TagCua_TuDong.dyn` (2026-11-02, skill `tag-cua-revit`, quy tắc + bẫy xem skill; **từ 2026-11-13 tag mặc định là `AV-Tag-DOOR` / `AV-Tag-DOOR_CuaSo` + cách xếp lại, tag 2 ô dưới đây chỉ còn khi bật IN[30]** – xem mục "Nút `Định vị + tag cửa` của Archivina cũng đổi sang `AV-Tag-DOOR`" ở phần nút Hồ sơ đã duyệt): tự tag cửa đi `AV_Door Tag`, cửa sổ `AV_Window Tag` trên mặt bằng đang mở; **bản 2 theo góp ý người dùng 2026-11-02 trưa**: (1) không tag đối tượng Type Comments `Louver` (tag cũ trên đó chỉ xoá khi bật ô Xoá), (2) tag ưu tiên NGAY GIỮA cửa (cửa đi phía không mở cánh, cửa sổ phía ngoài), không đè cửa / cánh mở / tường / chữ, (3) tag lệch khỏi giữa cửa thì có leader gắn vào cửa, (4) tag hiện đúng Type Mark: bỏ tiền tố `S3.` bằng cách thay nhãn trong family bằng nhãn Type Mark trơn chép từ family tag cùng hạng mục (`AV_Door Tag_Full` / `AV_Window Tag_Full`) vì Revit 2027.3 không sửa được Prefix nhãn qua API; nội thất ẩn bằng view template mới `<gốc> (ẩn nội thất)` (không sửa template gốc); EI chưa có cách hiện (`Cần xác nhận lại`); bấm lại không trùng, ô "Đặt lại" dời tag cũ. **Nút một chạm** `Archivina` → `HS TKBVTC` → `Tag cửa`. Thử bản sao G19: G19 sạch 93 cửa đi + 44 cửa sổ (34 leader), không đè; bản sao đã tag bằng bản 1: bỏ tiền tố 3 family, xoá 17 tag lam, dời 137 tag. Ảnh `_tmp\pyrevit_tagcua\Tang1_tag_cua_v2_*.png`. Người dùng chưa bấm thử bản 2 (`Cần xác nhận lại`).
 - **Gộp 2026-11-03** (người dùng yêu cầu): nút `Archivina` → `HS TKBVTC` → **`Định vị + tag cửa`** (thư mục nút `TagCua`)
   = tạo / mở `MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>` rồi tag trên đó (`TagCua_TuDong.py` IN[16] – IN[18]); template ẩn thêm
   Mechanical Equipment. Nút `MB định vị cửa` riêng đã bỏ (chuyển vào `_backup\`). Thử bản sao G19 OK, đã build; người
@@ -406,10 +406,20 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     (bảng mẫu hatch, tên có dấu) thì thứ tự so sánh chuỗi đổi → báo hỏng dữ liệu → thoát. Chữa: `import locale;
     locale.setlocale(locale.LC_ALL, "C")` ở ĐẦU script CPython, trước khi đụng model (`_tmp\site_duyet\diag.py`: có dòng này
     thì nạp + chuyển view được; sau khi thêm, 2 phiên 8 lượt bấm không văng). 2026-11-13: nút gộp `Hồ sơ đã duyệt` (dưới)
-    có dòng này ở đầu script; các nút của tab Archivina (`#! python3`) VẪN CHƯA có → bấm riêng từng nút Archivina trên
-    model này vẫn có thể văng (`Cần xác nhận lại`). Bản `arv_dynamo_host.py` đã thêm dòng này (đã thử cùng nút gộp, chạy
-    được) nằm ở `_backup\arv_dynamo_host_20261113_1059_co_locale.py`, CHƯA áp vào Archivina vì người dùng dặn "đừng động
-    gì đến archivina" – muốn áp phải hỏi lại.
+    có dòng này ở đầu script. **Đã chữa cho các nút Archivina 2026-11-13 21:01** (người dùng đồng ý "Có, thêm vào"):
+    `ARVTools.extension\lib\arv_dynamo_host.py` có hàm `dat_locale_c()` gọi lúc import (cả 42 script.py + 8 config.py
+    CPython của Archivina đều import module này đầu tiên; nút Vách kính + `startup.py` là IronPython, không dính) và gọi
+    lại ở đầu `run_button` / `run_core` (lần bấm sau, khi module đã nằm trong bộ nhớ). Không sinh lại nút nào. Thử nền
+    trên bản sao sạch HQV Site, bấm THẲNG nút Archivina Định vị + tag cửa, script thử cố ý không tự đặt locale
+    (`_tmp\tag_archivina\thu_locale.py`, kết quả `kq_locale\ket_qua.txt`): lúc bắt đầu `LC_CTYPE =
+    English_United States.1252` → sau khi import `arv_dynamo_host` là `C`; Tầng 5BA(1) tag 188 + 51, đặt ACD.07.06; cố ý
+    đặt lại locale xấu rồi bấm lần 2 → `run_button` tự trả về `C`; sau đó nạp ExportDWGSettings `AV-Export Cad`, chuyển
+    3 view (mặt bằng mới, sheet, mặt bằng nguồn) không văng. Chưa chạy lại phép đối chứng "không có dòng chữa" trong
+    phiên này (nguyên nhân lấy theo chẩn đoán 12/11); chưa thử bấm qua ribbon thật / hộp thoại thật; người dùng chưa
+    bấm (`Cần xác nhận lại`). Revit phải Reload pyRevit (hoặc mở lại) mới dùng bản mới. Bản trước:
+    `_backup\arv_dynamo_host_20261113_2101_truoc_locale.py`; bản thử buổi sáng
+    `_backup\arv_dynamo_host_20261113_1059_co_locale.py`. Extension khác có script CPython riêng (không import
+    `arv_dynamo_host`) thì tự đặt dòng này ở đầu script.
   - **Nút gộp `Hồ sơ đã duyệt` = extension RIÊNG `scripts\pyrevit\ARVHoSoDuyet.extension`** (2026-11-13; người dùng: "sinh
     ra 1 nút để lúc ấn có thể chuyển những gì đã trình bày … trong file chính", rồi "sinh nút mới ở trên thanh công cụ,
     đừng động gì đến archivina, để t có thể gỡ"):
@@ -462,9 +472,33 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
       đang chứa đúng bản đã thử – file của nút sửa lần cuối 14:07 – 14:10, lần thử 17:05 chạy chính các file đó, đã vào git
       14:20 – nên không sửa / sinh lại gì thêm; mở Revit 2027 (đang mở thì Reload pyRevit) là dùng, ô "Tag cửa" của bảng kiểm
       chọn sẵn AV-Tag-DOOR. 2 file `.rfa` trong `lib\tag_rieng` bị `.gitignore` (`*.rfa`) bỏ qua → không lên GitHub; mang
-      extension sang máy khác phải chép cả thư mục (thiếu file thì kiểu `mau` ẩn, nút lùi về kiểu `chu`). Nút
-      `Định vị + tag cửa` của Archivina KHÔNG đổi (vẫn `AV_Door Tag` / `AV_Window Tag`) vì người dùng dặn không động đến
-      Archivina. Chưa bấm trên file chính (`Cần xác nhận lại`).
+      extension sang máy khác phải chép cả thư mục (thiếu file thì kiểu `mau` ẩn, nút lùi về kiểu `chu`). Chưa bấm trên
+      file chính (`Cần xác nhận lại`).
+    - **Nút `Định vị + tag cửa` của Archivina cũng đổi sang `AV-Tag-DOOR` + cách xếp lại** (người dùng chốt 2026-11-13
+      20:20: "Đổi cả Archivina" – cho phép sửa `ARVTools.extension` đúng cho việc này; quy tắc + cách thử trong skill
+      `tag-cua-revit` mục "Tag mặc định từ 2026-11-13"):
+      - `scripts\dynamo\TagCua_TuDong.py` = lõi riêng `TagCua_xep_lai.py` + mặc định mới (dựng bằng
+        `_tmp\tag_archivina\tao_loi.py`): cửa đi `AV-Tag-DOOR`, cửa sổ `AV-Tag-DOOR_CuaSo`, dùng nguyên family (2 file
+        `.rfa` chép thêm vào `ARVTools.extension\lib\tag_cua\`); tag cũ của công cụ (`AV_Door Tag` / `AV_Window Tag` /
+        `AV_Louver Tag`) trên cửa được ĐỔI KIỂU + xếp lại, không xoá.
+      - 3 ô nhập mới: IN[30] (bool, mặc định tắt; Shift+bấm rồi tích = dùng lại tag 2 ô kiểu cũ), IN[31] / IN[32] = tên
+        family. `.dyn` thêm 3 ô (33 ô) + mã mới, chưa chạy thử trong Dynamo. Nút sinh lại 20:26 bằng
+        `build_from_dynamo.py ... --chi TagCua` (script.py / config.py chỉ đổi dòng mô tả); Revit phải Reload pyRevit.
+      - Thử nền nút thật (nút thử RIÊNG `_tmp\tag_archivina\ext\ARVTestTA.extension` + `chay_nen.ps1`, vì phiên khác đang
+        dùng chung `hs_site_link\buoc.txt`): G19 Tầng 1 1:100 – bật IN[30] ra `AV_Door Tag` × 94 + `AV_Window Tag` × 44
+        (41 leader) như trước; bấm mặc định đổi + xếp lại cả 138 tag sang family mới (13 leader, không tag nào đè); bấm
+        lại không đổi. HQV Site bản sao sạch 4 tầng 1:200 (nút Archivina chạy qua nút Hồ sơ đã duyệt kiểu `goc`): tag
+        94 / 148 / 83 / 239, leader 12 / 24 / 10 / 64, còn đè 0 / 3 / 0 / 1 = trùng file 11; bấm lại không đổi.
+        Kết quả `_tmp\tag_archivina\xem\` (`01_…HQV…_nut_Archivina_AV-Tag-DOOR.rvt`, `02_G19_Archivina_AV-Tag-DOOR.rvt`,
+        ảnh 03 – 09).
+      - Nút `Hồ sơ đã duyệt`: kiểu `goc` nay cũng ra `AV-Tag-DOOR` (sửa chữ trong bảng kiểm + thêm dòng `Kiểu tag` vào
+        tóm tắt); kiểu `mau` / `chu` / `gon` / `2o` vẫn chạy lõi riêng, không đổi (thử lại kiểu `mau` 20:36 trên bản sao
+        sạch sau khi sinh lại nút Archivina: 94 / 148 / 83 / 239 tag, leader 12 / 24 / 10 / 64, bấm lại không đổi).
+      - Bản trước: `_backup\TagCua_TuDong_20261113_2024_truoc_AV-Tag-DOOR.py` / `.dyn`,
+        `_backup\TagCua.pushbutton_20261113_2024_truoc_AV-Tag-DOOR\`, `_backup\arv_ho_so_duyet_20261113_2024.py`.
+      - Lỗi văng Revit do locale CPython: lần thử HQV ở đây đi qua nút Hồ sơ đã duyệt (có dòng chữa); 21:01 đã thêm dòng
+        chữa vào thư viện chung của Archivina và thử bấm thẳng nút Archivina trên bản sao HQV Site (xem mục "Nguyên nhân
+        Revit văng" ở trên). Người dùng chưa bấm nút Archivina bản này (`Cần xác nhận lại`).
     - Thử nền nút thật (qua ARVTestHS) trên bản sao sạch mang tên file chính `_tmp\ho_so_duyet\rvt\2.HQV_A_ThapB_Site.rvt`
       (`thu.py`, kết quả `_tmp\ho_so_duyet\kq2\`): 14 mục 3 phút 27 giây, 0 lỗi, đệm CAD dùng lại 8/8, số liệu khớp file 15
       (29 / 17 / 39 / 84 phòng; 24 / 33 / 36 / 114 ô; tag 94 / 146 / 83 / 239; lan can 0 / 6), leader cửa 13 / 26 / 9 / 63;
@@ -511,20 +545,41 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     sinh lại 17:17, Revit phải Reload pyRevit; vỏ nút chưa bấm thử, người dùng chưa duyệt (`Cần xác nhận lại`).
 - **Chi tiết CAD → legend 2D** (người dùng yêu cầu 2026-11-13, file `Desktop\CÔNG VIỆC\CT Cua khanh.dxf` 25 ô chi tiết cửa,
   bản chép `_tmp\ct_cua_legend\CT_Cua_khanh.dxf`; quy trình + biến môi trường trong `scripts\cad_legend\README.md`):
-  - Yêu cầu: hatch = Filled Region, nét trùng 1 nét, mỗi ô 1 detail group. Người dùng chốt thêm: 1 kiểu chữ (Arial, rộng 1,
-    cỡ 2,5 / 3,5 / 5 mm), 1 kiểu dim (`CTC_Dim 2.5mm`).
+  - Yêu cầu: hatch = Filled Region, nét trùng 1 nét, mỗi ô 1 detail group. Người dùng chốt thêm: 1 kiểu chữ (Arial, cỡ
+    2,5 / 3,5 / 5 mm), 1 kiểu dim (`CTC_Dim 2.5mm`). Hệ số rộng chữ + dim do Claude chọn: bản đầu 1,0, từ tối 13/11 là 0,8
+    (chữ CAD 73 % rộng 0,8; để 1,0 thì nhãn đè đường dẫn, tên ô tràn khung; đổi bằng `ARV_CTC_RONG_CHU`); người dùng chưa
+    nói gì về việc này (`Cần xác nhận lại`).
   - Cách làm: `tach_region.py` + Core Console nổ REGION / 3DSOLID (ezdxf không đọc ACIS SAB; Core Console 2027 văng khi mở
     thẳng DXF gốc) → `trich_xuat.py` (DXF → `ct_cua.json`) → `ve_legend.py` (CPython pyRevit, nhân bản 1 legend có sẵn vì
     API không tạo legend mới).
-  - Bẫy: dim CAD có điểm đo cách hình 15 – 120 mm, nét phụ `<Invisible lines>` vẫn hiện xám trong ảnh xuất → dim bám nét CAD
-    thật cùng vị trí theo phương đo, chỉ khi không có mới dùng nét phụ (199 / 537 dim). `NewGroup` lỗi
-    `shouldElementBeAddedToGroupByParent` khi danh sách có id đã bị xoá lúc commit → lọc id còn sống trước.
-  - Thử nền trên bản sao Site HQV (`_tmp\ct_cua_legend\rvt\Site.rvt`, link đặt không nạp): 25 ô / 25 group, 66.058 nét
-    (từ 102.765), 9.037 cung, 1.237 / 1.254 hatch, 1.002 chữ, 537 dim, ~12 phút. Còn 17 hatch lỗi biên; DFX / DF02 mới lỗi
-    sau khi nâng ngưỡng đoạn ngắn 0,8 → 1,0 mm (`Cần xác nhận lại`).
-  - Kết quả gửi duyệt: `_tmp\ct_cua_legend\duyet_20261113\`. File `06_*.rvt` có 2 legend: `(CAD)` bản 23 lỗi và
-    `(CAD) (2)` bản 17 lỗi.
-  - Chưa có nút cho model thật (sẽ làm extension riêng). Người dùng chưa duyệt (`Cần xác nhận lại`).
+  - Bẫy: dim giữa 2 tham chiếu ĐIỂM (đầu mút nét) bị Revit vẽ XIÊN theo đường nối 2 điểm → mỗi điểm đo bám 1 nét VUÔNG
+    GÓC với phương đo (nét CAD thật đúng vị trí, không có thì nét phụ `<Invisible lines>` dài 2 mm). Revit không nhận nét
+    ngắn hơn 0,7804 mm. API không ẩn được Group, ẩn tạm ~77 nghìn phần tử trong legend chạy quá 9 phút → ảnh từng ô phải
+    vẽ riêng từng ô vào legend tạm (`thu_anh_o.py`). `hash()` của Python đổi theo phiên → mã kiểu hatch phải tính bằng
+    md5. Script qua nút thử phải UTF-8 KHÔNG BOM. `NewGroup` lỗi `shouldElementBeAddedToGroupByParent` khi danh sách có
+    id đã bị xoá lúc commit → lọc id còn sống trước.
+  - **Bản sửa 2026-11-13 tối / 14 sáng** (người dùng: "chạy tiếp cái này", rồi "Làm tiếp"):
+    - 17 hatch lỗi đều là vùng rất nhỏ (0,4 × 2,5 mm, 1 × 2 mm, dải 150 × 0,4 mm) bị bước lọc đoạn ngắn làm méo → biên dự
+      phòng 4 mức dựng từ biên thô: nắn biên, nở 0,25 mm, nở 0,5 mm, hình bao (chỉ vùng nhỏ); Revit thử lần lượt.
+    - Lỗi có sẵn từ bản đầu, thấy khi đối chiếu ảnh với CAD: dim xiên; nền che chữ của MULTILEADER vẽ thành ô đen (nay là
+      vùng che trắng); chữ multileader tách mảnh "Tay ch ống" (nay 1 khối chữ); mũi tên ghi chú xanh lá (nay đen); đoạn
+      MTEXT dài không xuống dòng, tràn sang ô bên (nay bó theo khung CAD + 3 %); MTEXT có căn lề riêng của đoạn (`\pxq…`)
+      khác điểm neo (6 đoạn); 16 nhãn còn nguyên mã `\U+XXXX` ("TAY CO ÂM C\U+1EECA").
+    - Chạy nền trên bản sao SẠCH Site HQV (`_tmp\ct_cua_legend\rvt_sach4\Site.rvt`, link đặt không nạp; bản sao đã chạy bản
+      cũ thì kiểu `CTC_*` trùng tên bị dùng lại): 25 ô / 25 group, **0 lỗi** – 66.058 nét, 9.037 cung, 1.225 hatch (63 vẽ
+      bằng biên dự phòng, nặng nhất là nở 0,5 mm), 91 vùng che, 954 chữ, 537 dim (456 bám nét CAD thật, 305 nét phụ, 94 ghi
+      đè chữ theo CAD, 1 dim Revit đo lệch CAD > 0,6 mm chưa tra); 12 – 20 phút. Đã soi ảnh từng ô 11 / 25 ô, đối chiếu ảnh
+      CAD dựng bằng ezdxf ở 4 ô (DF02, rèm ngăn cháy, CCN 6400, cửa chống ngập hầm); 14 ô cửa cùng khuôn chưa soi từng ô.
+    - Chưa xử lý: hatch đặc của hình vẽ giữ màu CAD (thép xanh dương, mũi tên ký hiệu mặt cắt xanh lá); dim CAD chữ to
+      thành 2,5 mm vì chỉ 1 kiểu dim; 2 OLE2FRAME (ảnh / bảng nhúng) và nền che của 2 MTEXT thường không vẽ.
+  - Kết quả gửi duyệt bản cuối: `_tmp\ct_cua_legend\duyet_20261114\` (ảnh toàn bộ, ảnh 25 ô, so sánh trước – sau, log,
+    `.rvt`). `duyet_20261113\` là bản cũ: 01 – 06 bản thử chiều 13/11 (`06_*.rvt` có 2 legend bản 23 lỗi / 17 lỗi), 07 – 10
+    bản tối 13/11 (còn lỗi chữ multileader, mã `\U+`, căn lề đoạn).
+  - **Người dùng chốt 2026-11-14: "không cần làm nút, cho t file b đã làm rồi thôi"** → KHÔNG làm nút pyRevit cho việc
+    này; bàn giao file `_tmp\ct_cua_legend\duyet_20261114\05_Site_legend_CT_cua.rvt` (bản sao model Site 12/11 18:43, link
+    đặt không nạp, legend `CHI TIẾT CỬA (CAD)`). Người dùng không nói gì về ảnh / chữ rộng 0,8 / màu hatch
+    (`Cần xác nhận lại`). Muốn chạy cho file CAD khác thì làm lại theo các bước trong README (máy khác cần Python có
+    ezdxf + shapely và Core Console để nổ REGION).
 
 ### Đọc file DWG không cần mở AutoCAD
 Dùng `C:\Program Files\Autodesk\AutoCAD 2027\accoreconsole.exe /i <bản sao.dwg> /s <script.scr>`:

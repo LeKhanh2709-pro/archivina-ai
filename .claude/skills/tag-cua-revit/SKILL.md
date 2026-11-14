@@ -1,12 +1,50 @@
 ---
 name: tag-cua-revit
-description: 'Tag cửa Revit – Tự động tag cửa đi (AV_Door Tag) và cửa sổ (AV_Window Tag) trên mặt bằng Revit đang mở: bỏ đối tượng có Type Comments Louver; tag hiện đúng Type Mark (bỏ tiền tố S3. trong nhãn family); tag nằm ngang, ưu tiên ngay giữa cửa, không đè lên cửa (kể cả cánh mở), cửa sổ, tường, cột, chữ / tag khác; tag lệch khỏi giữa cửa thì có leader; nội thất thì ẩn bằng view template riêng "<template gốc> (ẩn nội thất)"; cửa có EI mà tag không hiện EI thì báo; bấm lại không tạo trùng. Nút pyRevit Archivina > HS TKBVTC > Định vị + tag cửa (một chạm: tạo / mở mặt bằng định vị cửa "MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>", template "MẶT BẰNG ĐỊNH VỊ CỬA" tường + sàn Halftone, ẩn nội thất / thiết bị vệ sinh / Mechanical Equipment, rồi tag trên đó) + graph Dynamo TagCua_TuDong.dyn. Dùng khi người dùng nhờ "tạo mặt bằng định vị cửa", hoặc khi người dùng nhờ "tag cửa", "đánh ký hiệu cửa trên mặt bằng Revit", "tag cửa sổ", "tag tự động không đè", hoặc sửa / thử nút Tag cửa.'
+description: 'Tag cửa Revit – Tự động tag cửa đi và cửa sổ trên mặt bằng Revit đang mở bằng family AV-Tag-DOOR / AV-Tag-DOOR_CuaSo (mặc định từ 2026-11-13, dùng nguyên family, khung nhỏ chỉ mã Type Mark; tag 2 ô kiểu cũ AV_Door Tag / AV_Window Tag vẫn chọn lại được, tag cũ của công cụ được đổi sang tag mới): bỏ đối tượng có Type Comments Louver; tag ưu tiên ngay giữa cửa, không đè lên cửa (kể cả cánh mở), cửa sổ, tường, cột, chữ / tag khác; hết chỗ thì trượt dọc tường hoặc quay vuông góc trước cửa, xa hơn thì có leader; nội thất thì ẩn bằng view template riêng "<template gốc> (ẩn nội thất)"; cửa có EI mà tag không hiện EI thì báo; bấm lại không tạo trùng. Nút pyRevit Archivina > HS TKBVTC > Định vị + tag cửa (một chạm: tạo / mở mặt bằng định vị cửa "MẶT BẰNG ĐỊNH VỊ CỬA - <tầng>", template "MẶT BẰNG ĐỊNH VỊ CỬA" tường + sàn Halftone, ẩn nội thất / thiết bị vệ sinh / Mechanical Equipment, rồi tag trên đó) + graph Dynamo TagCua_TuDong.dyn. Dùng khi người dùng nhờ "tạo mặt bằng định vị cửa", hoặc khi người dùng nhờ "tag cửa", "đánh ký hiệu cửa trên mặt bằng Revit", "tag cửa sổ", "tag tự động không đè", hoặc sửa / thử nút Tag cửa.'
 ---
 
 # Tag cửa Revit (Archivina)
 
 Người dùng là kiến trúc sư, dùng nút **Archivina → HS TKBVTC → Tag cửa** (pyRevit, Revit 2027) trên mặt bằng đang mở.
 Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tmp\`, không đụng model đang mở trong Revit của người dùng.
+
+## Tag mặc định từ 2026-11-13: `AV-Tag-DOOR` + cách xếp lại – QUY TẮC HIỆN HÀNH
+Người dùng chốt 2026-11-13 tối ("Đổi cả Archivina") sau khi duyệt cùng cách làm ở nút `Hồ sơ đã duyệt`. Các mục phía dưới
+viết cho tag 2 ô kiểu cũ; chỗ nào khác mục này thì mục này thắng.
+- **Family tag**: cửa đi `AV-Tag-DOOR` (family người dùng cấp: Door Tags, khung chữ nhật 6,2 × 2,7 mm, 1 nhãn Type Mark
+  Arial 2 mm hệ số rộng 0,6, định dạng Revit 2026); cửa sổ `AV-Tag-DOOR_CuaSo` (chính family đó đổi hạng mục sang Window
+  Tags bằng API, định dạng 2027 nên không nạp được vào Revit 2026). File ở `ARVTools.extension\lib\tag_cua\` (`.gitignore`
+  bỏ qua `*.rfa`: không lên GitHub, gói `dong_goi.ps1` thì có).
+- **Dùng NGUYÊN family**: không bỏ tiền tố, không thêm ô rộngXcao, không vẽ / tắt khung, không sửa `AV_Door Tag`. Kích
+  thước cửa xem bảng thống kê trên sheet.
+- Dự án chưa có family thì nạp từ `lib\tag_cua`; đã có family cùng tên thì dùng bản trong dự án, không nạp đè (G19 có sẵn
+  `AV-Tag-DOOR`).
+- **Tag cũ do công cụ đặt** (family IN[1] / IN[2] / IN[3] = `AV_Door Tag` / `AV_Window Tag` / `AV_Louver Tag`) trên cửa:
+  ĐỔI KIỂU (`ChangeTypeId`) sang family mới rồi xếp lại, không xoá tag nào. Cửa đang mang tag family khác: bỏ qua như cũ.
+  Tag mồ côi (cửa đã bị thay trong file link, hiện `?`): không đụng, không báo.
+- **Chỗ đặt** (thay thứ tự ở mục "Lần 3"): sát tường ngay giữa cửa → TRƯỢT dọc tường khi bề dài tag còn phủ ≥ 50 % bề rộng
+  cửa, hoặc QUAY VUÔNG GÓC tường ngay trước cửa ở phía không có cánh mở (cả hai không leader; trượt tới trước cửa khác thì
+  có leader) → lưới gần có leader. Tỉ lệ ≥ 1:150: khe quanh tag tối đa 0,6 mm giấy.
+- **3 ô nhập mới**: IN[30] (bool, mặc định TẮT) = dùng lại tag 2 ô kiểu cũ (bỏ tiền tố, thêm ô rộngXcao như trước) –
+  Shift+bấm rồi tích ô này; IN[31] / IN[32] = tên family dùng nguyên. Ô bool đặt nghĩa ngược để máy còn nhớ giá trị cũ /
+  graph chưa có ô vẫn ra tag mới. Biến môi trường `ARV_TAG_FAM_CUA_DI` / `_CUA_SO` / `_THU_MUC` (nút Hồ sơ đã duyệt) thay
+  IN[31] / IN[32] + thư mục; `ARV_TAG_GON` = 1 / 2 = tag gọn 1 ô / chỉ chữ trên family kiểu cũ.
+- **Nguồn**: lõi = lõi riêng `ARVHoSoDuyet.extension\lib\loi_rieng\TagCua_xep_lai.py` + mặc định mới, dựng bằng
+  `_tmp\tag_archivina\tao_loi.py` (thay chuỗi, mỗi chỗ khớp đúng 1 lần). Từ nay sửa cách xếp thì sửa `TagCua_TuDong.py`;
+  lõi riêng của nút Hồ sơ đã duyệt KHÔNG tự đổi theo (2 bản đang giống nhau về cách xếp).
+- `.dyn` đã có 33 ô + mã mới (đọc lại bằng `dyn_inputs` của builder: đủ, đúng mặc định); CHƯA chạy thử trong Dynamo.
+- **Thử nền nút thật** (nút thử riêng `_tmp\tag_archivina\ext\ARVTestTA.extension` + `chay_nen.ps1`, không dùng chung
+  `buoc.txt` với phiên khác):
+  - G19 bản sao, Tầng 1, 1:100 (`thu_g19.py`): bật IN[30] → `AV_Door Tag` × 94 + `AV_Window Tag` × 44, 41 leader, 3 chỗ
+    còn đè (như trước khi đổi); bấm mặc định → đổi + xếp lại cả 138 tag sang `AV-Tag-DOOR` × 94 + `AV-Tag-DOOR_CuaSo` × 44,
+    13 leader, không tag nào đè; bấm lại không đổi.
+  - HQV Site bản sao sạch, 4 tầng 1:200 qua nút Hồ sơ đã duyệt kiểu `goc` (= nút + lõi Archivina, `thu_hqv.py`): tag
+    94 / 148 / 83 / 239, leader 12 / 24 / 10 / 64, còn đè 0 / 3 / 0 / 1 – trùng file 11 người dùng đã duyệt; bấm lại
+    không đổi.
+  - Kết quả để xem: `_tmp\tag_archivina\xem\` (2 file `.rvt` + ảnh).
+- Bản trước khi đổi: `_backup\TagCua_TuDong_20261113_2024_truoc_AV-Tag-DOOR.py` / `.dyn`,
+  `_backup\TagCua.pushbutton_20261113_2024_truoc_AV-Tag-DOOR\`.
+- Người dùng chưa bấm nút Archivina bản này trong Revit của mình (`Cần xác nhận lại`).
 
 ## Quy tắc
 Chốt 2026-11-02 sáng (8 câu hỏi), sửa theo góp ý của người dùng 2026-11-02 trưa (có ảnh mẫu).
@@ -223,9 +261,10 @@ Người dùng yêu cầu tạo mặt bằng mới từ mặt bằng đã cho, t
     chỉ 0,8 s, không cần tối ưu.
 
 ## Tệp
-- Lõi: `scripts\dynamo\TagCua_TuDong.py` (30 ô IN). **KHÔNG chạy `build_dyn.py` với `TagCua_TuDong.json`**: spec chỉ có 28 ô,
-  sinh lại sẽ mất IN[28] / IN[29] (thêm vào `.dyn` bằng `_tmp\tpl_tl\them_in_dyn.py`) và làm `inputs.json` của nút mất mặc
-  định. Sửa `.py` thì chỉ thay chuỗi `Code` của Python node trong `.dyn` (`_tmp\tagcua_nhanh\thay_code_dyn.py`), giữ CRLF.
+- Lõi: `scripts\dynamo\TagCua_TuDong.py` (33 ô IN từ 2026-11-13). **KHÔNG chạy `build_dyn.py` với `TagCua_TuDong.json`**:
+  spec chỉ có 28 ô, sinh lại sẽ mất IN[28] – IN[32] (thêm vào `.dyn` bằng `_tmp\tpl_tl\them_in_dyn.py`) và làm
+  `inputs.json` của nút mất mặc định. Sửa `.py` thì chỉ thay chuỗi `Code` của Python node trong `.dyn`
+  (`_tmp\tagcua_nhanh\thay_code_dyn.py`), giữ CRLF.
 - Nút: `scripts\pyrevit\...\HoSo.panel\TagCua.pushbutton` là file SINH, không sửa tay; khai báo trong `BUTTONS` +
   `MOT_CHAM` (`tu_khoa` rỗng) của `build_from_dynamo.py`. Sinh lại bằng:
   `python scripts\pyrevit\build_from_dynamo.py "<gốc>\file mau revit\dynamo" --chi TagCua` (Git Bash: đặt

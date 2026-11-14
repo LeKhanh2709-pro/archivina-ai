@@ -25,6 +25,23 @@ import types
 import datetime
 import traceback
 
+
+def dat_locale_c():
+    """Engine CPython của pyRevit đặt LC_CTYPE theo máy (vd. English_United States.1252) cho CẢ tiến trình Revit; sau đó
+    Revit nạp phần tử có tên có dấu (model HQV Site: ExportDWGSettings "AV-Export Cad") thì báo corruptData rồi thoát
+    (Unmarshaller.cpp 357, tìm ra 2026-11-12, _tmp\\site_duyet\\diag.py). Trả locale về "C" như Revit vốn có, TRƯỚC khi nút
+    đụng tới model. Mọi nút sinh từ builder đều import module này đầu tiên nên đặt ở đây là đủ: gọi lúc import (lần bấm
+    đầu của phiên) và gọi lại ở đầu run_button / run_core (các lần bấm sau, khi module đã nằm sẵn trong bộ nhớ).
+    Người dùng cho thêm vào Archivina 2026-11-13."""
+    try:
+        import locale
+        locale.setlocale(locale.LC_ALL, "C")
+    except Exception:
+        pass
+
+
+dat_locale_c()
+
 import clr
 clr.AddReference("RevitAPI")
 from Autodesk.Revit.DB import Transaction, TransactionStatus
@@ -147,6 +164,7 @@ def load_core(core_path):
 
 def run_core(core_path, inputs, uiapp, tx_name):
     """Chạy core.py với IN = inputs. Trả về OUT (hoặc danh sách dòng lỗi)."""
+    dat_locale_c()
     src = load_core(core_path)
     tm, saved = _install_revitservices(uiapp, tx_name)
     g = {"__name__": "__arv_core__", "__file__": core_path, "IN": list(inputs), "__arv_typed_list__": _TypedList}
@@ -391,6 +409,7 @@ def _auto_report(spec, button_dir, uiapp):
 
 def run_button(button_dir, uiapp, ask=True, overrides=None):
     """Gọi từ script.py của nút. ask=False: không hiện hộp thoại (dùng khi chạy thử tự động)."""
+    dat_locale_c()
     with io.open(os.path.join(button_dir, "inputs.json"), "r", encoding="utf-8") as f:
         spec = json.load(f)
     if ask and os.environ.get("ARV_TOOLS_AUTO_REPORT"):
