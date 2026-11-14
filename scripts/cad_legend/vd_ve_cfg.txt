@@ -1,0 +1,8 @@
+TO=
+KHAC=ct_cua_moi.json|CHI TIẾT CỬA (CAD)|cua
+GHI_TUNG=1
+KQ=cuoi
+LUU=1
+CO_CHU=2.25:2,3.3:2.5,4.6:3.5,:5
+BO_DUOI=0.9
+PX=12000

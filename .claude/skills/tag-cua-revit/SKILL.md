@@ -46,6 +46,43 @@ viết cho tag 2 ô kiểu cũ; chỗ nào khác mục này thì mục này th�
   `_backup\TagCua.pushbutton_20261113_2024_truoc_AV-Tag-DOOR\`.
 - Người dùng chưa bấm nút Archivina bản này trong Revit của mình (`Cần xác nhận lại`).
 
+## Vách kính tag bằng Mark, cửa trong vách kính không tag (2026-11-14) – QUY TẮC HIỆN HÀNH
+Người dùng báo 2026-11-14 "tag vách kính bằng mark vẫn chưa được cập nhật", rồi chốt: sửa ở 2 nút Archivina (Định vị + tag
+cửa, Thống kê cửa); "không tag các cửa, và thống kê các cửa (cửa đi, cửa sổ) khi nằm trong vách kính". Cách hiểu của Claude:
+cửa có `Host` là curtain wall (`vk_trong_vach`) thì không tag cửa, không vào bảng; vách kính được tag bằng Mark ngay
+trong nút này.
+- **Cửa nằm trong vách kính**: bỏ khỏi danh sách tag (kể cả cửa trong file link) và khỏi bảng thống kê trên bản vẽ; lõi
+  báo "Không tag n cửa đi / cửa sổ nằm trong vách kính".
+- **Tag cửa cũ do công cụ đặt** (family IN[1] / [2] / [3] / [31] / [32]) đang nằm trên các cửa đó: HỎI Yes / No trước
+  transaction (`vk_hoi`, liệt kê id) – Yes = xoá, No = giữ và báo. Tag family khác không đụng. Dry-run không xoá.
+  Biến môi trường `ARV_XOA_TAG_VK` = 1 / 0 trả lời sẵn khi thử nền.
+- **Tag vách kính** (`vk_tag`, sau khi tag cửa): mỗi curtain wall thấy trong mặt bằng 1 tag tường hiện Mark, family
+  `ARV_Tag Vach Kinh Mark` (`lib\tag_vach_kinh\`, dự án chưa có thì tự nạp); quy tắc đặt như cửa sổ "Vách kính" của nút
+  Thống kê cửa (skill `thong-ke-cua-revit`). Vách đã có tag tường: không tag thêm. Vách chưa có Mark: không tag, liệt kê
+  (đặt Mark ở nút Thống kê cửa → cửa sổ Vách kính rồi bấm lại).
+- **Bảng thống kê trên bản vẽ**: mặt bằng có cửa nằm trong vách kính (`co_cua_trong_vk`) hoặc cửa trong link → bảng vẽ
+  rời (`vk_bang_ve`), vì bảng Revit không lọc được theo vách chủ. Mặt bằng ĐÃ nằm trên bản vẽ: bấm lại cập nhật 2 bảng
+  vẽ `BẢNG THỐNG KÊ CỬA ĐI / CỬA SỔ <TẦNG>` (`cap_nhat_bang_sheet`); bảng cũ khác số dòng thì HỎI rồi mới xoá chữ + nét cũ
+  và vẽ lại (giữ góc phải dưới + chỗ nhãn viewport; `ARV_VE_LAI_BANG`).
+- **4 ô nhập mới** (ô bool đặt nghĩa ngược): IN[33] = KHÔNG tag vách kính bằng Mark; IN[34] = vẫn tag + thống kê cửa nằm
+  trong vách kính như cũ; IN[35] = kiểu tag vách `Family : Type` (trống = `ARV_Tag Vach Kinh Mark`); IN[36] = thư mục
+  family tag (trống = `lib\tag_vach_kinh`). `.dyn` thêm 4 ô (37 ô) bằng `_tmp\tpl_tl\them_in_dyn.py`, chưa chạy trong Dynamo.
+- **Khối chung** `scripts\dynamo\VachKinh_chung.py` → chép vào lõi bằng `gop_vach_kinh.py` (trước `def mark(e):`), không
+  sửa tay giữa 2 mốc `PHẦN CHUNG VÁCH KÍNH`; xong thì sinh lại nút (`--chi TagCua`).
+- Sửa kèm `lib\arv_hoi_sheet._mac_dinh_tpl`: đang đứng trên chính view đích thì hộp thoại giữ template / tỉ lệ của view đó
+  (trước tự chọn `AF.07` khoá 1:100 làm mặt bằng 1:200 đổi tỉ lệ).
+- **Nút `Hồ sơ đã duyệt`** (người dùng "Có, cập nhật" 2026-11-14): mọi kiểu tag nay chạy đúng lõi này (lõi riêng
+  `loi_rieng\TagCua_xep_lai.py` không còn được nạp) → sửa cách xếp / vách kính ở `TagCua_TuDong.py` là nút đó đổi theo.
+- **Thử nền nút thật** (`_tmp\tk_vach_kinh\chay_2nut.py`, nút thử riêng `ARVTestVK` + `chay_nen.ps1`):
+  - bản sao Site HQV đã có mặt bằng định vị cửa Tầng 1 trên ACD.07.03 (bản tag 13/11): giữ template `ACD.07` 1:200, xoá
+    39 tag cửa trên cửa trong vách kính, còn 55 tag cửa, tag 50 / 56 vách (6 chưa có Mark; `T1-VK.57`, `T1-VK.33` không
+    tìm được chỗ trống), bảng vẽ lại TỔNG 55; bấm lại không đổi (`kq_2nut_site\`);
+  - bản sao `2.HQV_A_ThapB_L1-L3.rvt` Tầng 1 (tạo view + bản vẽ mới): 50 tag cửa, không tag 25 cửa trong vách kính, tag
+    34 / 40 vách, bảng cửa đi là bảng vẽ; bấm lại không đổi (`kq_2nut_l13\`).
+- Còn tồn tại (có từ trước): Tầng 1 Site bảng thống kê đè góc phải dưới mặt bằng. Tag vách không tránh đường trục.
+- Bản trước: `_backup\*_20261114_0910_truoc_bo_cua_vk*`, `_backup\*_20261114_0922_truoc_vach_kinh_chung*`.
+- Nút sinh lại 2026-11-14 ~09:22, Revit phải Reload pyRevit; người dùng chưa bấm (`Cần xác nhận lại`).
+
 ## Quy tắc
 Chốt 2026-11-02 sáng (8 câu hỏi), sửa theo góp ý của người dùng 2026-11-02 trưa (có ảnh mẫu).
 

@@ -45,7 +45,12 @@ FONT_CHUNG = u"Arial"
 # lại 0,65 - 0,75 (ISO công ty cho 0,8 - 1,0); để rộng 1 thì chữ dài hơn CAD ~25 %: đè lên đường dẫn, tràn khỏi khung ô.
 RONG_CHU = float(os.environ.get("ARV_CTC_RONG_CHU") or 0.8)
 CO_CHU = [(3.3, 2.5), (4.6, 3.5), (1e9, 5.0)]   # < 3,3 mm -> 2,5; < 4,6 -> 3,5; còn lại -> 5 (cỡ chuẩn ISO)
-CHU_BO_DUOI = 1.0                                # chữ CAD < 1 mm giấy (gần như không đọc được) thì bỏ, có báo
+# ARV_CTC_CO_CHU = "ngưỡng:cỡ,ngưỡng:cỡ,...:cỡ" để đổi bảng cỡ chữ, vd. "2.25:2,3.3:2.5,4.6:3.5,:5" thêm cỡ 2 mm cho bản vẽ
+# mà chữ ghi chú trong CAD cao 2 mm trên giấy (ctchung.dxf): dồn lên 2,5 mm thì chữ dài hơn CAD 25 %, đè lên hình.
+if os.environ.get("ARV_CTC_CO_CHU"):
+    CO_CHU = [(float(a) if a.strip() else 1e9, float(b)) for a, b in (x.split(":") for x in os.environ["ARV_CTC_CO_CHU"].split(","))]
+GHI_TUNG = os.environ.get("ARV_CTC_GHI_TUNG") == "1"     # ghi vết từng vùng / từng pha (tìm đối tượng làm Revit văng)
+CHU_BO_DUOI = float(os.environ.get("ARV_CTC_BO_DUOI") or 1.0)   # chữ CAD < 1 mm giấy (gần như không đọc được) thì bỏ, có báo
 CO_DIM = 2.5
 CAM = u'\\:{}[]|;<>?`~'
 
@@ -67,7 +72,13 @@ try:
     d = json.load(io.open(JSON, encoding="utf-8"))
     TL = int(d.get("ti_le", 20))
     o_ds = [o for o in d["o"] if not CHI or o["ten"] in CHI]
-    w(u"Số ô: {} | tỉ lệ 1:{}".format(len(o_ds), TL))
+    # bản vẽ nhiều tờ nhiều tỉ lệ (json có "ti_le" ở từng ô): mỗi lần chạy vẽ 1 legend = các ô CÙNG tỉ lệ
+    tl_o = sorted(set(int(o["ti_le"]) for o in o_ds if o.get("ti_le")))
+    if len(tl_o) > 1:
+        raise Exception(u"Các ô được chọn có nhiều tỉ lệ {}: mỗi legend chỉ 1 tỉ lệ, chọn ô theo từng tờ (ARV_CTC_CHI).".format(tl_o))
+    if tl_o:
+        TL = tl_o[0]
+    w(u"Số ô: {} | tỉ lệ 1:{} | cỡ chữ {}".format(len(o_ds), TL, CO_CHU))
     FEC = DB.FilteredElementCollector
 
     def ten_pt(e):
@@ -108,6 +119,13 @@ try:
     if not mau_lg:
         raise Exception(u"Dự án chưa có legend nào để nhân bản (Revit API không tạo legend mới từ đầu). "
                         u"Tạo tay 1 legend bất kỳ rồi bấm lại.")
+    # nhân bản legend ít phần tử nhất (model đã có legend lớn do công cụ vẽ thì không lấy nó làm gốc)
+    def so_pt(v):
+        try:
+            return FEC(doc, v.Id).WhereElementIsNotElementType().GetElementCount()
+        except Exception:
+            return 10 ** 9
+    mau_lg.sort(key=so_pt)
     t = giao_dich(u"Tạo legend")
     lg = doc.GetElement(mau_lg[0].Duplicate(DB.ViewDuplicateOption.Duplicate))
     lg.Name = ten
@@ -173,7 +191,19 @@ try:
             elif x < 0:
                 it.append([0, -x])
             else:
-                it.append([1, 0.3])     # chấm
+                it.append([1, None])    # chấm
+        # Chấm (dash 0 của CAD): CAD in ra 1 điểm to bằng bề dày nét. Vẽ thành nét dài CHAM (0,2 mm trên giấy ở tỉ lệ
+        # legend này) cho còn thấy - bản đầu để 0,3 mm mô hình, ở 1:50 chỉ còn 0,006 mm giấy nên mẫu cát / chấm bê tông
+        # ra trắng trơn. Phần dài thêm lấy bớt ở khoảng hở kề sau để chu kỳ mẫu không đổi.
+        for i_, a in enumerate(it):
+            if a[1] is None:
+                ke = it[(i_ + 1) % len(it)]
+                if ke is not a and ke[0] == 0 and ke[1] is not None and ke[1] > 0.1:
+                    dd = min(CHAM, ke[1] * 0.5)
+                    ke[1] -= dd
+                else:
+                    dd = CHAM
+                a[1] = max(dd, 0.05)
         gop = []
         for a in it:
             if gop and gop[-1][0] == a[0]:
@@ -197,15 +227,33 @@ try:
 
     KIEU_HATCH = {}
     loi_mau = []
+    CHAM = 0.2 * TL          # mm mô hình: chấm của mẫu hatch dài 0,2 mm trên giấy
+    DAY_DAC = 0.12 * TL      # mm mô hình: mẫu có bước giữa các đường nhỏ hơn 0,12 mm giấy thì in ra là mảng đặc
+    so_day = 0
+    kieu_dung = set(v["kieu"] for o in o_ds for v in o["vung"])
     for key, m in d["mau_hatch"].items():
+        if key not in kieu_dung:
+            continue                 # chỉ tạo kiểu cho các ô sẽ vẽ ở lần chạy này
         ten_k = sach_ten(u"CTC_" + m["ten"])
         mau = DB.Color(*[int(c) for c in m["rgb"]])
-        if m["solid"]:
+        dac = bool(m["solid"])
+        if not dac:
+            # Mẫu quá dày (CAD dùng hatch ANSI31 bước 0,03 mm... để tô đen lớp chống thấm): trên giấy là mảng đặc ->
+            # dùng kiểu đặc cùng màu, không dựng mẫu Model dày đặc (Revit vẽ rất chậm hoặc hiện sai).
+            buoc = []
+            for (ang, bx, by, ox, oy, ds) in m["lines"]:
+                a = math.radians(ang)
+                buoc.append(abs(-ox * math.sin(a) + oy * math.cos(a)))
+            if buoc and max(buoc) < DAY_DAC:
+                dac = True
+                so_day += 1
+                ten_k = sach_ten(u"CTC_Đặc {},{},{}".format(*[int(c) for c in m["rgb"]]))
+        if dac:
             fpe = solid_fp
         else:
-            ten_fp = ten_k if ten_k not in fp_ten or key in ten_k else ten_k
-            # cùng tên nhưng khác định nghĩa (khác key) -> thêm mã key
-            ten_fp = sach_ten(u"CTC_{} [{}]".format(m["ten"], key))
+            # cùng tên nhưng khác định nghĩa (khác key) -> thêm mã key; mẫu có chấm thì thêm tỉ lệ (độ dài chấm theo tỉ lệ)
+            co_cham = any(x == 0 for l in m["lines"] for x in l[5])
+            ten_fp = sach_ten(u"CTC_{} [{}{}]".format(m["ten"], key, u" 1-{}".format(TL) if co_cham else u""))
             fpe = fp_ten.get(ten_fp)
             if fpe is None:
                 grids = NetList[DB.FillGrid]()
@@ -271,7 +319,7 @@ try:
             pass
     KIEU_CHE = frt.Id
     t.Commit()
-    w(u"Kiểu filled region: {} | mẫu lỗi / thay bằng đặc: {}".format(len(KIEU_HATCH), loi_mau))
+    w(u"Kiểu filled region: {} | mẫu quá dày vẽ thành đặc: {} | mẫu lỗi / thay bằng đặc: {}".format(len(KIEU_HATCH), so_day, loi_mau))
 
     # ------------------------------------------------------------ kiểu chữ + kiểu dim
     t = giao_dich(u"Kiểu chữ, dim")
@@ -538,6 +586,8 @@ try:
                 continue
             xa_lo()
             typ_ = KIEU_HATCH[it["kieu"]] if loai == "vung" else KIEU_CHE
+            if GHI_TUNG:
+                w(u"    > {} z{} {} ({} vòng)".format(loai, it["z"], it.get("kieu"), len(it["loops"])))
             try:
                 if not it["loops"]:
                     raise Exception(u"vùng quá nhỏ, không còn biên gốc")
@@ -554,9 +604,13 @@ try:
                         for i_ in ds:
                             ids.Add(i_)
                         TONG[loai] += 1
-                        TONG["vung_bien_sua"] = TONG.get("vung_bien_sua", 0) + 1
-                        DU_PHONG_O.setdefault(o["ten"], {})
-                        DU_PHONG_O[o["ten"]][im] = DU_PHONG_O[o["ten"]].get(im, 0) + 1
+                        if it.get("goc") and im == 0:
+                            # dải polyline có bề rộng: hình dựng sẵn ở bước trích xuất, không phải biên hatch bị sửa
+                            TONG[it["goc"]] = TONG.get(it["goc"], 0) + 1
+                        else:
+                            TONG["vung_bien_sua"] = TONG.get("vung_bien_sua", 0) + 1
+                            DU_PHONG_O.setdefault(o["ten"], {})
+                            DU_PHONG_O[o["ten"]][im] = DU_PHONG_O[o["ten"]].get(im, 0) + 1
                         xong = True
                         break
                 if xong:
@@ -578,7 +632,15 @@ try:
                         loi_mau_vd.append(u"{} | {} z {} | {}".format(o["ten"], loai, it["z"], str(ex)[:120]))
         xa_lo()
         t_c = time.time()
+        if GHI_TUNG:
+            w(u"    > xong hình, tới chữ")
+            try:
+                doc.Regenerate()
+                w(u"    > regenerate được")
+            except Exception as ex:
+                w(u"    > regenerate lỗi {}".format(ex))
         # chữ
+        chu_nen = []
         for c in o["chu"]:
             try:
                 op = DB.TextNoteOptions(kieu_chu(c["font"], c["h"], c["wf"]))
@@ -601,10 +663,41 @@ try:
                 if tn is None:
                     tn = DB.TextNote.Create(doc, lg.Id, XYZ(c["x"], c["y"]), c["t"], op)
                 ids.Add(tn.Id); TONG["chu"] += 1
+                if c.get("nen"):
+                    chu_nen.append(tn)
             except Exception as ex:
                 LOI["chu"] += 1
                 if len(loi_mau_vd) < 30:
                     loi_mau_vd.append(u"{} | chữ '{}' | {}".format(o["ten"], c["t"][:30], str(ex)[:100]))
+        # MTEXT có nền che (background mask): vùng che trắng theo khung bao THẬT của Text Note trong Revit, nới mỗi phía
+        # 0,5 mm giấy. Vùng che tạo sau hatch / nét của ô nên che được hình phía sau; chữ là chú thích nên vẫn nằm trên.
+        if chu_nen:
+            try:
+                doc.Regenerate()
+            except Exception:
+                pass
+            for tn_ in chu_nen:
+                try:
+                    bb = tn_.get_BoundingBox(lg)
+                    le = 0.5 * TL * MM
+                    a_ = DB.XYZ(bb.Min.X - le, bb.Min.Y - le, 0); b_ = DB.XYZ(bb.Max.X + le, bb.Min.Y - le, 0)
+                    c_ = DB.XYZ(bb.Max.X + le, bb.Max.Y + le, 0); d_ = DB.XYZ(bb.Min.X - le, bb.Max.Y + le, 0)
+                    cl = DB.CurveLoop()
+                    for p_, q_ in ((a_, b_), (b_, c_), (c_, d_), (d_, a_)):
+                        cl.Append(DB.Line.CreateBound(p_, q_))
+                    ls_ = NetList[DB.CurveLoop](); ls_.Add(cl)
+                    fr = DB.FilledRegion.Create(doc, KIEU_CHE, lg.Id, ls_)
+                    if AN is not None:
+                        try:
+                            fr.SetLineStyleId(AN.Id)
+                        except Exception:
+                            pass
+                    ids.Add(fr.Id)
+                    TONG["chu_co_nen_che"] = TONG.get("chu_co_nen_che", 0) + 1
+                except Exception as ex:
+                    LOI["che"] += 1
+                    if len(loi_mau_vd) < 45:
+                        loi_mau_vd.append(u"{} | nền che chữ | {}".format(o["ten"], str(ex)[:100]))
         bam("chu", t_c); t_d = time.time()
         # dim: mỗi điểm đo bám 1 nét VUÔNG GÓC với phương đo (nét CAD thật đúng vị trí, không có thì nét phụ 2 mm
         # <Invisible lines>) -> dim luôn nằm đúng phương đo như CAD, số đo = khoảng cách giữa 2 nét song song
@@ -676,7 +769,11 @@ try:
             except Exception:
                 pass
         bam("dim", t_d); t_k = time.time()
+        if GHI_TUNG:
+            w(u"    > xong chữ + dim, tới commit")
         t.Commit()
+        if GHI_TUNG:
+            w(u"    > commit được, tới group")
         bam("commit", t_k)
         # group
         t1 = time.time()
@@ -734,6 +831,8 @@ try:
             t.RollBack()
             kq_g = u"KHÔNG tạo được group: {}".format(ex)
         w(u"=== Ô {}: {} phần tử, {} | vẽ {:.1f} s, group {:.1f} s".format(o["ten"], ids.Count, kq_g, t1 - t0, time.time() - t1))
+        if callable(globals().get("_nhip")):      # ve_chung.py: ghi nhịp vào báo cáo tổng để bộ chạy nền không coi là treo
+            _nhip(u"=== . ô {} xong".format(o["ten"]))
     tg.Assimilate()
     w(u"Tổng tạo: {}".format(TONG))
     w(u"Thời gian theo pha (s): {}".format(dict((k, round(v, 1)) for k, v in TG.items())))
@@ -750,6 +849,13 @@ try:
     for s in loi_mau_vd:
         w(u"  lỗi: " + s)
 
+    # khung bao của legend theo mm mô hình: để cắt ảnh từng ô đúng chỗ khi đối chiếu với CAD
+    try:
+        ol = lg.Outline
+        w(u"Khung view (mm mô hình): {:.1f} {:.1f} {:.1f} {:.1f}".format(ol.Min.U * TL / MM, ol.Min.V * TL / MM,
+                                                                        ol.Max.U * TL / MM, ol.Max.V * TL / MM))
+    except Exception as ex:
+        w(u"Không đọc được khung view: {}".format(ex))
     # ------------------------------------------------------------ xuất ảnh để duyệt
     if ANH:
         try:

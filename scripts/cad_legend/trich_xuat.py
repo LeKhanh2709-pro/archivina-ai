@@ -5,10 +5,17 @@
 Đầu ra  : ct_cua.json gồm các ô chi tiết; mỗi ô có nét (đã gộp nét trùng), cung, đường tròn, vùng hatch,
           vùng che (wipeout), chữ, dim. Toạ độ mm, đã dời về bố cục legend (các ô cách nhau KHE mm).
 
-Chạy: python trich_xuat.py <dxf gốc> <regions_no.dxf> <regions.json> <ra.json>
+Chạy: python trich_xuat.py <dxf gốc> <regions_no.dxf> <regions.json> <ra.json> [o_cfg.json]
+
+o_cfg.json (tuỳ chọn, thêm 2026-11-14 cho ctchung.dxf): bản vẽ nhiều tờ, mỗi tờ 1 tỉ lệ, khung ô không theo khuôn file
+cửa. {"to": [{"ma", "ten", "ti_le"}], "o": [{"to", "ten", "bounds": [x0, y0, x1, y1]}]}. Khi có: ô lấy theo file này,
+giữ nguyên bố cục CAD trong từng tờ (không chèn khe), mỗi ô ghi kèm tờ + tỉ lệ; nét nằm trên ranh chung của 2 ô chỉ
+thuộc 1 ô (ô bên phải / bên trên).
 """
-import sys, json, math, re, collections, hashlib
+import sys, os, json, math, re, collections, hashlib
 import ezdxf
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ma_chu
 from ezdxf.math import Matrix44, Vec3
 from ezdxf import colors as ezcolors
 from shapely.geometry import LineString
@@ -26,8 +33,27 @@ DT_NHO_NHAT = 0.01   # mm2, hatch có diện tích nhỏ hơn thì coi như khô
 MUC_DU_PHONG = ['nắn biên (tô chẵn lẻ, bỏ tự cắt)', 'nở 0,25 mm', 'nở 0,5 mm', 'hình chữ nhật bao (chỉ vùng nhỏ / mảnh)']
 
 src_path, reg_path, regjs_path, out_path = sys.argv[1:5]
+cfg_path = sys.argv[5] if len(sys.argv) > 5 else None
+DEM_MA = {}          # số đoạn chữ đã đổi bảng mã (tcvn3 / vni / tcvn3_theo_noi_dung)
 doc = ezdxf.readfile(src_path)
 msp = doc.modelspace()
+CFG_SOM = json.load(open(cfg_path, encoding='utf-8')) if cfg_path else None
+_TL_TO = {t['ma']: t['ti_le'] for t in CFG_SOM['to']} if CFG_SOM else {}
+
+
+def ti_le_tai(x, y):
+    """Tỉ lệ của tờ chứa điểm (x, y): cần ngay lúc duyệt bản vẽ để biết 1 polyline có bề rộng dày bao nhiêu trên giấy."""
+    if CFG_SOM:
+        for c in CFG_SOM['o']:
+            b = c['bounds']
+            if b[0] - 0.5 <= x <= b[2] + 0.5 and b[1] - 0.5 <= y <= b[3] + 0.5:
+                return _TL_TO[c['to']]
+    return TI_LE
+
+
+NET_DAY_GIAY = 0.2   # mm giấy: polyline có bề rộng từ mức này trở lên vẽ thành vùng tô đặc (đúng bề rộng CAD)
+TL_NHO = min(_TL_TO.values()) if _TL_TO else TI_LE
+NET_DUT_NHO = 0.05   # mm giấy: nét đứt có chu kỳ mẫu nhỏ hơn mức này thì in ra là nét liền
 
 # ---------------------------------------------------------------- thuộc tính hiệu lực (ByLayer / ByBlock)
 LAYERS = {l.dxf.name: l for l in doc.layers}
@@ -64,22 +90,55 @@ def thuoc_tinh(e, cha):
         lw = cha['lw'] if cha is not None else -3
     elif lw == -1:
         lw = L.dxf.get('lineweight', -3) if L is not None else -3
-    return {'layer': lay, 'aci': aci, 'rgb': tuple(rgb) if rgb else None, 'ltype': lt, 'lw': lw}
+    return {'layer': lay, 'aci': aci, 'rgb': tuple(rgb) if rgb else None, 'ltype': lt, 'lw': lw,
+            'lts': e.dxf.get('ltscale', 1.0) or 1.0}
 
 
 def kieu_net(tt):
     """Xếp nét vào 5 kiểu Revit dựng sẵn: thin / medium / wide / hidden / center."""
     n = (tt['ltype'] or '').upper()
-    if any(k in n for k in ('CENTER', 'DASHDOT', 'PHANTOM', 'TRUC', 'CHAIN')):
+    if any(k in n for k in ('CENTER', 'CENTRE', 'DASHDOT', 'PHANTOM', 'TRUC', 'CHAIN')):
         return 'center'
     if any(k in n for k in ('HIDDEN', 'DASH', 'KHUAT', 'DOT', 'DOTTED', 'DUT')):
         return 'hidden'
+    return kieu_theo_day(tt)
+
+
+def kieu_theo_day(tt):
+    """Kiểu nét liền theo bề dày nét (lineweight)."""
     lw = tt['lw']
     if lw is None or lw < 15:
         return 'thin'
     if lw < 35:
         return 'medium'
     return 'wide'
+
+
+def net_dut_qua_nho(e, m, tt):
+    """Nét đứt / chấm gạch mà chu kỳ mẫu (đã nhân tỉ lệ linetype) nhỏ hơn 0,2 mm trên giấy: CAD in ra như nét liền (vd.
+    khung bo tròn ở ctchung.dxf dùng DASHED2 với ltscale rất nhỏ) -> vẽ nét liền, không dùng <Hidden Lines>."""
+    dut = net_dut_cua(tt['ltype'])
+    if not dut:
+        return False
+    dd_, s_ = la_dong_dang(m)
+    ck = sum(abs(x) for x in dut) * tt.get('lts', 1.0) * (doc.header.get('$LTSCALE', 1.0) or 1.0) * s_
+    try:
+        t = e.dxftype()
+        if t == 'LINE':
+            p = tf(m, e.dxf.start)
+        elif t in ('ARC', 'CIRCLE'):
+            p = tf(m, e.ocs().to_wcs(e.dxf.center))
+        elif t == 'LWPOLYLINE':
+            q = e.get_points('xy')[0]
+            p = tf(m, e.ocs().to_wcs(Vec3(q[0], q[1], e.dxf.get('elevation', 0))))
+        else:
+            p = None
+        TL_ = ti_le_tai(p.x, p.y) if p is not None else TL_NHO
+    except Exception:
+        TL_ = TL_NHO
+    g = ck / TL_
+    bao_cao['net_dut_chu_ky_giay_' + ('<0.02' if g < 0.02 else '<0.05' if g < 0.05 else '<0.1' if g < 0.1 else '<0.2' if g < 0.2 else '<0.5' if g < 0.5 else '>=0.5')] += 1
+    return g < NET_DUT_NHO
 
 
 UU_TIEN = {'wide': 5, 'medium': 4, 'thin': 3, 'center': 2, 'hidden': 1}
@@ -204,8 +263,9 @@ def chia_duong(e, m):
 
 
 # ---------------------------------------------------------------- hatch
-def khoa_mau(h, tt):
-    """Khoá kiểu filled region + lưu định nghĩa mẫu."""
+def khoa_mau(h, tt, m=None):
+    """Khoá kiểu filled region + lưu định nghĩa mẫu. m = phép biến đổi của block chứa hatch: đường mẫu (góc, bước, nét
+    đứt) phải đổi theo, không thì hatch trong block thu nhỏ / xoay / lật gương ra mẫu sai cỡ, sai hướng."""
     if h.dxf.solid_fill:
         rgb = [0, 0, 0] if EP_DEN[0] else mau_rgb(tt)
         if h.dxf.get('hatch_style', 0) is not None and getattr(h, 'gradient', None) is not None and h.gradient:
@@ -217,9 +277,20 @@ def khoa_mau(h, tt):
         mau_hatch.setdefault(k, {'solid': True, 'rgb': rgb, 'ten': 'Đặc %d,%d,%d' % tuple(rgb)})
         return k
     lines = []
+    ti_le_m = 1.0
     for pl in h.pattern.lines if h.pattern else []:
-        lines.append([round(pl.angle % 360.0, 4), round(pl.base_point[0], 4), round(pl.base_point[1], 4),
-                      round(pl.offset[0], 4), round(pl.offset[1], 4), [round(d, 4) for d in pl.dash_length_items]])
+        ang, bx, by, ox, oy, ds = pl.angle, pl.base_point[0], pl.base_point[1], pl.offset[0], pl.offset[1], list(pl.dash_length_items)
+        if m is not None:
+            a = math.radians(ang)
+            d = m.transform_direction(Vec3(math.cos(a), math.sin(a), 0))
+            o = m.transform_direction(Vec3(ox, oy, 0))
+            b = m.transform(Vec3(bx, by, 0))
+            ti_le_m = math.hypot(d.x, d.y) or 1.0
+            ang = math.degrees(math.atan2(d.y, d.x))
+            bx, by, ox, oy = b.x, b.y, o.x, o.y
+            ds = [x * ti_le_m for x in ds]
+            bao_cao['hatch_mau_doi_theo_block'] += 1
+        lines.append([round(ang % 360.0, 4), round(bx, 4), round(by, 4), round(ox, 4), round(oy, 4), [round(x, 4) for x in ds]])
     if not lines:
         k = 'SOLID_0_0_0'
         mau_hatch.setdefault(k, {'solid': True, 'rgb': [0, 0, 0], 'ten': 'Đặc 0,0,0'})
@@ -233,16 +304,20 @@ def khoa_mau(h, tt):
     while k in mau_hatch and mau_hatch[k]['ky'] != ky:
         k += 'b'
     if k not in mau_hatch:
-        ten = '%s %s %g°' % (h.dxf.pattern_name, ('%g' % round(h.dxf.pattern_scale, 3)), round(h.dxf.pattern_angle % 360, 1))
+        ten = '%s %s %g°' % (h.dxf.pattern_name, ('%g' % round(h.dxf.pattern_scale * ti_le_m, 3)), round(h.dxf.pattern_angle % 360, 1))
         mau_hatch[k] = {'solid': False, 'rgb': rgb, 'ky': ky, 'lines': lines, 'ten': ten}
     return k
 
 
+CO_VONG = []     # cờ (path_type_flags) của từng vòng mà vong_hatch() vừa trả về, cùng thứ tự
+
+
 def vong_hatch(h):
-    """Các vòng biên của hatch (toạ độ WCS của hatch, trước khi nhân m) dưới dạng primitive."""
+    """Các vòng biên của hatch (toạ độ WCS của hatch, trước khi nhân m) dưới dạng primitive. Cờ từng vòng ghi vào CO_VONG."""
     ocs = h.ocs()
     elev = h.dxf.elevation.z if h.dxf.hasattr('elevation') else 0.0
     vongs = []
+    del CO_VONG[:]
     for path in h.paths:
         prims = []
         t = type(path).__name__
@@ -273,14 +348,13 @@ def vong_hatch(h):
                 elif et == 'ArcEdge':
                     a0, a1 = ed.start_angle, ed.end_angle
                     c, r = ed.center, ed.radius
-                    if ed.ccw:
-                        if a1 < a0: a1 += 360
-                        angs = (a0, (a0 + a1) / 2, a1)
-                    else:
-                        # góc lưu theo chiều kim đồng hồ: đảo dấu
-                        a0, a1 = -a0, -a1
-                        if a0 < a1: a0 += 360
-                        angs = (a0, (a0 + a1) / 2, a1)
+                    # ezdxf LUÔN lưu góc đầu / cuối theo chiều NGƯỢC kim đồng hồ (lúc đọc file nó đã đổi cung thuận kim:
+                    # start = 360 - end, end = 360 - start); cờ ccw chỉ cho biết chiều ĐI trên vòng biên. Sửa 2026-11-14:
+                    # bản đầu đảo dấu góc thêm lần nữa khi ccw = False -> cung bị lật gương qua trục ngang qua tâm, vòng
+                    # biên hở rồi bị nối thẳng: hatch có cung thuận kim tô sai chỗ (ctchung.dxf ô KIỂU 11: mảng hình
+                    # quạt lấn vào lòng bể).
+                    if a1 < a0: a1 += 360
+                    angs = (a0, (a0 + a1) / 2, a1) if ed.ccw else (a1, (a0 + a1) / 2, a0)
                     pts = [ocs.to_wcs(Vec3(c[0] + r * math.cos(math.radians(a)), c[1] + r * math.sin(math.radians(a)), elev)) for a in angs]
                     if abs(angs[2] - angs[0]) >= 359.999:
                         pm2 = ocs.to_wcs(Vec3(c[0] - r, c[1], elev)); p0 = ocs.to_wcs(Vec3(c[0] + r, c[1], elev))
@@ -291,13 +365,10 @@ def vong_hatch(h):
                 elif et in ('EllipseEdge', 'SplineEdge'):
                     try:
                         if et == 'EllipseEdge':
-                            from ezdxf.math import ConstructionEllipse
-                            a0, a1 = math.radians(ed.start_angle), math.radians(ed.end_angle)
+                            # như cung tròn: ezdxf lưu tham số đầu / cuối theo chiều ngược kim; ccw = False thì đi ngược lại
+                            pts = list(ed.construction_tool().flattening(CONG_SAI))
                             if not ed.ccw:
-                                a0, a1 = -a0, -a1
-                            ce = ConstructionEllipse(center=Vec3(ed.center[0], ed.center[1], 0), major_axis=Vec3(ed.major_axis[0], ed.major_axis[1], 0),
-                                                     ratio=ed.ratio, start_param=a0, end_param=a1, ccw=ed.ccw)
-                            pts = list(ce.flattening(CONG_SAI))
+                                pts.reverse()
                         else:
                             from ezdxf.math import BSpline
                             if ed.control_points:
@@ -314,6 +385,7 @@ def vong_hatch(h):
                         bao_cao['hatch_canh_loi_' + et] += 1
         if prims:
             vongs.append(prims)
+            CO_VONG.append(int(path.path_type_flags))
     return vongs
 
 
@@ -421,6 +493,35 @@ def font_cua(style_name):
     return 'Arial', wf
 
 
+def file_font(style_name):
+    """Tên file font của text style (để biết bảng mã chữ: TCVN3 / VNI / Unicode, xem ma_chu.py)."""
+    try:
+        return doc.styles.get(style_name).dxf.font or ''
+    except Exception:
+        return ''
+
+
+RE_DOAN = re.compile(r'\\p(x?)([^;]*);')
+
+
+def thut_le_doan(raw, h_chu, ti_le_khoi):
+    r"""Thụt lề của đoạn ĐẦU trong MTEXT (mã \pi = dòng đầu, \pl = lề trái), đổi ra mm bản vẽ: (dòng đầu, lề trái).
+    Có `x` (\pxi...) thì giá trị là bội số chiều cao chữ; không có `x` thì là đơn vị bản vẽ của chính MTEXT (nhân tỉ lệ
+    block). Cách hiểu này suy ra từ ctchung.dxf: tiêu đề tờ chống mối ghi \pi28787 với chữ cao 1358 trong block thu nhỏ
+    0,264 -> lệch 7,6 m, đúng vào giữa dải tiêu đề; hiểu là bội số chiều cao chữ thì chữ văng xa 39 km."""
+    mm_ = RE_DOAN.search(raw or '')
+    if not mm_:
+        return 0.0, 0.0
+    don_vi = h_chu if mm_.group(1) else ti_le_khoi
+    i_ = l_ = 0.0
+    for kk, vv in re.findall(r'([il])(-?\d+(?:\.\d+)?)', mm_.group(2).split('t')[0]):
+        if kk == 'i':
+            i_ = float(vv)
+        else:
+            l_ = float(vv)
+    return (l_ + i_) * don_vi, l_ * don_vi
+
+
 RE_MA_U = re.compile(r'\\U\+([0-9A-Fa-f]{4})')
 
 
@@ -430,14 +531,16 @@ def giai_ma_u(s):
     return RE_MA_U.sub(lambda mm: chr(int(mm.group(1), 16)), s)
 
 
-def them_chu(noi_dung, p, h, rot, ngang, doc_, font, wf, z, rong=0.0):
-    noi_dung = giai_ma_u(noi_dung).replace('\r', '').replace('\t', ' ').strip('\n')
+def them_chu(noi_dung, p, h, rot, ngang, doc_, font, wf, z, rong=0.0, nen=False):
+    noi_dung = giai_ma_u(noi_dung).replace('\r', '').replace('\t', ' ').strip('\n').rstrip()
     if not noi_dung.strip() or h <= 0:
         return
     it = {'t': noi_dung, 'x': round(p[0], 2), 'y': round(p[1], 2), 'h': round(h, 2), 'rot': round(rot % 360, 3),
           'ngang': ngang, 'doc': doc_, 'font': font, 'wf': round(wf, 2), 'z': z}
     if rong and rong > 0:
         it['rong'] = round(rong, 1)      # bề rộng khung MTEXT (mm): chữ tự xuống dòng trong khung này
+    if nen:
+        it['nen'] = 1                    # MTEXT có nền che (background mask): Revit vẽ thêm vùng che trắng sau chữ
     chu.append(it)
 
 
@@ -479,6 +582,7 @@ def xu_ly_text(e, m, tt, z):
     # dịch vuông góc theo hướng chữ để neo vào giữa chiều cao chữ
     r = math.radians(rot)
     p = (p[0] - math.sin(r) * dichz, p[1] + math.cos(r) * dichz)
+    c.dxf.text = ma_chu.doi_text(c.dxf.text, file_font(c.dxf.get('style', 'Standard')), DEM_MA)
     t = c.plain_text()
     them_chu(t, p, h, rot, ngang, 'M', font, wf, z)
 
@@ -495,12 +599,14 @@ def xu_ly_mtext(e, m, tt, z):
     ngang = {1: 'L', 2: 'C', 3: 'R'}[(ap - 1) % 3 + 1]
     doc_ = {0: 'T', 1: 'M', 2: 'B'}[(ap - 1) // 3]
     font, wf = font_cua(c.dxf.get('style', 'Standard'))
+    c.text = ma_chu.doi_mtext(c.text, file_font(c.dxf.get('style', 'Standard')), DEM_MA)
     try:
         t = c.plain_text(split=False)
     except Exception:
         t = c.text
-    if c.dxf.get('bg_fill', 0):
-        bao_cao['mtext_co_nen_che_chua_ve'] += 1
+    nen = bool(c.dxf.get('bg_fill', 0))
+    if nen:
+        bao_cao['mtext_co_nen_che'] += 1
     rong = c.dxf.get('width', 0) or 0
     p = c.dxf.insert
     rot = c.get_rotation()
@@ -517,7 +623,21 @@ def xu_ly_mtext(e, m, tt, z):
             p = Vec3(p[0] + math.cos(r) * dx, p[1] + math.sin(r) * dx, 0)
             ngang = can
             bao_cao['mtext_can_le_theo_doan'] += 1
-    them_chu(t, p, c.dxf.char_height, rot, ngang, doc_, font, wf, z, rong)
+    # Thụt lề đoạn (\pi, \pl): chỉ xét khi chữ căn trái. Chữ 1 dòng dời theo vị trí dòng đầu; đoạn nhiều dòng dời theo
+    # dòng đầu nếu là thụt lề treo (dòng đầu lùi ra trái), còn lại theo lề trái. Bề rộng khung trừ đi phần đã dời.
+    if ngang == 'L':
+        h0 = e.dxf.get('char_height', 0) or 0
+        dau_, trai_ = thut_le_doan(c.text, c.dxf.char_height, (c.dxf.char_height / h0) if h0 > 0 else 1.0)
+        # ước lượng chữ có tràn khung (xuống dòng) trong CAD không: rộng trung bình 1 ký tự ~0,55 chiều cao chữ
+        nhieu_dong = ('\n' in t.strip('\n')) or (rong > 0 and len(t.strip()) * c.dxf.char_height * 0.55 > rong)
+        dx = min(dau_, trai_) if nhieu_dong else dau_
+        if dx > 0.5:
+            r = math.radians(rot)
+            p = Vec3(p[0] + math.cos(r) * dx, p[1] + math.sin(r) * dx, 0)
+            if rong > 0:
+                rong = max(rong - dx, c.dxf.char_height)
+            bao_cao['mtext_thut_le'] += 1
+    them_chu(t, p, c.dxf.char_height, rot, ngang, doc_, font, wf, z, rong, nen)
 
 
 def xu_ly_mleader(e, m, tt, cha):
@@ -621,7 +741,7 @@ def xu_ly_dim(e, m, tt, cha, z):
         return
     dims.append({'p1': [round(p1.x, 3), round(p1.y, 3)], 'p2': [round(p2.x, 3), round(p2.y, 3)], 'p3': [round(p3.x, 3), round(p3.y, 3)],
                  'ang': round(ang, 5), 'h': round(txt_h, 2), 'gia_tri': round(do_hinh, 3),
-                 'hien': sach(hien), 'tien_to': sach(tien_to), 'hau_to': sach(hau_to), 'z': z})
+                 'hien': sach(hien).strip(), 'tien_to': sach(tien_to), 'hau_to': sach(hau_to), 'z': z})
 
 
 # ---------------------------------------------------------------- REGION / 3DSOLID đã nổ bằng AutoCAD
@@ -653,6 +773,97 @@ def xu_ly_region(e, m, tt, z):
             them_duong_gay(pts, kieu, z)
 
 
+# ---------------------------------------------------------------- polyline có bề rộng (lớp chống thấm, nét cắt dày...)
+from shapely.geometry import LinearRing
+from shapely.ops import substring
+
+
+def be_rong_pline(e):
+    """Bề rộng lớn nhất của polyline (trước phép biến đổi block); 0 nếu không có."""
+    try:
+        if e.dxftype() == 'LWPOLYLINE':
+            w = e.dxf.get('const_width', 0) or 0
+            if not w:
+                ws = [max(p[0], p[1]) for p in e.get_points('se')]
+                w = max(ws) if ws else 0
+            return w
+        w = e.dxf.get('default_start_width', 0) or 0
+        if not w:
+            ws = [max(v.dxf.get('start_width', 0) or 0, v.dxf.get('end_width', 0) or 0) for v in e.vertices]
+            w = max(ws) if ws else 0
+        return w
+    except Exception:
+        return 0
+
+
+def net_dut_cua(ten_lt):
+    """Mẫu nét đứt đơn giản của linetype: [nét (+), hở (-), chấm (0)...] theo đơn vị linetype; None nếu nét liền hoặc
+    mẫu có hình / chữ (ZIGZAG, FENCELINE...)."""
+    try:
+        tags = doc.linetypes.get(ten_lt).pattern_tags.tags
+    except Exception:
+        return None
+    if any(t.code in (75, 340) for t in tags):
+        return None
+    gt = [t.value for t in tags if t.code == 49]
+    return gt if len(gt) >= 2 else None
+
+
+def xu_ly_net_day(e, m, tt, s, z):
+    """Polyline có bề rộng. CAD vẽ nó thành dải tô đặc đúng bề rộng (lớp màng chống thấm, nét cắt...), không phải nét mảnh.
+    Trả về True = đã đưa vào danh sách vùng tô đặc; 'wide' / 'medium' = bề rộng trên giấy < NET_DAY_GIAY, vẫn vẽ nét
+    nhưng ép kiểu nét đậm; None = không có bề rộng đáng kể. Linetype nét đứt đơn giản thì cắt dải thành từng đoạn."""
+    w = be_rong_pline(e) * s
+    if w <= 0:
+        return None
+    pts = chia_duong(e, m)
+    gon = pts[:1]
+    for p in pts[1:]:
+        if math.hypot(p[0] - gon[-1][0], p[1] - gon[-1][1]) > 1e-6:
+            gon.append(p)
+    if len(gon) < 2:
+        return None
+    TL_ = ti_le_tai(gon[0][0], gon[0][1])
+    giay = w / TL_
+    if giay < NET_DAY_GIAY:
+        return 'wide' if giay >= 0.13 else ('medium' if giay >= 0.07 else None)
+    kin = len(gon) >= 4 and math.hypot(gon[0][0] - gon[-1][0], gon[0][1] - gon[-1][1]) < 1e-3
+    try:
+        duong = LineString(gon)
+        manh = []
+        dut = net_dut_cua(tt['ltype'])
+        if dut:
+            tl_lt = (e.dxf.get('ltscale', 1.0) or 1.0) * (doc.header.get('$LTSCALE', 1.0) or 1.0) * s
+            ds = [abs(x) * tl_lt for x in dut]
+            ck = sum(ds)
+            if ck >= 0.4 * TL_ and duong.length / ck < 3000:
+                t_, i_ = 0.0, 0
+                while t_ < duong.length - 1e-6:
+                    d_ = ds[i_ % len(ds)]
+                    if dut[i_ % len(dut)] >= 0:
+                        dai = d_ if d_ > 0 else w * 0.5          # chấm -> đoạn ngắn bằng nửa bề rộng
+                        manh.append(substring(duong, t_, min(t_ + dai, duong.length)))
+                    t_ += d_
+                    i_ += 1
+                bao_cao['net_day_dut'] += 1
+        if not manh:
+            manh = [LinearRing(gon[:-1]) if kin else duong]
+        hop = unary_union([g.buffer(w / 2.0, cap_style=2, join_style=2, mitre_limit=3.0) for g in manh if g.length > 1e-6])
+    except Exception:
+        bao_cao['net_day_loi'] += 1
+        return 'wide'
+    if hop.is_empty or hop.area < DT_NHO_NHAT:
+        return 'wide'
+    # Màu: polyline có bề rộng vẫn là NÉT -> đen như mọi nét khác (màu theo số của CAD là màu bút, in ra đen);
+    # chỉ giữ màu khi đối tượng / layer đặt màu thật (true color), AutoCAD cũng in đúng màu đó.
+    rgb = list(tt['rgb']) if (tt['rgb'] and not EP_DEN[0]) else [0, 0, 0]
+    k = 'SOLID_%d_%d_%d' % tuple(rgb)
+    mau_hatch.setdefault(k, {'solid': True, 'rgb': rgb, 'ten': 'Đặc %d,%d,%d' % tuple(rgb)})
+    vung.append({'loops': [], 'hop': hop, 'kieu': k, 'z': z, 'goc': 'net_day'})
+    bao_cao['net_day_thanh_vung'] += 1
+    return True
+
+
 # ---------------------------------------------------------------- duyệt bản vẽ
 def no_ra(e, m, tt, cha):
     """Nổ đối tượng phức (dim, leader, multileader) bằng virtual_entities rồi duyệt tiếp."""
@@ -679,6 +890,10 @@ def duyet(ents, m, cha):
         L = LAYERS.get(tt['layer'])
         if L is not None and (L.is_off() or L.is_frozen()):
             continue
+        # Layer không in (Defpoints, hoặc layer tắt cờ Plot): CAD không in ra giấy -> không vẽ, có đếm để báo.
+        if t != 'INSERT' and (tt['layer'].upper() == 'DEFPOINTS' or (L is not None and L.dxf.get('plot', 1) == 0)):
+            bao_cao['bo_layer_khong_in'] += 1
+            continue
         if t == 'INSERT':
             blk = doc.blocks.get(e.dxf.name)
             if blk is None:
@@ -694,6 +909,10 @@ def duyet(ents, m, cha):
             continue
         z = z_moi()
         kieu = kieu_net(tt)
+        if kieu in ('hidden', 'center') and t in ('LINE', 'ARC', 'CIRCLE', 'LWPOLYLINE', 'POLYLINE', 'SPLINE', 'ELLIPSE') \
+                and net_dut_qua_nho(e, m, tt):
+            kieu = kieu_theo_day(tt)
+            bao_cao['net_dut_qua_nho_thanh_lien'] += 1
         if t == 'LINE':
             them_seg(tf(m, e.dxf.start), tf(m, e.dxf.end), kieu, z)
         elif t in ('LWPOLYLINE', 'POLYLINE'):
@@ -701,6 +920,11 @@ def duyet(ents, m, cha):
                 bao_cao['bo_mesh'] += 1
                 continue
             dd, s = la_dong_dang(m)
+            day = xu_ly_net_day(e, m, tt, s, z)
+            if day is True:
+                continue
+            if day and kieu in ('thin', 'medium') and UU_TIEN[day] > UU_TIEN[kieu]:
+                kieu = day               # nét liền có bề rộng nhỏ: ép kiểu nét đậm hơn (nét đứt giữ nguyên kiểu)
             try:
                 for ve in e.virtual_entities():
                     if ve.dxftype() == 'LINE':
@@ -730,14 +954,21 @@ def duyet(ents, m, cha):
                 them_duong_gay(chia_duong(e, m), kieu, z)
         elif t in ('SPLINE', 'ELLIPSE'):
             them_duong_gay(chia_duong(e, m), kieu, z)
+        elif t == 'MLINE':
+            try:
+                duyet(list(e.virtual_entities()), m, tt)
+            except Exception:
+                bao_cao['khong_no_duoc_MLINE'] += 1
         elif t == 'HATCH':
-            k = khoa_mau(e, tt)
+            k = khoa_mau(e, tt, m)
             cap = [vong_sang_toa_do(v, m) for v in vong_hatch(e)]
+            co = list(CO_VONG)
             loops = [c[0] for c in cap if c[0]]
             tho = [c[1] for c in cap if c[1]]
+            co = [f for c, f in zip(cap, co) if c[1]]
             if tho:
                 # loops có thể rỗng (hatch rất nhỏ, mọi đoạn < NGAN_NHAT): khi đó chỉ còn biên dự phòng dựng từ vòng thô
-                vung.append({'loops': loops, 'tho': tho, 'kieu': k, 'z': z})
+                vung.append({'loops': loops, 'tho': tho, 'kieu': k, 'z': z, 'co': co, 'style': int(e.dxf.get('hatch_style', 0) or 0)})
             else:
                 bao_cao['hatch_khong_bien'] += 1
         elif t in ('SOLID', 'TRACE'):
@@ -891,48 +1122,63 @@ for key, ds in nhom_c.items():
 print('cung sau gộp:', len(cung), '(trước', len(arc_raw), ')')
 
 # ---------------------------------------------------------------- ô chi tiết
-khung = []
-for e in msp.query('LINE LWPOLYLINE'):
-    if e.dxf.layer not in ('A_Symbol', 'A-Symbol', 'CDC-KT-net thay'):
-        continue
-    pts = [(e.dxf.start.x, e.dxf.start.y), (e.dxf.end.x, e.dxf.end.y)] if e.dxftype() == 'LINE' else [tuple(p[:2]) for p in e.get_points()]
-    segs = list(zip(pts, pts[1:])) + ([(pts[-1], pts[0])] if e.dxftype() == 'LWPOLYLINE' and e.closed else [])
-    for a, b in segs:
-        if math.hypot(a[0] - b[0], a[1] - b[1]) < 2500:
-            continue
-        if abs(a[1] - b[1]) < 1:
-            if abs(a[1] + 65085) < 2 or abs(a[1] + 58075) < 2:   # dải tiêu đề ô: không chia ô
-                continue
-            khung.append(LineString([a, b]))
-        elif abs(a[0] - b[0]) < 1:
-            khung.append(LineString([a, b]))
-mat = [p for p in polygonize(unary_union(khung)) if p.area > 4e6]
-# tờ: ô rộng đủ 1 tờ (17388) thì gộp mọi mặt trong tờ đó
-to = sorted(set(round(p.bounds[0]) for p in mat if round(p.bounds[2] - p.bounds[0]) >= 17000))
-cells = []
-dung = set()
-for x0 in to:
-    trong = [p for p in mat if p.bounds[0] >= x0 - 1 and p.bounds[2] <= x0 + 17388 + 1]
-    for p in trong:
-        dung.add(id(p))
-    b = [min(p.bounds[0] for p in trong), min(p.bounds[1] for p in trong), max(p.bounds[2] for p in trong), max(p.bounds[3] for p in trong)]
-    cells.append(b)
-for p in mat:
-    if id(p) not in dung:
-        cells.append(list(p.bounds))
-cells.sort(key=lambda b: (-round(b[3] / 1000), b[0]))
-print('số ô:', len(cells))
-
-# vị trí trong legend: cột / hàng theo mép trái / mép trên, cách nhau KHE
-xs = sorted(set(round(b[0]) for b in cells))
-ys = sorted(set(round(b[3]) for b in cells), reverse=True)
-X0 = min(b[0] for b in cells); Y1 = max(b[3] for b in cells)
+cfg = json.load(open(cfg_path, encoding='utf-8')) if cfg_path else None
 o_ds = []
-for i, b in enumerate(cells):
-    col = xs.index(round(b[0])); row = ys.index(round(b[3]))
-    dx = -X0 + col * KHE
-    dy = -Y1 - row * KHE
-    o_ds.append({'i': i, 'bounds': b, 'dx': dx, 'dy': dy, 'net': [], 'cung': [], 'vung': [], 'che': [], 'chu': [], 'dim': []})
+if cfg:
+    # Ô theo file cấu hình: giữ nguyên bố cục CAD trong từng tờ (mỗi tờ 1 legend, gốc = góc trái trên của tờ).
+    tt_to = {t['ma']: t for t in cfg['to']}
+    for i, c in enumerate(cfg['o']):
+        cung_to = [x for x in cfg['o'] if x['to'] == c['to']]
+        b = [float(v) for v in c['bounds']]
+        X0 = min(x['bounds'][0] for x in cung_to); Y1 = max(x['bounds'][3] for x in cung_to)
+        # có ô kề bên phải / bên trên chung ranh: nét nằm trên ranh đó thuộc ô kia (không vẽ 2 lần)
+        ke_phai = any(x is not c and abs(x['bounds'][0] - b[2]) < 1 and min(x['bounds'][3], b[3]) - max(x['bounds'][1], b[1]) > 1 for x in cung_to)
+        ke_tren = any(x is not c and abs(x['bounds'][1] - b[3]) < 1 and min(x['bounds'][2], b[2]) - max(x['bounds'][0], b[0]) > 1 for x in cung_to)
+        o_ds.append({'i': i, 'ten': c['ten'], 'to': c['to'], 'ti_le': tt_to[c['to']]['ti_le'], 'bounds': b, 'dx': -X0, 'dy': -Y1,
+                     'ke_phai': ke_phai, 'ke_tren': ke_tren, 'net': [], 'cung': [], 'vung': [], 'che': [], 'chu': [], 'dim': []})
+    print('số ô (theo cấu hình):', len(o_ds), '| tờ:', ', '.join('%s 1:%s' % (t['ma'], t['ti_le']) for t in cfg['to']))
+else:
+    khung = []
+    for e in msp.query('LINE LWPOLYLINE'):
+        if e.dxf.layer not in ('A_Symbol', 'A-Symbol', 'CDC-KT-net thay'):
+            continue
+        pts = [(e.dxf.start.x, e.dxf.start.y), (e.dxf.end.x, e.dxf.end.y)] if e.dxftype() == 'LINE' else [tuple(p[:2]) for p in e.get_points()]
+        segs = list(zip(pts, pts[1:])) + ([(pts[-1], pts[0])] if e.dxftype() == 'LWPOLYLINE' and e.closed else [])
+        for a, b in segs:
+            if math.hypot(a[0] - b[0], a[1] - b[1]) < 2500:
+                continue
+            if abs(a[1] - b[1]) < 1:
+                if abs(a[1] + 65085) < 2 or abs(a[1] + 58075) < 2:   # dải tiêu đề ô: không chia ô
+                    continue
+                khung.append(LineString([a, b]))
+            elif abs(a[0] - b[0]) < 1:
+                khung.append(LineString([a, b]))
+    mat = [p for p in polygonize(unary_union(khung)) if p.area > 4e6]
+    # tờ: ô rộng đủ 1 tờ (17388) thì gộp mọi mặt trong tờ đó
+    to = sorted(set(round(p.bounds[0]) for p in mat if round(p.bounds[2] - p.bounds[0]) >= 17000))
+    cells = []
+    dung = set()
+    for x0 in to:
+        trong = [p for p in mat if p.bounds[0] >= x0 - 1 and p.bounds[2] <= x0 + 17388 + 1]
+        for p in trong:
+            dung.add(id(p))
+        b = [min(p.bounds[0] for p in trong), min(p.bounds[1] for p in trong), max(p.bounds[2] for p in trong), max(p.bounds[3] for p in trong)]
+        cells.append(b)
+    for p in mat:
+        if id(p) not in dung:
+            cells.append(list(p.bounds))
+    cells.sort(key=lambda b: (-round(b[3] / 1000), b[0]))
+    print('số ô:', len(cells))
+
+    # vị trí trong legend: cột / hàng theo mép trái / mép trên, cách nhau KHE
+    xs = sorted(set(round(b[0]) for b in cells))
+    ys = sorted(set(round(b[3]) for b in cells), reverse=True)
+    X0 = min(b[0] for b in cells); Y1 = max(b[3] for b in cells)
+    for i, b in enumerate(cells):
+        col = xs.index(round(b[0])); row = ys.index(round(b[3]))
+        dx = -X0 + col * KHE
+        dy = -Y1 - row * KHE
+        o_ds.append({'i': i, 'bounds': b, 'dx': dx, 'dy': dy, 'net': [], 'cung': [], 'vung': [], 'che': [], 'chu': [], 'dim': []})
 
 
 def o_chua(x, y):
@@ -943,9 +1189,12 @@ def o_chua(x, y):
     return None
 
 
-def cat_doan(x1, y1, x2, y2, b):
-    """Cắt đoạn theo hình chữ nhật (Liang–Barsky)."""
-    xmin, ymin, xmax, ymax = b[0] - 0.5, b[1] - 0.5, b[2] + 0.5, b[3] + 0.5
+def cat_doan(x1, y1, x2, y2, b, ke_phai=False, ke_tren=False):
+    """Cắt đoạn theo hình chữ nhật (Liang–Barsky). ke_phai / ke_tren: ranh phải / trên là ranh chung với ô khác -> nét
+    nằm đúng trên ranh đó không thuộc ô này."""
+    xmin, ymin = b[0] - 0.5, b[1] - 0.5
+    xmax = b[2] - 0.5 - 1e-6 if ke_phai else b[2] + 0.5
+    ymax = b[3] - 0.5 - 1e-6 if ke_tren else b[3] + 0.5
     dx, dy = x2 - x1, y2 - y1
     t0, t1 = 0.0, 1.0
     for p, q in ((-dx, x1 - xmin), (dx, xmax - x1), (-dy, y1 - ymin), (dy, ymax - y1)):
@@ -971,7 +1220,7 @@ ngoai = collections.Counter()
 for (x1, y1, x2, y2, k, z) in net:
     co = False
     for o in o_ds:
-        c = cat_doan(x1, y1, x2, y2, o['bounds'])
+        c = cat_doan(x1, y1, x2, y2, o['bounds'], o.get('ke_phai', False), o.get('ke_tren', False))
         if c and math.hypot(c[2] - c[0], c[3] - c[1]) >= NGAN_NHAT:
             a = dich(o, c[0], c[1]); b = dich(o, c[2], c[3])
             o['net'].append([a[0], a[1], b[0], b[1], k, z]); co = True
@@ -1184,25 +1433,79 @@ def bien_du_phong(hop):
     return [muc_nan(hop), muc_no(hop, 0.25), muc_no(hop, 0.5), muc_bao(hop)]
 
 
+def hop_theo_kieu(nguon, style):
+    """Vùng tô của hatch kiểu đảo Outer (1) / Ignore (2) theo độ lồng của các vòng biên: Outer chỉ tô giữa vòng ngoài cùng
+    và các đảo lớp 1 (không tô lại trong đảo của đảo); Ignore tô hết bên trong vòng ngoài cùng. Kiểu Normal (0) là tô
+    chẵn lẻ, đã có hinh_chan_le(). None nếu không dựng được.
+    (Bản thử 14/11 từng ghép vòng theo CỜ External rồi hợp lại; đã bỏ vì chẩn đoán sai: lỗi thật là đọc ngược cung thuận
+    kim. Các vòng của 1 hatch AutoCAD thường xếp khít nhau, tô chẵn lẻ là đúng.)"""
+    ds = []
+    for l in nguon:
+        p = diem_vong(l)
+        if len(p) < 3:
+            continue
+        try:
+            g = chi_da_giac(make_valid(Polygon(p)))
+        except Exception:
+            g = None
+        if g is not None:
+            ds.append(g)
+    if not ds:
+        return None
+    try:
+        sau = []
+        for i, g in enumerate(ds):
+            pt = g.representative_point()
+            sau.append(sum(1 for j, h in enumerate(ds) if j != i and h.contains(pt)))
+        hop = unary_union([g for g, s_ in zip(ds, sau) if s_ == 0])
+        if style == 1:
+            lo = [g for g, s_ in zip(ds, sau) if s_ == 1]
+            if lo:
+                hop = hop.difference(unary_union(lo))
+        return chi_da_giac(make_valid(hop.buffer(0)))
+    except Exception:
+        return None
+
+
 def xep_vung(ds, khoa, ten_bc):
-    """Gán vùng (hatch / wipeout) vào ô, kèm biên dự phòng. Vùng không có diện tích trong CAD thì bỏ, có báo."""
+    """Gán vùng (hatch / wipeout / dải polyline có bề rộng) vào ô, kèm biên dự phòng. Vùng không có diện tích trong CAD
+    thì bỏ, có báo."""
     so = 0
     for v in ds:
         nguon = v.get('tho') or v['loops']
-        hop = hinh_chan_le(nguon)
-        if hop is None or hop.area < DT_NHO_NHAT:
+        hop = v.get('hop')                       # hình đã dựng sẵn (dải polyline có bề rộng)
+        if hop is None:
+            hop = hinh_chan_le(nguon)
+            if v.get('style') in (1, 2) and len(nguon) > 2:
+                hop2 = hop_theo_kieu(nguon, v['style'])
+                if hop2 is not None and not hop2.is_empty and (
+                        hop is None or hop.symmetric_difference(hop2).area > max(1.0, 0.002 * hop2.area)):
+                    hop = hop2
+                    v = dict(v); v['loops'] = []         # tô chẵn lẻ không đúng kiểu đảo của hatch: chỉ dùng biên dựng lại
+                    bao_cao[ten_bc + '_theo_kieu_dao'] += 1
+        if hop is None or hop.is_empty or hop.area < DT_NHO_NHAT:
             bao_cao[ten_bc + '_khong_dien_tich'] += 1
-            xs_ = [s[1] for l in nguon for s in l]; ys_ = [s[2] for l in nguon for s in l]
+            xs_ = [s[1] for l in nguon for s in l] or [0]; ys_ = [s[2] for l in nguon for s in l] or [0]
             print('  %s không có diện tích, bỏ: z %d, khung bao %.3f x %.3f mm, tại (%.0f, %.0f)'
                   % (ten_bc, v['z'], max(xs_) - min(xs_), max(ys_) - min(ys_), min(xs_), min(ys_)))
             continue
-        o = o_chua(*tam_vong(v['loops'] or nguon))
+        if v['loops'] or nguon:
+            tam = tam_vong(v['loops'] or nguon)
+        else:
+            bb_ = hop.bounds
+            tam = ((bb_[0] + bb_[2]) / 2, (bb_[1] + bb_[3]) / 2)
+        o = o_chua(*tam)
+        if o is None and v.get('hop') is not None:
+            pr = hop.representative_point()
+            o = o_chua(pr.x, pr.y)
         if o is None:
             ngoai[khoa] += 1; continue
         it = {'loops': dich_vong(o, v['loops']), 'z': v['z']}
         if 'kieu' in v:
             it['kieu'] = v['kieu']
-        if not v['loops']:
+        if v.get('goc'):
+            it['goc'] = v['goc']
+        if not v['loops'] and not v.get('goc'):
             bao_cao[ten_bc + '_chi_con_du_phong'] += 1
         it['du_phong'] = [[dich_vong(o, m) for m in muc] for muc in bien_du_phong(hop)]
         if any(it['du_phong']):
@@ -1232,6 +1535,9 @@ for d in dims:
 MA = re.compile(r'^[A-Z]{1,5}[A-Z0-9]*(\.[A-Z0-9]+)?$')
 KT = re.compile(r'(\d+|[A-Z])\s*[xX*×]\s*\d+')
 for o in o_ds:
+    o['so'] = {k: len(o[k]) for k in ('net', 'cung', 'vung', 'che', 'chu', 'dim')}
+    if cfg:
+        continue                      # tên ô đã có trong cấu hình
     b = o['bounds']
     tieu_de = [t for t in chu if b[0] <= t['x'] <= b[2] and b[3] - 1300 <= t['y'] <= b[3]]
     tieu_de.sort(key=lambda t: (-t['h'], t['x']))
@@ -1247,8 +1553,8 @@ for o in o_ds:
     ten = ' '.join(x for x in ((ma[0] if ma else ''), (kt[0] if kt else '')) if x) or ('O%02d' % (o['i'] + 1))
     o['ten'] = ten
     o['so'] = {k: len(o[k]) for k in ('net', 'cung', 'vung', 'che', 'chu', 'dim')}
-# bỏ ô rỗng (chỉ có khung)
-rong = [o for o in o_ds if o['so']['cung'] + o['so']['vung'] + o['so']['chu'] + o['so']['dim'] == 0 and o['so']['net'] <= 8]
+# bỏ ô rỗng (chỉ có khung); ô khai trong cấu hình thì giữ hết
+rong = [] if cfg else [o for o in o_ds if o['so']['cung'] + o['so']['vung'] + o['so']['chu'] + o['so']['dim'] == 0 and o['so']['net'] <= 8]
 o_ds = [o for o in o_ds if o not in rong]
 # tên trùng: thêm số thứ tự
 dem = collections.Counter(o['ten'] for o in o_ds)
@@ -1258,12 +1564,14 @@ for o in o_ds:
         thu[o['ten']] += 1
         o['ten'] = '%s (%d)' % (o['ten'], thu[o['ten']])
 for o in o_ds:
-    print('%-22s' % o['ten'], o['so'])
+    print(('%s 1:%-4s' % (o['to'], o['ti_le']) if cfg else '') + '%-22s' % o['ten'], o['so'])
 print('ô rỗng bỏ qua:', [[round(v) for v in o['bounds']] for o in rong])
 print('ngoài ô:', dict(ngoai))
 print('báo cáo:', dict(bao_cao))
+print('đổi bảng mã chữ (số đoạn):', DEM_MA)
 print('mẫu hatch:', len(mau_hatch))
 
 json.dump({'ti_le': TI_LE, 'nguon': src_path, 'mau_hatch': mau_hatch, 'muc_du_phong': MUC_DU_PHONG, 'o': o_ds,
+           'to': (cfg['to'] if cfg else []), 'doi_bang_ma': DEM_MA,
            'bao_cao': dict(bao_cao), 'ngoai': dict(ngoai)}, open(out_path, 'w', encoding='utf-8'), ensure_ascii=False)
 print('XONG', out_path)

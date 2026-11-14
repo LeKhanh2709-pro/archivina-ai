@@ -319,6 +319,25 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     trùng; ảnh `_tmp\tk_vach_kinh\kq_that\`. Chưa thử vách trong link / vách cong; KHÔNG làm bảng thống kê Revit cho vách kính
     (người dùng chốt 2026-11-13: "Không cần"). Nút + `.dyn` sinh lại 2026-11-13 10:13, Revit phải Reload pyRevit; người dùng chưa
     bấm (`Cần xác nhận lại`). Bản trước: `_backup\*_20261113_1012_truoc_vach_kinh*`.
+  - **Vách kính tag bằng Mark ở CẢ nút Định vị + tag cửa; cửa nằm trong vách kính không tag, không thống kê** (người dùng
+    báo 2026-11-14 "tag vách kính bằng mark vẫn chưa được cập nhật", rồi chốt: sửa ở 2 nút Archivina; "không tag các cửa, và
+    thống kê các cửa (cửa đi, cửa sổ) khi nằm trong vách kính"; chi tiết trong skill `tag-cua-revit` + `thong-ke-cua-revit`):
+    - Cách hiểu của Claude: cửa có `Host` là curtain wall thì không tag cửa, không vào bảng (kể cả cửa trong file link).
+    - Khối chung `scripts\dynamo\VachKinh_chung.py`, chép vào `TagCua_TuDong.py` + `ThongKeCua_TuDong.py` bằng
+      `gop_vach_kinh.py` (không sửa tay giữa 2 mốc). Tag cửa: IN[33] KHÔNG tag vách kính, IN[34] vẫn tag + thống kê cửa
+      trong vách kính như cũ, IN[35] kiểu tag vách, IN[36] thư mục family; Thống kê cửa: IN[13] (ô bool đặt nghĩa ngược).
+    - Có xoá thì HỎI trước (hộp Yes / No của Revit, liệt kê id): tag cửa cũ do công cụ đặt trên cửa trong vách kính
+      (`ARV_XOA_TAG_VK`), bảng vẽ cũ khác số dòng (`ARV_VE_LAI_BANG`; 2 biến môi trường chỉ để trả lời sẵn khi thử nền).
+    - Bảng Revit không lọc được theo vách chủ → mặt bằng có cửa trong vách kính thì bảng thống kê = bảng vẽ rời (drafting).
+    - Sửa kèm `arv_hoi_sheet._mac_dinh_tpl`: đứng trên chính view đích thì giữ template / tỉ lệ của view đó (trước tự chọn
+      `AF.07` khoá 1:100).
+    - Thử nền nút thật (`_tmp\tk_vach_kinh\`, nút thử riêng `ARVTestVK`): bản sao Site đã có mặt bằng định vị cửa Tầng 1 –
+      xoá 39 tag cửa trong vách kính, còn 55, tag 50 / 56 vách (6 chưa có Mark, 2 tag không tìm được chỗ), bảng TỔNG 55;
+      bản sao L1-L3 Tầng 1 – 50 tag cửa, bỏ 25, tag 34 / 40 vách; bấm lại đều không đổi.
+    - Nút TagCua sinh lại 09:22, ThongKeCua 13:28 (2026-11-14), Revit phải Reload pyRevit; `.dyn` chưa chạy trong Dynamo;
+      gói `_dist` chưa đóng lại; người dùng chưa bấm (`Cần xác nhận lại`). Tồn tại có từ trước: Site Tầng 1 bảng thống kê
+      đè góc phải dưới mặt bằng. Bản trước: `_backup\*_20261114_0910_truoc_bo_cua_vk*`,
+      `_backup\*_20261114_0922_truoc_vach_kinh_chung*`, `_backup\*_20261114_1327_truoc_sua_canh_bao*`.
 - `LanCanLouver_TuDong.dyn` (2026-11-05, skill `dinh-vi-lan-can-louver-revit`, quy tắc + bẫy xem skill): người dùng yêu cầu
   "mặt bằng định vị lan can, louver, dựa vào Mark để nhận diện tên, giống nút định vị + tag cửa".
   - Bấm trên mặt bằng tầng → tạo / mở `MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>` (khối chung `DatSheet_chung.py`,
@@ -505,6 +524,27 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
       bấm lần 2 (52 giây) không đổi gì. Mã cửa trên tag khác file 15 ở vài loại (DCA15 → DS01…) vì file link đã đổi Type
       Mark sau 9:00. File chính lúc 10:47 (đọc qua MCP): đủ 4 mặt bằng nguồn, chưa có bản vẽ / view nào của công cụ.
       Ctrl+Z 1 lần chưa thử bằng tay; người dùng chưa bấm trên file chính (`Cần xác nhận lại`).
+    - **Cập nhật theo cách mới của Archivina** (người dùng "Có, cập nhật" 2026-11-14): mọi kiểu tag của nút nay chạy ĐÚNG
+      lõi của nút Định vị + tag cửa (Archivina) – lõi riêng `lib\loi_rieng\TagCua_xep_lai.py` (bản 13/11, chưa có phần vách
+      kính) không còn được nạp, file giữ lại để đối chiếu. Kiểu tag chỉ còn là cách gọi lõi: `mau` / `goc` = AV-Tag-DOOR
+      (`mau` nạp `.rfa` từ `lib\tag_rieng`), `chu` / `gon` = `ARV_TAG_GON`, `2o` = IN[30]. Kết quả: vách kính tag bằng Mark,
+      cửa nằm trong vách kính không tag + không vào bảng thống kê; mặt bằng đã tag bằng bản trước thì lõi HỎI (hộp Yes / No
+      của Revit, từng mặt bằng) rồi mới xoá tag cửa cũ trên cửa trong vách kính / vẽ lại bảng cũ. Bảng kiểm chỉ đổi dòng
+      chú thích (không còn chữ "Không xoá gì"). Sửa cách xếp / vách kính ở `TagCua_TuDong.py` là nút này đổi theo.
+      Thử nền nút thật (`_tmp\ho_so_duyet\thu_vk.py`, nút thử `ARVTestVK`, 2026-11-14):
+      (A2) bản sao sạch ĐÃ TÁCH central, đủ 14 mục 5 phút 50 giây, 14 / 14 lên bản vẽ, 0 lỗi → file xem
+      `_tmp\ho_so_duyet\xem\20_2.HQV_A_ThapB_Site_vach_kinh_Mark_du_14_muc.rvt` + ảnh `xem\21 – 25_*.png`: tag cửa
+      55 / 78 / 41 / 188 + 51 cửa sổ (Tầng 5BA), tag vách kính 50 / 56 / 35 / 0 (chưa có Mark: 6 / 0 / 1), không tag
+      39 / 70 / 42 cửa trong vách kính, bảng cửa đi TỔNG 55 / 78 / 41 / 188; bấm lại không đổi;
+      (B) bản sao file 11 (đã tag bằng bản 13/11), chỉ 4 mục định vị cửa, hộp hỏi bấm Yes THẬT (không dùng biến trả lời
+      sẵn): xoá 39 / 70 / 42 tag cửa cũ, tag 50 / 56 / 35 vách, vẽ lại 3 bảng, Tầng 5BA không đổi; bấm lại không đổi →
+      `xem\19_file11_bam_lai_vach_kinh_Mark.rvt`; (C) kiểu `chu` (Tầng 2) + `2o` (Tầng 3BA) chạy đúng, có tag vách.
+      Bảng cửa sổ Tầng 2 / 3BA nay trống (TỔNG 0, mọi cửa sổ đều là tấm vách kính) nhưng vẫn được đặt lên bản vẽ –
+      người dùng chốt 2026-11-14: "Giữ như vậy" (không bỏ bảng trống, đừng đề xuất lại); nhãn
+      viewport của bảng vẽ nằm dưới bảng, nhãn bảng cửa sổ tụt ra ngoài khung (có từ trước) – chưa xử lý. File
+      `xem\18_*.rvt` là lượt thử lỗi do bản sao chưa tách central (thiếu 2 viewport), không dùng. Bản trước:
+      `_backup\arv_ho_so_duyet_20261114_1323_truoc_vach_kinh.py`. Revit phải Reload pyRevit; người dùng chưa bấm
+      (`Cần xác nhận lại`).
     - Bẫy: lần ĐẦU pyRevit nạp phiên có extension mới báo `PyRevitLoader - Error Loading pyRevit` (NullReference trong
       `HashSet.AddIfNotPresent`, `sessionmgr.py` 431) 1 lần; nạp lại thì được (4 lần sau đều được). Gặp thì đóng hộp thoại,
       Reload pyRevit / mở lại Revit. Thử nạp nhanh: `_tmp\ho_so_duyet\chay_thu_nap.ps1` (liệt kê tab / nút trên ribbon).
@@ -580,6 +620,26 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     đặt không nạp, legend `CHI TIẾT CỬA (CAD)`). Người dùng không nói gì về ảnh / chữ rộng 0,8 / màu hatch
     (`Cần xác nhận lại`). Muốn chạy cho file CAD khác thì làm lại theo các bước trong README (máy khác cần Python có
     ezdxf + shapely và Core Console để nổ REGION).
+  - **File thứ 2 `Desktop\CÔNG VIỆC\ctchung.dxf` (người dùng 2026-11-14: "tiếp tục với file này") – XONG 15:00**, bàn
+    giao `_tmp\ct_chung_legend\duyet_20261114\` (`01_Site_legend_CT_chung_va_CT_cua.rvt` = bản sao sạch Site, link không
+    nạp; 7 legend `CHI TIẾT CHUNG (CAD) 01 – 07` + legend `CHI TIẾT CỬA (CAD)` vẽ lại bằng mã đã sửa; ảnh; so sánh bản in
+    AutoCAD – Revit 49 ô; `05_DOC_TRUOC.txt`). 8 legend 0 lỗi. Người dùng chưa duyệt (`Cần xác nhận lại`). Giữa chừng
+    người dùng bảo đóng gói → `_dist\CAD_Legend_20261114\` + `.zip` là bản TRƯỚC các sửa dưới đây.
+    - File là chi tiết chống thấm + chống mối: 6 tờ + bảng ký hiệu, 49 ô (`o_cfg.json`). Tỉ lệ SUY RA từ khung (cùng cỡ
+      giấy 695,5 × 560,8 mm): tờ A, B 1:50; C, D, F 1:30; E 1:10; ký hiệu 1:200 (`Cần xác nhận lại`) → mỗi tờ 1 legend.
+    - Bộ script nay làm được nhiều tờ / nhiều tỉ lệ, đổi TCVN3 / VNI (`ma_chu.py`), MTEXT thụt lề đoạn (`\pxi` bội chiều
+      cao chữ, `\pi` không `x` = đơn vị bản vẽ, đã kiểm bằng bản in AutoCAD); cách dùng ở `scripts\cad_legend\README.md`.
+    - **Lỗi của bản cửa đã bàn giao** (`ct_cua_legend\duyet_20261114\05_*.rvt`), đã sửa trong bản mới: cung biên hatch
+      chiều kim đồng hồ bị lật (ezdxf luôn lưu góc ngược chiều kim; 18 hatch sai ở RÈM NGĂN CHÁY / SA.LX / SA.C1);
+      209 polyline có bề rộng vẽ thành nét mảnh (nay vùng đặc); 490 nét đứt chu kỳ quá nhỏ (in ra liền); 24 MTEXT thụt lề
+      lệch chỗ; chữ font TCVN3 chữ hoa.
+    - Cỡ chữ: thêm 2,0 mm (Claude chọn) và **7 mm (người dùng chọn 2026-11-14 15:10 "Thêm cỡ 7 mm")** →
+      `ARV_CTC_CO_CHU=2.25:2,3.3:2.5,4.6:3.5,6:5,:7`; bản dùng `duyet_20261114\06_Site_legend_CT_chung_va_CT_cua_co7mm.rvt`
+      (bản 01 cùng thư mục là bản chưa có cỡ 7). Legend cửa vẫn 3 cỡ. Hatch đặc giữ màu CAD; 1 kiểu dim 2,5 mm
+      (`Cần xác nhận lại`, đã ghi trong `05_DOC_TRUOC.txt`).
+    - Bẫy chạy nền: `chay_test.ps1` dừng phiên khi 10 phút không có dòng `=== ` mới trong báo cáo → `ve_chung.py` truyền
+      `_nhip` cho `ve_legend.py` ghi 1 dòng mỗi ô (lần đầu legend cửa bị dừng ở ô 13). Nút thử riêng `ARVTestCL`
+      (`_tmp\ct_chung_legend\ext\`, `chay_nen_cl.ps1`), không dùng `hs_site_link\buoc.txt` chung.
 
 ### Đọc file DWG không cần mở AutoCAD
 Dùng `C:\Program Files\Autodesk\AutoCAD 2027\accoreconsole.exe /i <bản sao.dwg> /s <script.scr>`:
@@ -606,6 +666,16 @@ Dùng `C:\Program Files\Autodesk\AutoCAD 2027\accoreconsole.exe /i <bản sao.dw
 - Script pyRevit lưu tại `scripts/pyrevit/`. **`ARVTools.extension`** (tab **Archivina**, 22 nút): bộ Dynamo `file mau revit\dynamo\ARV_*_v1` + Chống thấm, sinh bằng `scripts\pyrevit\build_from_dynamo.py` (không sửa tay file trong `Archivina.tab\`), thư viện chung `lib\arv_dynamo_host.py`; xem `scripts\pyrevit\README.md`. **Bố cục gọn** (người dùng yêu cầu 2026-11-03): panel Hồ sơ đổi tên hiện thành **HS TKBVTC** (thư mục vẫn `HoSo.panel`, nút lớn); Kết cấu / Kiến trúc / Hoàn thiện / Thiết bị WC / Nội thất xếp nút nhỏ chồng 2–3 nút (`STACKS` trong builder, thư mục `<Panel><k>.stack`); bản trước `_backup\ARV Tools.tab_20261103_1416\`. **Đổi tên tab ARV Tools → Archivina + bỏ panel MEP** (người dùng yêu cầu 2026-11-04): thư mục tab `Archivina.tab` (`TAB` trong builder; thư mục extension giữ `ARVTools.extension`), 4 nút MEP (Thiết bị WC từ CAD, 2 nút ống thoát nước, ống gió) chuyển vào `_backup\MEP.panel_20261104_1140\`, graph gốc vẫn còn; còn 40 nút (41 sau khi thêm nút Tường xây 2026-11-04); bản tab trước `_backup\ARV Tools.tab_20261104_1140\`; Revit phải Reload pyRevit; chưa xem trong Revit thật (`Cần xác nhận lại`). **Icon nút** (người dùng duyệt ảnh xem trước 2026-11-03): mdi trắng đen như K-TOOL, nguồn `scripts\pyrevit\icons\` (`<Tên>.png` đen + `<Tên>.dark.png` trắng), builder chép thành `icon.png` / `icon.dark.png`; bản trước khi gắn `_backup\ARV Tools.tab_20261103_1429\`. **Thu gọn bằng nút xổ** (người dùng duyệt ảnh 2026-11-05): Kết cấu / Kiến trúc / Hoàn thiện / Thiết bị WC / Nội thất gộp thành 1 panel **Dựng mô hình**, mỗi nhóm 1 nút lớn xổ xuống (`PULLDOWNS`, `GOP_PANEL` trong builder; `DungMoHinh.panel\<Nhóm>.pulldown\`), panel cũ chuyển vào `_backup\<Nhóm>.panel_20261105_0918\`, bản tab trước `_backup\Archivina.tab_20261105_0913\`; chưa xem trong Revit thật (`Cần xác nhận lại`). Chưa xem bố cục + icon trong Revit thật (`Cần xác nhận lại`). Đã chạy thử dry-run trên bản sao G19 (2026-10-27): 22/22 không lỗi vỏ; 13 nút đọc CAD chưa thử được vì G19 không có CAD link, chưa thử ghi thật (`Cần xác nhận lại`).
 - **Gói Archivina cho máy khác** (2026-11-03): `scripts\pyrevit\dong_goi.ps1` → `_dist\ARVTools_<ngày>\` + `.zip` (~89 MB, kèm bộ cài pyRevit 6.5.5); máy đích chạy `CAI_DAT.bat` (đăng ký `<gói>\ARVTools` vào Extension Search Path). Family vách kính định dạng 2027. Đã thử đóng gói + phần dò của bộ cài trên máy này; chưa cài thử trên máy khác (`Cần xác nhận lại`). **Gói RIÊNG nút Vách kính** (người dùng yêu cầu 2026-11-04): `scripts\pyrevit\dong_goi_vach_kinh.ps1` → `_dist\ARVVachKinh_<ngày>\` + `.zip` (~88 MB, gần hết là bộ cài pyRevit; `-KhongKemPyRevit` còn ~6,7 MB), extension `ARVVachKinh.extension` (startup.py updater + panel VachKinh + `lib\arv_vach_kinh*.py` + `lib\vach_kinh\`), bộ cài nguồn `scripts\pyrevit\goi_vach_kinh\` (máy đã có ARVTools đầy đủ thì báo trùng nút, hỏi có cài thêm). Đã kiểm cú pháp bộ cài + không thiếu module; chưa cài thử, chưa nạp trong Revit (`Cần xác nhận lại`). Gói mang đủ kiểu vách kính: `lib\vach_kinh\ARV_VachKinh_Nguon.rvt` (5 kiểu đố / vách ARV + panel kính + vật liệu, xem skill `vach-kinh-revit`), mô hình thiếu thì nút tự chép; thử trên dự án trống OK 2026-11-04.
 - Model đang mở trong Revit của người dùng thì không đụng tới. Luôn chạy trên bản sao `.rvt` trong `D:\AI\_tmp\`.
+- **Bản sao của model workshared phải TÁCH central trước khi thử ghi** (tìm ra 2026-11-14): bản chép của file central /
+  file local mở thẳng bằng journal vẫn là file local của central THẬT (`\\192.168.100.242\…` = ổ A:); sửa phần tử đã có
+  trong central (view / sheet có sẵn, Mark tường…) là Revit tự MƯỢN phần tử đó từ central thật dưới tên người dùng, và
+  khi central đã đổi thì báo `IDS_OWN_ELEMENTS_BUT_OUT_OF_DATE` rồi journal tự huỷ bước đó (2 mục của nút Hồ sơ đã duyệt
+  không lên bản vẽ ở lần bấm đầu). Các phiên thử 13/11 – 14/11 trên bản sao Site + L1-L3 đã mượn vài phần tử như vậy
+  (không phiên nào Synchronize nên nội dung central không đổi; quyền mượn trả lại khi người dùng Synchronize /
+  Relinquish All Mine; đã báo người dùng). Cách làm đúng: trong phiên nền, TRƯỚC khi sửa gì, `doc.SaveAs(<đường dẫn mới
+  trên D:>, WorksharingSaveAsOptions.SaveAsCentral = True)` rồi thử trên chính file đó (mẫu `_tmp\ho_so_duyet\thu_vk.py`,
+  biến `ARV_THU_TACH`); bản đã tách của Site HQV: `_tmp\ho_so_duyet\rvt_tach\2.HQV_A_ThapB_Site.rvt`. Xong mỗi phiên kiểm
+  journal không có `borrowFromCentral` tới ổ mạng. Bản sao của file đã "SaveAs central" trên D: thì an toàn.
 - **Áp dụng bộ `AI REVIT` của đồng nghiệp** (2026-11-03, người dùng yêu cầu "áp dụng tất cả"; nguồn `D:\AI\AI REVIT\` = repo `antt-cell/arv-bim-claude` commit `b7381e6`, giữ nguyên, không đẩy lên GitHub của máy này):
   - **MCP `revit-archivina`** (Claude đọc trực tiếp Revit 2027 đang mở): mã ở `scripts\mcp\revit-archivina\` (đã build .NET 10, manifest `%APPDATA%\Autodesk\Revit\Addins\2027\ArchivinaRevitMcp.addin`, tab Revit **Archivina MCP**, cổng `127.0.0.1:9878`); đăng ký `D:\AI\.mcp.json` (venv `_tools\venv`, đã cài `mcp` 2.3.0), quyền trong `.claude\settings.json`: 12 tool đọc tự do, 9 tool tạo / mở / ghi phải hỏi, MCP cũ `revit` bị chặn. Chỉ sửa `core\Safety.cs`: thư mục bản sao mặc định `D:\AI\_tmp\revit-mcp` thay ổ mạng `H:`. Quy tắc dùng (theo bộ gốc): tool ghi chỉ chạy khi người dùng tự bấm **Cho phép ghi** trong Revit VÀ file là bản sao (do `rv_tao_du_an` / `rv_luu_ban_sao` tạo); hỏi trước mỗi lệnh ghi (file, việc, số phần tử); không bao giờ tìm cách vượt chốt chặn; trạng thái THỬ NGHIỆM, CHƯA DUYỆT. Chưa kết nối thử với Revit trên máy này (`Cần xác nhận lại`). Xem `scripts\mcp\revit-archivina\README.md`.
   - **Dynamo + nút**: `file mau revit\dynamo` cập nhật 9 graph + thêm 17 graph (thiết bị WC, nội thất, len chân tường, trát gờ logia), mô tả trong `README_AI_REVIT.md` cùng thư mục; Archivina nay 44 nút (thêm panel Thiết bị WC, Nội thất; 45 nút sau khi thêm Chi tiết cửa 2026-11-03). Bản cũ `_backup\*_20261103_1049*`.

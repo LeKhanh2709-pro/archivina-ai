@@ -11,10 +11,15 @@
 # mặt bằng, trả lời sẵn hộp thoại "đặt lên bản vẽ" bằng PHƯƠNG ÁN ĐÃ DUYỆT (view template, tỉ lệ, giai đoạn, hạng mục, khổ,
 # khung tên, số hiệu, tên bản vẽ) ghi trong lib\ho_so_duyet\<mã>.json. Kết quả = file người dùng đã duyệt.
 #
-#   - Tag cửa (người dùng 2026-11-13: "bản định vị cửa sắp xếp còn rối mắt"): bảng kiểm có ô chọn kiểu tag. "gon" / "2o"
-#     = nút Định vị + tag cửa chạy bằng LÕI RIÊNG lib\loi_rieng\TagCua_xep_lai.py (xếp lại: trượt dọc tường, quay vuông
-#     góc trước cửa, ít leader; "gon" = tag 1 ô chỉ mã) – thay lúc nạp qua arv_dynamo_host.load_core, không sửa file nào
-#     của Archivina; "goc" = đúng lõi của Archivina.
+#   - Tag cửa (người dùng 2026-11-13: "bản định vị cửa sắp xếp còn rối mắt"): bảng kiểm có ô chọn kiểu tag.
+#     Từ 2026-11-14 (người dùng: "Có, cập nhật" nút này theo cách mới của Archivina) MỌI kiểu chạy đúng lõi của nút
+#     Định vị + tag cửa của Archivina (lõi đó = lõi riêng xếp lại đã duyệt 13/11 + phần vách kính): vách kính được tag
+#     bằng Mark, cửa đi / cửa sổ NẰM TRONG vách kính không tag và không vào bảng thống kê. Kiểu tag chỉ còn là cách gọi
+#     lõi: "mau" / "goc" = family AV-Tag-DOOR; "chu" / "gon" = biến môi trường ARV_TAG_GON; "2o" = bật IN[30] (tag 2 ô
+#     kiểu cũ). Lõi riêng lib\loi_rieng\TagCua_xep_lai.py (bản 13/11, CHƯA có phần vách kính) không còn được nạp, file
+#     giữ lại để đối chiếu.
+#   - Có xoá thì lõi HỎI trước (hộp Yes / No của Revit, từng mặt bằng): mặt bằng định vị cửa đã tag bằng bản trước thì hỏi
+#     xoá tag cửa cũ đang nằm trên cửa trong vách kính, và hỏi vẽ lại bảng thống kê cũ trên bản vẽ.
 #   - Cấu hình nhận theo tên file đang mở ("nhan_file"); không khớp thì hỏi lại trước khi chạy.
 #   - Trước khi chạy: bảng kiểm từng mục (mặt bằng nguồn, view đích, bản vẽ, template, khung tên) → người dùng bấm Chạy.
 #     Mục thiếu mặt bằng nguồn không chạy được; mục khác bỏ tích để không làm.
@@ -69,34 +74,36 @@ THU_TU = ("ChongTham", "NganChay", "LanCanLouver", "TagCua")
 # Dòng báo cáo của lõi đưa vào bảng tóm tắt (đủ ở file log)
 DONG_CHINH = (u"ĐÃ VẼ", u"ĐÃ ĐẶT", u"Đã đặt mặt bằng", u"Đã tag", u"Dùng sheet trống", u"Số hiệu '", u"CẦN XEM LẠI",
               u"LỖI", u"Traceback", u"Phòng ướt theo CAD", u"Trục / hộp kỹ thuật cần hatch", u"Không có ", u"Chưa có ",
-              u"Bản xếp lại", u"Kiểu tag", u"Đã đổi ")
+              u"Bản xếp lại", u"Kiểu tag", u"Đã đổi ",
+              # 2026-11-14: vách kính tag bằng Mark, cửa nằm trong vách kính không tag / không thống kê
+              u"Không tag ", u"Đã xoá ", u"Còn ", u"== TAG VÁCH KÍNH", u"đã có tag", u"đã tag ", u"Bảng '")
 _DANG = {}          # mục đang chạy (hàm trả lời hộp thoại đọc ở đây)
-# Kiểu tag cửa: (mã, chữ hiện trong bảng kiểm). "mau" / "chu" / "gon" / "2o" chạy lõi riêng xếp lại; "goc" = lõi của
-# Archivina. "mau" = family tag người dùng cấp 2026-11-13 ("áp dụng tag này cho mặt bằng định vị cửa"): lib\tag_rieng\
+_TAG_IN = {}        # ô nhập thêm cho nút Định vị + tag cửa theo kiểu tag đang chọn (vd. {30: True} = tag 2 ô kiểu cũ)
+# Kiểu tag cửa: (mã, chữ hiện trong bảng kiểm). Từ 2026-11-14 mọi kiểu chạy lõi của Archivina (xem đầu file).
+# "mau" = family tag người dùng cấp 2026-11-13 ("áp dụng tag này cho mặt bằng định vị cửa"): lib\tag_rieng\
 # AV-Tag-DOOR.rfa (cửa đi, dùng nguyên) + AV-Tag-DOOR_CuaSo.rfa (bản của chính family đó đổi hạng mục sang Window Tags để
-# tag cửa sổ, vì family gốc chỉ tag được cửa đi); chỉ hiện khi có đủ file .rfa.
+# tag cửa sổ, vì family gốc chỉ tag được cửa đi); thiếu file ở đây thì lõi nạp bản cùng tên trong lib\tag_cua của Archivina.
 KIEU_TAG = (("mau", u"Tag AV-Tag-DOOR (family bạn cấp, khung nhỏ chỉ mã) – xếp lại; tag cũ của công cụ đổi sang kiểu này"),
             ("chu", u"Chỉ chữ mã, không khung – gọn nhất, tag nằm sát cửa (kích thước xem bảng thống kê)"),
             ("gon", u"Khung 1 ô 10 × 3,5 mm, chỉ mã – xếp lại"),
             ("2o", u"Khung 2 ô mã / rộngXcao – xếp lại"),
             # 2026-11-13 tối: người dùng chốt "Đổi cả Archivina" → lõi Archivina cũng tag AV-Tag-DOOR + xếp lại
             ("goc", u"Như nút Định vị + tag cửa của Archivina (từ 13/11 cũng là tag AV-Tag-DOOR, xếp lại)"))
-ENV_TAG = {"chu": "2", "gon": "1"}      # giá trị ARV_TAG_GON cho lõi riêng
-LOI_TAG_RIENG = os.path.join(_HERE, "loi_rieng", "TagCua_xep_lai.py")
+ENV_TAG = {"chu": "2", "gon": "1"}      # giá trị ARV_TAG_GON cho lõi của Archivina
+LOI_TAG_RIENG = os.path.join(_HERE, "loi_rieng", "TagCua_xep_lai.py")      # bản 13/11, không còn nạp (giữ để đối chiếu)
 THU_MUC_TAG_RIENG = os.path.join(_HERE, "tag_rieng")
 TAG_MAU = {"cua_di": u"AV-Tag-DOOR", "cua_so": u"AV-Tag-DOOR_CuaSo"}      # tên family = tên file .rfa
 ENV_TAG_MAU = ("ARV_TAG_FAM_CUA_DI", "ARV_TAG_FAM_CUA_SO", "ARV_TAG_FAM_THU_MUC")
 
 
 def co_tag_mau():
-    return os.path.isfile(LOI_TAG_RIENG) and all(
-        os.path.isfile(os.path.join(THU_MUC_TAG_RIENG, TAG_MAU[k] + u".rfa")) for k in ("cua_di", "cua_so"))
+    """Đủ 2 file family tag trong lib\\tag_rieng của extension này (thiếu thì lõi nạp bản trong lib\\tag_cua của Archivina)."""
+    return all(os.path.isfile(os.path.join(THU_MUC_TAG_RIENG, TAG_MAU[k] + u".rfa")) for k in ("cua_di", "cua_so"))
 
 
 def kieu_tag_dung():
-    """Các kiểu tag chọn được trên máy này (thiếu file thì ẩn kiểu tương ứng)."""
-    return tuple((k, c) for k, c in KIEU_TAG
-                 if k == "goc" or (k == "mau" and co_tag_mau()) or (k != "mau" and os.path.isfile(LOI_TAG_RIENG)))
+    """Các kiểu tag chọn được (từ 2026-11-14 mọi kiểu chạy lõi của Archivina nên luôn đủ)."""
+    return tuple(KIEU_TAG)
 
 
 def kd(s):
@@ -322,13 +329,16 @@ def hoi_ke_hoach(ch, ten_f, muc_ds, khop_ten, ghi_chu_tag=u""):
     n_duoc = sum(1 for m in muc_ds if m["duoc"])
     lb3 = Label()
     lb3.Text = (u"Bấm Chạy: lần lượt chạy các mục đang tích bằng đúng các nút HS TKBVTC, trả lời sẵn theo phương án đã duyệt "
-                u"(không hỏi lại từng nút). Không xoá gì, không sửa view template; mục đã làm rồi thì không vẽ trùng.\n"
+                u"(không hỏi lại từng nút). Không sửa view template; mục đã làm rồi thì không vẽ trùng.\n"
+                u"Định vị cửa: vách kính tag bằng Mark; cửa đi / cửa sổ nằm trong vách kính không tag, không vào bảng thống kê. "
+                u"Không tự xoá gì: mặt bằng đã tag từ trước thì HỎI rồi mới xoá tag cửa cũ trên cửa trong vách kính / vẽ lại "
+                u"bảng thống kê cũ.\n"
                 u"Revit sẽ bận vài phút. Hoàn tác: Ctrl+Z 1 lần cho cả lần bấm (báo cáo cuối ghi rõ). Nên Synchronize / lưu "
                 u"file trước khi chạy.")
     lb3.Location = Point(14, y)
-    lb3.Size = Size(rong - 28, 52)
+    lb3.Size = Size(rong - 28, 84)
     f.Controls.Add(lb3)
-    y += 56
+    y += 88
     # Kiểu tag cửa (chỉ khi có mục Định vị + tag cửa)
     from System.Windows.Forms import ComboBox, ComboBoxStyle
     cb_tag = ComboBox()
@@ -419,6 +429,7 @@ def _tra_loi(nut):
         tpl, tl = _tpl_tl(doc, view, nut, m)
         if nut == "TagCua":             # như arv_hoi_sheet.hoi
             ra = {6: False, 21: True, 22: m["gd"], 23: m["hm"], 24: m["kho"], 25: m["kt"], 26: m["so"], 27: ten_bv}
+            ra.update(_TAG_IN)          # ô nhập thêm theo kiểu tag (vd. 30: True = tag 2 ô kiểu cũ)
         else:                           # như arv_hoi_sheet._hoi_mat_bang + _doi_in
             t = _tpl_cua(doc, view)
             la_dich = tt["tu_khoa"] in kd(view.Name) or (t is not None and tt["tu_khoa"] in kd(_ten(t)))
@@ -567,36 +578,28 @@ def _chay_nut(uiapp, panel_dir, nut, ghi):
 
 
 def _thay_loi_tag(kieu_tag, ghi):
-    """Kiểu tag "gon" / "2o": nút Định vị + tag cửa của Archivina nạp lõi riêng LOI_TAG_RIENG thay core.py của nó (thay
-    lúc nạp, không sửa file của Archivina; __file__ của lõi vẫn là core.py gốc nên family đóng gói lib\\tag_cua vẫn tìm
-    đúng). Trả về hàm trả lại như cũ."""
-    import arv_dynamo_host
-    goc = arv_dynamo_host.load_core
+    """Đặt kiểu tag cho nút Định vị + tag cửa của Archivina. Từ 2026-11-14 MỌI kiểu chạy đúng core.py của nút đó (lõi
+    riêng LOI_TAG_RIENG không còn được nạp vì chưa có phần vách kính); kiểu tag chỉ là biến môi trường / ô nhập lõi đó
+    đọc: "mau" = tên family + thư mục .rfa của extension này, "chu" / "gon" = ARV_TAG_GON, "2o" = IN[30] (tag 2 ô kiểu
+    cũ), "goc" = mặc định của Archivina. Không sửa file nào của Archivina. Trả về hàm trả lại như cũ."""
     ten_env = ("ARV_TAG_GON",) + ENV_TAG_MAU
     cu_env = dict((k, os.environ.get(k)) for k in ten_env)
-    if kieu_tag == "mau" and not co_tag_mau():
-        ghi(u"Tag cửa: thiếu file family trong %s → dùng kiểu 'chỉ chữ'." % THU_MUC_TAG_RIENG)
-        kieu_tag = "chu"
-    if kieu_tag in ("mau", "chu", "gon", "2o") and os.path.isfile(LOI_TAG_RIENG):
-        def nap(core_path):
-            if os.path.basename(os.path.dirname(core_path)) == "TagCua.pushbutton":
-                return goc(LOI_TAG_RIENG)
-            return goc(core_path)
-        arv_dynamo_host.load_core = nap
-        for k in ten_env:
-            os.environ.pop(k, None)
-        if kieu_tag in ENV_TAG:
-            os.environ["ARV_TAG_GON"] = ENV_TAG[kieu_tag]
-        if kieu_tag == "mau":       # family tag người dùng cấp: lõi riêng đọc 3 biến này
-            os.environ["ARV_TAG_FAM_CUA_DI"] = TAG_MAU["cua_di"]
-            os.environ["ARV_TAG_FAM_CUA_SO"] = TAG_MAU["cua_so"]
-            os.environ["ARV_TAG_FAM_THU_MUC"] = THU_MUC_TAG_RIENG
-        ghi(u"Tag cửa: kiểu '%s' – lõi riêng %s" % (kieu_tag, LOI_TAG_RIENG))
-    else:
-        ghi(u"Tag cửa: lõi của Archivina (từ 2026-11-13 cũng tag AV-Tag-DOOR + xếp lại)")
+    for k in ten_env:
+        os.environ.pop(k, None)
+    _TAG_IN.clear()
+    if kieu_tag in ENV_TAG:
+        os.environ["ARV_TAG_GON"] = ENV_TAG[kieu_tag]
+    elif kieu_tag == "2o":
+        _TAG_IN[30] = True
+    elif kieu_tag == "mau" and co_tag_mau():    # family tag người dùng cấp: lõi đọc 3 biến này
+        os.environ["ARV_TAG_FAM_CUA_DI"] = TAG_MAU["cua_di"]
+        os.environ["ARV_TAG_FAM_CUA_SO"] = TAG_MAU["cua_so"]
+        os.environ["ARV_TAG_FAM_THU_MUC"] = THU_MUC_TAG_RIENG
+    ghi(u"Tag cửa: kiểu '%s' – lõi của nút Định vị + tag cửa (Archivina): vách kính tag bằng Mark, cửa nằm trong vách kính "
+        u"không tag, không thống kê." % kieu_tag)
 
     def tra_lai():
-        arv_dynamo_host.load_core = goc
+        _TAG_IN.clear()
         for k, v in cu_env.items():
             if v is None:
                 os.environ.pop(k, None)

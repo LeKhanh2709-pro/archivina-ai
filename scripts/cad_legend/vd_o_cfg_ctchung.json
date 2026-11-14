@@ -1,0 +1,531 @@
+{
+ "to": [
+  {
+   "ma": "A",
+   "ti_le": 50,
+   "ten": "CHI TIẾT CHUNG (CAD) 01 - CHỐNG MỐI MẠCH NGỪNG"
+  },
+  {
+   "ma": "B",
+   "ti_le": 50,
+   "ten": "CHI TIẾT CHUNG (CAD) 02 - CHỐNG MỐI ĐƯỜNG ỐNG"
+  },
+  {
+   "ma": "C",
+   "ti_le": 30,
+   "ten": "CHI TIẾT CHUNG (CAD) 03 - CHỐNG THẤM KIỂU 1-15"
+  },
+  {
+   "ma": "D",
+   "ti_le": 30,
+   "ten": "CHI TIẾT CHUNG (CAD) 04 - CHỐNG THẤM CỔ ỐNG, CỬA"
+  },
+  {
+   "ma": "E",
+   "ti_le": 10,
+   "ten": "CHI TIẾT CHUNG (CAD) 05 - CHỐNG THẤM CÁC VỊ TRÍ"
+  },
+  {
+   "ma": "F",
+   "ti_le": 30,
+   "ten": "CHI TIẾT CHUNG (CAD) 06 - CHỐNG THẤM TƯỜNG, HƯỚNG DẪN"
+  },
+  {
+   "ma": "G",
+   "ti_le": 200,
+   "ten": "CHI TIẾT CHUNG (CAD) 07 - KÝ HIỆU"
+  }
+ ],
+ "o": [
+  {
+   "to": "A",
+   "ten": "CM-01 CHỐNG MỐI MẠCH NGỪNG CHÂN TƯỜNG VÂY",
+   "bounds": [
+    144300,
+    -43643,
+    170812,
+    -29910
+   ]
+  },
+  {
+   "to": "A",
+   "ten": "PHÒNG CHỐNG MỐI MẠCH NGỪNG ĐỨNG TƯỜNG VÂY",
+   "bounds": [
+    170812,
+    -43643,
+    184800,
+    -29910
+   ]
+  },
+  {
+   "to": "A",
+   "ten": "CM-02 CHỐNG MỐI MẠCH NGỪNG ĐỈNH TƯỜNG VÂY",
+   "bounds": [
+    144300,
+    -57950,
+    166586,
+    -43643
+   ]
+  },
+  {
+   "to": "A",
+   "ten": "CM-03 PHÒNG CHỐNG MỐI MẠCH NGỪNG ĐỨNG TƯỜNG VÂY",
+   "bounds": [
+    166586,
+    -57950,
+    175276,
+    -43643
+   ]
+  },
+  {
+   "to": "A",
+   "ten": "MẶT CẮT ĐIỂN HÌNH TẦNG HẦM",
+   "bounds": [
+    175276,
+    -57950,
+    184800,
+    -43643
+   ]
+  },
+  {
+   "to": "B",
+   "ten": "CM-04 PHÒNG CHỐNG MỐI ĐƯỜNG ỐNG KỸ THUẬT XUYÊN VÁCH TẦNG HẦM",
+   "bounds": [
+    199700,
+    -45684,
+    237100,
+    -29910
+   ]
+  },
+  {
+   "to": "B",
+   "ten": "HÀO PHÒNG MỐI PHÍA NGOÀI",
+   "bounds": [
+    199700,
+    -57950,
+    210426,
+    -45684
+   ]
+  },
+  {
+   "to": "B",
+   "ten": "QUY TRÌNH LẮP ĐẶT ĐƯỜNG ỐNG BẢO TRÌ ALTIS PHÍA NGOÀI",
+   "bounds": [
+    210426,
+    -57950,
+    237100,
+    -45684
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 1",
+   "bounds": [
+    151753,
+    -77389,
+    155787,
+    -71688
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 2",
+   "bounds": [
+    155787,
+    -77389,
+    159586,
+    -71688
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 3",
+   "bounds": [
+    159586,
+    -77389,
+    163125,
+    -71688
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 4",
+   "bounds": [
+    163125,
+    -77389,
+    167960,
+    -71688
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 5",
+   "bounds": [
+    167960,
+    -77389,
+    172158,
+    -71688
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 6",
+   "bounds": [
+    151753,
+    -82486,
+    155253,
+    -77389
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 7",
+   "bounds": [
+    155253,
+    -82486,
+    159022,
+    -77389
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 8",
+   "bounds": [
+    159022,
+    -82486,
+    163328,
+    -77389
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 9",
+   "bounds": [
+    163328,
+    -82486,
+    167643,
+    -77389
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 10",
+   "bounds": [
+    167643,
+    -82486,
+    172158,
+    -77389
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 11",
+   "bounds": [
+    151753,
+    -88512,
+    156480,
+    -82486
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 12",
+   "bounds": [
+    156480,
+    -88512,
+    160698,
+    -82486
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 13",
+   "bounds": [
+    160698,
+    -88512,
+    164161,
+    -82486
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 14",
+   "bounds": [
+    164161,
+    -88512,
+    168166,
+    -82486
+   ]
+  },
+  {
+   "to": "C",
+   "ten": "CHI TIẾT CHỐNG THẤM KIỂU 15",
+   "bounds": [
+    168166,
+    -88512,
+    172158,
+    -82486
+   ]
+  },
+  {
+   "to": "D",
+   "ten": "CHỐNG THẤM LỖ MỞ, CỔ ỐNG KHOAN RÚT LÕI",
+   "bounds": [
+    188280,
+    -78798,
+    205184,
+    -71688
+   ]
+  },
+  {
+   "to": "D",
+   "ten": "CHI TIẾT XỬ LÝ ỐNG ĐẶT CHỜ",
+   "bounds": [
+    188280,
+    -83749,
+    195923,
+    -78798
+   ]
+  },
+  {
+   "to": "D",
+   "ten": "CHI TIẾT CHỐNG THẤM CỬA WC, CỬA QUAY LÔ GIA",
+   "bounds": [
+    195923,
+    -83749,
+    205184,
+    -78798
+   ]
+  },
+  {
+   "to": "D",
+   "ten": "CHI TIẾT CHỐNG THẤM CHÂN CỬA LÙA LOGIA",
+   "bounds": [
+    188280,
+    -88512,
+    205184,
+    -83749
+   ]
+  },
+  {
+   "to": "D",
+   "ten": "QUY CÁCH CHỐNG THẤM",
+   "bounds": [
+    205184,
+    -88512,
+    209348,
+    -71688
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm sàn tầng hầm 3",
+   "bounds": [
+    151724,
+    -94719,
+    153445,
+    -93645
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm vách tường vây",
+   "bounds": [
+    153445,
+    -94719,
+    154384,
+    -93645
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm rãnh thu nước, rãnh thoát nước",
+   "bounds": [
+    154384,
+    -94719,
+    156164,
+    -93645
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm hố pít thang máy",
+   "bounds": [
+    156164,
+    -94719,
+    157770,
+    -93645
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm cột bê tông trong bể",
+   "bounds": [
+    157770,
+    -94719,
+    158692,
+    -93645
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm mái tầng hầm (sàn ground)",
+   "bounds": [
+    151724,
+    -96260,
+    153710,
+    -94719
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm bể xử lý nước thải, bể nước sinh hoạt",
+   "bounds": [
+    153710,
+    -96260,
+    157159,
+    -94719
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm bể bơi, bể cân bằng, bể cảnh",
+   "bounds": [
+    157159,
+    -96260,
+    158692,
+    -94719
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm cổ ống kỹ thuật xuyên sàn",
+   "bounds": [
+    151724,
+    -97645,
+    153710,
+    -96260
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm hộp kỹ thuật, tường xây ngoài trời",
+   "bounds": [
+    153710,
+    -97645,
+    155489,
+    -96260
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm nhà vệ sinh, ban công, lôgia, phòng KT nước",
+   "bounds": [
+    155489,
+    -97645,
+    157096,
+    -96260
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm Tầng mái, Tầng Tum, sê nô",
+   "bounds": [
+    157096,
+    -97645,
+    158692,
+    -96260
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "Chống thấm bồn trồng cây, mái xanh",
+   "bounds": [
+    151724,
+    -99192,
+    153710,
+    -97645
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "CHỐNG THẤM GIẰNG MÓNG VÀ SÀN TẦNG HẦM",
+   "bounds": [
+    153710,
+    -99192,
+    155489,
+    -97645
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "CHỐNG THẤM ĐÀI CỌC VÀ SÀN TẦNG HẦM",
+   "bounds": [
+    155489,
+    -99192,
+    157093,
+    -97645
+   ]
+  },
+  {
+   "to": "E",
+   "ten": "BĂNG CẢN NƯỚC SIKA WATERBAR V20",
+   "bounds": [
+    157093,
+    -99192,
+    158692,
+    -97645
+   ]
+  },
+  {
+   "to": "F",
+   "ten": "CHI TIẾT CHỐNG THẤM TƯỜNG VỆ SINH TẠI VỊ TRÍ VÒI TẮM ĐỨNG",
+   "bounds": [
+    188280,
+    -104098,
+    197225,
+    -93916
+   ]
+  },
+  {
+   "to": "F",
+   "ten": "CHI TIẾT CHỐNG THẤM TƯỜNG PHÒNG KỸ THUẬT ƯỚT, PHÒNG RÁC",
+   "bounds": [
+    188280,
+    -110740,
+    202910,
+    -104098
+   ]
+  },
+  {
+   "to": "F",
+   "ten": "BẢNG KHU VỰC CHỐNG THẤM - QUY CÁCH CẤU TẠO",
+   "bounds": [
+    197225,
+    -104098,
+    202910,
+    -93916
+   ]
+  },
+  {
+   "to": "F",
+   "ten": "HƯỚNG DẪN QUY TRÌNH CHỐNG THẤM",
+   "bounds": [
+    202910,
+    -110740,
+    209348,
+    -93916
+   ]
+  },
+  {
+   "to": "G",
+   "ten": "KÝ HIỆU CHỐNG THẤM",
+   "bounds": [
+    -248200,
+    -181300,
+    -203500,
+    -167300
+   ]
+  }
+ ]
+}

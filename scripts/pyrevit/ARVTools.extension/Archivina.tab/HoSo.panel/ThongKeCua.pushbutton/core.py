@@ -1452,7 +1452,10 @@ def _chinh():
         if khac_tang:
             xem_lai.append(u"%d %s thấy trong mặt bằng nhưng Level khác tầng %s – bảng KHÔNG đếm (vd. id %s)." % (
                 len(khac_tang), nhan.lower(), lv.Name, u", ".join(str(e.Id.Value) for e in khac_tang[:5])))
-        if theo_tang != tong and not doc_in(6):
+        if theo_tang != tong and ve_tay:
+            xem_lai.append(u"%s: tầng %s có %d cái, mặt bằng chỉ thấy %d (crop / ẩn) – bảng vẽ rời chỉ đếm %d cái thấy "
+                           u"trong mặt bằng này." % (nhan, lv.Name, theo_tang, tong, tong))
+        elif theo_tang != tong and not doc_in(6):
             xem_lai.append(u"%s: tầng %s có %d cái, mặt bằng chỉ thấy %d (crop / ẩn) – bảng lọc theo tầng nên đếm %d; đặt "
                            u"bảng lên sheet của mặt bằng này và bật IN[6] (Shift+bấm) thì bảng chỉ đếm cửa thấy trên sheet."
                            % (nhan, lv.Name, theo_tang, tong, theo_tang))

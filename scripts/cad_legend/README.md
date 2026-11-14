@@ -104,7 +104,26 @@ Trạng thái (2026-11-14): bản sửa chạy trên bản sao sạch model Site
 ## Còn làm
 
 - Người dùng chốt 2026-11-14: **không cần làm nút pyRevit**, chỉ lấy file `.rvt` đã làm
-  (`duyet_20261114\05_Site_legend_CT_cua.rvt`). Không còn việc dở.
+  (`duyet_20261114\05_Site_legend_CT_cua.rvt`). File cửa không còn việc dở.
+- **File thứ 2 `ctchung.dxf` (chi tiết chống thấm, chống mối): XONG 2026-11-14 15:00**, bàn giao
+  `_tmp\ct_chung_legend\duyet_20261114\` (`01_*.rvt` có 7 legend chi tiết chung + legend cửa vẽ lại, ảnh, so sánh với bản
+  in AutoCAD từng ô, `05_DOC_TRUOC.txt`). 8 legend 0 lỗi; người dùng chưa duyệt (`Cần xác nhận lại`).
+- Bản nhiều tờ (từ 2026-11-14, bộ script này đã có):
+  - `tao_o_cfg.py` → `o_cfg.json` (`to`: mã / tỉ lệ / tên legend, `o`: tờ / tên / khung ô). Mẫu: `vd_o_cfg_ctchung.json`.
+    `trich_xuat.py <dxf> <regions_no.dxf> <regions.json> <ra.json> [o_cfg.json]`: có cấu hình thì mỗi ô mang tỉ lệ tờ,
+    toạ độ tính từ góc trái trên của tờ, nét trên ranh chung bên phải / trên chỉ thuộc 1 ô. Không có cấu hình = cách cũ.
+  - `ve_chung.py` (chạy qua nút thử, đọc `ve_cfg.txt`, mẫu `vd_ve_cfg.txt`): mỗi tờ 1 legend đúng tỉ lệ, `KHAC=` vẽ thêm
+    1 legend từ json khác, `LUU=1` lưu file. Ghi nhịp từng ô vào `tong.txt` (bộ chạy nền dừng phiên khi 10 phút không
+    có dòng `=== ` mới; legend cửa 25 ô mất ~13 phút).
+  - `ma_chu.py`: đổi TCVN3 / VNI theo font từng đoạn (cả `\f` giữa MTEXT), font chữ HOA thì viết hoa, chữ TCVN3 gán font
+    Unicode nhận theo nội dung.
+  - `tao_plot_o.py` (Core Console in từng ô ra PNG đơn sắc) + `so_o.py <KQ>` (ghép ảnh AutoCAD – Revit từng ô).
+  - Sửa chung (ảnh hưởng cả file cửa): cung / elip biên hatch chiều kim đồng hồ (ezdxf đã lưu góc ngược chiều, code cũ
+    lật lần nữa); polyline có bề rộng ≥ 0,2 mm giấy → vùng đặc; nét đứt chu kỳ < 0,05 mm giấy → nét liền; mẫu hatch
+    trong block xoay / co theo block; mẫu quá dày (< 0,12 mm giấy) → đặc; chấm mẫu = 0,2 mm giấy; MTEXT thụt lề đoạn
+    (`\pxi` bội chiều cao chữ, `\pi` không `x` = đơn vị bản vẽ, đã kiểm bằng bản in AutoCAD); bỏ layer không in;
+    hatch kiểu Outer / Ignore. Cỡ chữ đổi bằng `ARV_CTC_CO_CHU` (ctchung: thêm cỡ 2,0 mm).
+- Gói mang đi: `_dist\CAD_Legend_20261114\` + `.zip` (làm TRƯỚC các sửa ở trên: kết quả file cửa cũ, bộ script cũ).
 - Nếu sau này cần chạy cho file CAD khác hoặc làm nút: Revit API không tạo legend từ đầu, nên model phải có sẵn ít
   nhất 1 legend; máy khác cần Python có ezdxf + shapely (gói `_tools\CHONGTHAM_python` có đủ) và AutoCAD Core Console
   cho bước nổ REGION.

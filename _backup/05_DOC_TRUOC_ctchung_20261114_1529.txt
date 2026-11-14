@@ -1,0 +1,36 @@
+BÀN GIAO – CHI TIẾT CHUNG (ctchung.dxf) + CHI TIẾT CỬA vẽ lại, dạng legend 2D trong Revit 2027 (2026-11-14)
+
+01_Site_legend_CT_chung_va_CT_cua.rvt
+  Bản sao model Site HQV (link đặt không nạp). Có 8 legend mới, mỗi ô chi tiết 1 detail group:
+  - CHI TIẾT CHUNG (CAD) 01 - CHỐNG MỐI MẠCH NGỪNG        1:50   5 ô
+  - CHI TIẾT CHUNG (CAD) 02 - CHỐNG MỐI ĐƯỜNG ỐNG         1:50   3 ô
+  - CHI TIẾT CHUNG (CAD) 03 - CHỐNG THẤM KIỂU 1-15        1:30  15 ô
+  - CHI TIẾT CHUNG (CAD) 04 - CHỐNG THẤM CỔ ỐNG, CỬA      1:30   5 ô
+  - CHI TIẾT CHUNG (CAD) 05 - CHỐNG THẤM CÁC VỊ TRÍ       1:10  16 ô
+  - CHI TIẾT CHUNG (CAD) 06 - CHỐNG THẤM TƯỜNG, HƯỚNG DẪN 1:30   4 ô
+  - CHI TIẾT CHUNG (CAD) 07 - KÝ HIỆU                     1:200  1 ô
+  - CHI TIẾT CỬA (CAD)                                    1:20  25 ô (vẽ lại bằng bộ trích xuất đã sửa)
+  Cả 8 legend: 0 lỗi nét / cung / hatch / chữ / dim (04_log\tong.txt).
+
+02_anh_legend\        ảnh xuất từ chính Revit của từng legend
+03_so_sanh_CAD_Revit\ NN_<tờ>.png: trái = bản in thật từ AutoCAD theo đúng khung ô, phải = cùng vùng trong legend Revit
+                      (phần đen = ngoài vùng ảnh Revit, không phải nét vẽ); cua_*.png = 3 ô cửa có hatch được sửa
+04_log\               báo cáo tổng + log từng legend + cấu hình 49 ô (o_cfg.json)
+
+Bản cửa bàn giao trước (ct_cua_legend\duyet_20261114\05_Site_legend_CT_cua.rvt) có các lỗi sau, bản này đã sửa:
+  - 18 hatch sai hình ở 3 ô RÈM NGĂN CHÁY (13), SA.LX (3), SA.C1 (2): cung biên hatch vẽ chiều kim đồng hồ bị lật ngược
+  - 209 polyline có bề rộng (màng, nét đậm) trước vẽ thành nét mảnh, nay là vùng tô đặc đúng bề rộng
+  - 490 nét "nét đứt" có chu kỳ quá nhỏ (khi in ra là nét liền) nay vẽ nét liền
+  - 24 khối chữ MTEXT thụt lề đoạn bị lệch vị trí; chữ font TCVN3 chữ HOA nay viết hoa đúng
+
+Cần xác nhận lại:
+  - Tỉ lệ từng tờ do Claude SUY RA từ khung tờ (cùng khổ 695,5 x 560,8 mm); file CAD không ghi tỉ lệ.
+  - Thêm cỡ chữ 2,0 mm (khoảng 220 / 545 chữ trong CAD cao 2,0 mm khi in) ngoài 3 cỡ 2,5 / 3,5 / 5 đã chốt cho file cửa.
+  - Tiêu đề cao 6,7 – 12,9 mm trong CAD (khoảng 40 chữ, tờ A, B, D) đang về cỡ lớn nhất 5 mm, nên nhỏ hơn bản CAD và
+    có tiêu đề trong CAD xuống 2 dòng thì Revit nằm 1 dòng.
+  - Hatch đặc giữ màu CAD (màng chống thấm xanh dương); bản in AutoCAD đơn sắc ra đen.
+  - Chỉ 1 kiểu dim 2,5 mm: dim CAD chữ to (tờ E, phóng to) thành chữ nhỏ.
+  - Hatch mẫu quá dày (khoảng cách < 0,12 mm giấy) vẽ thành vùng đặc xám; vài chỗ che chữ dim (vd. "200" ở ô mái tầng hầm, tờ E).
+  - Chưa làm: chữ đậm / nghiêng / gạch chân trong MTEXT, nét kiểu ZIGZAG / FENCELINE (vẽ nét liền), 5 chữ < 0,9 mm giấy
+    ở ô chân cửa lùa logia (tờ D) bị bỏ, hatch CROSS rất lớn nằm ngoài các tờ và 4 đối tượng trên layer không in bị bỏ.
+  - Ô thứ 2 tờ F chứa 2 chi tiết (theo đúng khung CAD).

@@ -127,6 +127,7 @@ Người dùng yêu cầu: "1 cửa sổ đặt tên cửa đi cửa sổ, 1 c�
 | 10 | Tag vách kính bằng Mark | False (nút lấy theo ô trong bảng, lần đầu bật) |
 | 11 | Kiểu tag `Family : Type` (trống = `ARV_Tag Vach Kinh Mark`) | trống |
 | 12 | Thư mục family tag đóng gói (trống = `<extension>\lib\tag_vach_kinh`) | trống |
+| 13 | Vẫn thống kê cửa đi / cửa sổ nằm trong vách kính (2026-11-14, xem mục dưới) | False |
 
 Cách thử (`_tmp\tk_vach_kinh\`, bản sao `rvt\L1-L3.rvt` chép từ ổ A: `2.HQV_A_ThapB_L1-L3.rvt` do người dùng đưa): nút thử
 `ARVTestHS` (`hs_site_link\buoc.txt` → `chay_that.py`, exec `script.py` của NÚT THẬT 2 lần trên view nhân bản có crop) +
@@ -135,6 +136,32 @@ Cách thử (`_tmp\tk_vach_kinh\`, bản sao `rvt\L1-L3.rvt` chép từ ổ A: `
 có Mark, 6 chưa), đặt 5 dòng tên thử, tag 53 / 53 chữ đúng Mark, bấm lại không tag thêm; ảnh `kq_that\`. Phiên thử không
 đặt `locale` mà Revit không văng. Chưa thử: vách kính trong file link, vách cong, mặt bằng xoay.
 
+## Cửa nằm trong vách kính: không liệt kê, không thống kê (2026-11-14) – QUY TẮC HIỆN HÀNH
+Người dùng chốt 2026-11-14: "không tag các cửa, và thống kê các cửa (cửa đi, cửa sổ) khi nằm trong vách kính" (áp cho cả
+nút Định vị + tag cửa, xem skill `tag-cua-revit`). Cách hiểu của Claude: cửa đi / cửa sổ có `Host` là curtain wall
+(`vk_trong_vach`) thuộc về vách kính – vách có tên riêng theo Mark – nên không đứng riêng trong bảng.
+- Hộp thoại (`arv_bang_cua.lay_dong`): không liệt kê loại cửa chỉ nằm trong vách kính, SL mặt bằng / SL đã có không đếm
+  các cửa đó; dòng mô tả ghi "Không liệt kê n cửa đi / cửa sổ nằm trong vách kính…".
+- Lõi: `dem_trong_view(..., bo_vk)` / `dem_theo_tang(..., bo_vk)` bỏ các cửa đó, báo "bỏ n cái nằm trong vách kính".
+  **IN[13]** (bool, mặc định TẮT) = vẫn thống kê cửa nằm trong vách kính như cũ (ô đặt nghĩa ngược vì ô bool trống của
+  nút truyền False).
+- Bảng thống kê Revit KHÔNG lọc được theo vách chủ → tầng có cửa nằm trong vách kính (hoặc có cửa trong link) thì bảng =
+  **bảng vẽ rời** (drafting view, `vk_bang_ve` gọi `lk_bang_ve`), chỉ đếm cửa THẤY trong mặt bằng. Bảng Revit cùng tên có
+  từ trước: không xoá, lõi báo CẦN XEM LẠI. Bảng vẽ cũ khác số dòng: HỎI Yes / No rồi mới xoá chữ + nét cũ và vẽ lại
+  (giữ góc phải dưới + chỗ nhãn viewport trên bản vẽ); biến môi trường `ARV_VE_LAI_BANG` = 1 / 0 trả lời sẵn khi thử nền.
+- Phần vách kính của lõi nay là **khối chung** `scripts\dynamo\VachKinh_chung.py`, chép vào `ThongKeCua_TuDong.py` +
+  `TagCua_TuDong.py` bằng `gop_vach_kinh.py` (không sửa tay giữa 2 mốc `PHẦN CHUNG VÁCH KÍNH`); `VK_IN_THU_MUC` = chỉ số ô
+  thư mục family tag (12 ở đây).
+- Thử nền nút thật (`_tmp\tk_vach_kinh\chay_2nut.py`, nút thử riêng `ARVTestVK` + `chay_nen.ps1`; journal
+  `journal_site_dvc.txt` / `journal_l13.txt`):
+  - bản sao Site HQV đã có mặt bằng định vị cửa Tầng 1 (cửa trong link): cửa đi 55 cái / 11 ký hiệu, bỏ 39 cái nằm trong
+    vách kính, bảng vẽ `THỐNG KÊ CỬA ĐI - TẦNG 1`; bấm lại chỉ cập nhật chữ (`kq_2nut_site\`);
+  - bản sao `2.HQV_A_ThapB_L1-L3.rvt` Tầng 1 (cửa trong model chính): 50 cái / 14 ký hiệu, bỏ 25, bảng vẽ thay bảng
+    Revit; bấm lại không đổi (`kq_2nut_l13\`).
+- Bản trước: `_backup\*_20261114_0910_truoc_bo_cua_vk*`, `_backup\*_20261114_0922_truoc_vach_kinh_chung*`,
+  `_backup\*_20261114_1327_truoc_sua_canh_bao*`.
+
 ## Trạng thái
-Người dùng duyệt ảnh bản thử cửa sổ Vách kính 2026-11-13, nút sinh lại 10:13; chưa bấm trong Revit của mình
-(`Cần xác nhận lại`). Revit phải Reload pyRevit mới thấy bản mới.
+Người dùng duyệt ảnh bản thử cửa sổ Vách kính 2026-11-13. Bản 2026-11-14 (bỏ cửa nằm trong vách kính) nút sinh lại 13:28,
+`.dyn` sinh lại nhưng chưa chạy thử trong Dynamo; người dùng chưa bấm trong Revit của mình (`Cần xác nhận lại`). Revit
+phải Reload pyRevit mới thấy bản mới.
