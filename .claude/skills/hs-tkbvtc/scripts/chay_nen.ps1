@@ -13,7 +13,7 @@
     Tìm pyRevit CLI: $env:ARCHIVINA_PYREVIT -> %APPDATA%\pyRevit-Master\bin\pyrevit.exe -> pyrevit trong PATH.
     -HienCuaSo: giữ cửa sổ (chỉ khi người dùng đồng ý xem lỗi).
 #>
-param([Parameter(Mandatory = $true)][string]$Viec, [int]$ChoToiDa = 3600, [string]$PhienBan = '', [int]$ChoKhoa = 0, [switch]$HienCuaSo, [switch]$An)
+param([Parameter(Mandatory = $true)][string]$Viec, [int]$ChoToiDa = 3600, [string]$PhienBan = '', [int]$ChoKhoa = 0, [int]$KhongTienTrien = 45, [switch]$HienCuaSo, [switch]$An)
 $ErrorActionPreference = 'Stop'
 $skill = Split-Path -Parent $PSScriptRoot
 $ext = Join-Path $skill 'ext'
@@ -83,6 +83,9 @@ function Chay-Phien([string]$ViecP, [string]$KqP, [string]$MoTruoc) {
         $p = Start-Process $revit -ArgumentList "`"$journal`"" -WorkingDirectory $KqP -PassThru
         Bat-CuaSoPhien -IdTienTrinh $p.Id -HienCuaSo:$HienCuaSo -An:$An
         $nTruoc = -1; $tDoi = Get-Date; $lyDo = 'hết giờ'
+        # Tiến triển = dòng "=== " mới trong bao_cao.txt. Revit còn ghi journal (đang dựng đồ hoạ / chạy lõi nặng, vd. FPT P5
+        # 37 link) thì chờ thêm tới -KhongTienTrien phút (mặc định 45); journal cũng đứng 15 phút thì dừng.
+        $jPhien = Join-Path $KqP 'journal.0001.txt'; $jCo = -1; $tJ = Get-Date
         while (((Get-Date) - $t0).TotalSeconds -lt $ChoToiDa) {
             Start-Sleep 10
             if ($p.HasExited) { $lyDo = 'Revit đã thoát'; break }
@@ -93,7 +96,11 @@ function Chay-Phien([string]$ViecP, [string]$KqP, [string]$MoTruoc) {
             }
             if ($n -ne $nTruoc) { $nTruoc = $n; $tDoi = Get-Date; "$n bước sau $([int]((Get-Date) - $t0).TotalSeconds)s" }
             if ($xong) { $lyDo = 'xong'; break }
-            if (((Get-Date) - $tDoi).TotalSeconds -gt 900) { $lyDo = '15 phút không tiến triển'; break }
+            $c = if (Test-Path $jPhien) { (Get-Item $jPhien).Length } else { 0 }
+            if ($c -ne $jCo) { $jCo = $c; $tJ = Get-Date }
+            $giayBao = ((Get-Date) - $tDoi).TotalSeconds; $giayJ = ((Get-Date) - $tJ).TotalSeconds
+            if ($giayBao -gt 900 -and $giayJ -gt 900) { $lyDo = '15 phút không tiến triển (cả journal)'; break }
+            if ($giayBao -gt 60 * $KhongTienTrien) { $lyDo = "$KhongTienTrien phút không có bước mới (Revit vẫn ghi journal)"; break }
         }
         "Kết thúc: $lyDo sau $([int]((Get-Date) - $t0).TotalSeconds)s"
         $script:lyDoCuoi = $lyDo

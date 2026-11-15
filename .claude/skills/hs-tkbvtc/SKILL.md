@@ -46,6 +46,13 @@ Chưa thử trên máy khác (`Cần xác nhận lại`).
   trong vùng vẽ khung tên (đo nét dài family khung tên như `DatSheet_chung.sh_vung_ve`, sai số 1 mm); viewport / bảng
   không đè nhau; tag trên mặt bằng không đè nhau (tag có leader ước lượng bằng khung cỡ trung vị của tag cùng kiểu, tâm tại
   đầu tag). Tên bản vẽ khác yêu cầu chỉ là lưu ý. Thêm các dòng `CẦN XEM LẠI` của lõi (`can_xem` từng mục).
+- Khoá thêm của từng mục trong phương án (2026-11-15, FPT P5): `view_dich` = tên view đích khi tầng có ≥ 2 view cùng
+  loại (công cụ mở thẳng view đó → nút không mở hộp chọn view; thiếu khoá này mà tầng có ≥ 2 view thì mục KHÔNG chạy, ghi
+  vào `can_hoi` – hộp chọn view WinForms làm phiên nền đứng mãi); `khong_dung_cad: true` = IN[21] "Không dùng CAD link"
+  của Chống thấm / Ngăn cháy (tầng có ≥ 2 CAD link ở các view khác nhau thì lõi dừng); `them_in: {"<số IN>": giá trị}`
+  = ô nhập bất kỳ khác của lõi.
+- Khảo sát / chọn cửa KHÔNG gom phần tử theo view (`FilteredElementCollector(doc, viewId)` bắt Revit dựng đồ hoạ từng
+  view; FPT P5 37 link treo > 15 phút, 23 GB RAM) – link thấy trong view xét bằng `IsHidden`.
 - Thông tin dự án (`thong_tin_du_an`): điền tham số chữ của Project Information theo đúng tên; tên không có thì báo.
 - Nút Hồ sơ đã duyệt hiện CHƯA chạy mục `ChiTietCua` (bỏ qua) và chưa điền `thong_tin_du_an`.
 

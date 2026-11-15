@@ -380,9 +380,11 @@ try:
                 bro = v.get_Parameter(DB.BuiltInParameter.VIEW_TYPE).AsString()
             except Exception:
                 bro = None
+            # KHÔNG gom phần tử theo view ở đây: FilteredElementCollector(doc, v.Id) bắt Revit dựng đồ hoạ từng view
+            # (FPT P5 37 link: treo > 15 phút, 23 GB RAM – agent đo 2026-11-15). Link thấy trong view = IsHidden.
             mb.append({"ten": v.Name, "tang": v.GenLevel.Name, "loai_view": bro, "template": ten(t) if t else None,
                        "ti_le": v.Scale, "sheet": so_sheet(v), "crop": v.CropBoxActive,
-                       "link_thay": sum(1 for _ in DB.FilteredElementCollector(doc, v.Id).OfClass(DB.RevitLinkInstance))})
+                       "link_thay": len(link_thay_trong(v))})
         ks["mat_bang"] = sorted(mb, key=lambda x: (x["tang"], x["ten"]))
         ks["template_mat_bang"] = [{"ten": ten(t), "ti_le": t.Scale, "khoa_ti_le": bool(arv_hoi_sheet._tpl_khoa_tl(t))}
                                    for t in arv_hoi_sheet._templates(doc)]
@@ -429,6 +431,25 @@ try:
             len(ks["mat_bang"]), len(ks["template_mat_bang"]), len(ks["khung_ten"]), len(ks["sheet"])))
 
     BIC_CUA = (int(DB.BuiltInCategory.OST_Doors), int(DB.BuiltInCategory.OST_Windows))
+    _LINK_TAT_CA = []
+
+    def link_thay_trong(v):
+        """Link instance không bị ẩn trong view v (theo phần tử + hạng mục RVT Links) – không dùng collector theo view."""
+        if not _LINK_TAT_CA:
+            _LINK_TAT_CA.extend(DB.FilteredElementCollector(doc).OfClass(DB.RevitLinkInstance))
+        try:
+            if v.GetCategoryHidden(DB.ElementId(DB.BuiltInCategory.OST_RvtLinks)):
+                return []
+        except Exception:
+            pass
+        ra = []
+        for li in _LINK_TAT_CA:
+            try:
+                if not li.IsHidden(v):
+                    ra.append(li)
+            except Exception:
+                ra.append(li)
+        return ra
 
     def la_vach(e):
         try:
@@ -465,7 +486,7 @@ try:
             for e in DB.FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType():
                 if e.LevelId == v.GenLevel.Id:
                     ra.append((e, None))
-        for li in DB.FilteredElementCollector(doc, v.Id).OfClass(DB.RevitLinkInstance):
+        for li in link_thay_trong(v):
             ld = li.GetLinkDocument()
             if ld is None:
                 continue
@@ -538,17 +559,56 @@ try:
                                "ten": (d.get("ten") or u"").strip(), "tpl": (d.get("template") or u"").strip(),
                                "tl": int(d.get("ti_le") or 0), "gd": d.get("giai_doan") or u"",
                                "hm": d.get("hang_muc") or u"", "kho": d.get("kho") or u"A1",
-                               "kt": d.get("khung_ten") or u"", "mark": d.get("mark") or []})
+                               "kt": d.get("khung_ten") or u"", "mark": d.get("mark") or [],
+                               # 2026-11-15 (FPT P5): chọn sẵn view đích khi tầng có ≥ 2 view cùng loại; ô nhập thêm
+                               # của lõi, vd. {"21": true} = Không dùng CAD link (Chống thấm / Ngăn cháy)
+                               "view_dich": (d.get("view_dich") or u"").strip(),
+                               "them_in": dict((int(k), v) for k, v in (d.get("them_in") or {}).items())})
+                if d.get("khong_dung_cad") and nut in ("ChongTham", "NganChay"):
+                    muc_ds[-1]["them_in"][21] = True
         chi = set(V.get("chi") or [])
         if chi:
             muc_ds = [m for m in muc_ds if u"%s|%s" % (m["view"], m["nut"]) in chi]
         w(u"=== {} mục: {}".format(len(muc_ds), u"; ".join(u"%s|%s" % (m["view"], m["nut"]) for m in muc_ds)))
 
+        _DA_KIEM = set()
+
+        def kiem_muc(kq):
+            """Kiểm tra + xuất ảnh các bản vẽ của 1 mục vừa chạy (mỗi bản vẽ 1 lần)."""
+            sheets = dict((s.SheetNumber, s) for s in DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet))
+            for so in kq.get("sheet") or []:
+                if so in _DA_KIEM or so not in sheets:
+                    continue
+                _DA_KIEM.add(so)
+                w(u"=== kiểm tra bản vẽ {}".format(so))
+                r = kiem_sheet(sheets[so], kq["so_yeu_cau"] if kq["nut"] != "ChiTietCua" else u"", kq["ten_yeu_cau"])
+                r["muc"] = u"%s – %s" % (kq["view"], kq["nut"])
+                KET["kiem_tra"].append(r)
+                if V.get("anh", True):
+                    try:
+                        xuat_anh(sheets[so])
+                    except Exception as ex:
+                        r["luu_y"].append(u"Không xuất được ảnh: %s" % ex)
+            if not kq.get("sheet") and not kq["loi"]:
+                KET["kiem_tra"].append({"muc": u"%s – %s" % (kq["view"], kq["nut"]), "so": None, "dat": False,
+                                        "loi": [u"Mục không nằm trên bản vẽ nào"], "luu_y": []})
+
+        def _tra_loi_them(ham_goc):
+            """Câu trả lời của nút Hồ sơ đã duyệt + ô nhập thêm của mục (them_in)."""
+            def ham(*a):
+                ra = ham_goc(*a)
+                m_ = hsd._DANG.get("muc") or {}
+                if ra is not None and m_.get("them_in"):
+                    ra.update(m_["them_in"])
+                    hsd._DANG["tra_loi"] = ra
+                return ra
+            return ham
+
         # trả lời sẵn hộp thoại của 4 nút mặt bằng (như nút Hồ sơ đã duyệt) + Chi tiết cửa
         goc_ham = dict((hsd.NUT[n]["ham"], getattr(arv_hoi_sheet, hsd.NUT[n]["ham"])) for n in hsd.NUT)
         goc_ham["hoi_chi_tiet_cua"] = arv_hoi_sheet.hoi_chi_tiet_cua
         for n in hsd.NUT:
-            setattr(arv_hoi_sheet, hsd.NUT[n]["ham"], hsd._tra_loi(n))
+            setattr(arv_hoi_sheet, hsd.NUT[n]["ham"], _tra_loi_them(hsd._tra_loi(n)))
 
         def hoi_ctc(doc_, view_, uidoc_=None):
             m = hsd._DANG.get("muc") or {}
@@ -586,7 +646,23 @@ try:
                     mb = hsd.mat_bang_nguon(doc, m["view"])
                     if mb is None:
                         raise Exception(u"File không có mặt bằng tầng tên '%s'" % m["view"])
-                    hsd._doi_view(uiapp.ActiveUIDocument, doc, mb, nhom, u"Agent HS TKBVTC")
+                    mo_view = mb
+                    if m["nut"] in hsd.NUT and m["nut"] != "TagCua":
+                        dich = hsd.view_dich(doc, mb, m["nut"])
+                        if m["view_dich"]:
+                            # mở thẳng view đích → nút dùng view đang mở, không hỏi chọn view
+                            chon = [x for x in dich if x.Name == m["view_dich"]]
+                            if not chon:
+                                raise Exception(u"Không có view đích '%s' cùng tầng (view đích có: %s)" % (
+                                    m["view_dich"], u"; ".join(x.Name for x in dich) or u"-"))
+                            mo_view = chon[0]
+                        elif len(dich) > 1:
+                            # nút sẽ mở hộp chọn view (WinForms) và chờ mãi trong phiên nền → không chạy, hỏi người dùng
+                            KET["can_hoi"].append(u"%s – %s: tầng có %d view đích, cần chọn 1 (khoá view_dich): %s" % (
+                                m["view"], m["nut"], len(dich), u" | ".join(
+                                    u"%s%s" % (x.Name, u" (bản vẽ %s)" % so_sheet(x) if so_sheet(x) else u"") for x in dich)))
+                            raise Exception(u"Tầng có %d view đích cùng loại – chưa chọn view_dich, không chạy." % len(dich))
+                    hsd._doi_view(uiapp.ActiveUIDocument, doc, mo_view, nhom, u"Agent HS TKBVTC")
                     hsd._DANG.clear()
                     hsd._DANG["muc"] = m
                     sh_truoc = set(s.Id.Value for s in DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet))
@@ -608,6 +684,8 @@ try:
                         kq["sheet"] = sorted(s.SheetNumber for s in moi)
                     else:
                         dich = hsd.view_dich(doc, mb, m["nut"])
+                        if m["view_dich"]:
+                            dich = [x for x in dich if x.Name == m["view_dich"]] or dich
                         kq["view_dich"] = dich[0].Name if dich else None
                         kq["sheet"] = [so_sheet(dich[0])] if dich and so_sheet(dich[0]) else []
                 except BaseException:
@@ -616,6 +694,11 @@ try:
                 kq["loi"] = any(ln.strip().startswith((u"LỖI", u"Traceback")) for ln in kq["dong"])
                 if kq["loi"]:
                     KET["loi"].append(u"%s – %s" % (m["view"], m["nut"]))
+                # kiểm tra + ảnh NGAY sau mục (2026-11-15 FPT P5: mục sau treo thì kết quả mục trước vẫn còn)
+                try:
+                    kiem_muc(kq)
+                except Exception as ex_:
+                    w(u"   lỗi kiểm tra mục: %s" % ex_)
                 ghi_json()
         finally:
             hsd._DANG.clear()
@@ -623,27 +706,7 @@ try:
                 setattr(arv_hoi_sheet, k, v)
             tra_loi_tag()
 
-        # -------------------------------------------------------- kiểm tra + ảnh từng bản vẽ
-        sheets = dict((s.SheetNumber, s) for s in DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet))
-        da = set()
-        for kq in KET["muc"]:
-            for so in kq.get("sheet") or []:
-                if so in da or so not in sheets:
-                    continue
-                da.add(so)
-                w(u"=== kiểm tra bản vẽ {}".format(so))
-                r = kiem_sheet(sheets[so], kq["so_yeu_cau"] if kq["nut"] != "ChiTietCua" else u"",
-                               kq["ten_yeu_cau"])
-                r["muc"] = u"%s – %s" % (kq["view"], kq["nut"])
-                KET["kiem_tra"].append(r)
-                if V.get("anh", True):
-                    try:
-                        xuat_anh(sheets[so])
-                    except Exception as ex:
-                        r["luu_y"].append(u"Không xuất được ảnh: %s" % ex)
-            if not kq.get("sheet") and not kq["loi"]:
-                KET["kiem_tra"].append({"muc": u"%s – %s" % (kq["view"], kq["nut"]), "so": None, "dat": False,
-                                        "loi": [u"Mục không nằm trên bản vẽ nào"], "luu_y": []})
+        # (kiểm tra + ảnh từng bản vẽ: kiem_muc, gọi ngay sau mỗi mục ở vòng lặp trên)
         ghi_json()
 
         # -------------------------------------------------------- lưu ra file mới

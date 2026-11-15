@@ -1,0 +1,24 @@
+{
+ "ten": "FPT P5 (FPT P5_A_Tong) – thử agent so với hồ sơ mẫu 20261022, TẦNG 3 (agent, chưa duyệt)",
+ "ghi_chu": "Giá trị lấy đúng chữ trong lan/10_khao_sat_2027/khao_sat.json + PDF mẫu (mau/). Tỉ lệ 1:150, khổ A1, giai đoạn, hạng mục, template = như các sheet mẫu A.CD.20.08 / 22.06 / 25.02 / 26.05 trong model. Khung tên: Cần xác nhận lại (khảo sát không ghi khung tên từng sheet). Số hiệu: mẫu + '-AG' khi công cụ tạo bản vẽ mới; ChongTham / LanCanLouver dùng số hiệu sheet mẫu vì lõi sẽ vẽ vào chính view mẫu đã nằm trên sheet đó (xem nhat_ky.md).",
+ "nhan_file": ["FPT P5_A_Tong"],
+ "tag_cua": "goc",
+ "thong_tin_du_an": {},
+ "chung": {"giai_doan": "03.TKBVTC NGAM", "kho": "A1", "khung_ten": "FPT P5_Khung A1 : FPT P5_Khung A1", "ti_le": 150},
+ "nut": {
+  "ChongTham": {"template": "CD.20.MBChongTham", "hang_muc": "20.MatBangChongTham"},
+  "NganChay": {"template": "CD.26MBChongchaylan", "hang_muc": "26.ChiTietNganChayLan"},
+  "LanCanLouver": {"template": "TC.25DV lancan louver", "hang_muc": "25.ChiTietLanCan,Louver"},
+  "TagCua": {"template": "TC.22.MBDV Cua", "hang_muc": "22. CHI TIẾT CỬA, VÁCH KÍNH"},
+  "ChiTietCua": {"hang_muc": "22. CHI TIẾT CỬA, VÁCH KÍNH"}
+ },
+ "mat_bang": [
+  {"view": "TẦNG 3", "viec": {
+    "ChongTham": {"so": "A.CD.20.08", "ten": "MẶT BẰNG CHỐNG THẤM TẦNG 3"},
+    "NganChay": {"so": "A.CD.26.05-AG", "ten": "MẶT BẰNG CHỐNG CHÁY LAN TRỤC VÀ HỘP KĨ THUẬT TẦNG 3"},
+    "LanCanLouver": {"so": "A.CD.25.02", "ten": "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER TẦNG 3"},
+    "TagCua": {"so": "A.CD.22.06-AG", "ten": "MẶT BẰNG ĐỊNH VỊ CỬA TẦNG 3"},
+    "ChiTietCua": {"so": "A.CD.22.13-AG", "ten": "CHI TIẾT CỬA",
+                   "mark": ["DA01", "DA04", "SA08", "DW03-F", "DF01-F", "SA.L1", "G3-VK.01", "N3-VK.06"]}}}
+ ]
+}
