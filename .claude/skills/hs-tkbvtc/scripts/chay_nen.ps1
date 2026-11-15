@@ -13,7 +13,7 @@
     Tìm pyRevit CLI: $env:ARCHIVINA_PYREVIT -> %APPDATA%\pyRevit-Master\bin\pyrevit.exe -> pyrevit trong PATH.
     -HienCuaSo: giữ cửa sổ (chỉ khi người dùng đồng ý xem lỗi).
 #>
-param([Parameter(Mandatory = $true)][string]$Viec, [int]$ChoToiDa = 3600, [string]$PhienBan = '', [switch]$HienCuaSo, [switch]$An)
+param([Parameter(Mandatory = $true)][string]$Viec, [int]$ChoToiDa = 3600, [string]$PhienBan = '', [int]$ChoKhoa = 0, [switch]$HienCuaSo, [switch]$An)
 $ErrorActionPreference = 'Stop'
 $skill = Split-Path -Parent $PSScriptRoot
 $ext = Join-Path $skill 'ext'
@@ -96,6 +96,8 @@ function Chay-Phien([string]$ViecP, [string]$KqP, [string]$MoTruoc) {
             if (((Get-Date) - $tDoi).TotalSeconds -gt 900) { $lyDo = '15 phút không tiến triển'; break }
         }
         "Kết thúc: $lyDo sau $([int]((Get-Date) - $t0).TotalSeconds)s"
+        $script:lyDoCuoi = $lyDo
+        $script:giayCuoi = [int]((Get-Date) - $t0).TotalSeconds
         Start-Sleep 5
         Bao-CuaSoPhien
     }
@@ -114,25 +116,37 @@ function Chay-Phien([string]$ViecP, [string]$KqP, [string]$MoTruoc) {
 }
 
 $v = Get-Content -LiteralPath $Viec -Raw -Encoding UTF8 | ConvertFrom-Json
-if (-not (Test-Path $moDau)) {
-    # lần đầu trên máy này: tạo dự án trống làm file mở đầu (xem chay_hs.py)
-    $kqDau = Join-Path ([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($v.ket_qua))) ('_tao_mo_dau_' + (Get-Date -Format yyyyMMdd_HHmmss))
-    New-Item -ItemType Directory -Force -Path $kqDau | Out-Null
-    $vDau = Join-Path $kqDau 'viec_tao_mo_dau.json'
-    $j = @{ che_do = 'tao_mo_dau'; mo = $moDau; ket_qua = $kqDau } | ConvertTo-Json
-    [IO.File]::WriteAllText($vDau, $j, (New-Object Text.UTF8Encoding($false)))
-    'Chưa có file mở đầu → tạo ' + $moDau
-    Chay-Phien $vDau $kqDau ''
-    if (-not (Test-Path $moDau)) { throw "Không tạo được file mở đầu $moDau (xem $kqDau\bao_cao.txt)." }
+# KHOÁ: mỗi lúc chỉ 1 lần chạy (ext\buoc.txt và đường dẫn extension dùng chung). 2026-11-15 hai lần chạy chồng nhau làm
+# phiên Revit 2027 bấm nhầm việc của lần chạy 2026 (tạo mo_dau_2026.rvt bằng 2027). Mutex của Windows, không tạo file;
+# tiến trình chết giữa chừng thì khoá tự nhả. -ChoKhoa <phút> = chờ lần chạy kia xong (mặc định 0 = báo ngay).
+$mx = New-Object Threading.Mutex($false, 'Global\ARVAgentHS_chay_nen')
+$coKhoa = $false
+try { $coKhoa = $mx.WaitOne([TimeSpan]::FromMinutes($ChoKhoa)) } catch [Threading.AbandonedMutexException] { $coKhoa = $true }
+if (-not $coKhoa) { throw 'ĐANG CÓ lần chạy agent hs-tkbvtc khác (chay_nen.ps1) – chờ nó xong rồi chạy lại, hoặc dùng -ChoKhoa <phút>.' }
+try {
+    if (-not (Test-Path $moDau)) {
+        # lần đầu trên máy này (theo phiên bản Revit): tạo dự án trống làm file mở đầu (xem chay_hs.py)
+        $kqDau = Join-Path ([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($v.ket_qua))) ('_tao_mo_dau_' + (Get-Date -Format yyyyMMdd_HHmmss))
+        New-Item -ItemType Directory -Force -Path $kqDau | Out-Null
+        $vDau = Join-Path $kqDau 'viec_tao_mo_dau.json'
+        $j = @{ che_do = 'tao_mo_dau'; mo = $moDau; ket_qua = $kqDau; revit = $nam } | ConvertTo-Json
+        [IO.File]::WriteAllText($vDau, $j, (New-Object Text.UTF8Encoding($false)))
+        'Chưa có file mở đầu → tạo ' + $moDau
+        Chay-Phien $vDau $kqDau ''
+        if (-not (Test-Path $moDau)) { throw "Không tạo được file mở đầu $moDau (xem $kqDau\bao_cao.txt)." }
+    }
+    Chay-Phien $Viec $v.ket_qua $moDau
+    # Bẫy pyRevit (CLAUDE.md): lần đầu nạp extension mới / vừa đổi, phiên THOÁT SỚM trước khi bấm nút → chạy lại 1 lần vào
+    # <ket_qua>_lan2 (không xoá lần 1). Chỉ khi phiên tự thoát trong 3 phút; bị tắt / hết giờ thì KHÔNG chạy lại.
+    if (-not (Test-Path (Join-Path $v.ket_qua 'bao_cao.txt')) -and $script:lyDoCuoi -eq 'Revit đã thoát' -and $script:giayCuoi -lt 180) {
+        'Không có bao_cao.txt (phiên thoát sớm trước khi chạy nút) → chạy lại 1 lần'
+        $kq2 = ($v.ket_qua.TrimEnd('\', '/')) + '_lan2'
+        $v2 = Join-Path ([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($Viec))) ([IO.Path]::GetFileNameWithoutExtension($Viec) + '_lan2.json')
+        $v.ket_qua = $kq2
+        [IO.File]::WriteAllText($v2, ($v | ConvertTo-Json -Depth 5), (New-Object Text.UTF8Encoding($false)))
+        Chay-Phien $v2 $kq2 $moDau
+    }
 }
-Chay-Phien $Viec $v.ket_qua $moDau
-# Bẫy pyRevit (CLAUDE.md): lần đầu nạp extension mới / vừa đổi, phiên có thể thoát trước khi bấm nút → chạy lại 1 lần
-# vào thư mục kết quả mới (<ket_qua>_lan2), không xoá thư mục lần 1.
-if (-not (Test-Path (Join-Path $v.ket_qua 'bao_cao.txt'))) {
-    'Không có bao_cao.txt (phiên thoát trước khi chạy nút) → chạy lại 1 lần'
-    $kq2 = ($v.ket_qua.TrimEnd('\', '/')) + '_lan2'
-    $v2 = Join-Path ([IO.Path]::GetDirectoryName([IO.Path]::GetFullPath($Viec))) ([IO.Path]::GetFileNameWithoutExtension($Viec) + '_lan2.json')
-    $v.ket_qua = $kq2
-    [IO.File]::WriteAllText($v2, ($v | ConvertTo-Json -Depth 5), (New-Object Text.UTF8Encoding($false)))
-    Chay-Phien $v2 $kq2 $moDau
+finally {
+    $mx.ReleaseMutex()
 }

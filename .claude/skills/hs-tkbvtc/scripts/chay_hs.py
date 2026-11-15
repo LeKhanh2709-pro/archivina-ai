@@ -121,6 +121,10 @@ try:
     # Mở file bằng API khi chưa có file nào mở qua giao diện thì lần clr.AddReference sau đó lỗi nạp
     # DesktopConnectorInterop v26 → journal luôn mở trước 1 dự án trống nhỏ (ext\mo_dau.rvt). Chưa có thì che_do
     # "tao_mo_dau" tạo nó (không cần template).
+    # đúng phiên bản Revit file việc yêu cầu (2026-11-15: lần chạy chồng nhau làm Revit 2027 chạy việc của lần chạy 2026)
+    if V.get("revit") and u"%s" % app.VersionNumber != u"%s" % V["revit"]:
+        raise Exception(u"Phiên Revit %s nhưng file việc yêu cầu Revit %s – dừng (có lần chạy khác chồng lên?)." % (
+            app.VersionNumber, V["revit"]))
     if V.get("che_do") == "tao_mo_dau":
         nd = app.NewProjectDocument(DB.UnitSystem.Metric)
         o_ = DB.SaveAsOptions()
@@ -138,7 +142,14 @@ try:
         w(u"Nút Mo: không có mo.txt")
     uidoc = uiapp.ActiveUIDocument
     doc = uidoc.Document if uidoc is not None else None
-    if doc is None or os.path.normcase(os.path.normpath(doc.PathName or u"")) != os.path.normcase(mo):
+    # file workshared mở TÁCH central thì PathName rỗng, Title = "<tên gốc>_detached" (agent phát hiện 2026-11-15 trên FPT P5)
+    goc_ten = os.path.splitext(os.path.basename(mo))[0]
+    dung = doc is not None and (
+        os.path.normcase(os.path.normpath(doc.PathName or u"")) == os.path.normcase(mo) or
+        # tách central: PathName = "<tên>_detached.rvt" (chỉ tên, không thư mục – agent đo 2026-11-15) hoặc rỗng
+        (bool(getattr(doc, "IsDetached", False)) and
+         os.path.splitext(os.path.basename(doc.PathName or doc.Title or u""))[0] in (goc_ten, goc_ten + u"_detached")))
+    if not dung:
         raise Exception(u"File đang mở (%s) không phải file cần mở %s – nút Mo không mở được (xem mo.txt)." % (
             doc.PathName if doc is not None else u"-", mo))
     w(u"=== Đã mở: {} | workshared {} | tách {}".format(doc.Title, doc.IsWorkshared, getattr(doc, "IsDetached", u"?")))

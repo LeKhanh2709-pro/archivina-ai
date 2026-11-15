@@ -18,7 +18,9 @@ if not os.path.isdir(kq):
 f = io.open(os.path.join(kq, "mo.txt"), "w", encoding="utf-8")
 uiapp = __revit__
 loi = None
-if V.get("che_do") != "tao_mo_dau":
+if V.get("revit") and (u"%s" % uiapp.Application.VersionNumber) != (u"%s" % V["revit"]):
+    loi = u"Phiên Revit %s nhưng file việc yêu cầu Revit %s – không mở file" % (uiapp.Application.VersionNumber, V["revit"])
+elif V.get("che_do") != "tao_mo_dau":
     mo = os.path.normpath(V["mo"])
     dau = uiapp.ActiveUIDocument.Document if uiapp.ActiveUIDocument is not None else None
     try:
