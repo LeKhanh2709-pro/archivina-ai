@@ -18,7 +18,7 @@
 - [Không làm phiền máy người dùng](khong-lam-phien-may-nguoi-dung.md) — Claude chạy phần mềm ở chế độ nền (quy tắc 9), không mở cửa sổ chiếm bàn phím, không chụp toàn màn hình
 - [Vách kính Revit](vach-kinh-revit.md) — nút pyRevit Vách kính (VK/MDVK trên curtain wall, góc vuông, updater) làm 2026-11-01, chưa được người dùng bấm thử
 - [Cửa kính bản lề sàn](cua-kinh-ban-le-san.md) — chỉ cần bản vẽ CAD (không LISP); file mau\06_CuaKinh, script ezdxf trong _tmp\cua_kinh
-- [Tag cửa Revit](tag-cua-revit.md) — nút Định vị + tag cửa (gộp, đã build 2026-11-03); tag 2 ô mã / rộngXcao mm đã duyệt; + đặt lên sheet + bảng thống kê (đã build); gửi ảnh duyệt trước khi build
+- [Tag cửa Revit](tag-cua-revit.md) — nút Định vị + tag cửa (gộp 2026-11-03); từ 13/11 tag mặc định AV-Tag-DOOR + xếp lại, tag 2 ô chỉ còn khi bật IN[30]; + đặt lên sheet + bảng thống kê; gửi ảnh duyệt trước khi build
 - [Chi tiết cửa Revit](chi-tiet-cua-revit.md) — nút Chi tiết cửa: chọn cửa → MB/MĐ/MC 1/25 vào sheet 6 ô, thông tin người dùng tự điền; chưa bấm thử
 - [Bộ AI REVIT đồng nghiệp](ai-revit-dong-nghiep.md) — đã áp dụng 2026-11-03: MCP revit-archivina, skill bim-qaqc / dung-ket-cau-revit, +17 Dynamo, chuẩn ISO 19650
 - [Trình bày bản vẽ chống thấm / cháy lan](trinh-bay-ban-ve-chong-tham-chay-lan.md) — 2 nút tự tạo view + template theo tầng, tự đặt lên sheet; 2026-11-04 chưa duyệt
@@ -30,3 +30,9 @@
 - [Không tự tạo view template](khong-tu-tao-view-template.md) — 5 nút HS TKBVTC hỏi View template + Tỉ lệ (tỉ lệ theo template, khoá nếu template khoá), lõi không tạo / sửa template
 - [Hatch 1 đối tượng](hatch-1-doi-tuong.md) — chống thấm / ngăn cháy lan Revit: cả view 1 Filled Region; gộp vùng cũ chỉ khi người dùng đồng ý
 - [Nút HS TKBVTC nhận link](nut-hs-tkbvtc-nhan-link.md) — 9 nút đọc đối tượng trong file link (Link_chung.py); bảng có link là drafting; dim link bám nét ẩn
+- [Revit văng do locale CPython](revit-vang-locale-cpython.md) — Unmarshaller.cpp 357 / corruptData ExportPatternKey: CPython pyRevit đổi LC_CTYPE; chữa bằng locale.setlocale(LC_ALL, "C") đầu script; nút Archivina đã chữa trong arv_dynamo_host.py (13/11)
+- [Nút mới = extension riêng](nut-moi-extension-rieng.md) — nút mới / thử nghiệm làm extension gỡ được, không sửa ARVTools.extension (Archivina) khi chưa được bảo
+- [Nút Hồ sơ đã duyệt](nut-ho-so-duyet.md) — ARVHoSoDuyet.extension chạy lại 4 nút HS TKBVTC theo json đã duyệt; tag AV-Tag-DOOR đã duyệt 13/11; từ 14/11 mọi kiểu tag chạy lõi Archivina (không còn lõi riêng), có tag vách kính bằng Mark; chưa bấm trên file chính
+- [CAD sang legend Revit](cad-sang-legend-revit.md) — chi tiết CAD → legend 2D: Filled Region, nét trùng 1 nét, mỗi ô 1 group; 1 kiểu chữ (3 cỡ), 1 kiểu dim; soi ảnh từng ô so với CAD trước khi gửi duyệt (log 0 lỗi chưa đủ)
+- [Bản sao Revit phải tách central](ban-sao-revit-tach-central.md) — bản sao model workshared mở thẳng vẫn mượn phần tử từ central thật trên ổ mạng; SaveAs central mới trên D: trước khi thử ghi
+- [Tag vách kính bằng Mark](tag-vach-kinh-mark.md) — vách kính tag bằng Mark ở nút Định vị + tag cửa, Thống kê cửa và Hồ sơ đã duyệt; cửa nằm trong vách kính không tag, không thống kê (chốt 2026-11-14); thử nền OK, chưa bấm trong Revit thật
