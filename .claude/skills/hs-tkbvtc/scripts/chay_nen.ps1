@@ -1,24 +1,27 @@
 ﻿<#
 .SYNOPSIS
-    Chạy 1 bước của agent hs-tkbvtc trong phiên Revit 2027 RIÊNG, chạy nền (quy tắc 9): journal không mở file nào, bấm
+    Chạy 1 bước của agent hs-tkbvtc trong phiên Revit RIÊNG (mặc định 2027), chạy nền (quy tắc 9): journal không mở file nào, bấm
     nút thử ARVAgentHS (ext\ của skill), nút chạy scripts\chay_hs.py với file việc -Viec; chờ bao_cao.txt có dòng XONG
     (hoặc hết giờ / 10 phút không tiến triển) rồi đóng phiên. Không gắn cứng đường dẫn máy (quy tắc 8).
 .EXAMPLE
     powershell -NoProfile -ExecutionPolicy Bypass -File chay_nen.ps1 -Viec D:\AI\_tmp\hs_agent\01_HQV\viec\01_khao_sat.json
 .NOTES
-    Tìm Revit: $env:ARCHIVINA_REVIT (Revit.exe) -> registry Autodesk\Revit\2027 -> <ổ cứng>:\Program Files\Autodesk\Revit 2027.
+    Phiên bản Revit: -PhienBan <năm> -> khoá "revit" của file việc -> 2027 (người dùng 2026-11-15: FPT P5 chạy Revit 2026).
+    Tìm Revit <năm>: $env:ARCHIVINA_REVIT (chỉ khi không chỉ định năm) -> registry Autodesk\Revit\<năm>
+    -> <ổ cứng>:\Program Files\Autodesk\Revit <năm>. File mở đầu theo năm vì bản cũ không mở được file của bản mới:
+    ext\mo_dau_<năm>.rvt (2027: ext\mo_dau.rvt).
     Tìm pyRevit CLI: $env:ARCHIVINA_PYREVIT -> %APPDATA%\pyRevit-Master\bin\pyrevit.exe -> pyrevit trong PATH.
     -HienCuaSo: giữ cửa sổ (chỉ khi người dùng đồng ý xem lỗi).
 #>
-param([Parameter(Mandatory = $true)][string]$Viec, [int]$ChoToiDa = 3600, [switch]$HienCuaSo, [switch]$An)
+param([Parameter(Mandatory = $true)][string]$Viec, [int]$ChoToiDa = 3600, [string]$PhienBan = '', [switch]$HienCuaSo, [switch]$An)
 $ErrorActionPreference = 'Stop'
 $skill = Split-Path -Parent $PSScriptRoot
 $ext = Join-Path $skill 'ext'
 $buoc = Join-Path $ext 'buoc.txt'
 
-function Find-Revit {
-    if ($env:ARCHIVINA_REVIT -and (Test-Path -LiteralPath $env:ARCHIVINA_REVIT)) { return $env:ARCHIVINA_REVIT }
-    foreach ($k in 'HKLM:\SOFTWARE\Autodesk\Revit\2027', 'HKLM:\SOFTWARE\Autodesk\Revit\Autodesk Revit 2027') {
+function Find-Revit([string]$Nam, [bool]$ChiDinh) {
+    if (-not $ChiDinh -and $env:ARCHIVINA_REVIT -and (Test-Path -LiteralPath $env:ARCHIVINA_REVIT)) { return $env:ARCHIVINA_REVIT }
+    foreach ($k in "HKLM:\SOFTWARE\Autodesk\Revit\$Nam", "HKLM:\SOFTWARE\Autodesk\Revit\Autodesk Revit $Nam") {
         $ds = @()
         try {
             $ds = @(Get-ChildItem $k -Recurse -ErrorAction Stop | ForEach-Object {
@@ -28,10 +31,10 @@ function Find-Revit {
         if ($ds.Count) { return (Join-Path $ds[0] 'Revit.exe') }
     }
     foreach ($o in [IO.DriveInfo]::GetDrives() | Where-Object { $_.DriveType -eq 'Fixed' -and $_.IsReady }) {
-        $p = Join-Path $o.RootDirectory.FullName 'Program Files\Autodesk\Revit 2027\Revit.exe'
+        $p = Join-Path $o.RootDirectory.FullName "Program Files\Autodesk\Revit $Nam\Revit.exe"
         if (Test-Path $p) { return $p }
     }
-    throw 'Không tìm thấy Revit 2027 (đặt biến ARCHIVINA_REVIT = đường dẫn Revit.exe).'
+    throw "Không tìm thấy Revit $Nam (đặt biến ARCHIVINA_REVIT = đường dẫn Revit.exe)."
 }
 
 function Find-PyRevit {
@@ -43,11 +46,14 @@ function Find-PyRevit {
     throw 'Không tìm thấy pyRevit CLI (pyrevit.exe).'
 }
 
-$revit = Find-Revit
+$v = Get-Content -LiteralPath $Viec -Raw -Encoding UTF8 | ConvertFrom-Json
+$nam = if ($PhienBan) { $PhienBan } elseif ($v.revit) { [string]$v.revit } else { '2027' }
+$revit = Find-Revit $nam ([bool]($PhienBan -or $v.revit))
+"Revit $nam : $revit"
 $pyrevit = Find-PyRevit
 $lenh = 'CustomCtrl_%CustomCtrl_%ARVAgentHS%Agent%Chay:arvagenths_arvagenths_agent_chay'
 $lenhMo = 'CustomCtrl_%CustomCtrl_%ARVAgentHS%Agent%Mo:arvagenths_arvagenths_agent_mo'
-$moDau = Join-Path $ext 'mo_dau.rvt'
+$moDau = if ($nam -eq '2027') { Join-Path $ext 'mo_dau.rvt' } else { Join-Path $ext "mo_dau_$nam.rvt" }
 . (Join-Path $PSScriptRoot 'cua_so_phien.ps1')
 
 # 1 phiên Revit nền: journal (mở file mở đầu nếu có) → bấm nút agent với file việc $ViecP → chờ XONG trong $kqP\bao_cao.txt
