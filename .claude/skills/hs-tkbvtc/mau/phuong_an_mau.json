@@ -1,0 +1,26 @@
+{
+ "ten": "<Tên dự án / khối> – HS TKBVTC (agent, chưa duyệt)",
+ "ghi_chu": "Mẫu phương án. Mọi giá trị trong <> do NGƯỜI DÙNG cấp hoặc lấy đúng tên trong khao_sat.json – không tự đặt (quy tắc 5).",
+ "nhan_file": ["<chuỗi có trong tên file .rvt chính, vd. HQV_A_ThapB_Site>"],
+ "tag_cua": "goc",
+ "thong_tin_du_an": {"<tên tham số Project Information, vd. Project Name>": "<giá trị người dùng cấp>"},
+ "chung": {
+  "giai_doan": "<giá trị tham số giai đoạn của sheet, vd. 02_HoSoThietKeBanVeThiCong>",
+  "kho": "A1",
+  "khung_ten": "<Family : Type khung tên, đúng như khao_sat.json>",
+  "ti_le": 200
+ },
+ "nut": {
+  "NganChay": {"template": "<template mặt bằng ngăn cháy lan>", "hang_muc": "<hạng mục>"},
+  "LanCanLouver": {"template": "<template mặt bằng định vị lan can, louver>", "hang_muc": "<hạng mục>"},
+  "TagCua": {"template": "<template mặt bằng định vị cửa>", "hang_muc": "<hạng mục>"},
+  "ChiTietCua": {"hang_muc": "<hạng mục>"}
+ },
+ "mat_bang": [
+  {"view": "<tên mặt bằng nguồn, vd. Tầng 3BA>", "viec": {
+    "NganChay": {"so": "<số hiệu>", "ten": "MẶT BẰNG NGĂN CHÁY LAN TẦNG <..>"},
+    "LanCanLouver": {"so": "<số hiệu>", "ten": "MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER TẦNG <..>"},
+    "TagCua": {"so": "<số hiệu>", "ten": "MẶT BẰNG ĐỊNH VỊ CỬA TẦNG <..>"},
+    "ChiTietCua": {"so": "<số hiệu tờ đầu>", "ten": "CHI TIẾT CỬA", "mark": ["<Type Mark cửa / Mark vách kính>"]}}}
+ ]
+}

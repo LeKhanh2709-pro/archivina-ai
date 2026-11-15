@@ -98,6 +98,19 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
       2 × 1 → 3 × 1 → 2 × 2 → 3 × 2 (cột × hàng, ít ô trước) trên SHEET MỚI: lưới bỏ nét chia trong khối, 1 dải thông
       tin dưới hàng cuối khối, ô còn lại dùng tiếp cho cửa / vách nhỏ. Vẫn không lọt 3 × 2 → báo "VƯỢT KHỔ" (chia
       đoạn / xếp tay). Lề dưới mặt đứng vách kính chỉ chứa nét cắt + số 1 (40 mm + 1,1 chữ + 2 mm giấy).
+    - **Vách kính trong file link** (người dùng báo 2026-11-15 trên Site HQV, ảnh mẫu: "mặt đứng chi tiết cửa cho vách
+      kính đang bị sai, muốn hiện đầy đủ cả vách kính"): template `CHI TIẾT CỬA - MẶT ĐỨNG (LINK)` ẩn cả hạng mục Walls,
+      mà vách kính THUỘC Walls → đố + kính mất, chỉ còn cửa đi (tấm Doors). Nay mặt đứng vách link dùng template riêng
+      `... - MẶT ĐỨNG (LINK VÁCH KÍNH)` (`HAU_TO_LINK_VK`, `AN_LINK_MD_VK` = danh sách cũ bỏ Walls) + view filter
+      `ARV_Ẩn tường thường (link)` (Walls, `WALL_ATTR_WIDTH_PARAM` > 1 mm → tường thường ẩn, curtain wall không có
+      Width nên còn). Template nền không lấy template tên đuôi `(LINK)` / `(LINK VÁCH KÍNH)` của loại khác. Bấm lại vách
+      đã làm bằng bản cũ: view mặt đứng đang dùng template `(LINK)` được ĐỔI sang template mới (không xoá gì, không thêm
+      dim). Chuỗi dim đố vách link: vị trí lưới lấy từ `CurtainGrid` của vách trong link (đổi toạ độ), bám nét
+      `<Invisible lines>` trên mặt đứng (`net_md_dung` / `net_md_ngang`); bản cũ chỉ có dim tổng.
+      Thử nền nút thật (`_tmp\ctcua_vk_link\`, nút thử `ARVTestVL`, `thu.py`, bản sao Site đã tách central): bước A nút
+      cũ tái hiện lỗi (DVKT1-01 chỉ còn cửa, `kq_A\`); bước B nút mới: DVKT1-01 đổi template → đủ 6 ô + ô trên cửa,
+      DVKT1-02 tạo mới 1011 | 978 | 978 | 1665 | 978 | 1011 = 6620, đứng 3012 | 968, sheet ACD.07.04 (`kq_B\`).
+      Mặt đứng vách link còn vài nét xanh (đường bao / lưới của vách link) – chưa xử lý.
     - Ô trống (cả cửa): ô có nét dải thông tin RIÊNG trong group lưới và không viewport nào lấn vào > 2 mm (thay cách
       cũ theo tâm viewport, để ô nằm trong khối ghép không bị dùng lại).
 

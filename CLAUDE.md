@@ -29,11 +29,12 @@ Loại công trình chính: nhà ở dân dụng (nhà phố, biệt thự), chu
    - Không phụ thuộc thiết lập máy: đặt tạm rồi trả lại UCS World (kể cả trước `-WBLOCK`), HPANNOTATIVE 0, hatch không nền / trong suốt; UNDO Control None / One thì bỏ nhóm undo; thoát ký tự đại diện trong tên layer khi đưa vào `-LAYER`; mẫu hatch theo file `.pat` thì đo kích thước thực rồi chỉnh tỉ lệ; báo khi LISPSYS ≠ 1.
    - **Máy khác không phải cài gì** (người dùng chốt 2026-10-23): LISP cần Python thì dùng gói Python mang theo (Python nhúng + thư viện, chỉ chép thư mục), vd. `D:\AI\_tools\CHONGTHAM_python` → chép vào `<ổ>:\AI\_tools\` máy kia, LISP tự tìm. Gói lớn không đẩy lên GitHub. `scripts\cai_dat_python.ps1` chỉ là đường dự phòng.
    - Quy tắc 1–7 vẫn áp dụng trên máy này (thư mục gốc tự tìm được là `D:\AI`, tạm `D:\AI\_tmp`).
-9. **Claude chạy phần mềm ở chế độ nền, không chạy trực tiếp trên màn hình.** (người dùng chốt 2026-11-10) Lý do: người dùng đang làm việc trên chính máy này, cửa sổ bật lên sẽ che màn hình và chiếm bàn phím.
-   - AutoCAD: ưu tiên `accoreconsole.exe` (không có cửa sổ). Cần AutoCAD đầy đủ thì chạy `acad.exe /b` bằng `Start-Process -WindowStyle Minimized`.
-   - Revit và phần mềm có giao diện khác: chạy phiên riêng, thu nhỏ hoặc ẩn cửa sổ. Bấm nút bằng UI Automation (`InvokePattern`), không giả lập chuột / bàn phím, không lấy focus.
-   - Không chụp toàn màn hình. Cần ảnh thì xuất từ chính phần mềm, hoặc chụp đúng cửa sổ phiên thử bằng `PrintWindow`.
-   - Việc bắt buộc phải hiện cửa sổ lên màn hình thì báo người dùng trước và chờ đồng ý. Không đụng vào phiên Revit / AutoCAD người dùng đang mở.
+9. **Claude chạy phần mềm trên MÀN HÌNH 2, không đụng màn hình 1.** (người dùng chốt 2026-11-10, sửa 2026-11-15: "thao tác trên màn hình số 2, không ảnh hưởng màn hình 1, không cần làm ẩn nền nữa") Lý do: người dùng làm việc trên màn hình 1 (chính, `\\.\DISPLAY1`, 0,0 1920×1080); màn hình 2 (`\\.\DISPLAY2`, bên trái, -1920,0 1920×1080) dành cho phiên Claude.
+   - Cửa sổ phiên Claude tự mở (Revit, AutoCAD đầy đủ…) đặt trên màn hình 2, không làm trong suốt / không cắt vùng hiển thị nữa. Script dùng chung `_tmp\pyrevit_test\cua_so_phien.ps1` (`Bat-CuaSoPhien` / `Bao-CuaSoPhien`): cửa sổ nào lấn sang màn hình 1 thì dời sang vùng làm việc màn hình 2 (không lấy focus); dời 20 lần không ăn thì riêng cửa sổ đó mới bị ẩn như cách cũ. Máy không có màn hình phụ, hoặc truyền `-An`, thì ẩn như cũ.
+   - Vẫn giữ: focus bị phiên chiếm thì trả về ứng dụng người dùng đang dùng (chuột / bàn phím dùng chung cho 2 màn hình); bấm nút bằng UI Automation (`InvokePattern`), KHÔNG giả lập chuột / bàn phím.
+   - AutoCAD: ưu tiên `accoreconsole.exe` (không có cửa sổ). Cần AutoCAD đầy đủ thì `acad.exe /b` (script cũ trong skill vẫn `-WindowStyle Minimized`, giữ được vì skill dùng ở máy khác).
+   - Ảnh: được chụp RIÊNG vùng màn hình 2 (`CopyFromScreen` theo `Screen.Bounds` của màn hình phụ) hoặc cửa sổ phiên bằng `PrintWindow`; KHÔNG chụp màn hình 1 / toàn màn hình. Màn hình 2 có thể có cửa sổ của người dùng (vd. app Claude) → chỉ dùng ảnh để kiểm phiên thử.
+   - Việc bắt buộc phải hiện cửa sổ trên màn hình 1 thì báo người dùng trước và chờ đồng ý. Không đụng vào phiên Revit / AutoCAD người dùng đang mở.
 
 ## Môi trường phần mềm
 | Phần mềm | Phiên bản | Ghi chú |
@@ -48,7 +49,7 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
 
 ### Chạy Dynamo trên bản sao .rvt (Claude tự chạy)
 - `D:\AI\_tmp\revit_g19\chay_dynamo_ui.ps1 -Journal <journal.txt> -FileXong <file kết quả>`: mở Revit 2027 riêng bằng journal (mở bản sao trong `_tmp`, mở Dynamo có giao diện + graph), tự bấm **Run** bằng UI Automation (chờ nút Run bật; hộp thoại Dynamo "Open external file?" khi graph ở thư mục mới thì tự bấm **Yes**, người dùng cho phép 2026-10-27), chờ file kết quả rồi đóng phiên. Mỗi lần ~1 phút.
-  - **Chạy nền** (quy tắc 9, sửa 2026-11-10; áp cho script này và `_tmp\pyrevit_test\chay_test.ps1`, mỗi script chạy trong một tiến trình PowerShell riêng vì trùng tên kiểu `AnCuaSo`): mọi cửa sổ của đúng PID phiên này bị cắt vùng hiển thị về rỗng (`SetWindowRgn`; cửa sổ chính Revit 2027 là WPF 1900×1019, làm trong suốt không ăn, đẩy ra ngoài bị kéo về), thêm trong suốt + click xuyên qua + đẩy ra ngoài màn hình (tối đa 5 lần); focus bị chiếm thì trả về ứng dụng đang dùng. Không dùng `-WindowStyle Minimized` lúc khởi động. Lỗi giữa chừng cũng đóng phiên. `-HienCuaSo` = giữ cửa sổ khi cần xem lỗi. Cuối log có số lần lộ trên màn hình (dò 25 điểm mỗi 50 ms bằng `WindowFromPoint`) và bảng từng cửa sổ. Thử bản sao G19 (`_tmp\revit_nen\`, chỉ đọc): Dynamo lộ 0/595 lần quét, nút pyRevit thật qua journal lộ 1/272 (khoảng 50 ms lúc khởi động), cả hai ra đúng kết quả. Focus vẫn có thể bị giành vài lần: Dynamo chiếm 1 lần, không có lần trả (có thể đã tự trả); pyRevit chiếm 2, trả 2; chữ đang gõ có thể lọt trong khoảnh khắc đó. Chỉ kiểm bằng log, chưa ai xác nhận bằng mắt (`Cần xác nhận lại`). Các bản chép ở thư mục `_tmp` khác (gồm `revit_vk_hqv\chay_test.ps1`) chưa có phần này. Nút thử tạm ở `_tmp\revit_nen\da_go_ARVTestNen.extension`.
+  - **Màn hình 2** (quy tắc 9, sửa 2026-11-15; áp cho script này và `_tmp\pyrevit_test\chay_test.ps1`, cả 2 dot-source `_tmp\pyrevit_test\cua_so_phien.ps1`, kiểu C# `CuaSoPhien`; các `chay_nen*.ps1` gọi lại `chay_test.ps1` nên theo luôn; bản trước `_backup\chay_test_20261115_1145_truoc_man_hinh_2.ps1`, `_backup\chay_dynamo_ui_20261115_1145_truoc_man_hinh_2.ps1`): cửa sổ phiên dời sang màn hình 2, không ẩn. Thử 2026-11-15 (`_tmp\man_hinh_2\`, mở bản sao G19, 100 s): cửa sổ chính Revit nằm -1910,10 1900×1019 trên màn hình 2, chiếm focus 0 lần, lộ trên màn hình 1 5/1687 lần quét (~0,25 s lúc khởi động: khung MFC `Afx … Autodesk Revit 2027.3` bị Revit kéo về 20 lần rồi bị ẩn, sau đó tự đóng); ảnh `_tmp\man_hinh_2\man_hinh_phu_75s.png`. `-An` = ẩn như cách cũ dưới đây. Cách cũ – **Chạy nền** (quy tắc 9, sửa 2026-11-10; áp cho script này và `_tmp\pyrevit_test\chay_test.ps1`, mỗi script chạy trong một tiến trình PowerShell riêng vì trùng tên kiểu `AnCuaSo`): mọi cửa sổ của đúng PID phiên này bị cắt vùng hiển thị về rỗng (`SetWindowRgn`; cửa sổ chính Revit 2027 là WPF 1900×1019, làm trong suốt không ăn, đẩy ra ngoài bị kéo về), thêm trong suốt + click xuyên qua + đẩy ra ngoài màn hình (tối đa 5 lần); focus bị chiếm thì trả về ứng dụng đang dùng. Không dùng `-WindowStyle Minimized` lúc khởi động. Lỗi giữa chừng cũng đóng phiên. `-HienCuaSo` = giữ cửa sổ khi cần xem lỗi. Cuối log có số lần lộ trên màn hình (dò 25 điểm mỗi 50 ms bằng `WindowFromPoint`) và bảng từng cửa sổ. Thử bản sao G19 (`_tmp\revit_nen\`, chỉ đọc): Dynamo lộ 0/595 lần quét, nút pyRevit thật qua journal lộ 1/272 (khoảng 50 ms lúc khởi động), cả hai ra đúng kết quả. Focus vẫn có thể bị giành vài lần: Dynamo chiếm 1 lần, không có lần trả (có thể đã tự trả); pyRevit chiếm 2, trả 2; chữ đang gõ có thể lọt trong khoảnh khắc đó. Chỉ kiểm bằng log, chưa ai xác nhận bằng mắt (`Cần xác nhận lại`). Các bản chép ở thư mục `_tmp` khác (gồm `revit_vk_hqv\chay_test.ps1`) chưa có phần này. Nút thử tạm ở `_tmp\revit_nen\da_go_ARVTestNen.extension`.
 - Journal: `PermissiveJournal` + `PerformAutomaticActionInErrorDialog`; `dynShowUI true`, `dynAutomation false` (bật thì graph chạy ngoài API context, không mở được transaction); không thêm dòng trả lời hộp thoại, không thêm `ID_APP_EXIT`.
 - PythonNet3: không dùng `isinstance(e, <lớp Revit>)`, lọc bằng `OfClass` / so `Id.Value`; `import *` chỉ ở cấp module.
 
@@ -292,6 +293,13 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     Thử bản sao `file vach kinh.rvt` (`_tmp\revit_ctcua\thu3\VK.rvt`) + nút thật (`_tmp\pyrevit_ctcua\kq_vk\`):
     T1-VK.11 9 m → cả tờ, T2-VK.05 11 m → 1 hàng 3 ô, đủ dim; T1-VK.12 54 m vượt khổ (báo). Cửa G19 vẫn như cũ. Nút
     sinh lại 2026-11-04; người dùng chưa xem bố cục khối ô (`Cần xác nhận lại`).
+  - **Vách kính trong link hiện đủ trên mặt đứng** (người dùng báo 2026-11-15, Site HQV `CT VÁCH KÍNH DVKT1-01`: mặt đứng
+    chỉ còn cửa đi): template `(LINK)` ẩn hạng mục Walls làm mất đố + kính → template riêng `CHI TIẾT CỬA - MẶT ĐỨNG
+    (LINK VÁCH KÍNH)` giữ Walls, tường thường ẩn bằng filter `ARV_Ẩn tường thường (link)` (Width > 1 mm); bấm lại vách
+    đã làm thì view mặt đứng đổi sang template mới; vách tạo mới có thêm chuỗi dim đố (nét ẩn). Chi tiết + cách thử trong
+    skill. Thử nền nút thật bản sao Site (`_tmp\ctcua_vk_link\kq_A\` lỗi cũ, `kq_B\` đã sửa). Nút sinh lại 2026-11-15
+    12:09 (bản trước `_backup\*_20261115_*_truoc_vk_link*`), `.dyn` chưa sinh lại; Revit phải Reload pyRevit; người dùng
+    chưa bấm (`Cần xác nhận lại`).
   - Người dùng chưa bấm thử, chưa duyệt (`Cần xác nhận lại`).
 - `ThongKeCua_TuDong.dyn` (2026-11-04, skill `thong-ke-cua-revit`, quy tắc + cách thử xem skill): người dùng yêu cầu
   "1 bảng thống kê các cửa có trong mặt bằng đó, cửa trùng hiện 1 lần", nút riêng.
@@ -548,6 +556,22 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     - Bẫy: lần ĐẦU pyRevit nạp phiên có extension mới báo `PyRevitLoader - Error Loading pyRevit` (NullReference trong
       `HashSet.AddIfNotPresent`, `sessionmgr.py` 431) 1 lần; nạp lại thì được (4 lần sau đều được). Gặp thì đóng hộp thoại,
       Reload pyRevit / mở lại Revit. Thử nạp nhanh: `_tmp\ho_so_duyet\chay_thu_nap.ps1` (liệt kê tab / nút trên ribbon).
+- **Agent `hs-tkbvtc`** (người dùng yêu cầu 2026-11-15 "tạo agent làm HS TKBVTC", trả lời 15 câu hỏi; quy tắc đã chốt ghi
+  trong `.claude\agents\hs-tkbvtc.md`, công cụ trong skill `.claude\skills\hs-tkbvtc\`):
+  - Subagent của Claude Code: làm trên bản sao model chỉ chứa link, phạm vi ngăn cháy lan / định vị cửa / định vị lan can
+    louver / chi tiết cửa; làm thử 1 tầng mỗi loại rồi dừng chờ duyệt; chỗ không chắc thì dừng hỏi; lỗi trình bày chỉ báo;
+    bàn giao .rvt + ảnh + báo cáo tóm tắt + JSON phương án. Subagent không hỏi trực tiếp được → kết thúc lượt bằng mục
+    `## CẦN NGƯỜI DÙNG TRẢ LỜI`, phiên chính chuyển lời rồi gửi câu trả lời tiếp cho agent đó (SendMessage).
+  - Chạy nền: `scripts\chay_nen.ps1 -Viec <json>` → journal mở `ext\mo_dau.rvt` (dự án trống tự tạo) → nút thử `Mo`
+    (IronPython, mở file đích bằng API, workshared thì `DetachAndPreserveWorksets` = tách central, journal báo 0 dòng mượn)
+    → nút `Chay` (CPython, `chay_hs.py`: khảo sát / chạy nút theo phương án qua thư viện nút Hồ sơ đã duyệt / kiểm tra bản
+    vẽ / PNG / SaveAs file mới). Bẫy: CPython đã chạy rồi mới mở file bằng API thì Revit nạp `AcDbMgd` (tham chiếu
+    `DesktopConnectorInterop` 26 không có) → mọi `clr.AddReference` sau đó lỗi; nên mở bằng IronPython trước.
+  - Kiểm tra "ĐẠT" (câu 14): đúng số hiệu, viewport / bảng không tràn vùng vẽ khung tên, không đè nhau, tag không đè nhau.
+  - Thử bản sao G19 (`_tmp\hs_agent\00_thu_G19\`): khảo sát ~40 giây; ngăn cháy + định vị cửa + chi tiết cửa Tầng 1 ~25
+    giây, kiểm tra báo đúng 3 lỗi thấy trên ảnh. CHƯA thử trên Site HQV (link ở ổ A: – cần người dùng cho phép) và file
+    workshared; người dùng chưa giao việc thật cho agent (`Cần xác nhận lại`). Nút Hồ sơ đã duyệt chưa chạy mục
+    `ChiTietCua` / `thong_tin_du_an` của JSON phương án.
 - `ARV_MBTuongXayTang_v1.dyn` (bộ AI REVIT `AI REVIT\TUONG XAY\` của đồng nghiệp, người dùng yêu cầu áp dụng 2026-11-04;
   bản gốc giữ nguyên, bản dùng ở `scripts\dynamo\`):
   - Chức năng: mặt bằng TƯỜNG XÂY (định vị tường) cả tầng theo mẫu FPT P5 A.CD.04.07: view mới chép thông số template

@@ -85,6 +85,11 @@ AN_LINK_MD = ("OST_Walls", "OST_Floors", "OST_Ceilings", "OST_Roofs", "OST_Colum
               "OST_StructuralFraming", "OST_StructuralFoundation", "OST_Stairs", "OST_StairsRailing", "OST_GenericModel",
               "OST_Furniture", "OST_Casework", "OST_PlumbingFixtures", "OST_SpecialityEquipment", "OST_MechanicalEquipment",
               "OST_Topography", "OST_Planting", "OST_Entourage", "OST_Site", "OST_Parking", "OST_Rooms")
+# Vách kính trong link (người dùng báo 2026-11-15: mặt đứng chỉ còn cửa đi): vách kính THUỘC hạng mục Walls, ẩn Walls là
+# mất cả đố + kính → template riêng giữ Walls, tường thường ẩn bằng filter "Width > 1 mm" (curtain wall không có / = 0)
+HAU_TO_LINK_VK = u" (LINK VÁCH KÍNH)"
+AN_LINK_MD_VK = tuple(n for n in AN_LINK_MD if n != "OST_Walls")
+LOC_TUONG_THUONG = u"ARV_Ẩn tường thường (link)"
 AN_LINK_MB = ("OST_Floors", "OST_Ceilings", "OST_Roofs", "OST_StructuralFraming", "OST_Stairs", "OST_StairsRailing",
               "OST_GenericModel", "OST_Furniture", "OST_Casework", "OST_PlumbingFixtures", "OST_SpecialityEquipment",
               "OST_MechanicalEquipment", "OST_Rooms")
@@ -985,7 +990,7 @@ def ts_giai_doan(doc):
 
 
 # ---------------------------------------------------------------- template
-def lay_template(doc, view, ten_tpl, tu_khoa, ti_le, an_cat, p, ghi, an_ep=()):
+def lay_template(doc, view, ten_tpl, tu_khoa, ti_le, an_cat, p, ghi, an_ep=(), loc_tuong=False):
     """Template tên ten_tpl (đã có thì dùng nguyên). Chưa có: tạo từ template nền rồi chỉnh. Trả về template / None."""
     tpls = [v for v in FilteredElementCollector(doc).OfClass(View) if v.IsTemplate]
     for t in tpls:
@@ -994,8 +999,9 @@ def lay_template(doc, view, ten_tpl, tu_khoa, ti_le, an_cat, p, ghi, an_ep=()):
                 p(u"   Template '%s' đã có nhưng không dùng được cho view này → bỏ qua." % ten_tpl)
                 return None
             return t
+    hau_to = [h for h in (HAU_TO_LINK, HAU_TO_LINK_VK) if not ten_tpl.endswith(h)]
     ung = [t for t in tpls if (view is None or view.IsValidViewTemplate(t.Id))
-           and (ten_tpl.endswith(HAU_TO_LINK) or not t.Name.endswith(HAU_TO_LINK))]
+           and not any(t.Name.endswith(h) for h in hau_to)]
     tk = khong_dau(tu_khoa)
 
     def hang(t):
@@ -1063,9 +1069,36 @@ def lay_template(doc, view, ten_tpl, tu_khoa, ti_le, an_cat, p, ghi, an_ep=()):
                 an.append(ten_cat(doc, c))
         except Exception:
             pass
+    if loc_tuong:
+        if an_tuong_thuong(doc, tpl, p):
+            an.append(u"tường thường (filter '%s')" % LOC_TUONG_THUONG)
     p(u"   Tạo template '%s' từ '%s' (1:%d, Fine, ẩn: %s)." % (ten_tpl, nen.Name if nen is not None else u"view",
                                                              ti_le, u", ".join(an) or u"-"))
     return tpl
+
+
+def an_tuong_thuong(doc, tpl, p):
+    """Ẩn tường thường (Width > 1 mm) bằng view filter trên template; curtain wall không có Width (hoặc = 0) nên vẫn hiện.
+    Filter đã có thì dùng lại. Trả về True khi đã ẩn."""
+    try:
+        loc = None
+        for f in FilteredElementCollector(doc).OfClass(ParameterFilterElement):
+            if f.Name == LOC_TUONG_THUONG:
+                loc = f
+                break
+        if loc is None:
+            cats = List[ElementId]()
+            cats.Add(ElementId(BuiltInCategory.OST_Walls))
+            quy_tac = ParameterFilterRuleFactory.CreateGreaterRule(ElementId(BuiltInParameter.WALL_ATTR_WIDTH_PARAM),
+                                                                   ft(1), 1e-6)
+            loc = ParameterFilterElement.Create(doc, LOC_TUONG_THUONG, cats, ElementParameterFilter(quy_tac))
+        if not tpl.IsFilterApplied(loc.Id):
+            tpl.AddFilter(loc.Id)
+        tpl.SetFilterVisibility(loc.Id, False)
+        return True
+    except Exception as ex:
+        p(u"   CẢNH BÁO: không tạo được filter ẩn tường thường (%s) → tường cạnh vách kính có thể hiện." % ex)
+        return False
 
 
 def an_ky_hieu(doc, view, ten_views, crop_ids=()):
@@ -1390,6 +1423,25 @@ def _chinh(fi):
     trung = [v for v in views if v.Name in ten_v.values()]
     if trung:
         p(u"Type này đã có chi tiết (view: %s) → không tạo thêm." % u", ".join(v.Name for v in trung))
+        # Mặt đứng vách kính trong link làm bằng bản trước 2026-11-15 dùng template "(LINK)" ẩn cả Walls → chỉ còn cửa:
+        # đổi sang template "(LINK VÁCH KÍNH)" (chỉ view của công cụ, không xoá gì)
+        md_cu = [v for v in trung if v.Name == ten_v["md"] and v.ViewTemplateId.Value > 0
+                 and doc.GetElement(v.ViewTemplateId).Name.endswith(HAU_TO_LINK)]
+        if vk and lk and md_cu:
+            ten_moi = (doc_in(7) or u"").strip() + HAU_TO_LINK_VK
+            if dry:
+                p(u"   Sẽ đổi template mặt đứng '%s' sang '%s' (hiện đủ vách kính)." % (md_cu[0].Name, ten_moi))
+            else:
+                TransactionManager.Instance.EnsureInTransaction(doc)
+                v_cu = md_cu[0]
+                ten_cu = doc.GetElement(v_cu.ViewTemplateId).Name
+                tpl = lay_template(doc, v_cu, ten_moi, (tach(doc_in(9)) + [u"", u""])[1], v_cu.Scale,
+                                   tach(doc_in(10)) + ["OST_Levels"], p, True, list(AN_LINK_MD_VK), loc_tuong=True)
+                if tpl is not None:
+                    v_cu.ViewTemplateId = tpl.Id
+                    p(u"   Mặt đứng '%s': đổi template '%s' → '%s' (hiện đủ vách kính, đố, kính)." % (
+                        v_cu.Name, ten_cu, tpl.Name))
+                TransactionManager.Instance.TransactionTaskDone()
         for vp in FilteredElementCollector(doc).OfClass(Viewport):
             if any(vp.ViewId.Value == v.Id.Value for v in trung):
                 sh = doc.GetElement(vp.SheetId)
@@ -1829,12 +1881,17 @@ def _chinh(fi):
             pass
     for k, i in (("mb", 6), ("md", 7), ("mc", 8)):
         an_lk = []
-        if lk and k == "md":      # mặt đứng chỉ có cửa: ẩn hạng mục (Revit không ẩn từng phần tử trong link)
+        hau = HAU_TO_LINK
+        if lk and k == "md" and vk:   # vách kính: giữ Walls (vách kính là Walls), tường thường ẩn bằng filter
+            an_lk = list(AN_LINK_MD_VK)
+            hau = HAU_TO_LINK_VK
+        elif lk and k == "md":    # mặt đứng chỉ có cửa: ẩn hạng mục (Revit không ẩn từng phần tử trong link)
             an_lk = list(AN_LINK_MD)
         elif lk and k == "mb":    # mặt bằng: cửa + tường
             an_lk = list(AN_LINK_MB)
-        tpl = lay_template(doc, vs[k], ten_tpl_i(i) + (HAU_TO_LINK if (lk and an_lk) else u""), tk[["mb", "md", "mc"].index(k)],
-                           ti_le, an_cat + ([] if k == "mb" else ["OST_Levels"]), p, True, an_lk)
+        tpl = lay_template(doc, vs[k], ten_tpl_i(i) + (hau if (lk and an_lk) else u""), tk[["mb", "md", "mc"].index(k)],
+                           ti_le, an_cat + ([] if k == "mb" else ["OST_Levels"]), p, True, an_lk,
+                           loc_tuong=(lk and k == "md" and vk))
         if tpl is not None and vs[k].ViewTemplateId.Value != tpl.Id.Value:
             vs[k].ViewTemplateId = tpl.Id
     for k, v in vs.items():
@@ -2071,11 +2128,21 @@ def _chinh(fi):
                 return Reference(gl)
             except Exception:
                 return None
-        luoi_dung, luoi_ngang = [], []           # (vị trí theo H / cao độ, đường lưới)
-        for i in luoi_ids:
-            gl = doc.GetElement(i)
+        luoi_dung, luoi_ngang = [], []           # (vị trí theo H / cao độ, đường lưới; None = lưới trong link)
+        lk_luoi = []
+        if lk:       # vách trong link: vị trí lưới đổi toạ độ, dim bám nét ẩn (reference link bị Revit bỏ)
+            try:
+                cg_lk = fi._e.CurtainGrid
+                lk_luoi = list(cg_lk.GetUGridLineIds()) + list(cg_lk.GetVGridLineIds())
+            except Exception:
+                lk_luoi = []
+        for i in luoi_ids + lk_luoi:
+            gl = fi._e.Document.GetElement(i) if lk else doc.GetElement(i)
             try:
                 c = gl.FullCurve
+                if lk:
+                    c = c.CreateTransformed(fi._tf)
+                    gl = None
                 d = (c.GetEndPoint(1) - c.GetEndPoint(0)).Normalize()
                 q = c.Evaluate(0.5, True)
             except Exception:
@@ -2116,6 +2183,18 @@ def _chinh(fi):
         # lưới chỉ là điểm nên bám nét ẩn tại trục) cách mép 6 mm giấy, tổng 13 mm
         g_mb = XYZ(P.X, P.Y, z_lv)
 
+        def tren_md(w):
+            """Điểm w chiếu lên mặt phẳng view mặt đứng (qua O_d, pháp tuyến N)."""
+            return w + N * (O_d - w).DotProduct(N)
+
+        def net_md_dung(h):
+            g = tren_md(XYZ(P.X, P.Y, 0) + H * h)          # h đo theo H từ P (như vị trí lưới)
+            return net_an(v_md, XYZ(g.X, g.Y, z_day), XYZ(g.X, g.Y, z_dinh))
+
+        def net_md_ngang(z):
+            g = tren_md(XYZ(P.X, P.Y, z))
+            return net_an(v_md, g + H * h_trai, g + H * h_phai)
+
         def ne_mb(hs):
             return [net_an(v_mb, g_mb + H * h + N * smin, g_mb + H * h + N * smax) for h in hs]
         for nhan, dn, chuoi in ((u"MB chuỗi đố", ft(6) * ti_le, True), (u"MB rộng", ft(13) * ti_le, False)):
@@ -2131,14 +2210,21 @@ def _chinh(fi):
             if chuoi and not luoi_dung:
                 continue
             q = XYZ(O_d.X, O_d.Y, z_d)
-            refs = [r_trai] + ([ref_luoi(gl, v_md) for _, gl in luoi_dung] if chuoi else []) + [r_phai]
+            if lk and chuoi:      # lưới trong link: cả chuỗi bám nét ẩn trên mặt đứng
+                refs = [net_md_dung(h) for h in [h_trai] + [h for h, _ in luoi_dung] + [h_phai]]
+            else:
+                refs = [r_trai] + ([ref_luoi(gl, v_md) for _, gl in luoi_dung] if chuoi else []) + [r_phai]
             thu(nhan, v_md, q + X_d * (a - le), q + X_d * (b + le), refs)
         r_san_md = net_san["md"].GeometryCurve.Reference
         for nhan, dx, chuoi in ((u"MĐ đứng chuỗi", d1, True), (u"MĐ đứng tổng", d2, False)):
             if chuoi and not (luoi_ngang or r_duoi is not None):
                 continue
             q = O_d + X_d * (b + dx)
-            refs = [r_san_md, r_duoi] + ([ref_luoi(gl, v_md) for _, gl in luoi_ngang] if chuoi else []) + [r_tren]
+            if lk and chuoi:
+                refs = [r_san_md] + [net_md_ngang(z) for z in ([z_day] if chan_cao else []) +
+                                     [z for z, _ in luoi_ngang] + [z_dinh]]
+            else:
+                refs = [r_san_md, r_duoi] + ([ref_luoi(gl, v_md) for _, gl in luoi_ngang] if chuoi else []) + [r_tren]
             thu(nhan, v_md, XYZ(q.X, q.Y, z_lo), XYZ(q.X, q.Y, z_hi), refs)
         q = O_c + X_c * (b2 + d1)
         r_san_mc = net_san["mc"].GeometryCurve.Reference
