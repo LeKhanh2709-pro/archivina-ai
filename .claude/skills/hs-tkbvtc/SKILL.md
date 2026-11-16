@@ -22,11 +22,13 @@ Chưa thử trên máy khác (`Cần xác nhận lại`).
 
 ## File việc (JSON, mỗi lần chạy 1 file, thư mục kết quả MỚI mỗi lần – không ghi đè)
 ```json
-{"che_do": "khao_sat | chay",
+{"che_do": "khao_sat | chay | dat_mark_vk | kiem_tra",
  "mo": "<.rvt cần mở>",                 "phuong_an": "<phuong_an.json>  (chay)",
  "chi": ["<view>|<nút>", "..."],         "luu": "<.rvt lưu ra – file MỚI>",
  "ket_qua": "<thư mục mới>",             "log": "<thư mục log lõi + đệm CAD, dùng chung cả việc>",
- "anh": true, "tra_loi_xoa": "khong",   "khao_sat_view": ["<mặt bằng cần đếm cửa theo Type Mark>"]}
+ "anh": true, "tra_loi_xoa": "khong",   "khao_sat_view": ["<mặt bằng cần đếm cửa theo Type Mark>"],
+ "nap_lai_link": {"<tên link .rvt>": "<bản sao link trên D:>"},
+ "sheet_tien_to": ["A_TC.14."]          (kiem_tra: chỉ kiểm tra + xuất ảnh các tờ có số hiệu bắt đầu như vậy, không chạy nút)}
 ```
 Đường dẫn trong JSON viết bằng `/` (đỡ lỗi thoát `\`). Tên nút: `NganChay`, `TagCua`, `LanCanLouver`, `ChiTietCua`, `ChongTham`.
 
@@ -51,6 +53,42 @@ Chưa thử trên máy khác (`Cần xác nhận lại`).
   vào `can_hoi` – hộp chọn view WinForms làm phiên nền đứng mãi); `khong_dung_cad: true` = IN[21] "Không dùng CAD link"
   của Chống thấm / Ngăn cháy (tầng có ≥ 2 CAD link ở các view khác nhau thì lõi dừng); `them_in: {"<số IN>": giá trị}`
   = ô nhập bất kỳ khác của lõi.
+- Khoá `tao_view_moi: true` (2026-11-16, người dùng "Tạo view mới, thử"): trước khi bấm nút, view đích có sẵn cùng tầng
+  (view mẫu đã có tag / hatch) được ĐỔI TÊN trên bản sao (`MẪU - …`, bỏ chữ khoá) → nút tạo view mới; view mẫu vẫn nằm
+  trên bản vẽ cũ, không xoá gì; template mang chữ khoá thì không chạy, ghi `can_hoi`. Dùng kèm số hiệu mới (`-AG`).
+  CHƯA chạy được lần nào: 2026-11-16 Revit không mở được P5 (xem dòng dưới).
+- Nút `Mo` ghi locale CRT trước khi mở file (`LOCALE truoc … -> C` trong `mo.txt`) và đặt `C`. 2026-11-16 locale đã là
+  `C` mà P5 vẫn lỗi `CArchiveException 105` lúc giải nén bảng phần tử (mỗi lần hỏng 1 stream khác: 3970 / 102 / 339 /
+  1302), cả bản gốc `00_` lẫn bản Revit tự lưu `04_`; G19 mở bình thường. 15/11 tỉ lệ mở được 2 / 4, 16/11 0 / 4.
+  Nguyên nhân chưa rõ (`Cần xác nhận lại`): không phải locale, không phải file hỏng (cùng file lúc được lúc không).
+- **Đặt tên vách kính trong file link** (2026-11-16, G19 Side; người dùng: "tên của VK nếu chưa có thì theo thứ tự các
+  tầng, ví dụ tầng 1 là VKT1-01, VKT1-02…; các cửa trùng nhau trong dự án thì triển khai 1 lần"):
+  - Vách kính thường nằm trong file link (chỉ đọc) → chép file link về `rvt\`, chạy `che_do: "dat_mark_vk"` trên bản sao
+    đó (`vk_tang` [số tầng], `vk_dang` "VKT{t}-{n:02d}", `vk_bo_loai` ["tuong lam"] = kiểu curtain wall không phải vách
+    kính, `luu` = file link mới).
+  - Vách chưa có Mark được đặt theo thứ tự đọc (trên → dưới dải 3 m, trái → phải). Vách giống hệt nhau (kiểu, dài, cao,
+    panel / cửa cùng vị trí, lật đầu vẫn tính) dùng chung 1 Mark; giống vách đã có Mark thì lấy Mark đó. Ghi `vk_mark.json`.
+  - File việc của model chính: khoá `nap_lai_link` {"<tên link .rvt>": "<file link mới>"}. Nút `Mo` (IronPython) nạp lại link
+    bằng `RevitLinkType.LoadFrom` sau khi mở; kết quả ghi trong `mo.txt`.
+  - Thử G19 Side: Tầng 1 13 vách → VKT1-01…10 + 1 vách lấy T1-VK.04.2; tag 16 / 16 vách bằng Mark.
+  - Mark mới chỉ nằm trên BẢN SAO link: muốn dùng thật thì người dùng đặt Mark trong file link thật (`Cần xác nhận lại`).
+- Chi tiết cửa chạy chậm trên model nhiều link (G19 Side 242 link instance: ~3 phút / cửa, vách kính 5 – 8 phút, càng về
+  sau càng chậm vì mỗi lần tạo view Revit cập nhật đồ hoạ mọi section đã tạo). Bài học 2026-11-16 (lần `lan\07` chạy 3 giờ,
+  17 tờ, mất hết vì chưa lưu):
+  - Chia `mark` thành nhóm ~7 / mục và chạy THÀNH CHUỖI PHIÊN, mỗi phiên 1 – 2 mục, mở file của phiên trước, `luu` file mới
+    (mẫu `_tmp\hs_agent\02_G19_Side\viec\tao_chuoi_08_15.py` → `chuoi_08_15.ps1`; lõi xếp tiếp vào tờ cũ cùng `so`).
+  - Trong 1 phiên, sau vài mục chi tiết cửa Revit có thể nạp `AcDbMgd` → mục sau lỗi `DesktopConnectorInterop 26`
+    ngay ở `clr.AddReference` (giống bẫy mở file trong CPython) → thêm lý do để mỗi phiên ít mục.
+  - Revit có lúc dựng đồ hoạ > 15 phút không ghi journal. `chay_nen.ps1 -JournalDung <phút>` (mặc định 15) và từ
+    2026-11-16 CPU của Revit còn tăng thì vẫn tính là tiến triển. Chuỗi dùng `-ChoToiDa 9000 -KhongTienTrien 120 -JournalDung 30`.
+  - **MỌI phiên của chuỗi phải có `nap_lai_link`** khi model dùng link bản sao (G19 Side chiều 16/11: phiên 08 mở file do
+    phiên có LoadFrom lưu ra thì link `04_*_mark_VK.rvt` nạp được, nhưng file phiên 08 lưu ra (chỉ nạp link lúc mở) thì các
+    phiên 09 – 14 mở lên KHÔNG nạp link này (journal không hề thử nạp; link ổ A: vẫn nạp) → "chọn 0 đối tượng", 3 phiên
+    không làm gì; ảnh tờ Tầng 1 chỉ còn khung rỗng cho tới khi link nạp lại. Phiên 15 có `nap_lai_link` → `LinkLoaded`,
+    0 link không nạp. Nguyên nhân gốc `Cần xác nhận lại`). Chuỗi chạy lại: `viec\tao_chuoi_16_18.py`.
+  - Ảnh / `kiem_tra` của từng phiên chỉ có tờ phiên đó chạm tới, và tờ được xuất ngay sau MỤC ĐẦU (thiếu cửa mục sau xếp
+    thêm vào tờ đó) → cuối chuỗi chạy 1 phiên `che_do: "kiem_tra"` + `sheet_tien_to` trên file cuối (mẫu
+    `viec\19_kiem_tra_toan_bo.json`) để có ảnh + kiểm tra của mọi tờ.
 - Khảo sát / chọn cửa KHÔNG gom phần tử theo view (`FilteredElementCollector(doc, viewId)` bắt Revit dựng đồ hoạ từng
   view; FPT P5 37 link treo > 15 phút, 23 GB RAM) – link thấy trong view xét bằng `IsHidden`.
 - Thông tin dự án (`thong_tin_du_an`): điền tham số chữ của Project Information theo đúng tên; tên không có thì báo.

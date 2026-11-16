@@ -6,7 +6,10 @@
 # File việc (JSON):
 #   "mo":          .rvt cần mở. Workshared thì mở TÁCH khỏi central (DetachAndPreserveWorksets) → không bao giờ mượn phần
 #                  tử từ central thật trên ổ mạng; không workshared thì mở thường.
-#   "che_do":      "khao_sat" (chỉ đọc, ghi khao_sat.json) | "chay" (chạy các nút theo phương án)
+#   "che_do":      "khao_sat" (chỉ đọc, ghi khao_sat.json) | "chay" (chạy các nút theo phương án) | "dat_mark_vk" (đặt
+#                  Mark vách kính) | "kiem_tra" (2026-11-16: chỉ kiểm tra + xuất ảnh các bản vẽ có số hiệu bắt đầu bằng
+#                  "sheet_tien_to" – chuỗi hoặc danh sách, vd. ["A_TC.14.", "A_TC.22."]; không chạy nút, không lưu. Dùng
+#                  sau chuỗi phiên chi tiết cửa: ảnh / kiểm tra của từng phiên chỉ có tờ phiên đó chạm tới và có thể cũ)
 #   "phuong_an":   JSON phương án (định dạng nút Hồ sơ đã duyệt + mục ChiTietCua), che_do = chay
 #   "chi":         ["<view>|<nút>", ...] chỉ chạy các mục này (trống = mọi mục của phương án)
 #   "luu":         .rvt lưu ra sau khi chạy (file MỚI, có rồi thì không ghi đè); trống = không lưu
@@ -498,8 +501,163 @@ try:
                         ra.append((e, li))
         return ra
 
+    def luu_ra(luu):
+        """SaveAs ra file MỚI (có rồi thì không ghi đè); workshared → central mới."""
+        if os.path.isfile(luu):
+            KET["loi"].append(u"KHÔNG LƯU: đã có file %s (không ghi đè)" % luu)
+            return
+        if not os.path.isdir(os.path.dirname(luu)):
+            os.makedirs(os.path.dirname(luu))
+        o_ = DB.SaveAsOptions()
+        o_.OverwriteExistingFile = False
+        if doc.IsWorkshared:
+            ws_ = DB.WorksharingSaveAsOptions()
+            ws_.SaveAsCentral = True
+            o_.SetWorksharingOptions(ws_)
+        doc.SaveAs(luu, o_)
+        KET["da_luu"] = luu
+        w(u"=== Đã lưu {}".format(luu))
+
+    def dat_mark_vk():
+        """che_do "dat_mark_vk" (2026-11-16, G19 Side; người dùng: "tên của VK nếu chưa có thì theo thứ tự các tầng, ví dụ
+        tầng 1 là VKT1-01, VKT1-02"). Chạy trên BẢN SAO file chứa vách kính (thường là file link của model chính).
+        Vách kính (curtain wall) trên tầng V["vk_tang"] (số tầng, mặc định 1–4; level tên "TẦNG <n>", bỏ hầm) chưa có Mark
+        → đặt Mark V["vk_dang"] (mặc định "VKT{t}-{n:02d}") theo thứ tự đọc trên mặt bằng (trên → dưới theo dải 3 m, trái →
+        phải). Vách GIỐNG HỆT nhau (cùng kiểu, dài, cao, panel / cửa cùng loại + cùng vị trí; lật đầu tính là giống) dùng
+        CHUNG 1 Mark – người dùng: "các cửa trùng nhau trong dự án thì triển khai 1 lần"; giống vách đã có Mark thì lấy Mark
+        đó. Không đổi Mark đã có. Ghi <ket_qua>\\vk_mark.json, lưu ra V["luu"].
+        V["vk_bo_loai"]: chữ trong tên kiểu (không dấu) thì KHÔNG coi là vách kính, không đặt Mark (G19: curtain wall kiểu
+        "Tuong lam_*" là tường lam)."""
+        import re
+        tang_can = set(int(x) for x in (V.get("vk_tang") or [1, 2, 3, 4]))
+        dang = V.get("vk_dang") or u"VKT{t}-{n:02d}"
+        bo_loai = [kd(x) for x in (V.get("vk_bo_loai") or [])]
+
+        def so_tang(lv):
+            if lv is None or u"ham" in kd(lv.Name):
+                return None
+            m_ = re.search(r"\btang\s+(\d+)\b", kd(lv.Name))
+            return int(m_.group(1)) if m_ else None
+
+        def ten_loai(e):
+            t = doc.GetElement(e.GetTypeId())
+            if t is None:
+                return u"-"
+            return u"%s : %s" % (getattr(t, "FamilyName", u"") or u"", ten(t))
+
+        def chu_ky(wl):
+            cv = wl.Location.Curve
+            dai = cv.Length
+            bb = wl.get_BoundingBox(None)
+            z0 = bb.Min.Z
+            p0, p1 = cv.GetEndParameter(0), cv.GetEndParameter(1)
+            ds = []
+            for pid in wl.CurtainGrid.GetPanelIds():
+                pe = doc.GetElement(pid)
+                bp = pe.get_BoundingBox(None) if pe is not None else None
+                if bp is None:
+                    continue
+                c = bp.Min.Add(bp.Max).Multiply(0.5)
+                ir = cv.Project(c)
+                s = (ir.Parameter - p0) / (p1 - p0) * dai if ir is not None else 0.0
+                ds.append((ten_loai(pe), s, c.Z - z0, bp.Max.Z - bp.Min.Z))
+            tron = lambda x: int(round(ft2mm(x) / 10.0))
+            xuoi = tuple(sorted((a, tron(s), tron(z), tron(h)) for a, s, z, h in ds))
+            nguoc = tuple(sorted((a, tron(dai - s), tron(z), tron(h)) for a, s, z, h in ds))
+            return (ten_loai(wl), tron(dai), tron(bb.Max.Z - bb.Min.Z), min(xuoi, nguoc))
+
+        ds_vach = []
+        for wl in DB.FilteredElementCollector(doc).OfClass(DB.Wall):
+            if not la_vach(wl):
+                continue
+            lv = doc.GetElement(wl.LevelId)
+            p = wl.get_Parameter(DB.BuiltInParameter.ALL_MODEL_MARK)
+            cv = wl.Location.Curve
+            g = cv.GetEndPoint(0).Add(cv.GetEndPoint(1)).Multiply(0.5)
+            try:
+                ck = chu_ky(wl)
+            except Exception as ex_:
+                ck = None
+                w(u"   vách %d: không tính được chữ ký (%s) → coi là riêng" % (wl.Id.Value, ex_))
+            ds_vach.append({"wl": wl, "id": wl.Id.Value, "tang_ten": lv.Name if lv is not None else u"-",
+                            "tang": so_tang(lv), "mark_cu": (p.AsString() if p else None) or u"", "ck": ck,
+                            "x": ft2mm(g.X), "y": ft2mm(g.Y), "dai": ck[1] * 10 if ck else None,
+                            "cao": ck[2] * 10 if ck else None, "loai": ck[0] if ck else ten_loai(wl)})
+        da_co = set(v["mark_cu"] for v in ds_vach if v["mark_cu"])
+        biet = {}
+        for v in ds_vach:
+            if v["mark_cu"] and v["ck"] is not None:
+                biet.setdefault(v["ck"], v["mark_cu"])
+        dem = {}
+        t_ = DB.Transaction(doc, u"Agent HS TKBVTC – đặt Mark vách kính")
+        t_.Start()
+        for tg in sorted(tang_can):
+            ds = [v for v in ds_vach if v["tang"] == tg and not v["mark_cu"] and
+                  not any(b in kd(v["loai"]) for b in bo_loai)]
+            ds.sort(key=lambda v: (-int(v["y"] // 3000), v["x"]))
+            for v in ds:
+                if v["ck"] is not None and v["ck"] in biet:
+                    mk, cach = biet[v["ck"]], u"giống vách đã đặt"
+                else:
+                    while True:
+                        dem[tg] = dem.get(tg, 0) + 1
+                        mk = dang.format(t=tg, n=dem[tg])
+                        if mk not in da_co:
+                            break
+                    da_co.add(mk)
+                    cach = u"mới"
+                    if v["ck"] is not None:
+                        biet[v["ck"]] = mk
+                try:
+                    v["wl"].get_Parameter(DB.BuiltInParameter.ALL_MODEL_MARK).Set(mk)
+                    v["mark_moi"], v["cach"] = mk, cach
+                except Exception as ex_:
+                    v["loi"] = u"%s" % ex_
+                w(u"   {} | tầng {} | {} | dài {} cao {} → {} ({})".format(
+                    v["id"], v["tang_ten"], v["loai"], v["dai"], v["cao"], v.get("mark_moi", u"LỖI"), cach))
+        t_.Commit()
+        ra = []
+        for v in ds_vach:
+            r_ = dict((k, v[k]) for k in v if k not in ("wl", "ck"))
+            ra.append(r_)
+        with io.open(os.path.join(KQ, "vk_mark.json"), "w", encoding="utf-8") as g_:
+            g_.write(json.dumps(ra, ensure_ascii=False, indent=1))
+        n_moi = sum(1 for v in ds_vach if v.get("mark_moi"))
+        n_ten = len(set(v["mark_moi"] for v in ds_vach if v.get("mark_moi")))
+        w(u"=== Vách kính: {} vách, đặt Mark {} vách ({} tên); giữ {} vách đã có Mark".format(
+            len(ds_vach), n_moi, n_ten, sum(1 for v in ds_vach if v["mark_cu"])))
+        KET["vk_mark"] = {"so_vach": len(ds_vach), "dat": n_moi, "so_ten": n_ten}
+        if V.get("luu"):
+            luu_ra(V["luu"])
+
     if V.get("che_do") == "khao_sat":
         khao_sat()
+    elif V.get("che_do") == "dat_mark_vk":
+        dat_mark_vk()
+    elif V.get("che_do") == "kiem_tra":
+        # 2026-11-16 (G19 Side): chỉ kiểm tra + xuất ảnh MỌI bản vẽ có số hiệu bắt đầu bằng V["sheet_tien_to"], không
+        # chạy nút nào, không lưu. Lý do: trong chuỗi phiên chi tiết cửa, mỗi phiên chỉ kiểm / xuất ảnh tờ phiên đó chạm
+        # tới, và ảnh tờ được xuất ngay sau mục đầu nên thiếu cửa mục sau thêm vào.
+        tt = V.get("sheet_tien_to") or []
+        if not isinstance(tt, list):
+            tt = [tt]
+        tt = [u"%s" % t for t in tt]
+        ds_s = sorted(DB.FilteredElementCollector(doc).OfClass(DB.ViewSheet), key=lambda x: x.SheetNumber)
+        n_kt = 0
+        for s in ds_s:
+            if tt and not any(s.SheetNumber.startswith(t) for t in tt):
+                continue
+            n_kt += 1
+            w(u"=== kiểm tra bản vẽ {}".format(s.SheetNumber))
+            r = kiem_sheet(s, u"", u"")
+            r["muc"] = u"kiểm tra"
+            KET["kiem_tra"].append(r)
+            if V.get("anh", True):
+                try:
+                    xuat_anh(s)
+                except Exception as ex:
+                    r["luu_y"].append(u"Không xuất được ảnh: %s" % ex)
+        w(u"=== Đã kiểm tra {} bản vẽ (tiền tố {})".format(n_kt, u", ".join(tt) or u"mọi tờ"))
     else:
         # -------------------------------------------------------- chạy theo phương án
         os.environ["ARV_HO_SO_DUYET_LOG"] = LOG
@@ -563,6 +721,9 @@ try:
                                # 2026-11-15 (FPT P5): chọn sẵn view đích khi tầng có ≥ 2 view cùng loại; ô nhập thêm
                                # của lõi, vd. {"21": true} = Không dùng CAD link (Chống thấm / Ngăn cháy)
                                "view_dich": (d.get("view_dich") or u"").strip(),
+                               # 2026-11-16 (FPT P5, người dùng "Tạo view mới, thử"): view đích có sẵn của tầng (view
+                               # mẫu đã có tag / hatch) được ĐỔI TÊN trên bản sao cho nút không nhận ra → nút tạo view mới
+                               "tao_view_moi": bool(d.get("tao_view_moi")),
                                "them_in": dict((int(k), v) for k, v in (d.get("them_in") or {}).items())})
                 if d.get("khong_dung_cad") and nut in ("ChongTham", "NganChay"):
                     muc_ds[-1]["them_in"][21] = True
@@ -636,6 +797,49 @@ try:
             uiapp.ActiveUIDocument.Selection.SetReferences(refs)
             return refs.Count, con
 
+        _DOI_TEN = ((u"ĐỊNH VỊ", u"ĐV"), (u"Định vị", u"ĐV"), (u"định vị", u"ĐV"), (u"CHỐNG THẤM", u"CTH"),
+                    (u"Chống thấm", u"CTH"), (u"chống thấm", u"CTH"), (u"CHÁY LAN", u"CLAN"), (u"CHAY LAN", u"CLAN"),
+                    (u"Cháy lan", u"CLAN"), (u"cháy lan", u"CLAN"))
+
+        def an_view_mau(mb_, m_, kq_):
+            """Khoá tao_view_moi: đổi tên view đích có sẵn cùng tầng (CHỈ trên bản sao) để nút không nhận ra mà tạo view
+            mới. View vẫn nằm nguyên trên bản vẽ cũ, không xoá gì. Template của view mang chữ khoá thì không giấu được
+            bằng đổi tên → không chạy, ghi can_hoi."""
+            tk = hsd.NUT[m_["nut"]]["tu_khoa"]
+            ds = hsd.view_dich(doc, mb_, m_["nut"])
+            if not ds:
+                return
+            vuong = [v for v in ds if tk not in kd(v.Name)]
+            if vuong:
+                KET["can_hoi"].append(u"%s – %s: view có template mang chữ khoá '%s', đổi tên không giấu được: %s" % (
+                    m_["view"], m_["nut"], tk, u"; ".join(v.Name for v in vuong)))
+                raise Exception(u"tao_view_moi: không giấu được view mẫu (template mang chữ khoá) – không chạy.")
+            t_ = DB.Transaction(doc, u"Agent HS TKBVTC – đổi tên view mẫu")
+            t_.Start()
+            try:
+                for v in ds:
+                    cu = v.Name
+                    moi = cu
+                    for a, b in _DOI_TEN:
+                        moi = moi.replace(a, b)
+                    moi = u"MẪU - " + moi
+                    if tk in kd(moi):
+                        moi = u"MẪU - view %d" % v.Id.Value
+                    try:
+                        v.Name = moi
+                    except Exception:
+                        moi = u"%s (%d)" % (moi, v.Id.Value)
+                        v.Name = moi
+                    dong = u"Đổi tên view mẫu (bản sao, để nút tạo view mới): '%s' → '%s'%s" % (
+                        cu, moi, u" – vẫn nằm trên bản vẽ %s" % so_sheet(v) if so_sheet(v) else u"")
+                    kq_["dong"].append(dong)
+                    w(u"   " + dong)
+                t_.Commit()
+            except BaseException:
+                if t_.HasStarted() and not t_.HasEnded():
+                    t_.RollBack()
+                raise
+
         try:
             for m in muc_ds:
                 kq = {"view": m["view"], "nut": m["nut"], "so_yeu_cau": m["so"], "ten_yeu_cau": m["ten"], "dong": [],
@@ -647,6 +851,8 @@ try:
                     if mb is None:
                         raise Exception(u"File không có mặt bằng tầng tên '%s'" % m["view"])
                     mo_view = mb
+                    if m["tao_view_moi"] and m["nut"] in hsd.NUT and m["nut"] != "TagCua":
+                        an_view_mau(mb, m, kq)
                     if m["nut"] in hsd.NUT and m["nut"] != "TagCua":
                         dich = hsd.view_dich(doc, mb, m["nut"])
                         if m["view_dich"]:

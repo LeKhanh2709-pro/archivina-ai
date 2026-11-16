@@ -16,6 +16,18 @@ kq = os.path.normpath(V["ket_qua"])
 if not os.path.isdir(kq):
     os.makedirs(kq)
 f = io.open(os.path.join(kq, "mo.txt"), "w", encoding="utf-8")
+# 2026-11-16 (FPT P5 mở lỗi ArchiveException 105 corruptData khi đọc bảng phần tử): locale CRT của tiến trình khác "C"
+# làm Revit đọc sai dữ liệu có tên tiếng Việt (xem CLAUDE.md "Nguyên nhân Revit văng"). Ghi locale đang có rồi đặt "C"
+# trước khi mở file. Không được thì bỏ qua (mở như cũ).
+try:
+    import ctypes
+    _crt = ctypes.cdll.ucrtbase
+    _crt.setlocale.restype = ctypes.c_char_p
+    _cu = _crt.setlocale(0, None)
+    _moi = _crt.setlocale(0, b"C")
+    f.write(u"LOCALE truoc %s -> %s\n" % (_cu, _moi))
+except Exception as _ex:
+    f.write(u"LOCALE khong dat duoc: %s\n" % _ex)
 uiapp = __revit__
 loi = None
 if V.get("revit") and (u"%s" % uiapp.Application.VersionNumber) != (u"%s" % V["revit"]):
@@ -26,6 +38,11 @@ elif V.get("che_do") != "tao_mo_dau":
     try:
         ws = BasicFileInfo.Extract(mo).IsWorkshared
         oo = OpenOptions()
+        if V.get("audit"):
+            # 2026-11-16: khoá "audit" của file việc = mở kèm Audit (chỉ dùng cho BẢN SAO; Revit báo CArchiveException
+            # 105 "needs to be recovered ... select the Audit option")
+            oo.Audit = True
+            f.write(u"AUDIT bat\n")
         if ws:
             oo.DetachFromCentralOption = DetachFromCentralOption.DetachAndPreserveWorksets
             oo.SetOpenWorksetsConfiguration(WorksetConfiguration(WorksetConfigurationOption.OpenAllWorksets))
@@ -33,6 +50,21 @@ elif V.get("che_do") != "tao_mo_dau":
         f.write(u"MO %s | workshared %s | tach %s\n" % (mo, ws, ud.Document.IsDetached))
         if dau is not None and dau.Title != ud.Document.Title:
             dau.Close(False)
+        # 2026-11-16 (G19 Side): khoá "nap_lai_link" {"<tên link .rvt>": "<bản sao trên D:>"} = nạp lại link của BẢN SAO
+        # từ file khác (vd. bản sao link đã đặt Mark vách kính). Làm ở đây (IronPython) vì nạp file bằng API trong CPython
+        # gặp bẫy AcDbMgd / DesktopConnectorInterop (xem đầu file).
+        from Autodesk.Revit.DB import FilteredElementCollector, RevitLinkType, Element
+        for ten_l, duong in (V.get("nap_lai_link") or {}).items():
+            duong = os.path.normpath(duong)
+            gap = 0
+            for lt in FilteredElementCollector(ud.Document).OfClass(RevitLinkType):
+                if lt.IsNestedLink or Element.Name.GetValue(lt) != ten_l:
+                    continue
+                gap += 1
+                r = lt.LoadFrom(ModelPathUtils.ConvertUserVisiblePathToModelPath(duong), WorksetConfiguration())
+                f.write(u"NAP LAI LINK %s <- %s | %s\n" % (ten_l, duong, r.LoadResult))
+            if not gap:
+                f.write(u"NAP LAI LINK %s: khong thay link nay\n" % ten_l)
     except Exception as ex:
         loi = u"%s" % ex
 if loi:

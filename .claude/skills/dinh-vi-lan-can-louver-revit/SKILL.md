@@ -26,7 +26,11 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
    kèm chú thích) thành `MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER - <tầng>`, loại view riêng, template cùng tên (tạo từ template
    view gốc: Hidden Line, sàn Halftone tắt mẫu tô, tường xây Halftone, vách / cột BTCT tô đặc, ẩn nội thất / thiết bị cơ
    điện / ký hiệu mặt đứng, mặt cắt, filter ẩn trục link; công cụ ẩn thêm Plumbing Fixtures – IN[14]); crop sát nhà.
-2. **Nhận diện theo Mark** (instance `ALL_MODEL_MARK`): tiền tố IN[4] `LK;LC` = lan can, IN[6] `LV` = louver (không
+2. **Nhận diện theo Mark** (instance `ALL_MODEL_MARK`): tiền tố IN[4] `LK;LC;LS` = lan can (thêm `LS` 2026-11-15, người
+   dùng đồng ý "Có, thêm LS" – FPT P5 đặt Mark lan can `LS-xx`; sửa cả `ThongKeLanCan_TuDong.py` IN[1] + `.dyn` / `.json`
+   và `_TIEN_TO` của `lib\arv_bang_lan_can.py`, sinh lại 2 nút; bản trước `_backup\*_20261115_1824_truoc_LS*`; thử nền
+   bản sao P5 Tầng 3 `_tmp\hs_agent\01_FPT_P5\lan\22_chay_tang3_lan_can_LS\`: nhận 33 lan can (trước 0), bảng lan can
+   có dòng, 0 tag mới vì view mẫu đã có tag sẵn – chưa thử tag trên view sạch), IN[6] `LV` = louver (không
    phân biệt hoa thường / dấu). Đối tượng xét: Railings (mọi Railing = lan can), Windows / Generic Models có Type
    Comments hoặc tên family / type chứa `Louver` / `Lam` (nguyên chữ) = louver, cộng mọi đối tượng Windows / Generic
    Models có Mark đúng tiền tố.

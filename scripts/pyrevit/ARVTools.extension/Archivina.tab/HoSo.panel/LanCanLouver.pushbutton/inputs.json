@@ -42,7 +42,7 @@
    "type": "str",
    "decl": "str",
    "label": "Tiền tố Mark lan can, cách nhau bằng ;",
-   "default": "LK;LC",
+   "default": "LK;LC;LS",
    "kind": "normal"
   },
   {

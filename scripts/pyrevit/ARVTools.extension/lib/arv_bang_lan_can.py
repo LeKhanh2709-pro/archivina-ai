@@ -26,7 +26,7 @@ from System.Drawing import Size, Point, Font, Color
 
 _LUU = os.path.join(os.environ.get("APPDATA") or os.path.expanduser("~"), "pyRevit", "ARVTools", "ThongKeLanCan.json")
 LAN_CAN, LOUVER = u"Lan can", u"Louver"
-_TIEN_TO = {LAN_CAN: (u"lk", u"lc"), LOUVER: (u"lv",)}       # như IN[1] / IN[2] của core
+_TIEN_TO = {LAN_CAN: (u"lk", u"lc", u"ls"), LOUVER: (u"lv",)}       # như IN[1] / IN[2] của core
 _TU_KHOA_LV = (u"louver", u"lam")                            # như IN[6] của core
 _HANG_MUC = (DB.BuiltInCategory.OST_StairsRailing, DB.BuiltInCategory.OST_Windows, DB.BuiltInCategory.OST_GenericModel)
 _COT = ((u"loai", u"Loại", 70), (u"cua", u"Lan can / louver (Family : Type)", 280), (u"ten", u"Tên hiện tại (Mark)", 140),

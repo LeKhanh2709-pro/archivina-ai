@@ -1,0 +1,52 @@
+{
+  "ten": "ThongKeLanCan_TuDong",
+  "mo_ta": "Thống kê lan can, louver của mặt bằng đang mở theo MARK: đặt Mark theo JSON (nút lấy từ bảng đổi tên) rồi tạo / cập nhật BẢNG THỐNG KÊ LAN CAN / LOUVER <TẦNG>: cột Tên / Chiều dài / Chiều cao / Số lượng, gộp theo Mark (trùng tên hiện 1 dòng), lọc theo tầng; bấm lại thì cập nhật bảng cũ, không tạo trùng. Mặc định Dry-run.",
+  "py": "ThongKeLanCan_TuDong.py",
+  "dau_vao": [
+    {
+      "ten": "Tên view mặt bằng (trống = view đang mở)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tiền tố Mark lan can (;)",
+      "kieu": "string",
+      "gia_tri": "LK;LC"
+    },
+    {
+      "ten": "Tiền tố Mark louver (;)",
+      "kieu": "string",
+      "gia_tri": "LV"
+    },
+    {
+      "ten": "Dry-run (True = chỉ báo cáo)",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Mẫu tên bảng ({loai}, {tang}, {view})",
+      "kieu": "string",
+      "gia_tri": "BẢNG THỐNG KÊ {loai} {tang}"
+    },
+    {
+      "ten": "Mở bảng vừa tạo",
+      "kieu": "bool",
+      "gia_tri": true
+    },
+    {
+      "ten": "Từ khoá louver trong Type Comments / tên family (;)",
+      "kieu": "string",
+      "gia_tri": "Louver;Lam"
+    },
+    {
+      "ten": "Đổi tên: JSON [{ids, moi}] (trống = không đổi)",
+      "kieu": "string",
+      "gia_tri": ""
+    },
+    {
+      "ten": "Tạo / cập nhật bảng thống kê Revit",
+      "kieu": "bool",
+      "gia_tri": true
+    }
+  ]
+}

@@ -367,6 +367,9 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     Bấm nút thật qua journal trên bản sao L3-32 OK (`_tmp\pyrevit_lancan\kq2\`): nạp 2 family, 34 tag đúng chữ, bảng vào
     sheet đã có, bấm lại không trùng; cảnh báo duplicate Mark 0 → 8. Người dùng chưa bấm trong Revit của mình
     (`Cần xác nhận lại`).
+  - **Thêm tiền tố lan can `LS`** (người dùng "Có, thêm LS" 2026-11-15, FPT P5 dùng Mark `LS-xx`): 2 nút lan can nay nhận
+    `LK;LC;LS`; sinh lại 18:25, Revit phải Reload pyRevit. Thử nền bản sao P5 Tầng 3: nhận 33 lan can (trước 0), chưa thử
+    tag trên view sạch (`Cần xác nhận lại`). Chi tiết trong skill `dinh-vi-lan-can-louver-revit`.
 - **Rà 9 nút HS TKBVTC trên model HQV tháp B L5-L15** (2026-11-05, người dùng báo "không dùng được"; bản sao
   `_tmp\hs_tkbvtc_hqv\`, bấm thử bằng nút `ARVTestHS` qua journal, tầng `Tầng 5BA`, toạ độ ~2,4 km xa gốc). Lỗi đã sửa:
   (1) Chống thấm văng `CurveLoop ... discontinuous` (biên room có khe) → `lam_lien` dựng lại vòng liền; nay 79 phòng /

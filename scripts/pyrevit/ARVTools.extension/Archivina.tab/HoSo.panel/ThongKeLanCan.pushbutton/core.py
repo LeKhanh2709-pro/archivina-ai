@@ -38,7 +38,7 @@ from RevitServices.Transactions import TransactionManager
 from System.Collections.Generic import List as NetList
 
 TRANSACTION_NAME = u"ARV - Thống kê lan can, louver"
-MAC_DINH = ["", u"LK;LC", u"LV", True, u"BẢNG THỐNG KÊ {loai} {tang}", True, u"Louver;Lam", "", True]
+MAC_DINH = ["", u"LK;LC;LS", u"LV", True, u"BẢNG THỐNG KÊ {loai} {tang}", True, u"Louver;Lam", "", True]
 LAN_CAN, LOUVER = u"LAN CAN", u"LOUVER"
 HANG_MUC = (BuiltInCategory.OST_StairsRailing, BuiltInCategory.OST_Windows, BuiltInCategory.OST_GenericModel)
 

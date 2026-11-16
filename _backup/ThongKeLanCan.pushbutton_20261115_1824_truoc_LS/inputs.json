@@ -1,0 +1,81 @@
+{
+ "key": "ThongKeLanCan",
+ "title": "Thống kê lan can, louver",
+ "summary": "Thống kê lan can, louver của mặt bằng đang mở (người dùng yêu cầu 2026-11-05: \"tạo thống kê lan can louver như cửa\"): - Tên = MARK của từng đối tượng (không phải Type Mark như cửa). Nút bật bảng lib\\arv_bang_lan_can.py, người dùng gõ tên mới → IN[7] = JSON [{\"ids\": [...], \"moi\": \"LK-01\", \"cu\": ..., \"nhan\": ...}] → đặt Mark cho các đối tượng đó. - Mỗi lớp 1 bảng: \"BẢNG THỐNG KÊ LAN CAN <TẦNG>\" (Railings), \"BẢNG THỐNG KÊ LOUVER <TẦNG>\" (hạng mục có nhiều louver nhất trong view: Windows / Generic Models). Cùng tên với bảng của nút Định vị lan can, louver nên bảng đã đặt trên sheet được cập nhật theo, không tạo trùng, không xoá. - Cột như bảng cửa: Tên / Chiều dài (lan can: Tổng chiều dài) / Chiều cao / Số lượng; KHÔNG liệt kê từng cái, gộp theo Mark → trùng tên hiện 1 dòng; dòng TỔNG cuối bảng. - Lọc: Level = tầng của mặt bằng + Mark bắt đầu bằng tiền tố đang dùng (bộ lọc Revit không có \"hoặc\": dùng cả LK và LC thì lọc \"Mark có giá trị\"). Chưa có Mark đúng tiền tố thì không vào bảng, báo CẦN XEM LẠI. - Chưa có bảng cùng tên thì nhân bản bảng cùng hạng mục có sẵn (ưu tiên tên có \"thống kê\", giữ kiểu trình bày công ty), không có thì tạo mới. Bảng cùng tên khác hạng mục thì báo, không đụng. Dry-run chỉ báo cáo, không sửa mô hình.",
+ "transaction": "ARV - Thống kê lan can, louver",
+ "source": "ThongKeLanCan_TuDong.py",
+ "inputs": [
+  {
+   "index": 0,
+   "type": "str",
+   "decl": "str",
+   "label": "Tên view mặt bằng (để trống = view đang mở)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 1,
+   "type": "str",
+   "decl": "str",
+   "label": "Tiền tố Mark lan can, cách nhau bằng ;",
+   "default": "LK;LC",
+   "kind": "normal"
+  },
+  {
+   "index": 2,
+   "type": "str",
+   "decl": "str",
+   "label": "Tiền tố Mark louver, cách nhau bằng ;",
+   "default": "LV",
+   "kind": "normal"
+  },
+  {
+   "index": 3,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Dry-run (True = chỉ báo cáo)",
+   "default": true,
+   "kind": "dry_run"
+  },
+  {
+   "index": 4,
+   "type": "str",
+   "decl": "str",
+   "label": "Mẫu tên bảng ({loai} = LAN CAN / LOUVER, {tang} = tên tầng, {view} = tên view)",
+   "default": "BẢNG THỐNG KÊ {loai} {tang}",
+   "kind": "normal"
+  },
+  {
+   "index": 5,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Mở bảng vừa tạo (bảng đầu tiên)",
+   "default": true,
+   "kind": "normal"
+  },
+  {
+   "index": 6,
+   "type": "str",
+   "decl": "str",
+   "label": "Từ khoá louver trong Type Comments / tên family / type, cách nhau bằng ;",
+   "default": "Louver;Lam",
+   "kind": "normal"
+  },
+  {
+   "index": 7,
+   "type": "str",
+   "decl": "str",
+   "label": "Đổi tên: JSON [{\"ids\": [id...], \"moi\": \"<Mark mới>\"}] (trống = không đổi; nút điền từ bảng)",
+   "default": "",
+   "kind": "normal"
+  },
+  {
+   "index": 8,
+   "type": "bool",
+   "decl": "bool",
+   "label": "Tạo / cập nhật bảng thống kê Revit",
+   "default": true,
+   "kind": "normal"
+  }
+ ]
+}

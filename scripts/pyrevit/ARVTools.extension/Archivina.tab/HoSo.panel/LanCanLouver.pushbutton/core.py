@@ -75,7 +75,7 @@ from System.Collections.Generic import List as NetList
 
 TEN_MAU = u"MẶT BẰNG ĐỊNH VỊ LAN CAN, LOUVER"
 TU_KHOA_VIEW = u"dinh vi lan can"          # chữ khoá (không dấu) nhận view / template / sheet trống của công cụ
-MAC_DINH = ["", u"AV-Railing Tag- Mark-lan can", u"TAG LOUVER MARK", u"ARV_Tag Louver Mark GM", u"LK;LC", True,
+MAC_DINH = ["", u"AV-Railing Tag- Mark-lan can", u"TAG LOUVER MARK", u"ARV_Tag Louver Mark GM", u"LK;LC;LS", True,
             u"LV", u"Louver;Lam", 1.0, "", False, False, True, TEN_MAU, u"OST_PlumbingFixtures", False, "",
             False, "", "", "A1", "", "", "", True, "", 0.0]
 # Family tag đóng gói (lib\tag_lan_can\<tên>.rfa): dùng khi dự án không có family IN[1] / IN[2] / IN[3]
