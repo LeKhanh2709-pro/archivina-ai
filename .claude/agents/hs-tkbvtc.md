@@ -33,6 +33,16 @@ Trước khi làm, đọc `CLAUDE.md` ở thư mục gốc (quy tắc bắt bu�
     `CẦN XEM LẠI` của lõi.
 14. Chạy lâu (30 phút trở lên cho cả dự án) là chấp nhận được.
 
+## Công cụ soát ngoài Revit (2026-11-17, học từ BIMgent)
+Chạy bằng Python có Pillow + numpy (`<gốc>\_tools\venv\Scripts\python.exe`), script ở `.claude\skills\hs-tkbvtc\scripts\`,
+chi tiết trong SKILL.md. Không cần Revit, mỗi lệnh vài giây.
+- `ke_hoach.py`: kế hoạch 2 cấp + xem trước model + sinh sẵn file việc / chuỗi phiên.
+- `danh_gia.py`: xếp từng bản vẽ vào 4 trạng thái, mỗi vấn đề kèm nguyên nhân / cách xử lý / ai quyết, luật chạy lại.
+- `so_anh.py`: khoanh vùng khác giữa 2 ảnh / 2 lần chạy.
+- `so_chuan.py`: so lần chạy mới với chuẩn đã duyệt (bộ thử hồi quy).
+- **Không đọc lại cả lịch sử bẫy** trong SKILL.md khi gặp lỗi: đọc mục của đúng lỗi đó trong `danh_gia.md` (lấy từ
+  `mau\goi_y_sua.json`). Câu báo mới chưa phân loại (`[khac]`) gặp nhiều lần → ghi vào báo cáo để phiên chính thêm vào bảng.
+
 ## Cách dừng để hỏi
 Bạn không hỏi trực tiếp người dùng được. Khi cần hỏi / chờ duyệt: KẾT THÚC lượt với mục **`## CẦN NGƯỜI DÙNG TRẢ LỜI`**
 (câu hỏi đánh số, mỗi câu tự đứng được, kèm gợi ý mặc định và đường dẫn ảnh / báo cáo để xem). Phiên chính chuyển lời; câu
@@ -46,7 +56,7 @@ trả lời đến bằng tin nhắn tiếp theo, làm tiếp từ đó. Không 
 
 ## Quy trình
 Thư mục việc: `<gốc>\_tmp\hs_agent\NN_<mã>\` (NN tiếp theo số lớn nhất đang có, quy tắc 3) gồm `rvt\`, `viec\`, `lan\`,
-`log\`, `phuong_an.json`, `nhat_ky.md` (ghi mỗi bước: giờ, việc, kết quả, người dùng đã duyệt gì – để làm tiếp được),
+`log\`, `chuan\` (chuẩn đã duyệt cho so_chuan), `phuong_an.json`, `ke_hoach.md`, `nhat_ky.md` (ghi mỗi bước: giờ, việc, kết quả, người dùng đã duyệt gì – để làm tiếp được),
 `ban_giao\`. Mọi file / thư mục tạo mới trong đó đánh số `NN_` tăng dần, không ghi đè, không xoá (quy tắc 1).
 
 1. **Nhận việc.** Kiểm đủ: file model (+ cho phép đọc nếu ngoài `D:`), tầng × loại bản vẽ, số hiệu + tên từng bản vẽ, tỉ lệ,
@@ -59,18 +69,37 @@ Thư mục việc: `<gốc>\_tmp\hs_agent\NN_<mã>\` (NN tiếp theo số lớn 
    người dùng nói, sheet số hiệu đã có (trống / có nội dung), cửa theo Type Mark.
 3. **Soạn `phuong_an.json`** theo `mau\phuong_an_mau.json` (giá trị lấy đúng chữ trong `khao_sat.json`). Tên không khớp /
    có nhiều lựa chọn → hỏi.
+   **Lập kế hoạch**: `ke_hoach.py <việc>\phuong_an.json --khao-sat <khao_sat.json>` → `ke_hoach.md`. Gửi kế hoạch trong
+   CÙNG lần dừng hỏi xác nhận template (quy tắc 8), kèm mọi câu ở mục "Cần hỏi TRƯỚC khi chạy" (chỗ trống, template khoá
+   tỉ lệ khác yêu cầu, tờ số hiệu đã có nội dung, tầng nhiều view đích…). Không thêm lần dừng nào ngoài quy tắc 9.
 4. **Làm thử loại bản vẽ đầu tiên trên 1 tầng** (`che_do: chay`, `chi: ["<tầng>|<nút>"]`, `mo` = bản .rvt mới nhất,
    `luu` = `rvt\NN_<nhãn>.rvt` mới, `ket_qua` = `lan\NN_<nhãn>` mới, `log` = `log\` chung của việc).
-   - Đọc `bao_cao.txt`, `ket_qua.json` (`muc`, `kiem_tra`, `can_hoi`, `loi`), XEM ẢNH từng bản vẽ bằng Read (ảnh 4000 px;
-     thu nhỏ bằng Python của `_tools\venv` nếu cần) và đối chiếu với kiểm tra – log "ĐẠT" chưa đủ, phải nhìn ảnh.
-   - Journal báo dòng mượn phần tử từ central > 0 → DỪNG, báo ngay.
+   - **Soát**: `danh_gia.py <lan>` (đã có lần trước cùng mục thì thêm `--truoc <lan trước>` để khoanh vùng ảnh khác).
+     Làm theo trạng thái từng bản vẽ trong `danh_gia.md`:
+     - `ĐẠT` → vẫn XEM ẢNH 1 lần (log "ĐẠT" chưa đủ);
+     - `CẦN XEM ẢNH` → xem kỹ đúng vùng / đối tượng lõi nêu, ghi nhận đúng / sai vào báo cáo;
+     - `CẦN NGƯỜI DÙNG QUYẾT` → đưa vào mục hỏi, dùng phần "Gợi ý câu hỏi" (1 câu mỗi loại, đã gom các tờ);
+     - `LỖI CHẠY` → chỉ chạy lại khi danh_gia ghi "được chạy lại": chạy TỪ bản .rvt trước lần hỏng, thư mục kết quả
+       mới. Ghi "KHÔNG CHẠY LẠI NỮA" thì dừng, báo người dùng. Bài học: FPT P5 đã chạy lại 6 lần liền cùng lỗi mở file.
+   - XEM ẢNH từng bản vẽ bằng Read (ảnh 4000 px; thu nhỏ bằng Python của `_tools\venv` nếu cần).
+   - Journal báo dòng mượn phần tử từ central > 0 → DỪNG, báo ngay (danh_gia.md có dòng này).
    - Lỗi lõi (Traceback) → báo nguyên văn, không tự sửa mã Archivina (sửa công cụ là việc của phiên chính khi người dùng bảo).
    - Dừng: báo kết quả + chỗ không đạt + câu hỏi → chờ duyệt.
+   - Người dùng duyệt → **tạo chuẩn**: `so_chuan.py tao <các lan đã duyệt> --ra <việc>\chuan\NN_<nút>.json --duyet
+     "<câu duyệt nguyên văn, giờ>"`. Chỉ tạo chuẩn từ lần đã được duyệt.
 5. Duyệt rồi → chạy các tầng còn lại của loại đó (một lần chạy nhiều mục được), kiểm tra như bước 4, báo; rồi sang loại
    tiếp theo (lại làm thử 1 tầng, dừng chờ duyệt). Người dùng yêu cầu sửa phương án (số hiệu, tỉ lệ, template…) → sửa
    `phuong_an.json` (ghi vào nhật ký), chạy lại TỪ bản .rvt trước lần chạy hỏng, lưu ra file mới.
+   - Nhiều phiên (chi tiết cửa, model nhiều link): `ke_hoach.py <phuong_an.json> --tao-viec <Nút> thu|con_lai --mo <.rvt>
+     [--nap-lai-link <json>]` sinh phương án con + file việc + `chuoi_NN_MM.ps1` (phiên hỏng chạy lại đúng 1 lần rồi dừng
+     chuỗi). Chạy `khoi_dong_chuoi_*.ps1` trong tiến trình riêng (Start-Process, ẩn) để chuỗi sống qua lúc phiên Claude kết
+     thúc. Model dùng bản sao link: MỌI phiên phải có `nap_lai_link`.
+   - Chạy lại tầng / mục đã có chuẩn (sau khi sửa phương án, hoặc phiên chính báo đã sửa công cụ) → `so_chuan.py so
+     <lan mới> --chuan <chuẩn> --anh`. Có `HỒI QUY` (trước ĐẠT nay hỏng, mất mục) → dừng, báo người dùng kèm ảnh so;
+     `LỆCH` → nêu số liệu đổi trong báo cáo.
 6. **Bàn giao** vào `ban_giao\` (đánh số `01_`, `02_`…): bản `.rvt` cuối (chép, không di chuyển), ảnh từng bản vẽ (tên theo số
-   hiệu), `NN_bao_cao_tom_tat.md`, `NN_phuong_an_<mã>.json`. Báo cáo tóm tắt có: bảng từng bản vẽ (tầng, loại, số hiệu, tỉ
+   hiệu), `NN_bao_cao_tom_tat.md`, `NN_phuong_an_<mã>.json`. Trước khi bàn giao: chế độ `kiem_tra` trên file cuối rồi
+   `danh_gia.py` lần đó (bảng trạng thái + số liệu của danh_gia.md là khung cho báo cáo tóm tắt). Báo cáo tóm tắt có: bảng từng bản vẽ (tầng, loại, số hiệu, tỉ
    lệ, ĐẠT / KHÔNG ĐẠT + lý do), số liệu theo lõi (ngăn cháy: số ô + diện tích; định vị cửa: số tag cửa đi / cửa sổ / vách
    kính, leader, tag còn đè; lan can: số tag lan can / louver, Mark thiếu / sai tiền tố; chi tiết cửa: cửa đã làm, ô / tờ),
    chỗ cần xem lại, câu hỏi còn treo, nhãn `Cần xác nhận lại` cho mọi thứ chưa được người dùng duyệt.

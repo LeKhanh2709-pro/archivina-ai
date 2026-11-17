@@ -15,6 +15,11 @@ Người dùng chốt 2026-11-15 (trả lời 15 câu hỏi): xem mục "Quy t�
 | `ext\ARVAgentHS.extension` | Nút thử, chỉ nạp trong lúc chạy (`pyrevit extensions paths add/forget`). `Mo` (IronPython) mở file đích; `Chay` (CPython) chạy `scripts\chay_hs.py`. Đọc `ext\buoc.txt` (đường dẫn file việc). |
 | `scripts\chay_hs.py` | Trong Revit: khảo sát / chạy nút theo phương án / kiểm tra bản vẽ / ảnh / lưu. Gọi lại thư viện của nút Hồ sơ đã duyệt (`ARVHoSoDuyet.extension\lib\arv_ho_so_duyet.py`) để trả lời sẵn hộp thoại và chạy `script.py` của từng nút Archivina. |
 | `mau\phuong_an_mau.json` | Mẫu phương án (định dạng của nút Hồ sơ đã duyệt + mục `ChiTietCua`, `thong_tin_du_an`). |
+| `scripts\ke_hoach.py` | NGOÀI Revit. Kế hoạch 2 cấp + xem trước model theo `khao_sat.json`; `--tao-viec` sinh phương án con, file việc, chuỗi phiên. |
+| `scripts\danh_gia.py` | NGOÀI Revit. Soát 1 lần chạy: trạng thái từng bản vẽ, gợi ý xử lý theo loại lỗi, luật chạy lại, `--truoc` so ảnh. |
+| `scripts\so_anh.py` | NGOÀI Revit. So 2 ảnh / 2 thư mục lần chạy, khoanh + đánh số vùng khác. |
+| `scripts\so_chuan.py` | NGOÀI Revit. Tạo chuẩn từ lần đã duyệt / so lần mới với chuẩn (hồi quy). |
+| `scripts\soat_chung.py`, `mau\goi_y_sua.json` | Phần dùng chung: phân loại lỗi, rút số liệu từ dòng báo của lõi; bảng gợi ý theo loại lỗi. |
 
 Máy khác: cần Revit 2027 + pyRevit 6.5.5 + thư mục `<gốc>\scripts\pyrevit\ARVTools.extension` và `ARVHoSoDuyet.extension`
 (gốc = cha của `.claude`, hoặc biến `ARCHIVINA_AI`); `ARCHIVINA_REVIT` / `ARCHIVINA_PYREVIT` ép đường dẫn khi tìm không ra.
@@ -31,6 +36,50 @@ Chưa thử trên máy khác (`Cần xác nhận lại`).
  "sheet_tien_to": ["A_TC.14."]          (kiem_tra: chỉ kiểm tra + xuất ảnh các tờ có số hiệu bắt đầu như vậy, không chạy nút)}
 ```
 Đường dẫn trong JSON viết bằng `/` (đỡ lỗi thoát `\`). Tên nút: `NganChay`, `TagCua`, `LanCanLouver`, `ChiTietCua`, `ChongTham`.
+
+## Công cụ soát ngoài Revit (2026-11-17, áp dụng ý tưởng của BIMgent; người dùng: "áp dụng … cho agent tkbvtc")
+Python có Pillow + numpy (máy này `<gốc>\_tools\venv`), không gắn cứng đường dẫn (tìm theo `__file__`), không ghi đè
+(file đã có thì thêm `_2`). Không cần Revit, nên chạy được cả lúc một chuỗi phiên nền đang chạy.
+- `ke_hoach.py <phuong_an.json> [--khao-sat <khao_sat.json>]` → `ke_hoach.md/json` cạnh phương án.
+  - Cấp cao: mỗi loại = thử 1 tầng → soát → duyệt → các tầng còn lại. Các bước gắn nhãn [TỰ ĐỘNG] / [CLAUDE SOÁT] / [NGƯỜI DÙNG].
+  - Xem trước: chỗ `<…>` / `[Chờ bổ sung]` còn trong phương án; mặt bằng nguồn thiếu; template thiếu hoặc khoá tỉ lệ khác
+    yêu cầu; khung tên / giai đoạn / hạng mục chưa có; tờ số hiệu đã có view; tầng ≥ 2 view đích mà thiếu `view_dich`.
+    Luật view đích chép theo `arv_ho_so_duyet.view_dich`.
+  - Từ chối chạy khi phương án nằm trong thư mục skill.
+- `ke_hoach.py … --tao-viec <Nút> thu|con_lai --mo <.rvt> [--thu-tang <view>] [--nap-lai-link <json>] [--them-viec '<json>']`
+  - Chi tiết cửa chia ≤ 7 cửa / mục, ≤ 2 mục / phiên (`--nhom-cua`, `--muc-moi-phien`); nút khác 1 phiên.
+  - Ghi `phuong_an_NN_*.json`, `viec\NN_*.json` + `NN_*_lan2.json`, `viec\chuoi_NN_MM.ps1` (phiên không ra file → chạy lại
+    đúng 1 lần, vẫn không ra → dừng chuỗi), `viec\khoi_dong_chuoi_NN_MM.ps1` (log vào `lan\`). Số NN tiếp số lớn nhất trong
+    `viec\ rvt\ lan\`.
+  - Tham số `chay_nen.ps1` truyền bằng hashtable: mảng `@('-ChoToiDa', 9000)` bị PowerShell 5.1 hiểu là giá trị.
+- `danh_gia.py <lan> [--truoc <lan trước>] [--ra <thư mục>]` → `danh_gia.md/json`. Mã thoát 0 ĐẠT / 1 còn việc / 2 lỗi chạy.
+  - Trạng thái bản vẽ: `ĐẠT` / `CẦN XEM ẢNH` / `CẦN NGƯỜI DÙNG QUYẾT` / `LỖI CHẠY`.
+  - Lỗi kiểm tra + dòng `CẦN XEM LẠI` của lõi (kể cả dòng con thụt lề) được phân loại theo `soat_chung.MAU`. Loại tràn tách
+    theo cỡ: `tran_nho` ≤ 15 mm, `tran_rat_lon` khung > 1,5 × vùng vẽ, còn lại `tran_vua`. Đè: mặt bằng ↔ bảng = `de_bang`,
+    còn lại `de_view`. Mỗi nhóm in nguyên nhân / cách xử lý / ai quyết 1 lần.
+  - Câu báo lõi trùng lỗi kiểm tra cùng tờ thì bỏ (kiểm tra là số chắc).
+  - Lỗi phiên: Traceback, thiếu `ket_thuc` (phiên dừng giữa chừng), mục lõi lỗi (lấy dòng Exception của mục, vd. AcDbMgd).
+    Đếm các lần chạy tới lần này trong cùng thư mục `lan\` có cùng `chi` và cùng loại lỗi; vượt `1 + chay_lai_toi_da` →
+    KHÔNG CHẠY LẠI NỮA.
+  - Đọc dòng mượn central từ `<lan>_chay_nen.log` nếu có. Cuối file có gợi ý câu hỏi, 1 câu / loại, gom các tờ.
+- `so_anh.py A.png B.png [--ra x.png]` hoặc `--thu-muc <lan A> <lan B> --ra <thư mục mới>`.
+  - Cắt về khung nội dung, nét lệch ≤ 2 px không tính khác, gom vùng theo lưới 24 px.
+  - Ảnh ra: nền B nhạt, nét chỉ có ở A đỏ, chỉ có ở B xanh, khung cam đánh số. Ghép tờ theo số hiệu trong tên PNG.
+- `so_chuan.py tao <lan…> --ra <chuan.json> --duyet "<câu duyệt>"` / `so <lan…> --chuan <chuan.json> [--anh]`.
+  - Khoá mục = `view|nút` (chi tiết cửa thêm Mark đầu tiên), gộp nhiều phiên. Số nguyên phải bằng, diện tích ±0,05 m².
+  - `HỒI QUY` = trước ĐẠT nay KHÔNG ĐẠT / mất tờ / mất mục / lõi lỗi. `LỆCH` = số liệu hoặc loại lỗi đổi. Ảnh khác = cần xem.
+    Mã thoát 2 / 1 / 0.
+- Thêm loại lỗi mới: 1 dòng regex trong `soat_chung.MAU` + 1 khoá cùng tên trong `mau\goi_y_sua.json`; thêm số liệu:
+  1 dòng trong `soat_chung.SO_LIEU`.
+- Thử 2026-11-17 trên kết quả cũ (`_tmp\hs_agent_cai_tien\`, chỉ đọc thư mục các việc):
+  - danh_gia G19 `00\lan\06` → 3 tờ, đúng 3 lỗi đã thấy trên ảnh; FPT P5 `lan\24` "được chạy lại", `lan\26` trở đi "KHÔNG
+    chạy lại nữa"; G19 Side `lan\07` → lỗi AcDbMgd mục Tầng 2 + phiên dừng giữa chừng.
+  - so_anh P5 lan 20 / 22 khoanh đúng bảng lan can mới.
+  - so_chuan lan 20 với chính nó 0 lệch; chuẩn gộp 6 phiên chi tiết cửa G19 Side khớp.
+  - ke_hoach P5 hỏi đúng 2 tờ đã có nội dung; chuỗi thử với `chay_nen` giả chạy lại 1 lần rồi dừng đúng.
+  - Chưa chạy trong một việc thật với Revit (`Cần xác nhận lại`).
+- Chưa làm: ảnh đánh số tại chỗ lỗi (tag đè / viewport tràn). Cần `chay_hs.py` ghi toạ độ khung lỗi trên tờ;
+  không sửa trong lúc chuỗi G19 Side 17 → 19 đang chạy vì mỗi phiên đọc lại file này.
 
 ## Hành vi cần biết
 - **Tách central**: file workshared mở bằng `DetachAndPreserveWorksets` (mọi workset) → không mượn phần tử từ central thật
@@ -89,6 +138,15 @@ Chưa thử trên máy khác (`Cần xác nhận lại`).
   - Ảnh / `kiem_tra` của từng phiên chỉ có tờ phiên đó chạm tới, và tờ được xuất ngay sau MỤC ĐẦU (thiếu cửa mục sau xếp
     thêm vào tờ đó) → cuối chuỗi chạy 1 phiên `che_do: "kiem_tra"` + `sheet_tien_to` trên file cuối (mẫu
     `viec\19_kiem_tra_toan_bo.json`) để có ảnh + kiểm tra của mọi tờ.
+  - **Chuỗi dài phải chạy trong tiến trình RIÊNG** (`Start-Process powershell -WindowStyle Hidden -File <khởi động>.ps1`,
+    mẫu `viec\khoi_dong_chuoi_17_19.ps1`): chuỗi chạy nền bằng tool Bash của Claude bị tắt theo khi phiên Claude kết thúc
+    (G19 Side 16/11 17:34, mất phiên 15 đang chạy); tiến trình riêng sống qua lúc phiên kết thúc (chạy tiếp 17:38 – 21:19
+    không ai trông). Task Scheduler (`Register-ScheduledTask`) bị chặn quyền – không dùng. Log do `powershell.exe` 5.1 ghi
+    bằng `*>` là UTF-16 → trong Bash đọc bằng `iconv -f UTF-16LE -t UTF-8`, `grep` thẳng không thấy gì. Viết file `.ps1`
+    bằng tool Write, không qua heredoc Python / Bash (`\\v` thành ký tự điều khiển, file khởi động 17/11 hỏng đường dẫn).
+    Máy khởi động lại giữa chừng thì phiên đang chạy mất (17/11 08:15, phiên 17), chuỗi nối lại từ file rvt mới nhất.
+  - Kết quả G19 Side (16 – 17/11): 56 chi tiết (43 cửa + 13 vách kính) trên 20 tờ A_TC.14.xx, 4 tờ định vị cửa, ~13 giờ
+    máy chạy; vách kính 7 cái / phiên mất 1,5 – 2,2 giờ. Bàn giao `_tmp\hs_agent\02_G19_Side\ban_giao\`.
 - Khảo sát / chọn cửa KHÔNG gom phần tử theo view (`FilteredElementCollector(doc, viewId)` bắt Revit dựng đồ hoạ từng
   view; FPT P5 37 link treo > 15 phút, 23 GB RAM) – link thấy trong view xét bằng `IsHidden`.
 - Thông tin dự án (`thong_tin_du_an`): điền tham số chữ của Project Information theo đúng tên; tên không có thì báo.

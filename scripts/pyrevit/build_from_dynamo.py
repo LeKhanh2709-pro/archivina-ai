@@ -161,7 +161,9 @@ def stack_of(panel, name):
 # Tab hiện trên ribbon = tên thư mục: "Archivina" (đổi từ "ARV Tools" theo yêu cầu người dùng 2026-11-04)
 TAB = "Archivina.tab"
 # Panel viết tay (không sinh từ Dynamo, builder không đụng vào thư mục): chỉ thêm vào layout của tab
-PANEL_VIET_TAY = ["VachKinh"]
+# HSPCCC (2026-11-17): tool PCCC của đồng nghiệp (bộ cài CaiDat_PCCC_2026.11.13), 1 nút xổ 18 nút, thư viện ở
+# HSPCCC.panel\lib, family ở ARVTools.extension\family (tn_revit tìm <lib>\..\..\family); không lên GitHub (.gitignore)
+PANEL_VIET_TAY = ["VachKinh", "HSPCCC"]
 
 IN_RE = re.compile(r"^#\s*IN\[(\d+)\]\s*(?:\(([^)]*)\))?\s*(.*)$")
 DYN_TYPES = {"StringInputNode": "str", "NumberInputNode": "float", "BooleanInputNode": "bool"}

@@ -575,6 +575,18 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     giây, kiểm tra báo đúng 3 lỗi thấy trên ảnh. CHƯA thử trên Site HQV (link ở ổ A: – cần người dùng cho phép) và file
     workshared; người dùng chưa giao việc thật cho agent (`Cần xác nhận lại`). Nút Hồ sơ đã duyệt chưa chạy mục
     `ChiTietCua` / `thong_tin_du_an` của JSON phương án.
+  - **Áp dụng ý tưởng repo BIMgent (TUM)** (người dùng 2026-11-17: "áp dụng những thứ đang học cho agent tkbvtc, k cần làm
+    nhật ký"):
+    - Thêm 4 script chạy NGOÀI Revit trong `scripts\` của skill, cách dùng ở mục "Công cụ soát ngoài Revit" của SKILL.md:
+      - `ke_hoach.py`: kế hoạch 2 cấp + xem trước model + sinh chuỗi phiên;
+      - `danh_gia.py`: 4 trạng thái bản vẽ, gợi ý theo loại lỗi, luật chạy lại có giới hạn;
+      - `so_anh.py`: khoanh vùng khác giữa 2 ảnh;
+      - `so_chuan.py`: chuẩn đã duyệt + so hồi quy.
+    - Dùng chung `soat_chung.py` + bảng `mau\goi_y_sua.json` (tra theo loại lỗi thay cho đọc cả lịch sử bẫy).
+    - File agent thêm các bước dùng 4 script này. Bản trước: `_backup\*_20261117_0848_truoc_ap_dung_BIMgent.md`.
+    - Mới thử trên kết quả cũ (`_tmp\hs_agent_cai_tien\`), chưa dùng trong việc thật (`Cần xác nhận lại`).
+    - Chưa làm ảnh đánh số tại chỗ lỗi: cần sửa `chay_hs.py`. Không sửa lúc chuỗi G19 Side 17 → 19 (sáng 17/11) đang chạy,
+      vì mỗi phiên đọc lại file này.
 - `ARV_MBTuongXayTang_v1.dyn` (bộ AI REVIT `AI REVIT\TUONG XAY\` của đồng nghiệp, người dùng yêu cầu áp dụng 2026-11-04;
   bản gốc giữ nguyên, bản dùng ở `scripts\dynamo\`):
   - Chức năng: mặt bằng TƯỜNG XÂY (định vị tường) cả tầng theo mẫu FPT P5 A.CD.04.07: view mới chép thông số template
@@ -708,6 +720,33 @@ Dùng `C:\Program Files\Autodesk\AutoCAD 2027\accoreconsole.exe /i <bản sao.dw
   - **Dynamo + nút**: `file mau revit\dynamo` cập nhật 9 graph + thêm 17 graph (thiết bị WC, nội thất, len chân tường, trát gờ logia), mô tả trong `README_AI_REVIT.md` cùng thư mục; Archivina nay 44 nút (thêm panel Thiết bị WC, Nội thất; 45 nút sau khi thêm Chi tiết cửa 2026-11-03). Bản cũ `_backup\*_20261103_1049*`.
   - `scripts\pyrevit\ARV.extension\` (tab ARV gốc của đồng nghiệp): mới chép, chưa đăng ký vào pyRevit.
 - **Nút Vách kính** (`Archivina` → panel `Vách kính`, 2026-11-01, IronPython, viết tay): curtain wall chia đố 65 theo quy tắc VK / MDVK (mỗi ô < 1200 chia đều, cửa sổ `CuaSoVK_A_loai2` / cửa đi `Door-Curtain-Wall-Double-Glass` theo rộng tâm - tâm + cao nhập trong bảng WPF), vách góc vuông như mẫu `file mau revit\file vach kinh.rvt` (đố góc 150 x 150 + kính góc), updater `startup.py` tự chia lại khi đổi chiều dài / chiều cao; không dim, không view mặt đứng, không lam. Quy tắc + cách thử: skill `vach-kinh-revit`. Đã thử lõi, bảng (PNG ngoài màn hình), updater, vỏ nút trên bản sao; người dùng chưa bấm thử (`Cần xác nhận lại`). IronPython 2.7 trên .NET 10: không lồng `try` trong `except` (Revit thoát), `.Name` của ElementType đọc qua `Element.Name.GetValue`.
+- **Nút xổ `HS PCCC` trong tab Archivina** (người dùng yêu cầu 2026-11-17: "áp dụng `AI REVIT\CaiDat_PCCC_2026.11.13.exe`
+  cho máy của t", "tạo ra 1 nút riêng của HS PCCC trong Archivina", chọn bố cục 1 nút xổ):
+  - Nguồn: bộ cài IExpress của đồng nghiệp, không chữ ký số, bản 2026.11.13 (bản thử) = `CAIDAT.cmd` + `PCCC.zip`
+    (extension pyRevit IronPython 18 nút + `family\TN_Tag_DoDai.rfa`). KHÔNG chạy `.exe`: tách CAB bằng `expand.exe`
+    (`_tmp\caidat_pccc\`), không ghi gì vào `%APPDATA%` / ổ C:.
+  - **GỘP HẲN vào `ARVTools.extension`** (người dùng chọn "Gộp hẳn vào Archivina" 2026-11-17 09:40, thay cho bản đầu là
+    extension riêng qua junction `scripts\pyrevit\PCCC.extension` – junction đó đã mất trước khi gỡ, không rõ do đâu):
+    `Archivina.tab\HSPCCC.panel\HSPCCC.pulldown\<18 nút>` (+ `icon.png` / `.dark.png` mdi `fire-extinguisher`),
+    thư viện PCCC ở `HSPCCC.panel\lib` (pyRevit có đưa lib cấp panel vào SearchPaths – đã đọc từ lớp lệnh biên dịch,
+    thứ tự: nút, `ARVTools.extension\lib`, `HSPCCC.panel\lib` → module Archivina trùng tên sẽ che module PCCC; hiện
+    không trùng), family ở `ARVTools.extension\family\TN_Tag_DoDai.rfa` (tn_revit tìm `<lib>\..\..\family`) → KHÔNG sửa
+    dòng mã nào của đồng nghiệp, chỉ dời thư mục. Builder: `PANEL_VIET_TAY = ["VachKinh", "HSPCCC"]` (build lại không
+    mất); `dong_goi.ps1` chép cả extension nên gói `_dist` mang theo (chưa đóng gói lại). `Cấu hình dự án` gọi file của
+    `Gán Fire Rating` cùng thư mục → 2 nút phải nằm chung.
+  - Nguồn đã xếp lại (dạng extension riêng) giữ ở `_tools\PCCC-Revit\` (đọc `00_CAI_TAI_O_D.txt`). Bản trước:
+    `_backup\PCCC.tab_20261117_0925_*`, `_backup\build_from_dynamo_*_truoc_HS_PCCC.py`,
+    `_backup\Archivina_tab_bundle_*_truoc_HS_PCCC.yaml`.
+  - `.gitignore` bỏ `HSPCCC.panel/`, `_tools/PCCC-Revit/`, bản backup PCCC (người dùng KHÔNG chọn đẩy lên GitHub; family
+    bị `*.rfa` bỏ sẵn). Gỡ: chuyển `HSPCCC.panel` ra `_backup`, bỏ `HSPCCC` khỏi `PANEL_VIET_TAY` + `bundle.yaml` tab,
+    Reload pyRevit (KHÔNG chạy `GO_CAI_DAT.cmd`, file đó gỡ bản ở `%APPDATA%`). Bộ cài `.exe` mới: tách CAB, chép đè
+    các thư mục nút + lib theo cách này.
+  - Thử nền 2026-11-17 09:49 – 09:53 (nút thử tạm `ARVTestPCCC` CPython, đã gỡ; dự án trống): pyRevit nạp không lỗi,
+    panel `HS PCCC` sau `Vách kính`, đủ 18 nút + vạch chia; SearchPaths như trên. Bẫy khi thử: nút thử IronPython có
+    `lib` cấp panel + nút xổ thì journal đứng (không rõ vì sao) → dùng nút CPython; ID nút trong nút xổ dạng
+    `CustomCtrl_%CustomCtrl_%CustomCtrl_%<Tab>%<Panel>%<Pulldown>%<Nút>` (3 lần `CustomCtrl_`). Chưa bấm nút PCCC nào
+    trên model; tool tự ghi gỡ lỗi vào `%LOCALAPPDATA%\pccc-*-rvt`; Revit đang mở phải Reload pyRevit; người dùng chưa
+    xem (`Cần xác nhận lại`).
 
 ## Skill công ty (ARCHIVINA)
 Đặt tại `.claude\skills\`, nguồn: github.com/anhnh-archivina/archivina-claude-skills. Mỗi skill đã được chỉnh cho máy này trong mục "Áp dụng tại D:\AI" của file `SKILL.md`; bản tải về chưa chỉnh được lưu trong `_backup\`.

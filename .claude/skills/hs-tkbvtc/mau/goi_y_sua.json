@@ -1,0 +1,256 @@
+{
+ "_ghi_chu": "Bảng tra theo LOẠI LỖI cho scripts\\danh_gia.py (2026-11-17, áp dụng ý tưởng 'tài liệu theo việc' của BIMgent): mỗi lỗi chỉ kéo đúng mục của nó vào báo cáo, agent không phải đọc lại cả lịch sử bẫy. 'ai_quyet': nguoi_dung = dừng hỏi (quy tắc 10, 11 của agent); agent = agent tự xử lý được; phien_chinh = phải sửa công cụ (agent không sửa mã Archivina). 'chay_lai_toi_da' = số lần agent được chạy lại CÙNG mục khi gặp lỗi này (0 = không chạy lại). Nội dung lấy từ các lần thử ghi trong CLAUDE.md / SKILL.md; điều chưa chắc ghi 'Cần xác nhận lại'. Thêm loại mới: thêm 1 khoá ở đây + 1 mẫu nhận dạng trong soat_chung.MAU.",
+ "tran_rat_lon": {
+  "ten": "Khung bản vẽ to gấp nhiều lần vùng vẽ",
+  "nguyen_nhan": [
+   "Template hiện ký hiệu mặt cắt / mặt đứng / callout nằm xa ngoài nhà, làm khung viewport phình (G19 template '1.2' → 1250 × 2038 mm; HQV 'ACD.14.1' → 1144 × 989 mm).",
+   "View đang tắt crop nên thấy cả phần khác của model / CAD link (Site HQV: view có sẵn tắt crop thấy cả CAD hầm).",
+   "Trục / link của tầng khác không được thu về sát nhà."
+  ],
+  "cach_sua": [
+   "Người dùng chọn template khác cho loại bản vẽ này, hoặc cho phép ẩn ký hiệu nằm ngoài crop (công cụ đã có sh_an_ky_hieu_ngoai_crop cho view nó tự tạo).",
+   "Kiểm crop của view đích trong ảnh: không có crop thì bật crop theo tường.",
+   "Không tự đổi tỉ lệ / khổ (quy tắc 11 của agent)."
+  ],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "tran_vua": {
+  "ten": "Bản vẽ không vừa vùng vẽ ở tỉ lệ đang chọn",
+  "nguyen_nhan": [
+   "Mặt bằng (kể cả trục, chú thích, chừa chỗ tag) lớn hơn vùng vẽ khổ giấy ở tỉ lệ yêu cầu.",
+   "Chi tiết cửa: cụm view của cửa / vách kính lớn hơn ô; lõi giữ 1/25 (người dùng chốt 2026-11-04) nên view lấn sang ô bên / ra ngoài khung.",
+   "Template KHOÁ tỉ lệ khác tỉ lệ người dùng yêu cầu (bẫy HQV: 'AF.07_MatBangDinhViCua' khoá 1:100, phải chọn 'ACD.07' mới ra 1:200)."
+  ],
+  "cach_sua": [
+   "Hỏi người dùng: tỉ lệ nhỏ hơn / khổ lớn hơn / thu crop / chia mặt bằng thành nhiều tờ.",
+   "Kiểm khao_sat.json: template có 'khoa_ti_le' không; khoá thì báo tên template + tỉ lệ khoá."
+  ],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "tran_nho": {
+  "ten": "Lấn ra ngoài vùng vẽ vài mm",
+  "nguyen_nhan": [
+   "Bóng trục / đầu trục chạm dải khung tên (G19 A.4-101: phải 12 mm).",
+   "Ký hiệu mặt cắt hoặc nhãn viewport chạm khung trên / dưới (G19 chi tiết cửa: trên 3 mm).",
+   "View ghi chú / bảng đặt sát góc khung (FPT P5: dưới 3 / phải 3 mm)."
+  ],
+  "cach_sua": [
+   "Chỉ báo, kèm ảnh khoanh vùng: người dùng dời viewport tay hoặc chấp nhận.",
+   "Nếu lặp lại ở mọi tầng cùng loại: báo phiên chính để chỉnh lề trong lõi (không tự sửa mã)."
+  ],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "de_bang": {
+  "ten": "Mặt bằng đè bảng thống kê / bảng ghi chú",
+  "nguyen_nhan": [
+   "Mặt bằng lớn chạm vùng bảng ở góc phải dưới (lõi đặt bảng sát góc khung, mặt bằng giữa vùng vẽ).",
+   "Tầng crop theo tường bao cả khối đế + sân (HQV Tầng 1: 665 × 559 mm > vùng vẽ 681 × 529)."
+  ],
+  "cach_sua": [
+   "Hỏi người dùng: dời bảng tay / đổi tỉ lệ / đặt bảng sang tờ khác. Agent không tự dời bảng (quy tắc 11)."
+  ],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "de_view": {
+  "ten": "Hai view trên tờ đè nhau",
+  "nguyen_nhan": [
+   "Tờ có sẵn đã có view ghi chú / chú thích của dự án, công cụ đặt thêm bảng ghi chú của nó (FPT P5 A.CD.20.08: 'ghi chú chống thấm tầng 3' đè 'BẢNG GHI CHÚ - ...').",
+   "View ghi chú bản cũ 'CHÚ THÍCH - ...' còn trên tờ (lõi chỉ báo, không xoá).",
+   "Chi tiết cửa / vách kính: 3 view (mặt bằng, mặt đứng, mặt cắt) của cùng 1 cửa chồng nhau khi cụm lớn hơn ô (vách kính dài; G19 Side A_TC.14.04 'T1-VK.02')."
+  ],
+  "cach_sua": [
+   "Ghi chú / bảng: hỏi người dùng giữ view nào; không xoá viewport nào (quy tắc 1).",
+   "Chi tiết cửa: xem ảnh; chồng thật thì báo người dùng dời tay hoặc cho vách đó chiếm khối nhiều ô (lõi có sẵn cách xếp khối 2 / 3 / 4 / 6 ô)."
+  ],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "tag_de": {
+  "ten": "Tag đè nhau",
+  "nguyen_nhan": [
+   "Mặt bằng dày cửa ở tỉ lệ nhỏ (1:150 – 1:200), lưới tìm chỗ hết chỗ trống.",
+   "Tag có leader được ước lượng bằng khung cỡ trung vị (kiểm tra có thể báo thừa – xem ảnh trước khi kết luận)."
+  ],
+  "cach_sua": [
+   "Xem ảnh khoanh vùng: đè thật thì liệt kê id cho người dùng dời tay, hoặc hỏi đổi kiểu tag / tỉ lệ."
+  ],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "so_hieu": {
+  "ten": "Số hiệu bản vẽ khác yêu cầu",
+  "nguyen_nhan": [
+   "Số hiệu yêu cầu đã có tờ khác dùng, hoặc view đích đã nằm trên tờ khác (lõi giữ tờ cũ)."
+  ],
+  "cach_sua": [
+   "Tra 'sheet' trong khao_sat.json, báo người dùng tờ nào đang giữ số / view đó."
+  ],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "khung_ten": {
+  "ten": "Tờ không có khung tên",
+  "nguyen_nhan": ["Tờ trống có sẵn không có khung tên, lõi dùng lại tờ đó."],
+  "cach_sua": ["Báo người dùng; không tự chèn khung tên vào tờ có sẵn."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "khong_len_ban_ve": {
+  "ten": "Mục chạy xong nhưng không nằm trên bản vẽ nào",
+  "nguyen_nhan": [
+   "Lõi dừng trước bước đặt sheet (xem dòng LỖI / KHÔNG trong mục).",
+   "Bản sao workshared chưa tách central: Revit huỷ bước mượn phần tử (2 mục Hồ sơ đã duyệt 14/11)."
+  ],
+  "cach_sua": [
+   "Đọc 'dong' của mục; file.tach phải là true với file workshared."
+  ],
+  "ai_quyet": "agent",
+  "chay_lai_toi_da": 1
+ },
+ "lon_hon_vung_ve": {
+  "ten": "Lõi báo mặt bằng lớn hơn vùng vẽ",
+  "nguyen_nhan": ["Như 'tran_vua' – lõi đo trước khi đặt."],
+  "cach_sua": ["Gộp với lỗi tràn của cùng tờ khi báo người dùng."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "cham_bang": {
+  "ten": "Lõi báo mặt bằng có thể chạm bảng",
+  "nguyen_nhan": ["Như 'de_bang' – lõi ước lượng trước khi đặt; kiểm tra sau đặt mới là số chắc."],
+  "cach_sua": ["Có lỗi 'de_bang' cùng tờ thì báo 1 lần; không có thì xem ảnh rồi bỏ qua."],
+  "ai_quyet": "agent",
+  "chay_lai_toi_da": 0
+ },
+ "link_chua_an": {
+  "ten": "Thiết bị vệ sinh / nội thất trong link chưa ẩn",
+  "nguyen_nhan": ["Template của dự án điều khiển filter; công cụ không sửa template (người dùng chốt 2026-11-05)."],
+  "cach_sua": ["Hỏi người dùng có cho thêm filter 'ARV_Ẩn ... (link)' vào template không (người dùng chưa quyết – Cần xác nhận lại)."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "mark_sai_tien_to": {
+  "ten": "Mark không theo tiền tố lan can / louver",
+  "nguyen_nhan": ["Dự án dùng tiền tố khác LK / LC / LS / LV (FPT P5 trước 15/11 dùng LS-xx)."],
+  "cach_sua": ["Liệt kê tiền tố gặp được, hỏi người dùng thêm tiền tố vào nút hay đặt lại Mark."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "thieu_mark": {
+  "ten": "Đối tượng chưa có Mark",
+  "nguyen_nhan": ["Vách kính / lan can trong model (thường trong file link, chỉ đọc) chưa đặt Mark."],
+  "cach_sua": ["Vách kính: hỏi người dùng có chạy che_do 'dat_mark_vk' trên bản sao link không (quy tắc đặt tên VKT{t}-{n})."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "tag_can_doi_tay": {
+  "ten": "Lõi không tìm được chỗ trống cho tag",
+  "nguyen_nhan": ["Hết chỗ trống quanh đối tượng (tường / tag / chữ khác)."],
+  "cach_sua": ["Xem ảnh vùng đó, liệt kê id cho người dùng dời tay."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "ei_khong_hien": {
+  "ten": "Cửa có EI nhưng tag không hiện EI",
+  "nguyen_nhan": ["Family tag cửa chưa có nhãn tham số chống cháy (chưa có cách hiện EI – Cần xác nhận lại)."],
+  "cach_sua": ["Chỉ báo số lượng trong báo cáo tóm tắt."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "thieu_doi_tuong": {
+  "ten": "Không thấy đối tượng yêu cầu trên tầng",
+  "nguyen_nhan": [
+   "Mark / Type Mark gõ khác model, hoặc đối tượng nằm ở tầng khác.",
+   "Link chứa đối tượng không nạp (G19 Side 16/11: link bản sao không nạp lại → 'chọn 0 đối tượng'; phải có 'nap_lai_link' ở MỌI phiên)."
+  ],
+  "cach_sua": [
+   "Kiểm 'link' trong ket_qua.json + mo.txt; thiếu 'nap_lai_link' thì agent thêm rồi chạy lại.",
+   "Link nạp đủ mà vẫn thiếu: hỏi người dùng Mark đúng."
+  ],
+  "ai_quyet": "agent",
+  "chay_lai_toi_da": 1
+ },
+ "phong_uot_nghi_ngo": {
+  "ten": "Phòng ướt lõi không chắc",
+  "nguyen_nhan": ["Phòng hở, phòng > 15 m², room tràn qua lỗ mở (lõi chống thấm bỏ hoặc tách)."],
+  "cach_sua": ["Xem ảnh vị trí, báo người dùng danh sách để quyết."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "link_khong_nap": {
+  "ten": "Link Revit không nạp được",
+  "nguyen_nhan": ["File link ở ổ mạng / ổ khác chưa được phép đọc, đã đổi chỗ, hoặc bản sao link mất đường dẫn sau khi lưu."],
+  "cach_sua": ["Có bản sao link trên D: thì thêm 'nap_lai_link'; không có thì hỏi người dùng cho phép đọc (quy tắc 7)."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "loi_hoi": {
+  "ten": "Lõi hỏi xoá / gộp / vẽ lại",
+  "nguyen_nhan": ["Mặt bằng đã có kết quả của bản công cụ cũ."],
+  "cach_sua": ["Đã trả lời KHÔNG; hỏi người dùng đúng câu đó, đồng ý thì chạy lại với 'tra_loi_xoa': 'co'."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "nhieu_view_dich": {
+  "ten": "Tầng có nhiều view đích",
+  "nguyen_nhan": ["Tầng có ≥ 2 view cùng loại; thiếu khoá 'view_dich' thì mục không chạy (hộp chọn view làm phiên nền đứng)."],
+  "cach_sua": ["Hỏi người dùng chọn view, ghi 'view_dich' vào phương án."],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 0
+ },
+ "mo_file_that_bai": {
+  "ten": "Nút Mo không mở được file",
+  "nguyen_nhan": [
+   "FPT P5 16/11: Revit báo CArchiveException 105 lúc giải nén bảng phần tử, mỗi lần 1 stream khác; G19 mở bình thường (nguyên nhân chưa rõ – Cần xác nhận lại).",
+   "File đang mở ở phiên Revit khác / đường dẫn sai."
+  ],
+  "cach_sua": [
+   "Chạy lại tối đa 1 lần. Lần 2 vẫn lỗi: DỪNG, gửi người dùng mo.txt + câu báo lỗi (FPT P5 16/11: lan 24 – 34 chạy 6 lần liền cùng lỗi mà không ra gì)."
+  ],
+  "ai_quyet": "nguoi_dung",
+  "chay_lai_toi_da": 1
+ },
+ "acdbmgd": {
+  "ten": "clr.AddReference lỗi DesktopConnectorInterop 26",
+  "nguyen_nhan": ["Trong phiên, Revit đã nạp AcDbMgd (sau vài mục chi tiết cửa, hoặc mở file bằng API trong CPython)."],
+  "cach_sua": ["Chạy các mục sau ở phiên mới, mỗi phiên 1 – 2 mục (scripts\\ke_hoach.py chia sẵn)."],
+  "ai_quyet": "agent",
+  "chay_lai_toi_da": 1
+ },
+ "phien_dung": {
+  "ten": "Phiên Revit nền dừng / thoát giữa chừng",
+  "nguyen_nhan": [
+   "Journal đứng quá -JournalDung phút lúc Revit dựng đồ hoạ (model nhiều link).",
+   "Máy khởi động lại / phiên Claude kết thúc kéo theo tiến trình nền (chạy chuỗi bằng tiến trình riêng)."
+  ],
+  "cach_sua": [
+   "Không có file 'luu' thì chạy lại 1 lần TỪ bản .rvt trước (không dùng file dở). Lần 2 vẫn dừng: chia nhỏ mục hơn rồi hỏi người dùng."
+  ],
+  "ai_quyet": "agent",
+  "chay_lai_toi_da": 1
+ },
+ "trung_file_luu": {
+  "ten": "Không lưu vì đã có file cùng tên",
+  "nguyen_nhan": ["File việc dùng lại tên 'luu' cũ (quy tắc không ghi đè)."],
+  "cach_sua": ["Đặt 'luu' tên mới (NN tiếp theo) rồi chạy lại."],
+  "ai_quyet": "agent",
+  "chay_lai_toi_da": 1
+ },
+ "loi_lop": {
+  "ten": "Lỗi trong lõi / chay_hs.py (Traceback)",
+  "nguyen_nhan": ["Lỗi mã – chưa phân loại."],
+  "cach_sua": ["Báo nguyên văn Traceback cho người dùng / phiên chính; không tự sửa mã Archivina."],
+  "ai_quyet": "phien_chinh",
+  "chay_lai_toi_da": 0
+ },
+ "khac": {
+  "ten": "Dòng cần xem lại chưa phân loại",
+  "nguyen_nhan": ["Câu báo mới của lõi chưa có trong bảng."],
+  "cach_sua": ["Đọc nguyên văn, xem ảnh; gặp nhiều lần thì thêm loại mới vào bảng này."],
+  "ai_quyet": "agent",
+  "chay_lai_toi_da": 0
+ }
+}

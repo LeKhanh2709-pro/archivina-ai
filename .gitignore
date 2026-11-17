@@ -51,3 +51,14 @@ scripts/mcp/revit-archivina/**/obj/
 # Bộ AI REVIT nhận từ máy đồng nghiệp (repo git riêng, có dữ liệu dự án) - đã áp dụng vào D:\AI 2026-11-03
 AI REVIT/
 00. AI REVIT.rar
+
+# Tool PCCC cua dong nghiep (CaiDat_PCCC_2026.11.13.exe), cai tai D: 2026-11-17 - khong day len GitHub
+_tools/PCCC-Revit/
+scripts/pyrevit/PCCC.extension
+_backup/PCCC.tab_*/
+_backup/PCCC_tab_bundle_*
+# file build khi dung icon pyRevit
+scripts/pyrevit/icons/nguon/bin/
+scripts/pyrevit/icons/nguon/obj/
+# HS PCCC gop vao Archivina 2026-11-17 (ma dong nghiep, khong day len GitHub; family da bi *.rfa bo qua)
+scripts/pyrevit/ARVTools.extension/Archivina.tab/HSPCCC.panel/
