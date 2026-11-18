@@ -535,11 +535,37 @@ def hoi_chi_tiet_cua(doc, view, uidoc=None):
             return ung[-1].SheetNumber
         return None
 
-    kq = _bang(doc, u"Chi tiết cửa – đặt lên bản vẽ", False, u"", u"CHI TIẾT CỬA",
-               os.path.join(_THU_MUC_LUU, "ChiTietCua_sheet.json"), dong_dau, goi_y)
-    if kq is None:
-        return None
-    return {1: kq["kt"], 2: kq["ten"].strip().upper() or u"CHI TIẾT CỬA", 3: kq["so"].strip(), 16: kq["gd"], 17: kq["hm"]}
+    # Chi tiết vách kính tách riêng khỏi chi tiết cửa (người dùng yêu cầu 2026-11-18): có chọn vách kính thì hỏi thêm
+    # 1 bảng cho bản vẽ vách kính (lõi IN[18] – IN[22]; tên bản vẽ + tên tầng, mỗi tầng bản vẽ riêng)
+    luu_cua = os.path.join(_THU_MUC_LUU, "ChiTietCua_sheet.json")
+    luu_vk = os.path.join(_THU_MUC_LUU, "ChiTietVachKinh_sheet.json")
+    kq = None
+    if n_cua or not vach:
+        if not n_cua:
+            dong_dau += u" Vách kính: bản vẽ riêng."
+        kq = _bang(doc, u"Chi tiết cửa – đặt lên bản vẽ", False, u"", u"CHI TIẾT CỬA", luu_cua, dong_dau, goi_y)
+        if kq is None:
+            return None
+    ra = {}
+    if kq is not None:
+        ra.update({1: kq["kt"], 2: kq["ten"].strip().upper() or u"CHI TIẾT CỬA", 3: kq["so"].strip(), 16: kq["gd"],
+                   17: kq["hm"]})
+    if vach:
+        if not os.path.exists(luu_vk) and os.path.exists(luu_cua):    # lần đầu: lấy giai đoạn / hạng mục / khổ của cửa
+            _ghi_luu(_doc_luu(luu_cua), luu_vk)
+        # thứ tự (người dùng chốt 2026-11-18): vách kính → cửa đi → cửa sổ. Có bảng cửa: số hiệu trống = lõi bắt đầu
+        # vách kính từ số hiệu của bảng cửa, cửa đi / cửa sổ đánh tiếp sau; chỉ chọn vách kính: gợi ý số tiếp theo
+        kq_vk = _bang(doc, u"Chi tiết vách kính – đặt lên bản vẽ", False, u"", u"CHI TIẾT VÁCH KÍNH", luu_vk,
+                      u"%d vách kính, xếp trước cửa: mỗi tầng bản vẽ riêng (tên + tầng), theo Mark.%s" % (
+                          len(vach), u" Số hiệu trống = từ số của bảng cửa." if kq is not None else u""),
+                      (lambda gd, hm, ten_bv: u"") if kq is not None else None)
+        if kq_vk is None:
+            return None
+        ra.update({18: kq_vk["kt"], 19: kq_vk["ten"].strip().upper() or u"CHI TIẾT VÁCH KÍNH",
+                   20: kq_vk["so"].strip(), 21: kq_vk["gd"], 22: kq_vk["hm"]})
+        if kq is None:
+            ra.update({1: kq_vk["kt"], 16: kq_vk["gd"], 17: kq_vk["hm"]})
+    return ra
 
 
 def _sheet_trong(doc, tu_khoa):

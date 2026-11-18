@@ -190,6 +190,30 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     không cắt vén (người dùng vẽ tay "thiếu"; xem SKILL.md): bấm nút thật bản sao Site (chép lại từ ổ A: 18:00, người dùng
     cho phép, sau khi phiên dọn file xoá hết DXF / .rvt trong `_tmp\ct_cad`) Tầng 3BA: 282 nét / 350,1 m, chỉ khu WC đổi;
     ảnh `_tmp\ct_cad\kq_3ba\3BA_khu_WC_ven.png`. Tầng 1 / 2 / 5BA chưa chạy lại với bản này (DXF đã bị xoá).
+  - **Chống thấm nhận WC / lô gia theo dấu chân tường khi model chỉ có link** (người dùng "Sửa nút Chống thấm"
+    2026-11-18, sau khi agent G19 Side ra 4 tờ chống thấm trống: room WC trong link hở / không có, 64 bồn cầu + sen
+    "phòng hở"). Lõi `ChongTham_VeVenChanTuong.py`: model chỉ có link (`CHI_LINK`) mà còn thiết bị vệ sinh ngoài mọi room →
+    `QuetTuong` (chép cách quét của `NganChay_TrucHKT.quet_khe`, sửa ở đây không đổi Ngăn cháy lan): lưới 20 mm, dải lõi
+    tường (lõi < 30 mm bỏ), cột / vách link KC, vách kính theo tim, Room Separation + lan can (không lan can cầu thang) làm
+    vách mỏng; cửa đi / cửa sổ đặt RỜI (không host) + Generic Model tên lam / louver / lan can làm vách theo khung bao (bỏ khi
+    khung > 6 m hoặc cả 2 cạnh > 600 mm); nối đầu tường hở ≤ 400 mm → khoang kín chứa thiết bị = WC, biên bám mép lõi. Lô
+    gia: khoang kín 1,5 – 15 m² ở phía NHỎ của cửa đi / cửa sổ có tên / kiểu / Type Comments chứa logia / lô gia / ban công,
+    phía kia là phòng kín lớn hơn; cửa / lam lô gia ĐẶT RỜI mà chỉ 1 phía kín thì phía kín (1,5 – 15 m²) là lô gia; cửa có
+    host mà phía lô gia hở ra ngoài thì chỉ báo; hoặc sát lan can mà phía kia là ngoài nhà. Vòng biên Revit không lùi được
+    (bậc lệch nhỏ) thì `nan_bac` rồi lùi lại (chỉ nét vén). Tắt bằng `QUET_TUONG = False`. Biến môi trường `ARV_DUMP_QUET`
+    (chỉ để thử) = ghi lưới quét quanh cửa lô gia hở ra JSON. Bản trước
+    `_backup\ChongTham_VeVenChanTuong_20261118_0837_truoc_quet_tuong.py` (+ thư mục nút; bản 10:05 giữa chừng – chưa có lam
+    đặt rời – KHÔNG được sao lưu riêng). Nút sinh lại 10:47, `.dyn` chưa sinh lại; Revit phải Reload pyRevit. Thử nền nút
+    thật trên bản sao G19 Side (`_tmp\hs_agent\02_G19_Side\`): phiên 27 – 29 (bản 10:05) Tầng 3, 4-32 mỗi tầng 32 WC + 10
+    lô gia, 8 lô gia hở vì mép ngoài là lam thép `AV-Lam Thép Logia1` (cửa sổ đặt rời, phiên 30 ghi lưới quét tìm ra);
+    "Sửa tiếp lô gia hở" (người dùng 2026-11-18) → phiên 34 – 36 (bản 10:47): Tầng 3, 4-32 mỗi tầng 32 WC (64 / 64 thiết bị)
+    + 27 lô gia (17 theo cửa trượt, 10 theo lam) / 476 nét / 397,8 m / 209,9 m², không còn báo hở, 4 tờ ĐẠT; Tầng 1 5 WC /
+    32 nét / 24,2 m²; Tầng 2 không có thiết bị → trống. Đối chiếu: L3-32 TẦNG 3 nhận theo tên room (04/11) cũng 32 WC + 27
+    lô gia. Lỗi đã gặp khi thử: phòng 9 m² sau cửa trượt nhận nhầm lô gia (quy tắc cũ "phía kia hở"), 2 khe 0,1 m² cạnh
+    lan can thành lô gia (thêm ngưỡng 1,5 m²), lam đặt rời bị báo nhầm "lô gia hở" (phiên 31 – 33). Revit nền thoát khi
+    dựng hình view TẦNG 4-32 ở phiên vẽ 4 tầng liền (có .dmp, chưa rõ nguyên nhân; chia phiên thì qua). Bàn giao bản đủ v3
+    `_tmp\hs_agent\02_G19_Side\ban_giao\24_*.rvt` + `28_*.pdf`. Người dùng chưa duyệt ảnh, chưa bấm trên model thật
+    (`Cần xác nhận lại`).
 - **Hỏi View template + Tỉ lệ, KHÔNG tự tạo template** (người dùng yêu cầu 2026-11-05, áp cho 5 nút Chống thấm, Ngăn cháy
   lan, Định vị + tag cửa, Định vị lan can louver, Tường xây):
   - Hộp thoại `arv_hoi_sheet._bang(tpl_view=...)` thêm 2 ô ngay sau ô "Đặt lên bản vẽ": View template (template mặt bằng
@@ -300,6 +324,31 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     skill. Thử nền nút thật bản sao Site (`_tmp\ctcua_vk_link\kq_A\` lỗi cũ, `kq_B\` đã sửa). Nút sinh lại 2026-11-15
     12:09 (bản trước `_backup\*_20261115_*_truoc_vk_link*`), `.dyn` chưa sinh lại; Revit phải Reload pyRevit; người dùng
     chưa bấm (`Cần xác nhận lại`).
+  - **2026-11-18 (người dùng gửi mẫu A.CD.22.13 / A.19.36, khoanh ảnh G19 Side "trình bày vẫn còn xấu")** – chi tiết
+    trong skill (quy tắc 11, 12): cửa có Fire Rating (EI60…) và cửa thang máy (tên family / type / Type Comments /
+    Description / Model có "thang máy" / "elevator" / "lõi thang", trừ "thang bộ"; G19 Side E32, E33, 40 =
+    `Pix_KC_Cua_LoiThang_*`), louver (chữ "louver" / "louvre", đúng từ "lam", Mark tiền tố LV; G19 Side lam thép lô gia
+    42 tính là louver – `Cần xác nhận lại`) KHÔNG triển khai (báo bỏ qua); khung nhìn sát cửa, dim mm
+    đen cách hình 6 mm, dải thông tin dưới ô điền KÝ HIỆU (Type Mark / Mark vách) + KÍCH THƯỚC (mm), VẬT LIỆU / GHI CHÚ để
+    trống. Rồi "tách riêng chi tiết cửa và chi tiết vách kính, chi tiết vách kính sắp xếp theo thứ tự và theo tầng":
+    vách kính lên bản vẽ RIÊNG `CHI TIẾT VÁCH KÍNH <TẦNG>` mỗi tầng (IN[18] – IN[22]: khung tên / tên / số hiệu / giai đoạn
+    / hạng mục, trống = như cửa; số hiệu trống = bắt đầu từ số hiệu chi tiết cửa), thứ tự (người dùng chốt) vách kính
+    theo tầng + Mark (so số tự nhiên) → cửa đi → cửa sổ theo Type Mark, vách kính chỉ xếp tiếp vào tờ cuối của tầng; hộp
+    thoại có thêm bảng "Chi tiết vách kính" khi có chọn vách kính. Ô chật (G19 Side DW05-G cụm 215 – 220 / ô 218 mm,
+    tên "MẶT BẰNG" + tỉ lệ ~13 mm chạm dải thông tin): tên mặt bằng đặt bên phải mặt bằng (`GetLabelOutline`), lề trên 3 mm. "Mỗi tầng tờ riêng" là cách Claude hiểu "theo tầng" (`Cần xác nhận lại`). Agent `chay_hs.py`: khoá
+    `so_vk` / `ten_vk`, `them_in` áp cả cho Chi tiết cửa, có IN[0] thì không bắt chọn theo Mark, so tầng theo `.Value`.
+    Thử nền nút thật bản sao file mẫu vách kính (`_tmp\ctcua_tach_vk\`, 3 vách dựng thêm trên Tầng 2 / 3 chỉ để thử): 6
+    vách chọn xáo trộn → A.CD.01 – .03 `… TẦNG 1` (T1-VK.02, .10, .11), A.CD.04 `… TẦNG 2` (T2-VK.01, .03 cùng tờ),
+    A.CD.05 `… TẦNG 3`; bấm lại thêm T1-VK.05 → A.CD.06, T1-VK.10 báo đã có. G19 Side (`_tmp\hs_agent\02_G19_Side\`,
+    phiên 40 – 45 trên bản sao rvt\05): phiên 45 1 lần bấm 8 đối tượng xáo trộn Tầng 1 + 3 → bỏ E32 (thang máy), 42 + 52
+    (louver; 52 Type Comments "Cửa sổ mở lật+ Vách kính cố định+ Louver" – `Cần xác nhận lại`), VKT1-10 → A_TC.14.01
+    `CHI TIẾT VÁCH KÍNH TẦNG 1`, DW01 / DW04 / DW05-G / cửa sổ 37 → A_TC.14.02 `CHI TIẾT CỬA`. Sửa kèm: đọc id IN[0]
+    bằng `int(float())` làm lệch id ghép 17 chữ số của phần tử link (có từ trước) → đọc thẳng `int()`. Cửa sổ 37 (link LỒNG
+    `G19_A_L3 : G19_A_L3-32.AP1`) mặt đứng chỉ khung, mặt bằng trống (người dùng báo): Revit chưa dựng hình link trong view
+    vừa tạo → lõi gán lại template (bỏ → Regenerate → gán lại) cho 3 view của cửa / vách trong link; phiên 49 hiện đủ, tờ
+    ĐẠT. Nút sinh lại 2026-11-18 16:45 (23 ô), `.dyn` chưa sinh lại; bản trước `_backup\*_20261118_1437_truoc_tach_vach_kinh*`,
+    `_backup\*_20261118_1213_truoc_trinh_bay_sach*` (+ các bản 1514 / 1551 / 1601 / 1610 / 1645 giữa chừng). Revit phải Reload
+    pyRevit; người dùng chưa bấm, chưa duyệt (`Cần xác nhận lại`).
   - Người dùng chưa bấm thử, chưa duyệt (`Cần xác nhận lại`).
 - `ThongKeCua_TuDong.dyn` (2026-11-04, skill `thong-ke-cua-revit`, quy tắc + cách thử xem skill): người dùng yêu cầu
   "1 bảng thống kê các cửa có trong mặt bằng đó, cửa trùng hiện 1 lần", nút riêng.

@@ -27,7 +27,8 @@ Chưa thử trên máy khác (`Cần xác nhận lại`).
 
 ## File việc (JSON, mỗi lần chạy 1 file, thư mục kết quả MỚI mỗi lần – không ghi đè)
 ```json
-{"che_do": "khao_sat | chay | dat_mark_vk | kiem_tra",
+{"che_do": "khao_sat | chay | dat_mark_vk | kiem_tra | script",
+ "script": "<file .py chạy trên file đã mở (che_do script, 2026-11-18): có sẵn doc, uiapp, DB, w, KET, KQ, V, luu_ra>",
  "mo": "<.rvt cần mở>",                 "phuong_an": "<phuong_an.json>  (chay)",
  "chi": ["<view>|<nút>", "..."],         "luu": "<.rvt lưu ra – file MỚI>",
  "ket_qua": "<thư mục mới>",             "log": "<thư mục log lõi + đệm CAD, dùng chung cả việc>",
@@ -93,6 +94,14 @@ Python có Pillow + numpy (máy này `<gốc>\_tools\venv`), không gắn cứng
   `tra_loi_xoa: "co"` chỉ khi người dùng đã đồng ý đúng việc đó.
 - Chi tiết cửa: chọn sẵn mỗi `mark` 1 đối tượng trên tầng (cửa theo Type Mark, vách kính theo Mark; cửa nằm trong vách
   kính tính theo vách; cả trong link). Không chọn được gì thì không chạy nút (tránh nút chờ chọn trên màn hình).
+  `them_in` cũng áp cho mục ChiTietCua (2026-11-18), vd. `{"0": "id;id"}` = làm đúng danh sách id (bỏ qua vùng chọn).
+- Chi tiết vách kính bản vẽ RIÊNG (2026-11-18, người dùng: "tách riêng chi tiết cửa và chi tiết vách kính, … theo thứ tự
+  và theo tầng"): khoá `ten_vk` (mặc định `CHI TIẾT VÁCH KÍNH`, lõi thêm tên tầng: `CHI TIẾT VÁCH KÍNH TẦNG 1`) và `so_vk`
+  (trống = tiếp sau tờ vách kính đã có, chưa có thì bắt đầu từ `so` của cửa) trong mục ChiTietCua; khung tên / giai
+  đoạn / hạng mục như cửa. Lõi làm vách kính (theo tầng + Mark) → cửa đi → cửa sổ (theo Type Mark); bỏ cửa Fire Rating,
+  cửa thang máy, louver. Mỗi mục 1 lần bấm → nhiều tầng nhiều mục thì tờ vách kính tầng sau nằm sau tờ cửa tầng trước:
+  muốn đúng thứ tự cả bộ thì gom vách kính mọi tầng vào 1 mục bằng `them_in {"0": "id;id"}` (id ghép của phần tử link
+  như trong báo cáo lõi) hoặc cho `so_vk` dãy riêng. Kiểm tra tờ vách kính bỏ so tên với `ten`.
 - Kiểm tra bản vẽ (`kiem_tra` trong `ket_qua.json`, ĐẠT khi `loi` rỗng): số hiệu đúng yêu cầu; mọi viewport / bảng nằm
   trong vùng vẽ khung tên (đo nét dài family khung tên như `DatSheet_chung.sh_vung_ve`, sai số 1 mm); viewport / bảng
   không đè nhau; tag trên mặt bằng không đè nhau (tag có leader ước lượng bằng khung cỡ trung vị của tag cùng kiểu, tâm tại

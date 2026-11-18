@@ -1,6 +1,6 @@
 ---
 name: chi-tiet-cua-revit
-description: 'Chi tiết cửa Revit – Chọn 1 cửa đi / cửa sổ (family có sẵn) trên Revit, tự tạo MẶT BẰNG (callout), MẶT ĐỨNG (nhìn từ ngoài nhà; cửa trong nhà nhìn từ phía không mở cánh), MẶT CẮT (cắt qua cánh, ngoài nhà bên phải) tỉ lệ 1/25 kèm kích thước tổng, đặt vào ô trống tiếp theo của sheet "CHI TIẾT CỬA" (khung A1 chia 6 ô 2 × 3, dải trống dưới mỗi ô để người dùng tự điền ký hiệu, vật liệu, phụ kiện; hết ô thì tạo sheet mới, số sheet tăng tiếp). View template "CHI TIẾT CỬA - MẶT BẰNG / MẶT ĐỨNG / MẶT CẮT" tạo từ template 1/25 có sẵn. Mỗi type cửa chỉ làm 1 lần. Nút pyRevit Archivina > HS TKBVTC > Chi tiết cửa (một chạm) + graph Dynamo ChiTietCua_TuDong.dyn. Dùng khi người dùng nhờ "triển khai chi tiết cửa", "chi tiết cửa Revit", "mặt đứng / mặt cắt cửa 1/25", "sheet chi tiết cửa", hoặc sửa / thử nút Chi tiết cửa.'
+description: 'Chi tiết cửa Revit – Chọn 1 cửa đi / cửa sổ (family có sẵn) trên Revit, tự tạo MẶT BẰNG (callout), MẶT ĐỨNG (nhìn từ ngoài nhà; cửa trong nhà nhìn từ phía không mở cánh), MẶT CẮT (cắt qua cánh, ngoài nhà bên phải) tỉ lệ 1/25 kèm kích thước tổng, đặt vào ô trống tiếp theo của sheet "CHI TIẾT CỬA" (khung A1 chia 6 ô 2 × 3, dải thông tin dưới mỗi ô: công cụ điền ký hiệu + kích thước, vật liệu / ghi chú để người dùng điền; hết ô thì tạo sheet mới, số sheet tăng tiếp; cửa có Fire Rating, cửa thang máy, louver không làm; thứ tự vách kính → cửa đi → cửa sổ; vách kính đặt bản vẽ riêng "CHI TIẾT VÁCH KÍNH <TẦNG>" mỗi tầng, xếp theo tầng + Mark). View template "CHI TIẾT CỬA - MẶT BẰNG / MẶT ĐỨNG / MẶT CẮT" tạo từ template 1/25 có sẵn. Mỗi type cửa chỉ làm 1 lần. Nút pyRevit Archivina > HS TKBVTC > Chi tiết cửa (một chạm) + graph Dynamo ChiTietCua_TuDong.dyn. Dùng khi người dùng nhờ "triển khai chi tiết cửa", "chi tiết cửa Revit", "mặt đứng / mặt cắt cửa 1/25", "sheet chi tiết cửa", hoặc sửa / thử nút Chi tiết cửa.'
 ---
 
 # Chi tiết cửa Revit (Archivina)
@@ -114,6 +114,70 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
     - Ô trống (cả cửa): ô có nét dải thông tin RIÊNG trong group lưới và không viewport nào lấn vào > 2 mm (thay cách
       cũ theo tâm viewport, để ô nằm trong khối ghép không bị dùng lại).
 
+11. **Trình bày sạch như mẫu + bỏ cửa chống cháy** (người dùng 2026-11-18, gửi mẫu A.CD.22.13 FPT P5 + A.19.36 CT1, khoanh
+    ảnh G19 Side: mặt đứng / mặt cắt / mặt bằng còn thấy cửa, đồ vật bên cạnh; "trình bày vẫn còn xấu"):
+    - **Cửa có Fire Rating** (tham số type `DOOR_FIRE_RATING` / "Fire Rating", rồi instance; vd. EI60, E30) KHÔNG triển
+      khai chi tiết: `_chay` bỏ khỏi danh sách và báo "Bỏ qua N cửa có Fire Rating …" (`BO_FIRE_RATING = True`).
+    - **Cửa thang máy** cũng KHÔNG triển khai (người dùng chốt 2026-11-18 "cửa thang máy k triển khai", sau khi thấy E32
+      trên tờ thử): `cua_thang_may` – tên family / type, Type Comments, Description, Model (không dấu, bỏ ký tự ngăn)
+      chứa `thang may` / `thangmay` / `elevator` / `loi thang` / `loithang`, trừ chuỗi có `thang bo`; báo "Bỏ qua N cửa thang
+      máy …" (`BO_THANG_MAY = True`). G19 Side: E32, E33, 40 = `Pix_KC_R21_Dr_LoCua : Pix_KC_Cua_LoiThang_<rộng>x2300` (lỗ
+      cửa thang máy trong link kết cấu). Không dùng "lift" (trùng cửa nâng trượt lift-slide). Cửa thang máy đặt tên khác
+      hẳn (không có các chữ trên) thì vẫn bị làm → `Cần xác nhận lại` với dự án khác.
+    - **Louver** cũng KHÔNG triển khai (người dùng chốt 2026-11-18 "louver thì k triển khai"): `cua_louver` – tên family /
+      type, Type Comments, Description, Model có từ bắt đầu bằng `louver` / `louvre` hoặc đúng từ `lam` (tách từ theo ký tự
+      ngăn và chữ thường → hoa: `LamThep` → lam thep; "Laminated" không tính), hoặc Mark / Type Mark tiền tố `LV` + số (quy
+      ước nút Định vị lan can, louver); báo "Bỏ qua N louver …" (`BO_LOUVER = True`). G19 Side: `AV-Lam Thép Logia1` (Type
+      Mark 42, lam thép lô gia) tính là louver (`Cần xác nhận lại`).
+    - **Khung sát cửa**: mặt đứng ngang = hình cửa ± `LE_SAT_MM` 30 mm (chiều đứng giữ cách cũ: khung chỉnh theo ký hiệu
+      mặt cắt – thử khung đứng sát cửa thì đường cắt trên mặt đứng dài vượt cửa ~750 mm, đầu ký hiệu lòi khỏi khung tờ),
+      nhìn sâu tới mặt tường phía kia + 30; mặt cắt ngang = 2 mặt tường ± 30; mặt bằng = hình cửa (cả cung mở) ± 30, mỗi
+      bên lỗ thấy `LE_MB_TUONG_MM` 80 mm tường. Phần tử link không Hide in View từng cái được nên khung sát là cách duy
+      nhất bỏ cửa / đồ vật cạnh bên. Vách kính giữ lề IN[5] như cũ.
+    - **Dim cách mép hình `DIM_CACH_MM` 6 mm giấy**, nằm NGOÀI khung model, trong vùng chú thích (annotation crop) nới
+      riêng từng phía (phải mặt đứng / mặt cắt, dưới mặt bằng). Nới xong phải ẩn lại ký hiệu view (`an_viewer_thua`):
+      lần ẩn đầu, ký hiệu mặt đứng còn ngoài vùng chú thích nên collector theo view không trả về → hiện số "4" thừa.
+      `hop_ht` (phần thấy để xếp ô) = khung + offset chú thích từng phía.
+    - **Kiểu dim** (`kieu_dim_ct`): ưu tiên kiểu CÓ SẴN thẳng, màu đen, đơn vị mm làm tròn 1 (hoặc theo đơn vị dự án là
+      mm), chữ 1,8 – 2,6 mm gần 2,2, tên `AV_` (G19: `AV_Dim 2.2mm_0.6_H _`); không có thì chép kiểu mặc định thành
+      `ARV_Dim Chi tiết cửa` (mm, đen). G19 Side trước sửa: kiểu mặc định `AV_Dim 2.0mm_Cut dim 2mm PC` đơn vị m, màu đỏ
+      → dim ghi "1.35 m" đỏ.
+    - Vết cắt trên mặt đứng ghi đè nét đen (G19 hiện nét đứt xanh xuyên hình cửa).
+    - **Dải thông tin điền ký hiệu + kích thước** (người dùng chọn 2026-11-18): `dai_thong_tin` kẻ bảng như mẫu – cột KÝ
+      HIỆU (Type Mark / Mark vách, chữ ~5 mm) | KÍCH THƯỚC (mm) (rộng x cao theo tham số Width / Height của cửa, vách =
+      dài x cao) | VẬT LIỆU (để trống), hàng dưới GHI CHÚ (để trống); chữ kiểu có sẵn gần 2,2 mm (Arial, đen, không đậm,
+      rộng 1, `AV_`), group `ARV_ChiTietCua_TT <sheet> <ký hiệu>`. Kích thước ở dải theo tham số type có thể khác dim trên
+      hình khi dim đo theo mép lỗ tường (G19 DW02: 900 x 2200 / dim 910 – 2265) → `Cần xác nhận lại` cách ghi.
+    - Ô chật (cụm mặt đứng + mặt bằng + 2 chỗ tên view 14 mm + lề 5 mm > vùng đặt view; G19 Side DW05-G cửa 2220 mở cánh
+      vào trong: cụm 215 – 220 / ô 218 mm, tên "MẶT BẰNG" + "TL - 1:25" (~13 mm) chạm dải thông tin – bớt khoảng chừa tên
+      vẫn chạm): tên mặt bằng đặt BÊN PHẢI mặt bằng (`GetLabelOutline`, đáy tên ngang đáy phần thấy), dưới mặt bằng chừa
+      3 mm, lề trên 3 mm (`ten_mb_phai`). Hộp viewport mặt đứng tính cả hộp bao ký hiệu mặt cắt (±1193 mm model) nên kiểm
+      tra của agent báo "tràn trên 3 – 5 mm" dù ảnh không tràn – soát bằng ảnh.
+    - Cửa không lọt 1 ô (G19 Side: rèm ngăn cháy 6,2 m tràn sang khung tên – nay bị bỏ vì có Fire Rating) chiếm khối ô
+      như vách kính; cửa cao thử khối 1 cột × 2 hàng trước.
+    - Thử nền 2026-11-18 (`_tmp\hs_agent\02_G19_Side\`, phiên 38 – 39, bản sao rvt\05): xem nhật ký dự án.
+12. **Tách riêng chi tiết cửa và chi tiết vách kính** (người dùng 2026-11-18: "tách riêng chi tiết cửa và chi tiết vách
+    kính, chi tiết vách kính sắp xếp theo thứ tự và theo tầng"):
+    - Vách kính KHÔNG đặt chung bản vẽ với cửa: bản vẽ riêng tên IN[19] (mặc định `CHI TIẾT VÁCH KÍNH`) + tên tầng viết
+      hoa → `CHI TIẾT VÁCH KÍNH TẦNG 1`, mỗi tầng bản vẽ riêng (tên đã kết thúc bằng tên tầng thì không thêm). Tầng =
+      level của vách (vách trong link: level model chính cùng cao độ, `lk_level_host`).
+    - Số hiệu IN[20]: có thì bắt đầu từ số đó (trùng thì tăng tiếp); trống = tầng đã có bản vẽ vách kính thì tiếp sau
+      số lớn nhất của tầng đó, chưa có thì tiếp sau bản vẽ vách kính các tầng khác, chưa có nữa thì bắt đầu từ số hiệu
+      chi tiết cửa IN[3] (vách kính xếp trước, cửa đi / cửa sổ đánh tiếp sau), không có IN[3] thì tiếp sau bản vẽ chi
+      tiết cửa (cùng giai đoạn / hạng mục). Khung tên / giai đoạn / hạng mục IN[18] / IN[21] / IN[22], trống = như cửa.
+    - Thứ tự làm trong 1 lần bấm (`khoa_thu_tu`, người dùng chốt 2026-11-18 "sắp xếp theo thứ tự vách kính, xong đến cửa
+      đi, xong cửa sổ"): vách kính theo cao độ tầng rồi Mark so số tự nhiên (VK.2 trước VK.10) → cửa đi → cửa sổ (theo
+      Type Mark). Cửa đi, cửa sổ chung bản vẽ CHI TIẾT CỬA. Báo cáo có dòng "Thứ tự: …". Nhiều lần bấm (vd. agent mỗi
+      tầng 1 lần) thì số tờ vách kính tầng sau nằm sau tờ cửa của tầng trước → muốn đúng thứ tự cả bộ thì bấm 1 lần cho
+      mọi tầng, hoặc cho vách kính dãy số hiệu riêng.
+    - Vách kính 1 ô chỉ xếp tiếp vào bản vẽ vách kính CUỐI của tầng (không lấp ô trống tờ trước) → đọc theo thứ tự tờ /
+      ô là đúng thứ tự Mark. Cửa vẫn lấp ô trống mọi tờ chi tiết cửa như cũ.
+    - Hộp thoại (`arv_hoi_sheet.hoi_chi_tiet_cua`): có chọn vách kính thì hiện thêm bảng "Chi tiết vách kính – đặt lên
+      bản vẽ" (nhớ riêng `ChiTietVachKinh_sheet.json`, lần đầu chép giai đoạn / hạng mục của bảng cửa; số hiệu để trống
+      = tự đánh); chỉ chọn vách kính thì chỉ hiện bảng vách kính. Agent: khoá `so_vk` / `ten_vk` trong mục ChiTietCua của
+      phương án (`chay_hs.py`).
+    - Bản vẽ cũ đã có vách kính đặt chung tờ cửa (trước 2026-11-18) giữ nguyên, không dời / xoá.
+
 ## File
 - Lõi: `<gốc>\scripts\dynamo\ChiTietCua_TuDong.py` (graph `.dyn` sinh bằng `build_dyn.py ChiTietCua_TuDong.json`).
 - Nút: sinh bằng `scripts\pyrevit\build_from_dynamo.py "file mau revit\dynamo" --chi ChiTietCua` (MOT_CHAM
@@ -124,6 +188,13 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
   cả 2 nút.
 
 ## Bẫy đã gặp (Revit 2027.3)
+- **Link lồng chưa được dựng hình trong view vừa tạo** (người dùng báo 2026-11-18, G19 Side cửa sổ 37 trong link
+  `G19_A_L3.rvt : G19_A_L3-32.AP1.rvt`): mặt đứng chỉ còn khung chữ nhật, mặt bằng trống, mặt cắt vẫn đủ; ảnh xuất ngay
+  khi mở lại file vẫn vậy. Không phải do family (4 khối hình hiện mọi hướng / mức chi tiết, không family con dùng chung),
+  không phải View Range (cắt 1200, cửa sổ 450 – 2800). Thử phiên 46 – 48: đổi Detail Level template qua Medium rồi trả Fine
+  → mặt đứng hiện đủ; gán lại View Range cùng giá trị → mặt bằng vẫn trống; bỏ template → Regenerate → gán lại → cả 3
+  view hiện đủ. Lõi: cửa / vách trong link, sau khi dựng xong 3 view thì gán lại template như vậy (`lk`), báo
+  "Dựng lại hình link …", kiểm số kích thước không đổi.
 - `ViewSection.CreateSection`: view NHÌN THEO +BasisZ (ViewDirection = -BasisZ), mặt cắt ở Min.Z, cắt xa ở Max.Z,
   RightDirection = -BasisX. Bản đầu tưởng ngược lại nên mặt đứng nhìn từ trong nhà. Lõi kiểm lại ViewDirection /
   RightDirection sau khi tạo và báo CẢNH BÁO nếu lệch.

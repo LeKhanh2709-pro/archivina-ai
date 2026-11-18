@@ -10,6 +10,7 @@
 #                  Mark vách kính) | "kiem_tra" (2026-11-16: chỉ kiểm tra + xuất ảnh các bản vẽ có số hiệu bắt đầu bằng
 #                  "sheet_tien_to" – chuỗi hoặc danh sách, vd. ["A_TC.14.", "A_TC.22."]; không chạy nút, không lưu. Dùng
 #                  sau chuỗi phiên chi tiết cửa: ảnh / kiểm tra của từng phiên chỉ có tờ phiên đó chạm tới và có thể cũ)
+#                  | "script" (2026-11-18: chạy file Python "script" trên file đã mở, xem chỗ điều phối che_do)
 #   "phuong_an":   JSON phương án (định dạng nút Hồ sơ đã duyệt + mục ChiTietCua), che_do = chay
 #   "chi":         ["<view>|<nút>", ...] chỉ chạy các mục này (trống = mọi mục của phương án)
 #   "luu":         .rvt lưu ra sau khi chạy (file MỚI, có rồi thì không ghi đè); trống = không lưu
@@ -487,7 +488,7 @@ try:
         ra = []
         for bic in (DB.BuiltInCategory.OST_Doors, DB.BuiltInCategory.OST_Windows, DB.BuiltInCategory.OST_Walls):
             for e in DB.FilteredElementCollector(doc).OfCategory(bic).WhereElementIsNotElementType():
-                if e.LevelId == v.GenLevel.Id:
+                if e.LevelId.Value == v.GenLevel.Id.Value:      # so .Value (PythonNet3: == giữa 2 ElementId không tin được)
                     ra.append((e, None))
         for li in link_thay_trong(v):
             ld = li.GetLinkDocument()
@@ -632,6 +633,15 @@ try:
 
     if V.get("che_do") == "khao_sat":
         khao_sat()
+    elif V.get("che_do") == "script":
+        # 2026-11-18: chạy 1 file Python tuỳ ý (V["script"]) trên file đã mở – dùng để soi dữ liệu model (kiểu dim,
+        # section tag, Fire Rating...) khi sửa lõi nút. Biến có sẵn: doc, uiapp, DB, w, KET, KQ, V, luu_ra. Không tự lưu.
+        _sp = os.path.normpath(V["script"])
+        w(u"=== chạy script {}".format(_sp))
+        exec(compile(io.open(_sp, encoding="utf-8").read(), _sp, "exec"),
+             {"doc": doc, "uiapp": uiapp, "DB": DB, "w": w, "KET": KET, "KQ": KQ, "V": V, "luu_ra": luu_ra,
+              "__name__": "__script__"})
+        w(u"=== script xong")
     elif V.get("che_do") == "dat_mark_vk":
         dat_mark_vk()
     elif V.get("che_do") == "kiem_tra":
@@ -718,6 +728,8 @@ try:
                                "tl": int(d.get("ti_le") or 0), "gd": d.get("giai_doan") or u"",
                                "hm": d.get("hang_muc") or u"", "kho": d.get("kho") or u"A1",
                                "kt": d.get("khung_ten") or u"", "mark": d.get("mark") or [],
+                               # 2026-11-18: chi tiết vách kính bản vẽ riêng (tên + tầng) – số hiệu / tên riêng
+                               "so_vk": (d.get("so_vk") or u"").strip(), "ten_vk": (d.get("ten_vk") or u"").strip(),
                                # 2026-11-15 (FPT P5): chọn sẵn view đích khi tầng có ≥ 2 view cùng loại; ô nhập thêm
                                # của lõi, vd. {"21": true} = Không dùng CAD link (Chống thấm / Ngăn cháy)
                                "view_dich": (d.get("view_dich") or u"").strip(),
@@ -742,7 +754,10 @@ try:
                     continue
                 _DA_KIEM.add(so)
                 w(u"=== kiểm tra bản vẽ {}".format(so))
-                r = kiem_sheet(sheets[so], kq["so_yeu_cau"] if kq["nut"] != "ChiTietCua" else u"", kq["ten_yeu_cau"])
+                ten_mong = kq["ten_yeu_cau"]
+                if kq["nut"] == "ChiTietCua" and kd(sheets[so].Name).startswith(kd(kq.get("ten_vk") or u"CHI TIẾT VÁCH KÍNH")):
+                    ten_mong = u""          # bản vẽ vách kính riêng: tên = tên vách kính + tầng
+                r = kiem_sheet(sheets[so], kq["so_yeu_cau"] if kq["nut"] != "ChiTietCua" else u"", ten_mong)
                 r["muc"] = u"%s – %s" % (kq["view"], kq["nut"])
                 KET["kiem_tra"].append(r)
                 if V.get("anh", True):
@@ -774,7 +789,11 @@ try:
         def hoi_ctc(doc_, view_, uidoc_=None):
             m = hsd._DANG.get("muc") or {}
             ra = {1: m.get("kt") or u"", 2: (m.get("ten") or u"CHI TIẾT CỬA").upper(), 3: m.get("so") or u"",
-                  16: m.get("gd") or u"", 17: m.get("hm") or u""}
+                  16: m.get("gd") or u"", 17: m.get("hm") or u"",
+                  # vách kính: bản vẽ riêng mỗi tầng (khung tên / giai đoạn / hạng mục như cửa)
+                  18: m.get("kt") or u"", 19: (m.get("ten_vk") or u"CHI TIẾT VÁCH KÍNH").upper(), 20: m.get("so_vk") or u"",
+                  21: m.get("gd") or u"", 22: m.get("hm") or u""}
+            ra.update(m.get("them_in") or {})       # ô nhập thêm của mục, vd. {"0": "id;id"} = danh sách đối tượng
             hsd._DANG["tra_loi"] = ra
             return ra
         arv_hoi_sheet.hoi_chi_tiet_cua = hoi_ctc
@@ -842,7 +861,8 @@ try:
 
         try:
             for m in muc_ds:
-                kq = {"view": m["view"], "nut": m["nut"], "so_yeu_cau": m["so"], "ten_yeu_cau": m["ten"], "dong": [],
+                kq = {"view": m["view"], "nut": m["nut"], "so_yeu_cau": m["so"], "ten_yeu_cau": m["ten"],
+                      "ten_vk": m.get("ten_vk") or u"", "dong": [],
                       "can_xem": [], "loi": False}
                 KET["muc"].append(kq)
                 w(u"=== {} – {} ({}) {}".format(m["view"], m["nut"], m["so"], datetime.datetime.now().strftime("%H:%M:%S")))
@@ -877,7 +897,10 @@ try:
                         w(u"   chọn {} đối tượng; không thấy: {}".format(n_chon, u", ".join(thieu) or u"-"))
                         if thieu:
                             kq["can_xem"].append(u"Không thấy trên tầng: %s" % u", ".join(thieu))
-                        if not n_chon:
+                        if m["them_in"].get(0):
+                            # danh sách id có sẵn (IN[0]) → lõi làm đúng các id đó, không dùng vùng chọn
+                            w(u"   IN[0] = {}".format(m["them_in"][0]))
+                        elif not n_chon:
                             raise Exception(u"Không chọn được cửa / vách kính nào (Mark: %s) – không chạy để nút không "
                                             u"chờ chọn trên màn hình." % u", ".join(m["mark"]))
                     kq["dong"] = hsd._chay_nut(uiapp, PANEL, m["nut"], w)
