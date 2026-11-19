@@ -8,6 +8,10 @@
 #   - Nhận trục / hộp kỹ thuật theo thứ tự bằng chứng:
 #       a) tên room có từ khoá (HKT, hộp kỹ thuật, trục kỹ thuật, shaft…) hoặc chứa Shaft Opening
 #       b) chứa ống / ống gió / ống luồn dây đi đứng, ô không có cửa đi và thiết bị vệ sinh
+#          Shaft Opening (2026-11-18): xét TỪNG VÒNG biên của mọi shaft (model + link) cắt qua sàn tầng (theo khung bao Z,
+#          không theo LevelId); ô kín không cửa chứa 1 vòng, không rộng hơn nhiều → bo theo ô; vòng nằm trong phòng có
+#          cửa (phòng KT nước / điện) hoặc không thuộc ô kín nào → bo theo chính vòng shaft; vòng ngoài khu nhà (ngoài
+#          khung các ô kín, vd. lỗ mở nắp hầm ngoài sân) hoặc > 30 m2 không vẽ, liệt kê
 #       c) không có ống, dấu X trong model (như G19): ô / khe kín KHÔNG có cửa đi, cửa sổ, thiết bị vệ sinh, sàn hoàn
 #          thiện, diện tích ≤ ngưỡng (mặc định 3 m2: ô 1770 x 2520 ở hành lang G19 không phải trục), bề rộng lòng ≥ ngưỡng
 #   - Loại: ô chứa thang máy / thang bộ (tên family / type / room có từ khoá loại trừ)
@@ -1373,6 +1377,106 @@ def dau_x_cad(view, lv):
     return kq
 
 
+SHAFT_TREN_MM = 300.0     # shaft opening "cắt sàn tầng": đáy ≤ cao độ level + 300 mm …
+SHAFT_DUOI_MM = 50.0      # … và đỉnh ≥ cao độ level − 50 mm
+
+
+def noi_vong(curves):
+    """Xếp các đoạn của 1 vòng biên nối đầu – đuôi (đảo chiều đoạn khi cần) → list Curve, hoặc None nếu không khép kín."""
+    con = list(curves)
+    if not con:
+        return None
+    kq = [con.pop(0)]
+    tol = mm(2)
+    while con:
+        cuoi = kq[-1].GetEndPoint(1)
+        for i, c in enumerate(con):
+            if c.GetEndPoint(0).DistanceTo(cuoi) < tol:
+                kq.append(con.pop(i))
+                break
+            if c.GetEndPoint(1).DistanceTo(cuoi) < tol:
+                kq.append(con.pop(i).CreateReversed())
+                break
+        else:
+            return None
+    return kq if kq[-1].GetEndPoint(1).DistanceTo(kq[0].GetEndPoint(0)) < tol else None
+
+
+def diem_trong(pts):
+    """Một điểm nằm TRONG đa giác: trọng tâm diện tích, không thì điểm lệch vào trong từ trung điểm các cạnh."""
+    n = len(pts)
+    a = sum(pts[i][0] * pts[(i + 1) % n][1] - pts[(i + 1) % n][0] * pts[i][1] for i in range(n)) / 2
+    if abs(a) > 1e-9:
+        cx = sum((pts[i][0] + pts[(i + 1) % n][0]) * (pts[i][0] * pts[(i + 1) % n][1] - pts[(i + 1) % n][0] * pts[i][1])
+                 for i in range(n)) / (6 * a)
+        cy = sum((pts[i][1] + pts[(i + 1) % n][1]) * (pts[i][0] * pts[(i + 1) % n][1] - pts[(i + 1) % n][0] * pts[i][1])
+                 for i in range(n)) / (6 * a)
+        if trong_da_giac(cx, cy, pts):
+            return (cx, cy), abs(a)
+    for i in range(n):
+        (x1, y1), (x2, y2) = pts[i], pts[(i + 1) % n]
+        L = math.hypot(x2 - x1, y2 - y1)
+        if L < 1e-9:
+            continue
+        for k in (1, -1):
+            q = ((x1 + x2) / 2 - k * (y2 - y1) / L * mm(30), (y1 + y2) / 2 + k * (x2 - x1) / L * mm(30))
+            if trong_da_giac(q[0], q[1], pts):
+                return q, abs(a)
+    return None, abs(a)
+
+
+def vong_shaft_tang(view, lv):     # tên riêng: LoMo_ShaftOpening_nguon.py đã có hàm vong_shaft(op)
+    """Các vòng biên Shaft Opening (model chính + file link đang thấy trong view) CẮT QUA sàn của level: khung bao Z có
+    đáy ≤ level + SHAFT_TREN_MM và đỉnh ≥ level − SHAFT_DUOI_MM. KHÔNG xét LevelId / chỉ tâm khung bao (sửa 2026-11-18,
+    G19 Side Tầng 1, 2 ra 0 ô: shaft của link kết cấu đặt ở level kết cấu lệch cao độ, shaft "Nắp hầm → Tầng 1" mang
+    level Nắp hầm, 1 shaft nhiều vòng có tâm khung bao nằm ngoài mọi hộp). Mỗi vòng 1 mục; chỉ vòng có tâm trong crop
+    của view (khi crop bật: bỏ lỗ thông gió hầm ngoài sân); vòng trùng chỗ (shaft kiến trúc + kết cấu) lấy 1 lần.
+    → list[{c, pts, loops (Curve ở cao độ level), m2, kt, nguon}]"""
+    z = lv.Elevation
+    nguon = [(e, Transform.Identity, "") for e in FilteredElementCollector(doc)
+             .OfCategory(BuiltInCategory.OST_ShaftOpening).WhereElementIsNotElementType()]
+    for li, ld, tf in lk_cac_link(doc, view):
+        for e in FilteredElementCollector(ld).OfCategory(BuiltInCategory.OST_ShaftOpening).WhereElementIsNotElementType():
+            nguon.append((e, tf, li.Name.split(" : ")[0]))
+    crop = None
+    try:
+        if view.CropBoxActive:
+            cb = view.CropBox
+            q = [cb.Transform.OfPoint(XYZ(x, y, cb.Min.Z)) for x in (cb.Min.X, cb.Max.X) for y in (cb.Min.Y, cb.Max.Y)]
+            crop = (min(p.X for p in q), min(p.Y for p in q), max(p.X for p in q), max(p.Y for p in q))
+    except Exception:
+        crop = None
+    kq, da = [], set()
+    for e, tf, ten_l in nguon:
+        try:
+            bb = e.get_BoundingBox(None)
+            if bb is None:
+                continue
+            za, zb = tf.OfPoint(bb.Min).Z, tf.OfPoint(bb.Max).Z
+            if not (min(za, zb) <= z + mm(SHAFT_TREN_MM) and max(za, zb) >= z - mm(SHAFT_DUOI_MM)):
+                continue
+            prof = e.Document.GetElement(e.SketchId).Profile
+        except Exception:
+            continue
+        for arr in prof:
+            cv = noi_vong([phang(c.CreateTransformed(tf), z) for c in arr])
+            if not cv:
+                continue
+            pts = diem_loop(cv)
+            if len(pts) < 3:
+                continue
+            c, dt = diem_trong(pts)
+            if c is None or (crop and not (crop[0] <= c[0] <= crop[2] and crop[1] <= c[1] <= crop[3])):
+                continue
+            khoa = (round(c[0] / mm(20)), round(c[1] / mm(20)))
+            if khoa in da:
+                continue
+            da.add(khoa)
+            kq.append({"c": c, "pts": pts, "loops": cv, "m2": ra_m2(dt), "kt": tuple(ra_mm(t) for t in kich_thuoc(pts)),
+                       "nguon": ("%s id %d" % (ten_l, e.Id.Value)).strip()})
+    return kq
+
+
 def tim_truc(view, lv, da_lam, viec, ghi_them):
     """Nhận trục / hộp kỹ thuật trên level của view → (se_lam, da_co, bi_loai, xem_lai).
     da_lam(v): ô đã làm rồi (đã hatch / đã có lỗ mở) → bỏ qua; viec: chữ trong báo cáo ("hatch", "tạo lỗ mở")"""
@@ -1408,10 +1512,8 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
             if f._li.Id.Value in li_kt and not la_san_ket_cau(f)]
     san = [s for s in san if s]
     ong = ong_dung(lv)
-    shaft = [diem_tam(e) for e in FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ShaftOpening)
-             .WhereElementIsNotElementType()]
-    shaft += [diem_tam(e) for e in lk_tang(doc, view, BuiltInCategory.OST_ShaftOpening)]
-    shaft = [p for p in shaft if p]
+    vong_sh = vong_shaft_tang(view, lv)   # mỗi vòng biên shaft opening cắt sàn tầng này (2026-11-18)
+    shaft = [s["c"] for s in vong_sh]
     loai = []
     for cat in (BuiltInCategory.OST_SpecialityEquipment, BuiltInCategory.OST_GenericModel,
                 BuiltInCategory.OST_MechanicalEquipment, BuiltInCategory.OST_Stairs):
@@ -1423,9 +1525,14 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
                 if p and bb and bb.Min.Z - mm(500) <= z + mm(1000) <= bb.Max.Z + mm(500):
                     loai.append(p)
     bao_cao.append("Trên level: cửa đi %d, cửa sổ %d, thiết bị vệ sinh %d, sàn hoàn thiện %d, ống đứng %d, "
-                   "shaft opening %d, thang máy / thang bộ %d; %s" % (
+                   "vòng shaft opening cắt sàn %d, thang máy / thang bộ %d; %s" % (
                        len(cua) // 2, len(cua_so) // 2, len(tb), len(san), len(ong), len(shaft), len(loai),
                        ghi_them))
+    if vong_sh:
+        dem_sh = {}
+        for s in vong_sh:
+            dem_sh[s["nguon"]] = dem_sh.get(s["nguon"], 0) + 1
+        bao_cao.append("Shaft opening cắt sàn tầng: %s" % "; ".join("%s: %d vòng" % kv for kv in sorted(dem_sh.items())))
     if not ong and not shaft:
         bao_cao.append("Model không có ống đứng / shaft opening → trục, hộp nhận theo tên room hoặc hình học "
                        "(ô kín không cửa, cửa sổ, thiết bị, sàn) – xem ảnh để duyệt (Cần xác nhận lại).")
@@ -1468,6 +1575,8 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
             len(xcad), ", ".join("%s %d" % kv for kv in sorted(dem_l.items())),
             " → ô chỉ có hình học mà không có dấu X thì không vẽ" if co_cad else ""))
     x_dung = set()            # chỉ số dấu X đã nằm trong ô được nhận
+    sh_dung = set()           # chỉ số vòng shaft opening đã nằm trong ô được nhận
+    o_da_co = []              # ô đã hatch / đã có lỗ mở từ trước
 
     # ---- phân loại ----
     se_ve, da_co, bi_loai, xem_lai, khong_x, khe_dai = [], 0, [], [], [], []
@@ -1480,6 +1589,7 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
             continue
         ix = [i for i, d in enumerate(xcad) if trong_vung(d["c"][0], d["c"][1], pts)]
         tong_x = sum(xcad[i]["m2"] for i in ix)
+        ish = [i for i, s in enumerate(vong_sh) if trong_vung(s["c"][0], s["c"][1], pts)]
         if v["ten"]:
             nguon = "tên room '%s'" % v["ten"]
         elif any(trong_vung(x, y, r["pts"]) for r in room_hkt):
@@ -1495,8 +1605,13 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
                 continue
             nguon = "dấu X CAD"
         elif trong(cua) or trong(tb):
-            continue
-        elif trong(shaft):
+            continue          # phòng có cửa / thiết bị (vd. phòng KT nước có shaft): vòng shaft trong đó bo riêng ở dưới
+        elif ish:
+            # như dấu X CAD: ô không lớn hơn nhiều so với vòng shaft thì bo theo mép tường thô của ô; ô rộng hơn hẳn
+            # hoặc chứa nhiều vòng thì bo theo vòng shaft ở dưới
+            tong_sh = sum(vong_sh[i]["m2"] for i in ish)
+            if v["m2"] > max(2.0 * tong_sh, tong_sh + 0.5) or len(ish) > 1:
+                continue
             nguon = "shaft opening"
         elif trong(ong):
             nguon = "ống đứng"
@@ -1512,8 +1627,10 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         else:
             continue
         x_dung.update(ix)
+        sh_dung.update(ish)
         if da_lam(v):
             da_co += 1
+            o_da_co.append(v)
             continue
         v["nguon"] = nguon
         se_ve.append(v)
@@ -1540,6 +1657,44 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         se_ve.append(v)
         if v["kt"][0] > O_LON_MM:
             xem_lai.append(v)
+    # vòng shaft opening không nằm trong ô kín nào được nhận (nằm trong phòng có cửa – phòng KT nước / điện, hoặc ô hở,
+    # tường hộp chưa dựng): bo theo chính vòng shaft (2026-11-18)
+    # khu nhà ≈ khung bao các ô kín quét được (+ 500 mm): vòng shaft ngoài khung (G19 Side Tầng 1: lỗ mở nắp hầm ngoài sân,
+    # dấu X cạnh hàng rào) không phải trục của nhà → không vẽ, liệt kê
+    p_o = [p for v in room_hkt + khe for l in v["pts"] for p in l]
+    khung_o = (min(p[0] for p in p_o) - mm(500), min(p[1] for p in p_o) - mm(500),
+               max(p[0] for p in p_o) + mm(500), max(p[1] for p in p_o) + mm(500)) if p_o else None
+    sh_lon, sh_ngoai = [], []
+    for i, s in enumerate(vong_sh):
+        if i in sh_dung:
+            continue
+        cx, cy = s["c"]
+        if khung_o and not (khung_o[0] <= cx <= khung_o[2] and khung_o[1] <= cy <= khung_o[3]):
+            sh_ngoai.append(s)
+            continue
+        if any(trong_vung(p[0], p[1], [s["pts"]]) for p in loai) or any(
+                r.IsPointInRoom(XYZ(cx, cy, z + mm(1000))) for r in room_loai):
+            continue
+        if any(trong_vung(cx, cy, v["pts"]) for v in se_ve + o_da_co):
+            continue
+        if s["m2"] > DT_CO_BANG_CHUNG_M2:
+            sh_lon.append(s)           # lỗ mở lớn (thông tầng…) không phải trục: không vẽ, liệt kê
+            continue
+        v = {"pts": [s["pts"]], "loops": [s["loops"]], "m2": s["m2"], "diem": (cx, cy), "kt": s["kt"], "ten": ""}
+        if da_lam(v):
+            da_co += 1
+            continue
+        v["nguon"] = "vòng shaft opening"
+        se_ve.append(v)
+        if v["kt"][0] > O_LON_MM:
+            xem_lai.append(v)
+    if sh_ngoai:
+        bao_cao.append("KHÔNG VẼ %d vòng shaft opening ngoài khu nhà (ngoài khung các ô kín, vd. lỗ mở nắp hầm ngoài sân – "
+                       "Cần xác nhận lại): %s" % (len(sh_ngoai), "; ".join("%.2f m2 %dx%d tại %s" % (
+                           s["m2"], round(s["kt"][0]), round(s["kt"][1]), toa_do(s["c"])) for s in sh_ngoai)))
+    if sh_lon:
+        bao_cao.append("KHÔNG VẼ %d vòng shaft opening lớn hơn %g m2 (lỗ mở thông tầng?, Cần xác nhận lại): %s" % (
+            len(sh_lon), DT_CO_BANG_CHUNG_M2, "; ".join("%.2f m2 tại %s" % (s["m2"], toa_do(s["c"])) for s in sh_lon)))
     if khe_dai:
         bao_cao.append("KHÔNG VẼ %d dải dài hẹp (dài ≥ %d, rộng ≤ %d mm: khe giữa tường và vách / lõi, Cần xác nhận lại): %s" % (
             len(khe_dai), KHE_DAI_MM, KHE_HEP_MM, "; ".join("%.2f m2 %dx%d tại %s" % (
@@ -1553,7 +1708,7 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         with open(os.path.join(THU_MUC, "ngan_chay_vung.json"), "w", encoding="utf-8") as f:
             json.dump([{"m2": round(v["m2"], 3), "kt": [round(t) for t in v["kt"]], "nguon": v.get("nguon", ""),
                         "pts": [[(round(ra_mm(p[0])), round(ra_mm(p[1]))) for p in l] for l in v["pts"]]}
-                       for v in room_hkt + khe + [v for v in se_ve if v["nguon"] == "khung X CAD"]],
+                       for v in room_hkt + khe + [v for v in se_ve if v["nguon"] in ("khung X CAD", "vòng shaft opening")]],
                       f, ensure_ascii=False)
     except Exception:
         pass

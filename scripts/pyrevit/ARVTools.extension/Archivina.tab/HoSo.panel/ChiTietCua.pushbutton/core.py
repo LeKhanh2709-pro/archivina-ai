@@ -114,6 +114,13 @@ KIEU_MB = u"CT CỬA"                           # kiểu view riêng: Floor Plan
 KIEU_MC = u"MẶT CẮT CỬA"
 TIEN_TO = (u"CT CỬA", u"CT VÁCH KÍNH")       # tiền tố tên view chi tiết cửa / vách kính
 KHOI_VK = ((1, 1), (2, 1), (3, 1), (2, 2), (3, 2))   # khối ô (cột × hàng) cho vách kính, ít ô trước
+# Tờ vách kính XẾP LIỀN (người dùng 2026-11-19 "xếp chặt vách kính hơn"; G19 Side 13 vách mỗi vách 1 tờ vì khối 2 × 2
+# không lọt cột còn lại): không kẻ sẵn lưới 6 ô; mỗi vách chiếm đúng bề rộng cụm view + lề (tối thiểu 1 ô) × 1 hoặc 2
+# hàng, xếp tiếp sau vách trước trên tờ vách kính cuối của tầng (đúng thứ tự Mark). Nét chia của từng khối gom group
+# NHOM_LUOI_VK (tên vẫn bắt đầu bằng NHOM_LUOI → vẫn nhận là sheet của công cụ). False = cách cũ (khối ô lưới).
+XEP_LIEN_VK = True
+NHOM_LUOI_VK = NHOM_LUOI + u"VK"
+LE_KHOI_VK_MM = 8.0          # lề mỗi bên cụm view trong khối vách kính xếp liền (mm giấy)
 TEN_NGOAI = (u"logia", u"lo gia", u"ban cong", u"balcony", u"san phoi", u"san thuong", u"terrace", u"ngoai nha")
 SO_COT, SO_HANG = 3, 2
 TI_LE_DAI_TT = 0.22          # dải thông tin dưới mỗi ô (tỉ lệ chiều cao ô)
@@ -920,6 +927,121 @@ def o_trong(doc, sheet, vung, vps):
             continue
         kq.append(k)
     return kq
+
+
+def khoi_vk_tren_sheet(doc, sheet, vung):
+    """Các khối vách kính xếp liền đã có trên sheet: (x0, y0, x1, y1), dò theo nét trong group NHOM_LUOI_VK của từng khối:
+    nét trên dải thông tin cho mép trái / phải + hàng đáy; khối ở hàng dưới là khối 1 hàng khi group có nét chia hàng
+    hoặc hàng trên phía trên nó đã có khối 1 hàng, không thì khối 2 hàng. (Nét <Invisible lines> vẫn in ra khi xuất ảnh
+    tờ – thử 2026-11-19 – nên không dùng nét ẩn đánh dấu.)"""
+    trai, duoi, phai, tren = vung
+    o_h = (tren - duoi) / SO_HANG
+    y_ch = tren - o_h
+    tl = ft(1)
+    ds = []
+    for g in FilteredElementCollector(doc, sheet.Id).OfClass(Group):
+        if not ten(g.GroupType).startswith(NHOM_LUOI_VK):
+            continue
+        ngang = []
+        for i in g.GetMemberIds():
+            try:
+                c = doc.GetElement(i).GeometryCurve
+                a, b = c.GetEndPoint(0), c.GetEndPoint(1)
+            except Exception:
+                continue
+            if abs(a.Y - b.Y) < tl:
+                ngang.append((min(a.X, b.X), max(a.X, b.X), a.Y))
+        dai = [n for n in ngang if abs(n[2] - (duoi + o_h * TI_LE_DAI_TT)) < tl
+               or abs(n[2] - (y_ch + o_h * TI_LE_DAI_TT)) < tl]
+        if not dai:
+            continue
+        x0, x1, yt = max(dai, key=lambda n: n[1] - n[0])
+        y0 = yt - o_h * TI_LE_DAI_TT
+        co_net_ch = any(abs(n[2] - y_ch) < tl and n[0] < x1 - tl and n[1] > x0 + tl for n in ngang)
+        ds.append((x0, y0, x1, co_net_ch))
+    tren_1 = [(x0, x1) for x0, y0, x1, _ in ds if y0 > y_ch - tl]
+    kq = []
+    for x0, y0, x1, co_net_ch in ds:
+        if y0 > y_ch - tl:
+            kq.append((x0, y0, x1, tren))
+        elif co_net_ch or any(min(x1, b) - max(x0, a) > tl for a, b in tren_1):
+            kq.append((x0, y0, x1, y_ch))
+        else:
+            kq.append((x0, y0, x1, tren))
+    return kq
+
+
+def cho_khoi_vk(vung, khoi_cu, bw, so_hang):
+    """Chỗ đặt khối vách kính rộng bw, cao so_hang hàng (1 / 2) trên tờ xếp liền đã có khoi_cu: mỗi hàng có con trỏ =
+    mép phải xa nhất của khối chạm hàng đó; khối 2 hàng đặt sau con trỏ lớn hơn, khối 1 hàng vào hàng trên nếu còn đủ
+    chỗ, không thì hàng dưới (đọc từ trái sang phải, trên xuống dưới như lưới 6 ô). Trả (x0, y0, x1, y1, hàng) hoặc
+    None khi hết chỗ."""
+    trai, duoi, phai, tren = vung
+    o_h = (tren - duoi) / SO_HANG
+    tl = ft(1)
+    hang = [(tren - o_h, tren), (duoi, tren - o_h)]
+    cur = []
+    for hy0, hy1 in hang:
+        c = trai
+        for x0, y0, x1, y1 in khoi_cu:
+            if min(y1, hy1) - max(y0, hy0) > tl:
+                c = max(c, x1)
+        cur.append(c)
+    if so_hang >= 2:
+        x0 = max(cur)
+        return (x0, duoi, min(x0 + bw, phai), tren, None) if x0 + bw <= phai + tl else None
+    # đúng thứ tự đọc: sau khối 2 hàng cuối, hàng dưới đã có khối thì hàng trên không nhận thêm
+    doan = max([k[2] for k in khoi_cu if k[3] - k[1] > o_h + tl] + [trai])
+    khoa_tren = any(k[3] - k[1] <= o_h + tl and k[3] <= tren - o_h + tl and k[0] >= doan - tl for k in khoi_cu)
+    for r in ((1,) if khoa_tren else (0, 1)):
+        if cur[r] + bw <= phai + tl:
+            return (cur[r], hang[r][0], min(cur[r] + bw, phai), hang[r][1], r)
+    return None
+
+
+def net_khoi_vk(doc, sheet, vung, hop, khoi_cu, ten_nhom):
+    """Nét của 1 khối vách kính xếp liền: chia cột (trái – nếu hàng đó chưa có nét ở mép trái khối –, phải), chia hàng
+    (khối 1 hàng, đoạn chưa có), nét dải thông tin; gom group ten_nhom (khoi_vk_tren_sheet dò lại khối theo các nét này)."""
+    trai, duoi, phai, tren = vung
+    o_h = (tren - duoi) / SO_HANG
+    tl = ft(1)
+    x0, y0, x1, y1 = hop[:4]
+    nets = []
+    hang = [(tren - o_h, tren), (duoi, tren - o_h)]
+    for hy0, hy1 in hang:                        # mép trái: đoạn hàng nào chưa có khối kề sát bên trái thì kẻ
+        if min(y1, hy1) - max(y0, hy0) <= tl or x0 <= trai + tl:
+            continue
+        if not any(abs(k[2] - x0) < tl and min(k[3], hy1) - max(k[1], hy0) > tl for k in khoi_cu):
+            nets.append(((x0, hy0), (x0, hy1)))
+    if x1 < phai - tl:                           # mép phải
+        nets.append(((x1, y0), (x1, y1)))
+    y_ch = tren - o_h                            # nét chia hàng (khối 1 hàng): phần chưa có khối 1 hàng ở hàng kia
+    if y1 - y0 < o_h + tl:
+        doan = [(x0, x1)]
+        for k in khoi_cu:
+            if k[3] - k[1] < o_h + tl and (abs(k[1] - y_ch) < tl or abs(k[3] - y_ch) < tl):
+                moi = []
+                for a, b in doan:
+                    if k[2] <= a or k[0] >= b:
+                        moi.append((a, b))
+                        continue
+                    if k[0] > a:
+                        moi.append((a, k[0]))
+                    if k[2] < b:
+                        moi.append((k[2], b))
+                doan = moi
+        nets += [((a, y_ch), (b, y_ch)) for a, b in doan if b - a > tl]
+    yt = y0 + o_h * TI_LE_DAI_TT                 # nét trên dải thông tin
+    nets.append(((x0, yt), (x1, yt)))
+    ids = List[ElementId]()
+    for (ax, ay), (bx, by) in nets:
+        ids.Add(doc.Create.NewDetailCurve(sheet, Line.CreateBound(XYZ(ax, ay, 0), XYZ(bx, by, 0))).Id)
+    g = doc.Create.NewGroup(ids)
+    try:
+        g.GroupType.Name = ten_view_hop_le(ten_nhom)
+    except Exception:
+        pass
+    return yt
 
 
 def tang_so(s):
@@ -1974,12 +2096,38 @@ def _chinh(fi):
             break
     if vuot_kh:
         khoi = KHOI_VK[-1]
-    if vk or khoi != (1, 1):
+    xep_lien = bool(vk and XEP_LIEN_VK)
+    hop_khoi = None                  # tờ vách kính xếp liền: (x0, y0, x1, y1, hàng) của khối trên sheet
+    if xep_lien:
+        rong_vung = SO_COT * o_w
+        # cụm lọt 1 ô thì rộng đúng 1 ô (như lưới cũ: 3 vách 1 ô / hàng), to hơn thì rộng cụm + lề 2 bên
+        bw = o_w if cw <= o_w else min(cw + 2 * ft(LE_KHOI_VK_MM), rong_vung)
+        so_hang_vk = 1 if ch <= o_h - o_h * TI_LE_DAI_TT else 2
+        vuot_kh = cw > rong_vung or ch > SO_HANG * o_h - o_h * TI_LE_DAI_TT
+        p(u"   Vách kính 1:%d: cụm ước lượng %.0f × %.0f mm → khối rộng %.0f mm × %d hàng (xếp liền)%s." % (
+            ti_le, mm(cw), mm(ch), mm(bw), so_hang_vk,
+            u" – VẪN VƯỢT KHỔ (quá dài cho 1 tờ ở 1:%d), cần chia đoạn / xếp tay" % ti_le if vuot_kh else u""))
+    elif vk or khoi != (1, 1):
         p(u"   %s 1:%d: cụm ước lượng %.0f × %.0f mm → khối %d × %d ô%s." % (
             u"Vách kính" if vk else u"Cửa", ti_le, mm(cw), mm(ch), khoi[0], khoi[1],
             u" – VẪN VƯỢT KHỔ (quá dài cho 1 tờ ở 1:%d), cần chia đoạn / xếp tay" % ti_le if vuot_kh else u""))
     chon_sh, chon_o, vung = None, None, None
-    if khoi == (1, 1):
+    khoi_cu = []
+    if xep_lien:
+        # chỉ xếp tiếp vào bản vẽ vách kính CUỐI của tầng (đúng thứ tự Mark); tờ cuối kẻ lưới 6 ô kiểu cũ thì tờ mới
+        for s in cua_minh[-1:]:
+            vg = vung_sh.get(s.Id.Value)
+            ku = khoi_vk_tren_sheet(doc, s, vg) if vg is not None else []
+            if not ku:
+                p(u"   Bản vẽ vách kính cuối %s kẻ lưới 6 ô kiểu cũ (không xếp liền) → tờ mới." % s.SheetNumber)
+                continue
+            hop = cho_khoi_vk(vg, ku, min(bw, vg[2] - vg[0]), so_hang_vk)
+            if hop is not None:
+                chon_sh, vung, hop_khoi, khoi_cu = s, vg, hop, ku
+            else:
+                p(u"   Bản vẽ vách kính cuối %s không còn chỗ rộng %.0f mm × %d hàng → tờ mới." % (
+                    s.SheetNumber, mm(bw), so_hang_vk))
+    elif khoi == (1, 1):
         # vách kính: chỉ xếp tiếp vào bản vẽ cuối của tầng (không lấp ô trống bản vẽ trước) → đúng thứ tự Mark
         for s in (cua_minh[-1:] if vk else cua_minh):
             vg = vung_sh.get(s.Id.Value)
@@ -1992,6 +2140,8 @@ def _chinh(fi):
     o_khoi = [(chon_o or 0) + r * SO_COT + c for r in range(khoi[1]) for c in range(khoi[0])]
     ten_o = u"ô %d" % (o_khoi[0] + 1) if len(o_khoi) == 1 else u"ô %s (khối %d × %d)" % (
         u", ".join(str(k + 1) for k in o_khoi), khoi[0], khoi[1])
+    if xep_lien:
+        ten_o = u"khối %d (rộng %.0f mm × %d hàng, xếp liền)" % (len(khoi_cu) + 1, mm(bw), so_hang_vk)
     so_moi = None
     if chon_sh is None:
         so = sorted([s.SheetNumber for s in sheets], key=khoa_so)
@@ -2010,6 +2160,9 @@ def _chinh(fi):
             so_moi = tang_so(so_moi)
         p(u"   %s sheet mới %s - %s (khung '%s'), %s." % (u"Sẽ tạo" if dry else u"Tạo", so_moi, ten_sh,
                                                      tb_type.FamilyName if tb_type is not None else u"không có", ten_o))
+    elif xep_lien:
+        p(u"   Đặt vào sheet %s - %s, %s, sau %d vách kính đã có." % (
+            chon_sh.SheetNumber, chon_sh.Name, ten_o, len(khoi_cu)))
     else:
         p(u"   Đặt vào sheet %s - %s, %s/6." % (chon_sh.SheetNumber, chon_sh.Name, ten_o))
     for k in ("mb", "md", "mc"):
@@ -2834,44 +2987,55 @@ def _chinh(fi):
         vung = vung_ve(doc, chon_sh, tb, p)
         chon_o = 0
         trai, duoi, phai, tren = vung
-        trong_khoi = set(o_khoi)                 # khối ghép của vách kính: không vẽ nét chia bên trong
-        nets = []
-        for c in range(1, SO_COT):               # nét đứng chia cột, từng hàng
-            for r in range(SO_HANG):
-                if r * SO_COT + c - 1 in trong_khoi and r * SO_COT + c in trong_khoi:
+        if xep_lien:                             # tờ vách kính xếp liền: không kẻ sẵn lưới, nét theo từng khối
+            hop_khoi = cho_khoi_vk(vung, [], min(bw, phai - trai), so_hang_vk)
+            p(u"   Sheet %s: vùng vẽ %.0f × %.0f mm, tờ vách kính xếp liền (không kẻ sẵn lưới 6 ô)." % (
+                so_moi, mm(phai - trai), mm(tren - duoi)))
+        else:
+            trong_khoi = set(o_khoi)                 # khối ghép của vách kính: không vẽ nét chia bên trong
+            nets = []
+            for c in range(1, SO_COT):               # nét đứng chia cột, từng hàng
+                for r in range(SO_HANG):
+                    if r * SO_COT + c - 1 in trong_khoi and r * SO_COT + c in trong_khoi:
+                        continue
+                    _, y0, x0, y1 = o_luoi(vung, r * SO_COT + c - 1)
+                    nets.append((XYZ(x0, y0, 0), XYZ(x0, y1, 0)))
+            for r in range(1, SO_HANG):              # nét ngang chia hàng, từng cột
+                for c in range(SO_COT):
+                    if (r - 1) * SO_COT + c in trong_khoi and r * SO_COT + c in trong_khoi:
+                        continue
+                    x0, y0, x1, _ = o_luoi(vung, r * SO_COT + c - SO_COT)
+                    nets.append((XYZ(x0, y0, 0), XYZ(x1, y0, 0)))
+            for k in range(SO_COT * SO_HANG):        # dải thông tin: mỗi ô 1 nét; khối ghép 1 nét dưới hàng cuối khối
+                if k in trong_khoi and len(o_khoi) > 1:
                     continue
-                _, y0, x0, y1 = o_luoi(vung, r * SO_COT + c - 1)
-                nets.append((XYZ(x0, y0, 0), XYZ(x0, y1, 0)))
-        for r in range(1, SO_HANG):              # nét ngang chia hàng, từng cột
-            for c in range(SO_COT):
-                if (r - 1) * SO_COT + c in trong_khoi and r * SO_COT + c in trong_khoi:
-                    continue
-                x0, y0, x1, _ = o_luoi(vung, r * SO_COT + c - SO_COT)
-                nets.append((XYZ(x0, y0, 0), XYZ(x1, y0, 0)))
-        for k in range(SO_COT * SO_HANG):        # dải thông tin: mỗi ô 1 nét; khối ghép 1 nét dưới hàng cuối khối
-            if k in trong_khoi and len(o_khoi) > 1:
-                continue
-            x0, y0, x1, y1 = o_luoi(vung, k)
-            y = y0 + (y1 - y0) * TI_LE_DAI_TT
-            nets.append((XYZ(x0, y, 0), XYZ(x1, y, 0)))
-        if len(o_khoi) > 1:
-            x0, y0, _, y1 = o_luoi(vung, o_khoi[-1] - (khoi[0] - 1))
-            x1 = o_luoi(vung, o_khoi[-1])[2]
-            y = y0 + (y1 - y0) * TI_LE_DAI_TT
-            nets.append((XYZ(x0, y, 0), XYZ(x1, y, 0)))
-        ids = List[ElementId]()
-        for a0, a1 in nets:
-            ids.Add(doc.Create.NewDetailCurve(chon_sh, Line.CreateBound(a0, a1)).Id)
-        g = doc.Create.NewGroup(ids)
-        try:
-            g.GroupType.Name = u"%s %s" % (NHOM_LUOI, so_moi)
-        except Exception:
-            pass
-        p(u"   Sheet %s: vùng vẽ %.0f × %.0f mm, lưới 6 ô (group '%s %s')." % (
-            so_moi, mm(phai - trai), mm(tren - duoi), NHOM_LUOI, so_moi))
-    x0, _, _, y1 = o_luoi(vung, chon_o)          # khối ô: góc trên trái = ô đầu, góc dưới phải = ô cuối
-    _, y0, x1, y1d = o_luoi(vung, chon_o + (khoi[1] - 1) * SO_COT + khoi[0] - 1)
-    y0v = y0 + (y1d - y0) * TI_LE_DAI_TT         # vùng đặt view (trên dải thông tin của hàng cuối khối)
+                x0, y0, x1, y1 = o_luoi(vung, k)
+                y = y0 + (y1 - y0) * TI_LE_DAI_TT
+                nets.append((XYZ(x0, y, 0), XYZ(x1, y, 0)))
+            if len(o_khoi) > 1:
+                x0, y0, _, y1 = o_luoi(vung, o_khoi[-1] - (khoi[0] - 1))
+                x1 = o_luoi(vung, o_khoi[-1])[2]
+                y = y0 + (y1 - y0) * TI_LE_DAI_TT
+                nets.append((XYZ(x0, y, 0), XYZ(x1, y, 0)))
+            ids = List[ElementId]()
+            for a0, a1 in nets:
+                ids.Add(doc.Create.NewDetailCurve(chon_sh, Line.CreateBound(a0, a1)).Id)
+            g = doc.Create.NewGroup(ids)
+            try:
+                g.GroupType.Name = u"%s %s" % (NHOM_LUOI, so_moi)
+            except Exception:
+                pass
+            p(u"   Sheet %s: vùng vẽ %.0f × %.0f mm, lưới 6 ô (group '%s %s')." % (
+                so_moi, mm(phai - trai), mm(tren - duoi), NHOM_LUOI, so_moi))
+    if xep_lien:
+        # khối vách kính xếp liền: nét chia + dải thông tin + nét ẩn chéo khối, group riêng từng vách
+        x0, y0, x1, y1 = hop_khoi[:4]
+        y0v = net_khoi_vk(doc, chon_sh, vung, hop_khoi, khoi_cu, u"%s %s %s" % (
+            NHOM_LUOI_VK, chon_sh.SheetNumber, mk or u"VK %d" % (len(khoi_cu) + 1)))
+    else:
+        x0, _, _, y1 = o_luoi(vung, chon_o)          # khối ô: góc trên trái = ô đầu, góc dưới phải = ô cuối
+        _, y0, x1, y1d = o_luoi(vung, chon_o + (khoi[1] - 1) * SO_COT + khoi[0] - 1)
+        y0v = y0 + (y1d - y0) * TI_LE_DAI_TT         # vùng đặt view (trên dải thông tin của hàng cuối khối)
     cx, cy = (x0 + x1) / 2.0, (y0v + y1) / 2.0
     vps = {}
     for k in ("md", "mc", "mb"):

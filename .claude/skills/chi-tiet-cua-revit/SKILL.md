@@ -172,6 +172,20 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
       mọi tầng, hoặc cho vách kính dãy số hiệu riêng.
     - Vách kính 1 ô chỉ xếp tiếp vào bản vẽ vách kính CUỐI của tầng (không lấp ô trống tờ trước) → đọc theo thứ tự tờ /
       ô là đúng thứ tự Mark. Cửa vẫn lấp ô trống mọi tờ chi tiết cửa như cũ.
+    - **Tờ vách kính XẾP LIỀN** (người dùng 2026-11-19 "XẾP CHẶT VÁCH KÍNH HƠN": G19 Side 13 vách mỗi vách 1 tờ vì khối
+      2 × 2 không lọt cột còn lại; `XEP_LIEN_VK = True`, False = khối ô lưới như cũ): tờ vách kính KHÔNG kẻ sẵn lưới 6 ô.
+      Mỗi vách = 1 khối rộng đúng 1 ô nếu cụm lọt 1 ô, to hơn thì rộng cụm + 8 mm lề mỗi bên (`LE_KHOI_VK_MM`), cao 1 hoặc
+      2 hàng (cùng ngưỡng cũ). `cho_khoi_vk`: khối 2 hàng đặt sau mép phải xa nhất của 2 hàng; khối 1 hàng vào hàng trên
+      còn chỗ, không thì hàng dưới; sau khối 2 hàng cuối, hàng dưới đã có khối thì hàng trên khoá (giữ thứ tự đọc trái →
+      phải, trên → dưới); vẫn chỉ xếp tiếp vào tờ vách kính cuối của tầng, hết chỗ thì tờ mới. `net_khoi_vk`: mỗi khối kẻ
+      nét chia trái (khi chưa có) / phải, nét chia hàng (khối 1 hàng, đoạn chưa có), nét trên dải thông tin, gom group
+      `ARV_ChiTietCua_LuoiVK <số tờ> <Mark>`; `khoi_vk_tren_sheet` dò lại khối từ chính các nét đó (nét dải thông tin =
+      mép trái / phải + hàng đáy; khối hàng dưới là 1 hàng khi có nét chia hàng hoặc phía trên đã có khối 1 hàng). Tờ vách
+      kính cuối kẻ lưới 6 ô kiểu cũ thì báo và sang tờ mới. Báo cáo: "khối n (rộng … mm × h hàng, xếp liền)".
+      Thử nền nút thật bản sao file mẫu vách kính (`_tmp\ctcua_tach_vk\`, lượt 08 + ảnh 09, 2 lần bấm): 7 vách → 4 tờ (bản
+      cũ 6 tờ), lần 2 xếp tiếp T1-VK.05, .10 vào A.CD.01 cạnh T1-VK.02, T1-VK.11 (525 mm) sang tờ mới; T2-VK.01, .03 cùng
+      hàng trên A.CD.02. Giả lập ngoài Revit (`thu_xep_lien.py` trong scratchpad phiên) 4 kịch bản dò lại khối 0 lỗi;
+      G19 Side 13 vách ước 9 tờ.
     - Hộp thoại (`arv_hoi_sheet.hoi_chi_tiet_cua`): có chọn vách kính thì hiện thêm bảng "Chi tiết vách kính – đặt lên
       bản vẽ" (nhớ riêng `ChiTietVachKinh_sheet.json`, lần đầu chép giai đoạn / hạng mục của bảng cửa; số hiệu để trống
       = tự đánh); chỉ chọn vách kính thì chỉ hiện bảng vách kính. Agent: khoá `so_vk` / `ten_vk` trong mục ChiTietCua của
@@ -188,6 +202,12 @@ Claude sửa công cụ và tự thử trên BẢN SAO `.rvt` trong `<gốc>\_tm
   cả 2 nút.
 
 ## Bẫy đã gặp (Revit 2027.3)
+- **Nét `<Invisible lines>`** (soi 2026-11-19 trên bản sao file mẫu vách kính): `Category.GetCategory(doc,
+  BuiltInCategory.OST_InvisibleLines)` trả **None** (kiểu nét không nằm trong SubCategories của Lines) → mọi chỗ trong lõi
+  lấy kiểu nét ẩn theo cách này (nét sàn trong view, nét bám dim `net_an` / `na`) thực ra đang là nét mặc định
+  `<Thin Lines>` / nét đứt dự phòng. Tìm được bằng `FilteredElementCollector(doc).OfClass(GraphicsStyle)` có
+  `GraphicsStyleCategory.Id == OST_InvisibleLines` (id 201) và gán được, NHƯNG nét đó vẫn in ra khi xuất ảnh tờ → không
+  dùng nét ẩn làm dấu trên sheet. Các chỗ dùng cũ chưa sửa (`Cần xác nhận lại` có hiện thừa nét trên view không).
 - **Link lồng chưa được dựng hình trong view vừa tạo** (người dùng báo 2026-11-18, G19 Side cửa sổ 37 trong link
   `G19_A_L3.rvt : G19_A_L3-32.AP1.rvt`): mặt đứng chỉ còn khung chữ nhật, mặt bằng trống, mặt cắt vẫn đủ; ảnh xuất ngay
   khi mở lại file vẫn vậy. Không phải do family (4 khối hình hiện mọi hướng / mức chi tiết, không family con dùng chung),

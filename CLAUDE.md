@@ -63,6 +63,23 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     khoanh + 6 ô cùng loại), không lẫn khe rác. Lỗ mở shaft dùng chung ngưỡng (gộp lại). Nút NganChay + LoMoShaft sinh
     lại; người dùng chưa bấm lại (`Cần xác nhận lại`). Dải chữ L 494 × 5151 mm cạnh lõi phải (47815, 21595) được hatch
     từ trước, lõi trái không có: `Cần xác nhận lại` có phải trục không.
+  - **Nhận Shaft Opening theo từng vòng, cắt sàn theo cao độ** (người dùng 2026-11-18 tối: "chống cháy lan tầng 1 tầng 2
+    chưa có, fix lỗi cho t" – G19 Side phiên 21 Tầng 1 / 2 ra 0 ô). Phiên soi 50 (`_tmp\hs_agent\02_G19_Side\viec\
+    soi_ngan_chay_T1_T2.py`, ghi lý do loại từng khoang): (1) sàn kết cấu `ST_FL-RC-200` của link KC `G19_S_B2-L2` phủ cả tầng
+    bị tính là sàn hoàn thiện (tên không có chữ BTCT, link KC có lỗ cửa thang máy nên bị coi là link kiến trúc) → loại mọi
+    khoang; (2) shaft opening có trong model nhưng không lấy được: shaft link KC mang level kết cấu lệch cao độ, shaft
+    "Nắp hầm → Tầng 1" mang level Nắp hầm, cũ chỉ xét tâm khung bao cả shaft (shaft 9 – 10 vòng). Sửa `tim_truc` (khối PHẦN
+    CHUNG): `vong_shaft_tang` lấy TỪNG VÒNG sketch của mọi shaft (model + link đang thấy) có khung bao Z cắt qua level (đáy ≤
+    level + 300, đỉnh ≥ level − 50 mm), tâm trong crop; khoang kín không cửa chứa 1 vòng (không rộng hơn 2 lần) → bo theo khoang;
+    vòng trong phòng có cửa (KT nước, KT điện) / không thuộc khoang nào → bo theo chính vòng; vòng ngoài khung các khoang kín
+    (+ 500 mm, vd. lỗ mở nắp hầm ngoài sân) hoặc > 30 m² → không vẽ, liệt kê. Quy tắc sàn hoàn thiện KHÔNG đổi (bỏ sàn KC thì
+    4 khe tường 85 – 235 mm ở Tầng 1 bị hatch nhầm). Thử nền nút thật trên bản sao rvt\35 → rvt\52: Tầng 1 4 trục / 4,4 m²,
+    Tầng 2 9 trục / 8,5 m², 2 tờ ĐẠT (phiên 51 trước khi thêm điều kiện trong khu nhà hatch cả 2 lỗ mở ngoài sân). Tầng 3 / 4
+    không chạy lại (bấm lại có thể thêm vài vòng shaft trong phòng KT, `Cần xác nhận lại`). Nút sinh lại 20:37, `.dyn` chưa
+    sinh lại; `LoMo_ShaftOpening.py` đã gộp lại (hàm mới đặt tên `vong_shaft_tang` vì LoMo có sẵn `vong_shaft(op)`), chưa thử.
+    Bàn giao `_tmp\hs_agent\02_G19_Side\ban_giao\29_*_v4.rvt` – `33_*_v4.pdf`. Bản trước
+    `_backup\NganChay_TrucHKT_20261118_2024_truoc_shaft_vong.py`, `_backup\LoMo_ShaftOpening_20261118_2030_*`. Revit phải
+    Reload pyRevit; người dùng chưa duyệt (`Cần xác nhận lại`).
 - **Bo sát mép tường thô (người dùng chốt 2026-10-28, áp cho CẢ chống thấm và ngăn cháy lan):** hatch / nét bo theo mặt lõi tường, KHÔNG bao giờ theo lớp trát / hoàn thiện (thực tế hộp kỹ thuật không có trát; model mẫu vẽ tường trát 15 mm hai mặt là sai). Chống thấm: room `SpatialElementBoundaryLocation.CoreBoundary` (thử bản sao chưa vẽ: 364 nét / 412,2 m + 59 hatch, bản lưu `_tmp\pyrevit_chongtham\motcham\G19_chong_tham_loi_tuong.rvt`). **Đã áp lên G19 thật 2026-10-28 09:40** (người dùng đồng ý xoá đúng 2 group cũ `ARV_ChongTham_Ven` 364 nét + 1 hatch, `ARV_ChongTham_Hatch` 58 hatch; graph `_tmp\revit_g19_goc\chay_g19_goc_v4.dyn` chỉ xoá khi khớp danh sách): 59 phòng, 364 nét / 412,2 m, 59 hatch; bản trước `_backup\G19_20261028_0937.rvt`. Lần chạy đầu sót 1 WC không sàn vì bồn cầu đã bị ẩn trong view → lõi sửa: dò cả thiết bị đang ẩn trong view; bản thiếu lưu ở `_backup\G19_20261028_0939_thieu1WC.rvt`, G19 khôi phục từ bản 09:37 rồi chạy lại). Ngăn cháy lan: quét dải lõi theo `CompoundStructure` (bỏ tường ốp lõi < 30 mm), cạnh vùng bắt vào mép lõi gần nhất trong 1 ô lưới → khe hộp gen đúng 150×800 (lõi–lõi), bản lưu `_tmp\pyrevit_nganchay\G19_ngan_chay_thu_v4.rvt`. **Người dùng duyệt bản bo lõi (v4) "ngăn cháy lan cũng OK rồi" 2026-10-28**; chưa áp lên G19 thật.
 - **Đặt lên bản vẽ cho Chống thấm + Ngăn cháy lan** (người dùng yêu cầu 2026-11-03 tối: "tự động trình bày vào bản vẽ"):
   - Bấm nút → hộp thoại `lib\arv_hoi_sheet.py` (`hoi_chong_tham` / `hoi_ngan_chay`, chung `_bang` với Tag cửa) → vẽ như cũ
@@ -349,6 +366,13 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     ĐẠT. Nút sinh lại 2026-11-18 16:45 (23 ô), `.dyn` chưa sinh lại; bản trước `_backup\*_20261118_1437_truoc_tach_vach_kinh*`,
     `_backup\*_20261118_1213_truoc_trinh_bay_sach*` (+ các bản 1514 / 1551 / 1601 / 1610 / 1645 giữa chừng). Revit phải Reload
     pyRevit; người dùng chưa bấm, chưa duyệt (`Cần xác nhận lại`).
+    **Chạy lại toàn bộ G19 Side bằng bản 16:45** (người dùng "Chạy lại chi tiết cửa", 18 – 19/11; phiên 53 – 58 trên bản sao
+    rvt\05): 13 vách kính → A_TC.14.01 – 04, 06 – 14 (mỗi vách 1 tờ: khối 2 × 2 không lọt cột còn lại của tờ cuối; 14.05 là tờ
+    trống có sẵn → nút nhảy qua), 8 cửa đi + 5 cửa sổ → 14.15 – 17; bỏ 22 cửa Fire Rating, 2 cửa thang máy, 6 louver (42 – 44,
+    52, SA.L1, SA.L2); 4 / 17 tờ KHÔNG ĐẠT (khung viewport chồng / tràn 1 – 15 mm). Mỗi cửa 8 – 15 phút; 43 cửa 1 lần bấm thì
+    máy tắt đột ngột (Kernel-Power 41) → chia 3 lần bấm, mỗi lần lưu file. Bàn giao bản đủ v5
+    `_tmp\hs_agent\02_G19_Side\ban_giao\34_*_v5.rvt` – `38_*_v5.pdf` (kèm chống thấm, ngăn cháy lan Tầng 3 / 4 nay 55 ô /
+    19,7 m², lan can louver vẽ lại). Người dùng chưa duyệt (`Cần xác nhận lại`).
   - Người dùng chưa bấm thử, chưa duyệt (`Cần xác nhận lại`).
 - `ThongKeCua_TuDong.dyn` (2026-11-04, skill `thong-ke-cua-revit`, quy tắc + cách thử xem skill): người dùng yêu cầu
   "1 bảng thống kê các cửa có trong mặt bằng đó, cửa trùng hiện 1 lần", nút riêng.
