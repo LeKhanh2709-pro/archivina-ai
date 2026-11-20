@@ -80,6 +80,33 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     Bàn giao `_tmp\hs_agent\02_G19_Side\ban_giao\29_*_v4.rvt` – `33_*_v4.pdf`. Bản trước
     `_backup\NganChay_TrucHKT_20261118_2024_truoc_shaft_vong.py`, `_backup\LoMo_ShaftOpening_20261118_2030_*`. Revit phải
     Reload pyRevit; người dùng chưa duyệt (`Cần xác nhận lại`).
+  - **Bo vào tường thô, tính từ TIM tường** (lượt 2 G19 Side 2026-11-20 chiều, sau khi người dùng duyệt chống thấm): khối
+    PHẦN CHUNG (`loi_tuong`, `keo_noi`, `quet_khe`) sửa đúng 3 lỗi nút Chống thấm: dải = lớp THÔ (`la_hoan_thien`,
+    `LOP_HOAN_THIEN` / `VL_HOAN_THIEN`) tính từ tim tường (bỏ dời theo Location Line), tường chỉ có trát không chặn; nối chỉ
+    kéo tới mặt thô tường nối; đầu tường chạm kín không nối tiếp. Không thêm gờ thấp / lam đặt rời. `LoMo_ShaftOpening.py` gộp
+    lại; nút NganChay sinh lại 15:5x (chỉ core.py), `.dyn` chưa sinh lại; bản trước
+    `_backup\NganChay_TrucHKT_20261120_1545_truoc_tuong_tho.py` (+ LoMo, thư mục nút). Phiên 97 – 98 (trên file 50, link kiến
+    trúc chép lại 15:16): tầng 1 4 ô / 3,7 m², tầng 2 9 / 8,6, tầng 3, 4-32 59 / 18,0 (v6: 55 / 19,7; thêm 4 hộp ống 250 × 805
+    góc WC bản cũ bị dải dời sai che), 4 tờ ĐẠT. Soi DXF (phiên 99): 0 cạnh hụt / lấn trừ 1 đoạn 450 mm tầng 1 hụt 15 mm vì
+    shaft opening của link dừng trước tường; bản v6 đo với link hiện tại: tầng 3 53 / 55 ô sai (lấn 64 m, hụt 16 m). Bàn
+    giao `_tmp\hs_agent\02_G19_Side\ban_giao\53_*.rvt` – `55_*.md`. Revit phải Reload pyRevit; người dùng chưa duyệt
+    (`Cần xác nhận lại`).
+  - **Có dấu X thì bo theo dấu X** (người dùng 2026-11-20 tối, 3 ảnh file 53 khoanh đỏ tầng 1, 2: "tầng 1 bo sai, tầng 2 bo
+    sai … chỗ nào có dấu x thì bo theo dấu x, k có thì có thể bo cả hộp đấy"). Nguyên nhân: ô kín tường (hộp) chứa 1 vòng
+    shaft opening không rộng hơn 2 lần vòng thì nút bo theo cả ô (quy tắc 18/11), rộng hơn khung dấu X = vòng shaft (vd. tầng 1
+    ô 2285 × 450, X 1635 × 450; ô 450 × 1900, X 450 × 1635; tầng 2 ô 800 × 1155, X 600 × 1155). Soi DXF view
+    (`viec\soi_dau_x.py`: nét `A-DETL` = nét symbolic shaft + viền hatch, cặp nét chéo cắt nhau = dấu X): tầng 1 2 / 4 ô thừa,
+    tầng 2 6 / 9, tầng 3 và 4-32 4 / 59 (các ô còn lại không có X: giữ bo theo hộp). Sửa khối
+    PHẦN CHUNG: `vong_shaft_tang` đọc nét symbolic trong sketch mỗi shaft (`Sketch.GetAllElements`, line style khác
+    `<Sketch>`, chéo 3° – 87° so với cạnh vòng; `net_cheo_shaft`, `cap_dau_x`) → gán dấu X cho vòng chứa điểm cắt →
+    `vung_dau_x` = hợp các khung X theo phương cạnh dài nhất của vòng (`hop_hcn`), cạnh khung lệch ≤ `SHAFT_X_BAT_MM` 30 mm
+    bắt vào cạnh vòng (dấu X vẽ tay lệch 15 mm); `tim_truc`: ô kín chứa vòng có X thì bỏ, vòng đó vẽ theo vùng X (nguồn
+    "dấu X shaft opening", báo cáo dòng "Bo theo DẤU X"). Thử ngoài Revit trên DXF (`viec\thu_vung_x.py`) đúng khung X, ô L 2
+    dấu X ra đúng chữ L. `LoMo_ShaftOpening.py` gộp lại; nút NganChay sinh lại 2026-11-20 17:3x, `.dyn` chưa sinh lại; bản
+    trước `_backup\NganChay_TrucHKT_20261120_1731_truoc_dau_x.py` (+ LoMo, thư mục nút). Chạy lại 4 tầng (phiên 104 – 106,
+    từ file 50): tầng 1 4 ô / 3,3 m², tầng 2 9 / 7,2, tầng 3 + 4-32 59 / 17,4 (9 theo dấu X), 4 tờ ĐẠT; soi DXF mọi ô có X trùng
+    khung X, 50 ô hình học 0 cạnh sai; vài cạnh theo X cách tường thô 50 – 100 mm (đúng quy tắc, đã báo). Bàn giao
+    `ban_giao\56_*.rvt` – `58_*.md` (thay 53 – 55). Người dùng chưa duyệt (`Cần xác nhận lại`).
 - **Bo sát mép tường thô (người dùng chốt 2026-10-28, áp cho CẢ chống thấm và ngăn cháy lan):** hatch / nét bo theo mặt lõi tường, KHÔNG bao giờ theo lớp trát / hoàn thiện (thực tế hộp kỹ thuật không có trát; model mẫu vẽ tường trát 15 mm hai mặt là sai). Chống thấm: room `SpatialElementBoundaryLocation.CoreBoundary` (thử bản sao chưa vẽ: 364 nét / 412,2 m + 59 hatch, bản lưu `_tmp\pyrevit_chongtham\motcham\G19_chong_tham_loi_tuong.rvt`). **Đã áp lên G19 thật 2026-10-28 09:40** (người dùng đồng ý xoá đúng 2 group cũ `ARV_ChongTham_Ven` 364 nét + 1 hatch, `ARV_ChongTham_Hatch` 58 hatch; graph `_tmp\revit_g19_goc\chay_g19_goc_v4.dyn` chỉ xoá khi khớp danh sách): 59 phòng, 364 nét / 412,2 m, 59 hatch; bản trước `_backup\G19_20261028_0937.rvt`. Lần chạy đầu sót 1 WC không sàn vì bồn cầu đã bị ẩn trong view → lõi sửa: dò cả thiết bị đang ẩn trong view; bản thiếu lưu ở `_backup\G19_20261028_0939_thieu1WC.rvt`, G19 khôi phục từ bản 09:37 rồi chạy lại). Ngăn cháy lan: quét dải lõi theo `CompoundStructure` (bỏ tường ốp lõi < 30 mm), cạnh vùng bắt vào mép lõi gần nhất trong 1 ô lưới → khe hộp gen đúng 150×800 (lõi–lõi), bản lưu `_tmp\pyrevit_nganchay\G19_ngan_chay_thu_v4.rvt`. **Người dùng duyệt bản bo lõi (v4) "ngăn cháy lan cũng OK rồi" 2026-10-28**; chưa áp lên G19 thật.
 - **Đặt lên bản vẽ cho Chống thấm + Ngăn cháy lan** (người dùng yêu cầu 2026-11-03 tối: "tự động trình bày vào bản vẽ"):
   - Bấm nút → hộp thoại `lib\arv_hoi_sheet.py` (`hoi_chong_tham` / `hoi_ngan_chay`, chung `_bang` với Tag cửa) → vẽ như cũ
@@ -253,8 +280,22 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     đo lại: tầng 1 0 / 21 đúng, tầng 3 182 / 298. Nút sinh lại 2026-11-20 08:47, `.dyn` chưa sinh lại; bản trước
     `_backup\ChongTham_VeVenChanTuong_20261119_2024_truoc_tuong_tho.py` (+ thư mục nút). Hướng room (CoreBoundary) chưa
     đổi. Bàn giao `ban_giao\47_*.rvt` – `49_*.md` (lượt 1, chưa có ngăn cháy / lan can vẽ lại). **`NganChay_TrucHKT.py` +
-    `LoMo_ShaftOpening.py` cùng công thức dời theo Location Line – chưa sửa** (lượt 2). Revit phải Reload pyRevit; người
+    `LoMo_ShaftOpening.py` cùng công thức dời theo Location Line** – đã sửa 2026-11-20 chiều (lượt 2, xem mục Ngăn cháy lan). Revit phải Reload pyRevit; người
     dùng chưa duyệt (`Cần xác nhận lại`).
+    **Lần 3 (2026-11-20 trưa, người dùng 2 ảnh WC tầng 1 file 47: "tầng 1 còn sai nhiều")**: lỗi KHÔNG ở nút – link kiến trúc
+    `G19_A_B2-L2` các phiên dùng là bản chép 16/11, bản ổ A: đã sửa (tường WC dời / mỏng 30 – 45 mm; nhận ra vì nét bê tông của
+    link KC nạp thẳng ổ A: trùng, nét kiến trúc lệch). Người dùng cho chép bản hiện tại (`rvt\81_*`, Mark VK đặt lại → `rvt\82_*`,
+    số VKT tầng 1 dịch 1 số – lượt 3 làm lại chi tiết vách kính). Soát bằng NÉT REVIT VẼ: xuất DXF view chống thấm
+    (`_tmp\hs_agent\02_G19_Side\viec\xuat_dxf_chong_tham.py`) + `soi_dxf_chong_tham.py` (A-WALL / S-COLS = mặt thô,
+    A-WALL-FNSH = trát / ốp; OK / LẤN / HỤT / TRỐNG mỗi 25 mm). Soi thấy thêm lỗi có từ trước ở mép lô gia tầng 3 / 4-32: bo theo
+    lan can / lam, chưa vào gờ bê tông `VBT-120` cao 150 mm dưới đó → sửa lõi: (1) tường đứng trên sàn thấp hơn mặt cắt quét
+    (đỉnh ≥ sàn + `QUET_TUONG_THAP_MIN_MM` 100, đáy ≤ sàn + 200) là tường thô; (2) cửa / lam đặt rời có tâm khung bao nằm trên
+    dải thô của tường / gờ thì không làm vật chặn (`tren_tuong_tho`); (3) đầu tường đã chạm kín vật chặn trên cả bề rộng dải thì
+    không nối tiếp (hết "2 dải 144 × 50 mm" góc vách KC có từ v6). Nút sinh lại 2026-11-20 12:16 (`.dyn` chưa sinh lại), bản trước
+    `_backup\ChongTham_VeVenChanTuong_20261120_1143_truoc_tuong_thap.py` (+ thư mục nút). Phiên 94 – 96 từ rvt\60: tầng 1 5 WC /
+    25,8 m², tầng 3, 4-32 32 WC + 27 lô gia / 212,7 m², 4 tờ ĐẠT, soi DXF 0 cạnh hụt / lấn. Bàn giao `ban_giao\50_*.rvt` –
+    `52_*.md` (thay 47 – 49). Bài học: trước mỗi lượt dùng bản chép link thì so ngày sửa với bản ổ A: (memory `link-ban-sao-cu`).
+    **Người dùng duyệt lượt 1 (file 50) 2026-11-20 15:40: "ok rồi đấy chuyển sang ngăn cháy lan đi"** → lượt 2 Ngăn cháy lan.
 - **Hỏi View template + Tỉ lệ, KHÔNG tự tạo template** (người dùng yêu cầu 2026-11-05, áp cho 5 nút Chống thấm, Ngăn cháy
   lan, Định vị + tag cửa, Định vị lan can louver, Tường xây):
   - Hộp thoại `arv_hoi_sheet._bang(tpl_view=...)` thêm 2 ô ngay sau ô "Đặt lên bản vẽ": View template (template mặt bằng

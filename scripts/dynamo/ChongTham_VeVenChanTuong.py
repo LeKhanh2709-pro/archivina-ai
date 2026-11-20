@@ -114,6 +114,10 @@ QUET_TUONG = True
 QUET_O_LUOI_MM = 20.0     # cạnh ô lưới quét
 QUET_LOI_MONG_MM = 30.0   # tường lõi mỏng hơn (ốp, hoàn thiện, kính tắm mỏng) không coi là vách
 QUET_NOI_HO_MM = 400.0    # đầu tường hở cách tường khác tới mức này thì nối (như Revit khép room)
+# Tường THẤP đứng trên sàn (gờ / tường lửng thấp hơn mặt cắt quét level + 1000 mm) cũng là tường thô chặn biên (2026-11-20, G19
+# Side tầng 3 / 4-32: gờ bê tông "VBT-120" cao 150 mm dưới lan can / lam ở mép 27 lô gia mỗi tầng – bản cũ bỏ qua nên đường bo
+# theo lan can / lam: lấn 30 – 45 mm vào gờ hoặc hụt 86 mm trước gờ). Đáy tường ≤ sàn + 200 mm, đỉnh ≥ sàn + mức dưới.
+QUET_TUONG_THAP_MIN_MM = 100.0
 # Bo vào TƯỜNG THÔ (người dùng 2026-11-19, ảnh WC G19 Side: "phải bo cả vào lớp trát của tường, bo vào lớp tường thô"):
 # dải chặn khi quét = các lớp THÔ của tường – bỏ lớp chức năng Finish1 / Finish2 / Membrane và lớp có vật liệu trát / ốp
 # (không theo ranh giới lõi khai trong kiểu tường: kiểu khai lớp trát trong lõi thì bản cũ bo vào mặt trát). Tường chỉ có lớp
@@ -1337,6 +1341,7 @@ class QuetTuong(object):
         opt = Options()
         opt.DetailLevel = ViewDetailLevel.Fine
         tuong, chi_tuong = [], []
+        n_thap = 0
         for cat in (BuiltInCategory.OST_Walls, BuiltInCategory.OST_Columns, BuiltInCategory.OST_StructuralColumns):
             for e in list(FilteredElementCollector(doc, view.Id).OfCategory(cat).WhereElementIsNotElementType()) + \
                     lk_thay(doc, view, cat, False):      # kể cả tường / cột / vách của file link (kiến trúc + kết cấu)
@@ -1348,6 +1353,11 @@ class QuetTuong(object):
                     tuong.append(e)
                     if cat == BuiltInCategory.OST_Walls:
                         chi_tuong.append(e)
+                elif bb is not None and cat == BuiltInCategory.OST_Walls and \
+                        bb.Min.Z <= lv.Elevation + mm(200) and bb.Max.Z >= lv.Elevation + mm(QUET_TUONG_THAP_MIN_MM):
+                    tuong.append(e)                      # gờ / tường lửng thấp hơn mặt cắt (xem QUET_TUONG_THAP_MIN_MM)
+                    chi_tuong.append(e)
+                    n_thap += 1
         th = math.radians(q_goc_chinh(chi_tuong))
         cs, sn = math.cos(th), math.sin(th)
         self.cs, self.sn = cs, sn
@@ -1462,7 +1472,23 @@ class QuetTuong(object):
         # cửa đi / cửa sổ KHÔNG nằm trong tường (đặt rời) + Generic Model tên lam / louver / lan can: chặn theo khung bao.
         # G19 Side Tầng 3 2026-11-18: lam thép mặt lô gia "AV-Lam Thép Logia1" (Windows, không host) → 8 lô gia / tầng hở.
         # Khung bao rộng > 600 mm hoặc dài > 6 m (đối tượng xoay xiên / không phải tấm mặt dựng) thì bỏ, không chặn.
-        n_roi = 0
+        n_roi = n_tren_tuong = 0
+
+        def tren_tuong_tho(bb):
+            """Tâm khung bao nằm trên dải thô của 1 tường (kể cả gờ thấp) → tường đã chặn, không lấy khung bao làm vật chặn
+            (2026-11-20, G19 Side tầng 3 / 4-32: lam thép lô gia đứng trên gờ VBT-120 nhưng khung bao thò vào trong mặt gờ
+            85 mm → đường bo dừng ở khung lam, hụt 85 mm trước mặt thô của gờ ở 15 lô gia mỗi tầng)."""
+            cx, cy = (bb.Min.X + bb.Max.X) / 2, (bb.Min.Y + bb.Max.Y) / 2
+            for ax, ay, bx, by, cw in loi.values():
+                L = math.hypot(bx - ax, by - ay)
+                if L < 1e-9:
+                    continue
+                ux, uy = (bx - ax) / L, (by - ay) / L
+                t = (cx - ax) * ux + (cy - ay) * uy
+                if -mm(50) <= t <= L + mm(50) and abs((cy - ay) * ux - (cx - ax) * uy) <= cw / 2 + c:
+                    return True
+            return False
+
         for cat in (BuiltInCategory.OST_Windows, BuiltInCategory.OST_Doors, BuiltInCategory.OST_GenericModel):
             for e in list(FilteredElementCollector(doc, view.Id).OfCategory(cat).WhereElementIsNotElementType()) + \
                     lk_thay(doc, view, cat, False):
@@ -1479,15 +1505,19 @@ class QuetTuong(object):
                     dx, dy = bb.Max.X - bb.Min.X, bb.Max.Y - bb.Min.Y
                     if min(dx, dy) > mm(600) or max(dx, dy) > mm(6000):
                         continue
+                    if tren_tuong_tho(bb):
+                        n_tren_tuong += 1
+                        continue
                 except Exception:
                     continue
                 ghi([[xoay(p) for p in ((bb.Min.X, bb.Min.Y), (bb.Max.X, bb.Min.Y), (bb.Max.X, bb.Max.Y),
                                         (bb.Min.X, bb.Max.Y))]], "dat_roi", e)
                 n_roi += 1
-        self.bao = ("dải tường thô (bỏ lớp trát / ốp) %d tường (bỏ %d tường thô < %g mm, %d tường chỉ có lớp trát / ốp), "
-                    "%d vách kính, %d mặt cột / vách khác, %d Room Separation, %d lan can, %d cửa / lam đặt rời" % (
-                        len(loi), bo_mong, QUET_LOI_MONG_MM, len(trat), n_kinh, n_tuong_mat - len(loi) - n_kinh, n_rs,
-                        n_lc, n_roi))
+        self.bao = ("dải tường thô (bỏ lớp trát / ốp) %d tường (gồm %d gờ / tường lửng thấp hơn mặt cắt; bỏ %d tường thô "
+                    "< %g mm, %d tường chỉ có lớp trát / ốp), %d vách kính, %d mặt cột / vách khác, %d Room Separation, "
+                    "%d lan can, %d cửa / lam đặt rời (bỏ %d cái đứng trên tường / gờ)" % (
+                        len(loi), n_thap, bo_mong, QUET_LOI_MONG_MM, len(trat), n_kinh, n_tuong_mat - len(loi) - n_kinh,
+                        n_rs, n_lc, n_roi, n_tren_tuong))
         self.rong = not mat
         if not mat:
             return
@@ -1541,6 +1571,13 @@ class QuetTuong(object):
                     continue
                 ux, uy = (px - qx) / L, (py - qy) / L
                 cx, cy = px, py
+                # Đầu tường đã chạm kín vật chặn khác trên CẢ bề rộng dải → không phải đầu hở, không nối tiếp (2026-11-20, G19 Side
+                # tầng 3 / 4-32: đầu tường WB 150_ST chạm vách KC ở góc, dải gạch cao hơn mặt vách 50 mm → ô nối kéo dải gạch
+                # băng qua vách, thò vào lô gia thành dải 230 × 50 mm không hatch – lỗi "2 dải 144 × 50 mm" có từ v6).
+                lech_ = max(0.0, ww / 2 - c / 2)
+                if all(dac(xoay((cx + ux * c * 1.5 - uy * s_, cy + uy * c * 1.5 + ux * s_)))      # 1,5 ô: qua hẳn ô của chính dải
+                       for s_ in ((0.0, lech_, -lech_) if lech_ > 0 else (0.0,))):
+                    continue
                 dau.append((cx, cy, ux, uy, ww, wid))
                 t, buoc, gap_trong, cham = 0.0, c / 2, False, None
                 while t <= mm(QUET_NOI_HO_MM):

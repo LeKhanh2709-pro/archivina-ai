@@ -89,6 +89,11 @@ DT_NHO_NHAT_M2 = 0.01     # ô nhỏ hơn coi là khe giữa 2 lớp tường (0
 O_LUOI_MM = 20.0          # cạnh ô lưới quét dấu chân tường
 LOI_MONG_MM = 30.0        # tường có lõi mỏng hơn (gạch ốp, lớp gỗ…) là lớp hoàn thiện → không coi là vách
 NOI_HO_MM = 400.0         # đầu tường hở cách tường khác tới mức này thì nối (như Revit khép room)
+# Bo vào TƯỜNG THÔ (2026-11-20, lượt 2 G19 Side – cùng cách nút Chống thấm đã được duyệt): dải chặn khi quét = các lớp THÔ
+# của tường (bỏ lớp chức năng Finish1 / Finish2 / Membrane và lớp có vật liệu trát / ốp), không theo ranh giới lõi khai trong
+# kiểu tường; tường chỉ có lớp hoàn thiện không chặn; chỗ nối chỉ kéo dải tới mặt thô xa của tường nối.
+LOP_HOAN_THIEN = ("Finish1", "Finish2", "Membrane")
+VL_HOAN_THIEN = ("trat", "plaster", "gach op", "gachop", "op lat", "oplat", "render")
 DT_CO_BANG_CHUNG_M2 = 30.0   # ô có ống đứng / shaft opening: nhận tới diện tích này
 TU_LAYER_X = ("lo mo", "lomo", "material", "truc", "hkt", "shaft", "mep", "ky thuat")  # layer CAD có dấu X trục / lỗ mở
 TU_LAYER_BO = ("hatch", "hidden", "khuat", "center", "thang", "elev", "lift", "interior", "noi that")
@@ -935,8 +940,30 @@ def mat_day(e, opt, tf=None):
     return kq
 
 
+def la_hoan_thien(w, l):
+    """Lớp trát / ốp / màng: chức năng Finish1 / Finish2 / Membrane, hoặc vật liệu tên có trát / plaster / ốp lát."""
+    try:
+        if str(l.Function) in LOP_HOAN_THIEN:
+            return True
+    except Exception:
+        pass
+    try:
+        m = w.Document.GetElement(l.MaterialId) if l.MaterialId is not None and l.MaterialId.Value > 0 else None
+        if m is not None:
+            t = khong_dau(m.Name).replace("_", " ")
+            if any(k in t for k in VL_HOAN_THIEN):
+                return True
+    except Exception:
+        pass
+    return False
+
+
 def loi_tuong(w):
-    """Đường tim DẢI LÕI của tường thẳng: (A, B, bề dày lõi, bề dày tường); None nếu tường cong / không có cấu tạo lớp"""
+    """Đường tim DẢI THÔ của tường thẳng (từ lớp thô đầu tới lớp thô cuối, bỏ lớp trát / ốp 2 bên): (A, B, bề dày thô,
+    bề dày tường); "trat" nếu tường chỉ có lớp hoàn thiện (không chặn); None nếu tường cong / không có cấu tạo lớp.
+    Sửa 2026-11-20 (lượt 2 G19 Side, như nút Chống thấm): (1) Location.Curve của tường LUÔN là tim tường, KHÔNG theo tham số
+    Location Line – bản cũ dời dải theo WALL_KEY_REF_PARAM nên lệch tới nửa bề dày tường (WB 15-95 đặt theo mặt lõi: 55 mm);
+    (2) dải = lớp thô, không theo ranh giới lõi khai trong kiểu tường (kiểu khai lớp trát trong lõi thì bản cũ bo vào mặt trát)."""
     cv = w.Location.Curve
     if cv.GetType().Name != "Line":
         return None
@@ -944,33 +971,58 @@ def loi_tuong(w):
     if cau_tao is None:
         return None
     lop = list(cau_tao.GetLayers())
-    i0, i1 = cau_tao.GetFirstCoreLayerIndex(), cau_tao.GetLastCoreLayerIndex()
-    if not lop or i0 < 0 or i1 < i0:
+    if not lop:
         return None
+    tho = [i for i, l in enumerate(lop) if l.Width > 1e-9 and not la_hoan_thien(w, l)]
+    if not tho:
+        return "trat"
+    i0, i1 = tho[0], tho[-1]
     W = w.Width
-    ngoai = sum(l.Width for l in lop[:i0])                  # lớp phía ngoài lõi (theo Orientation)
+    ngoai = sum(l.Width for l in lop[:i0])                  # lớp phía ngoài dải thô (theo Orientation)
     cw = sum(l.Width for l in lop[i0:i1 + 1])
-    tam_loi = W / 2 - ngoai - cw / 2                        # tim lõi lệch khỏi tim tường về phía Orientation
-    k = w.get_Parameter(BuiltInParameter.WALL_KEY_REF_PARAM).AsInteger()
-    dinh_vi = {0: 0.0, 1: tam_loi, 2: W / 2, 3: -W / 2, 4: W / 2 - ngoai, 5: W / 2 - ngoai - cw}.get(k, 0.0)
+    d = W / 2 - ngoai - cw / 2                              # tim dải thô lệch khỏi tim tường về phía Orientation
     o = w.Orientation
-    d = tam_loi - dinh_vi
     A, B = cv.GetEndPoint(0), cv.GetEndPoint(1)
     return ((A.X + o.X * d, A.Y + o.Y * d), (B.X + o.X * d, B.Y + o.Y * d), cw, W)
 
 
-def keo_noi(w, dau_i):
-    """Nửa bề dày lớn nhất của tường nối ở đầu dau_i (0 / 1) → kéo dải lõi cho kín góc nối"""
+def keo_noi(w, dau_i, P, u, cw, loi, trat):
+    """Kéo dài dải thô ở đầu dau_i (điểm P trên tim dải thô, hướng ra ngoài u) cho kín góc nối: tới MẶT THÔ xa của tường nối
+    cắt ngang (không kéo qua lớp trát của nó – bản cũ kéo nửa bề dày cả lớp trát); tường nối thẳng hàng: nửa ô lưới nếu dải
+    này không rộng hơn; tường trát / ốp vẽ riêng: không kéo; tường nối không rõ cấu tạo (vách kính, tường cong…): nửa bề dày
+    tường đó như bản cũ. Tường link: phần tử nối đã được bọc LkPT (Id giả) nên so thẳng Id.Value."""
     kq = 0.0
     try:
-        for e in w.Location.get_ElementsAtJoin(dau_i):
-            if e.Id.Value != w.Id.Value:
-                try:
-                    kq = max(kq, e.Width / 2)
-                except Exception:
-                    pass
+        ds = list(w.Location.get_ElementsAtJoin(dau_i))
     except Exception:
-        pass
+        return 0.0
+    for e in ds:
+        try:
+            k = e.Id.Value
+        except Exception:
+            continue
+        if k == w.Id.Value or k in trat:
+            continue
+        t = loi.get(k)
+        if t is None:
+            try:
+                kq = max(kq, e.Width / 2)
+            except Exception:
+                pass
+            continue
+        ax, ay, bx, by, cwe = t
+        L = math.hypot(bx - ax, by - ay)
+        if L < 1e-9:
+            continue
+        nx_, ny_ = -(by - ay) / L, (bx - ax) / L
+        kk = u[0] * nx_ + u[1] * ny_
+        if abs(kk) < 0.3:                      # nối thẳng hàng
+            if cw <= cwe + 1e-9:
+                kq = max(kq, mm(O_LUOI_MM) / 2)
+            continue
+        s = (P[0] - ax) * nx_ + (P[1] - ay) * ny_
+        tt = ((cwe / 2 if kk > 0 else -cwe / 2) - s) / kk
+        kq = max(kq, min(tt, mm(1000)))
     return kq
 
 
@@ -992,34 +1044,47 @@ def quet_khe(view, lv):
     cs, sn = math.cos(th), math.sin(th)
     xoay = lambda p: (p[0] * cs + p[1] * sn, -p[0] * sn + p[1] * cs)
     mat, loi, bo_mong = [], {}, 0
+    trat, cho_dai = set(), []          # tường chỉ có lớp hoàn thiện (không chặn); tường thô chờ dựng dải (sau khi đủ `loi`)
     id_tuong = set(w.Id.Value for w in chi_tuong)
     for e in tuong:
         try:
             tt = loi_tuong(e) if e.Id.Value in id_tuong else None
         except Exception:
             tt = None
+        if tt == "trat":               # tường trát / ốp vẽ riêng: không chặn
+            trat.add(e.Id.Value)
+            continue
         if tt is not None:
             (ax, ay), (bx, by), cw, W = tt
             if cw < mm(LOI_MONG_MM):
                 bo_mong += 1           # tường ốp / lớp hoàn thiện riêng: không phải vách
                 continue
-            L = math.hypot(bx - ax, by - ay)
-            if L < 1e-6:
+            if math.hypot(bx - ax, by - ay) < 1e-6:
                 continue
-            ux, uy = (bx - ax) / L, (by - ay) / L
             loi[e.Id.Value] = (ax, ay, bx, by, cw)
-            ka, kb = keo_noi(e, 0), keo_noi(e, 1)
-            pa, pb = (ax - ux * ka, ay - uy * ka), (bx + ux * kb, by + uy * kb)
-            nx_, ny_ = -uy * cw / 2, ux * cw / 2
-            mat.append([[xoay(p) for p in ((pa[0] + nx_, pa[1] + ny_), (pb[0] + nx_, pb[1] + ny_),
-                                           (pb[0] - nx_, pb[1] - ny_), (pa[0] - nx_, pa[1] - ny_))]])
+            cho_dai.append(e)
             continue
         try:
             for vong in mat_day(e, opt):
                 mat.append([[xoay(p) for p in v] for v in vong])
         except Exception:
             pass
-    bao_cao.append("Quét theo dải lõi %d tường (bỏ %d tường ốp / hoàn thiện mỏng)" % (len(loi), bo_mong))
+    # dải thô từng tường, kéo kín góc nối tới mặt thô của tường nối (cần đủ `loi` của mọi tường nên làm sau vòng trên)
+    for e in cho_dai:
+        ax, ay, bx, by, cw = loi[e.Id.Value]
+        L = math.hypot(bx - ax, by - ay)
+        ux, uy = (bx - ax) / L, (by - ay) / L
+        try:
+            ka = keo_noi(e, 0, (ax, ay), (-ux, -uy), cw, loi, trat)
+            kb = keo_noi(e, 1, (bx, by), (ux, uy), cw, loi, trat)
+        except Exception:
+            ka = kb = 0.0
+        pa, pb = (ax - ux * ka, ay - uy * ka), (bx + ux * kb, by + uy * kb)
+        nx_, ny_ = -uy * cw / 2, ux * cw / 2
+        mat.append([[xoay(p) for p in ((pa[0] + nx_, pa[1] + ny_), (pb[0] + nx_, pb[1] + ny_),
+                                       (pb[0] - nx_, pb[1] - ny_), (pa[0] - nx_, pa[1] - ny_))]])
+    bao_cao.append("Quét theo dải tường thô (bỏ lớp trát / ốp) %d tường (bỏ %d tường thô < %g mm, %d tường chỉ có lớp "
+                   "trát / ốp)" % (len(loi), bo_mong, LOI_MONG_MM, len(trat)))
     c = mm(O_LUOI_MM)
     # đường phân chia phòng (Room Separation) trên level: coi như vách mỏng 1,5 ô lưới (G19: khép 2 ô ở hành lang)
     for e in list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_RoomSeparationLines)
@@ -1119,6 +1184,13 @@ def quet_khe(view, lv):
                 continue
             ux, uy = (px - qx) / L, (py - qy) / L
             cx, cy = px, py
+            # Đầu tường đã chạm kín vật chặn khác trên CẢ bề rộng dải → không phải đầu hở, không nối tiếp (2026-11-20, như nút
+            # Chống thấm: G19 Side đầu tường WB 150_ST chạm vách KC ở góc, dải gạch rộng hơn mặt vách → ô nối kéo dải gạch băng
+            # qua vách thành dải thò ra ngoài).
+            lech_ = max(0.0, ww / 2 - c / 2)
+            if all(dac(xoay((cx + ux * c * 1.5 - uy * s_, cy + uy * c * 1.5 + ux * s_)))      # 1,5 ô: qua hẳn ô của chính dải
+                   for s_ in ((0.0, lech_, -lech_) if lech_ > 0 else (0.0,))):
+                continue
             dau.append((cx, cy, ux, uy, ww, wid))
             t, buoc, gap_trong, cham = 0.0, c / 2, False, None
             while t <= mm(NOI_HO_MM):
@@ -1339,6 +1411,173 @@ def dau_x_cad(view, lv):
 
 SHAFT_TREN_MM = 300.0     # shaft opening "cắt sàn tầng": đáy ≤ cao độ level + 300 mm …
 SHAFT_DUOI_MM = 50.0      # … và đỉnh ≥ cao độ level − 50 mm
+# Dấu X của shaft opening (người dùng 2026-11-20, ảnh G19 Side tầng 1, 2: "chỗ nào có dấu x thì bo theo dấu x, k có thì có
+# thể bo cả hộp"): vòng shaft có dấu X (2 nét symbolic chéo cắt nhau trong sketch) → vùng hatch = hợp các khung dấu X, KHÔNG
+# bo cả vòng / cả ô kín chứa nó. Vòng / ô không có dấu X giữ cách bo cũ.
+SHAFT_X_BAT_MM = 30.0     # cạnh khung dấu X lệch ≤ 30 mm so với cạnh vòng shaft thì bắt vào cạnh vòng (dấu X vẽ tay lệch 15 mm)
+
+
+def net_cheo_shaft(e, tf, huong):
+    """Nét symbolic (không phải nét biên "<Sketch>") trong sketch của shaft, CHÉO so với mọi cạnh vòng biên (lệch 3° – 87°)
+    → list ((x1, y1), (x2, y2)) toạ độ model chính. huong: list (ux, uy) phương các cạnh vòng biên."""
+    kq = []
+    try:
+        d = e.Document
+        ids = list(d.GetElement(e.SketchId).GetAllElements())
+    except Exception:
+        return kq
+    s3 = math.sin(math.radians(3))
+    for i in ids:
+        try:
+            el = d.GetElement(i)
+            cv = el.GeometryCurve
+            ls = el.LineStyle
+            if ls is not None and ls.Name == "<Sketch>":
+                continue
+            if cv is None or cv.GetType().Name != "Line":
+                continue
+            a, b = tf.OfPoint(cv.GetEndPoint(0)), tf.OfPoint(cv.GetEndPoint(1))
+        except Exception:
+            continue
+        L = math.hypot(b.X - a.X, b.Y - a.Y)
+        if L < mm(100):
+            continue
+        vx, vy = (b.X - a.X) / L, (b.Y - a.Y) / L
+        if all(abs(vx * uy - vy * ux) > s3 and abs(vx * ux + vy * uy) > s3 for ux, uy in huong):
+            kq.append(((a.X, a.Y), (b.X, b.Y)))
+    return kq
+
+
+def giao_cheo(s1, s2):
+    """Điểm cắt nhau THẬT (không chạm đầu mút) của 2 đoạn → (x, y) hoặc None"""
+    (a, b), (c, d) = s1, s2
+
+    def cr(o, p, q):
+        return (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0])
+    d1, d2, d3, d4 = cr(c, d, a), cr(c, d, b), cr(a, b, c), cr(a, b, d)
+    if not (d1 * d2 < 0 and d3 * d4 < 0):
+        return None
+    t = d1 / (d1 - d2)
+    return (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
+
+
+def cap_dau_x(net):
+    """Ghép các nét chéo cắt nhau thành dấu X → list (điểm cắt, 4 đầu mút)"""
+    don, da = [], set()
+    for a, b in net:               # bỏ nét trùng (shaft kiến trúc + kết cấu cùng chỗ)
+        k = tuple(sorted([(round(a[0] / mm(2)), round(a[1] / mm(2))), (round(b[0] / mm(2)), round(b[1] / mm(2)))]))
+        if k not in da:
+            da.add(k)
+            don.append((a, b))
+    kq, dung = [], set()
+    for i in range(len(don)):
+        if i in dung:
+            continue
+        for j in range(i + 1, len(don)):
+            if j in dung:
+                continue
+            g = giao_cheo(don[i], don[j])
+            if g is not None:
+                kq.append((g, [don[i][0], don[i][1], don[j][0], don[j][1]]))
+                dung.update((i, j))
+                break
+    return kq
+
+
+def hop_hcn(hcn):
+    """Hợp các hình chữ nhật cùng phương (u0, v0, u1, v1) → list vòng điểm (vòng ngoài ngược chiều kim đồng hồ, lỗ cùng
+    chiều), bỏ đỉnh thẳng hàng"""
+    eps = mm(1)
+
+    def gop(vs):
+        kq = []
+        for v in sorted(vs):
+            if not kq or v - kq[-1] > eps:
+                kq.append(v)
+        return kq
+    xs = gop([r[0] for r in hcn] + [r[2] for r in hcn])
+    ys = gop([r[1] for r in hcn] + [r[3] for r in hcn])
+    so_x, so_y = len(xs) - 1, len(ys) - 1
+    phu = [[any(r[0] - eps <= (xs[i] + xs[i + 1]) / 2 <= r[2] + eps and r[1] - eps <= (ys[j] + ys[j + 1]) / 2 <= r[3] + eps
+                for r in hcn) for j in range(so_y)] for i in range(so_x)]
+
+    def co(a, b):
+        return 0 <= a < so_x and 0 <= b < so_y and phu[a][b]
+    canh = {}
+    for i in range(so_x):
+        for j in range(so_y):
+            if not phu[i][j]:
+                continue
+            if not co(i, j - 1):
+                canh.setdefault((i, j), []).append((i + 1, j))
+            if not co(i + 1, j):
+                canh.setdefault((i + 1, j), []).append((i + 1, j + 1))
+            if not co(i, j + 1):
+                canh.setdefault((i + 1, j + 1), []).append((i, j + 1))
+            if not co(i - 1, j):
+                canh.setdefault((i, j + 1), []).append((i, j))
+    vong = []
+    while canh:
+        bd = next(iter(canh))
+        cur, ds = bd, []
+        while cur in canh:
+            ds.append(cur)
+            sau = canh[cur].pop()
+            if not canh[cur]:
+                del canh[cur]
+            cur = sau
+            if cur == bd:
+                break
+        if cur != bd:
+            continue
+        g = []
+        for k in range(len(ds)):
+            a, b, c = ds[k - 1], ds[(k + 1) % len(ds)], ds[k]
+            if (c[0] - a[0]) * (b[1] - c[1]) - (c[1] - a[1]) * (b[0] - c[0]) != 0:
+                g.append(c)
+        if len(g) >= 3:
+            vong.append([(xs[i], ys[j]) for i, j in g])
+    return vong
+
+
+def vung_dau_x(s, z):
+    """Vòng shaft s có dấu X (s["x"]): vùng = hợp các khung dấu X theo phương cạnh dài nhất của vòng; cạnh khung lệch
+    ≤ SHAFT_X_BAT_MM so với cạnh vòng thì bắt vào cạnh vòng → (list vòng [Curve], list vòng điểm) hoặc (None, None)"""
+    pts = s["pts"]
+    n = len(pts)
+    if not s.get("x") or n < 3:
+        return None, None
+    k = max(range(n), key=lambda t: math.hypot(pts[(t + 1) % n][0] - pts[t][0], pts[(t + 1) % n][1] - pts[t][1]))
+    L = math.hypot(pts[(k + 1) % n][0] - pts[k][0], pts[(k + 1) % n][1] - pts[k][1])
+    ux, uy = (pts[(k + 1) % n][0] - pts[k][0]) / L, (pts[(k + 1) % n][1] - pts[k][1]) / L
+
+    def ve(p):
+        return (p[0] * ux + p[1] * uy, -p[0] * uy + p[1] * ux)
+
+    def ra(q):
+        return (q[0] * ux - q[1] * uy, q[0] * uy + q[1] * ux)
+    lp = [ve(p) for p in pts]
+    mu, mv = [q[0] for q in lp], [q[1] for q in lp]
+    bat = mm(SHAFT_X_BAT_MM)
+
+    def snap(t, ds):
+        g = min(ds, key=lambda d: abs(d - t))
+        return g if abs(g - t) <= bat else t
+    hcn = []
+    for _, d4 in s["x"]:
+        q = [ve(p) for p in d4]
+        u0, u1 = snap(min(a for a, _ in q), mu), snap(max(a for a, _ in q), mu)
+        v0, v1 = snap(min(b for _, b in q), mv), snap(max(b for _, b in q), mv)
+        if u1 - u0 > mm(50) and v1 - v0 > mm(50):
+            hcn.append((u0, v0, u1, v1))
+    if not hcn:
+        return None, None
+    vong = [[ra(q) for q in vg] for vg in hop_hcn(hcn)]
+    if not vong:
+        return None, None
+    loops = [[Line.CreateBound(XYZ(P[t][0], P[t][1], z), XYZ(P[(t + 1) % len(P)][0], P[(t + 1) % len(P)][1], z))
+              for t in range(len(P))] for P in vong]
+    return loops, vong
 
 
 def noi_vong(curves):
@@ -1391,7 +1630,8 @@ def vong_shaft_tang(view, lv):     # tên riêng: LoMo_ShaftOpening_nguon.py đ�
     G19 Side Tầng 1, 2 ra 0 ô: shaft của link kết cấu đặt ở level kết cấu lệch cao độ, shaft "Nắp hầm → Tầng 1" mang
     level Nắp hầm, 1 shaft nhiều vòng có tâm khung bao nằm ngoài mọi hộp). Mỗi vòng 1 mục; chỉ vòng có tâm trong crop
     của view (khi crop bật: bỏ lỗ thông gió hầm ngoài sân); vòng trùng chỗ (shaft kiến trúc + kết cấu) lấy 1 lần.
-    → list[{c, pts, loops (Curve ở cao độ level), m2, kt, nguon}]"""
+    Mỗi vòng kèm dấu X trong vòng (x) và vùng hợp các khung dấu X (vung = vòng Curve, vung_pts; None khi không có X).
+    → list[{c, pts, loops (Curve ở cao độ level), m2, kt, nguon, x, vung, vung_pts}]"""
     z = lv.Elevation
     nguon = [(e, Transform.Identity, "") for e in FilteredElementCollector(doc)
              .OfCategory(BuiltInCategory.OST_ShaftOpening).WhereElementIsNotElementType()]
@@ -1406,7 +1646,7 @@ def vong_shaft_tang(view, lv):     # tên riêng: LoMo_ShaftOpening_nguon.py đ�
             crop = (min(p.X for p in q), min(p.Y for p in q), max(p.X for p in q), max(p.Y for p in q))
     except Exception:
         crop = None
-    kq, da = [], set()
+    kq, da, cheo = [], set(), []
     for e, tf, ten_l in nguon:
         try:
             bb = e.get_BoundingBox(None)
@@ -1418,10 +1658,17 @@ def vong_shaft_tang(view, lv):     # tên riêng: LoMo_ShaftOpening_nguon.py đ�
             prof = e.Document.GetElement(e.SketchId).Profile
         except Exception:
             continue
+        huong = []
         for arr in prof:
             cv = noi_vong([phang(c.CreateTransformed(tf), z) for c in arr])
             if not cv:
                 continue
+            for c in cv:
+                if c.Length > mm(10):
+                    p0, p1 = c.GetEndPoint(0), c.GetEndPoint(1)
+                    L = math.hypot(p1.X - p0.X, p1.Y - p0.Y)
+                    if L > 1e-9:
+                        huong.append(((p1.X - p0.X) / L, (p1.Y - p0.Y) / L))
             pts = diem_loop(cv)
             if len(pts) < 3:
                 continue
@@ -1433,7 +1680,21 @@ def vong_shaft_tang(view, lv):     # tên riêng: LoMo_ShaftOpening_nguon.py đ�
                 continue
             da.add(khoa)
             kq.append({"c": c, "pts": pts, "loops": cv, "m2": ra_m2(dt), "kt": tuple(ra_mm(t) for t in kich_thuoc(pts)),
-                       "nguon": ("%s id %d" % (ten_l, e.Id.Value)).strip()})
+                       "nguon": ("%s id %d" % (ten_l, e.Id.Value)).strip(), "x": []})
+        cheo.extend(net_cheo_shaft(e, tf, huong or [(1.0, 0.0)]))
+    # dấu X (2 nét chéo cắt nhau) gán cho vòng chứa điểm cắt (vòng của shaft khác cùng chỗ cũng được)
+    for g, d4 in cap_dau_x(cheo):
+        for s in kq:
+            if trong_da_giac(g[0], g[1], s["pts"]):
+                s["x"].append((g, d4))
+                break
+    for s in kq:
+        s["vung"], s["vung_pts"] = (None, None)
+        if s["x"]:
+            try:
+                s["vung"], s["vung_pts"] = vung_dau_x(s, z)
+            except Exception:
+                s["vung"], s["vung_pts"] = (None, None)
     return kq
 
 
@@ -1550,6 +1811,8 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         ix = [i for i, d in enumerate(xcad) if trong_vung(d["c"][0], d["c"][1], pts)]
         tong_x = sum(xcad[i]["m2"] for i in ix)
         ish = [i for i, s in enumerate(vong_sh) if trong_vung(s["c"][0], s["c"][1], pts)]
+        if any(vong_sh[i]["vung"] for i in ish):
+            continue          # ô chứa vòng shaft có dấu X: bo theo dấu X ở dưới, không bo cả ô (2026-11-20)
         if v["ten"]:
             nguon = "tên room '%s'" % v["ten"]
         elif any(trong_vung(x, y, r["pts"]) for r in room_hkt):
@@ -1624,7 +1887,7 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
     p_o = [p for v in room_hkt + khe for l in v["pts"] for p in l]
     khung_o = (min(p[0] for p in p_o) - mm(500), min(p[1] for p in p_o) - mm(500),
                max(p[0] for p in p_o) + mm(500), max(p[1] for p in p_o) + mm(500)) if p_o else None
-    sh_lon, sh_ngoai = [], []
+    sh_lon, sh_ngoai, bo_x = [], [], []
     for i, s in enumerate(vong_sh):
         if i in sh_dung:
             continue
@@ -1640,11 +1903,24 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         if s["m2"] > DT_CO_BANG_CHUNG_M2:
             sh_lon.append(s)           # lỗ mở lớn (thông tầng…) không phải trục: không vẽ, liệt kê
             continue
-        v = {"pts": [s["pts"]], "loops": [s["loops"]], "m2": s["m2"], "diem": (cx, cy), "kt": s["kt"], "ten": ""}
+        if s["vung"]:
+            # có dấu X: vùng = hợp các khung dấu X (2026-11-20)
+            pv = s["vung_pts"]
+            dt = abs(sum(sum(p[t][0] * p[(t + 1) % len(p)][1] - p[(t + 1) % len(p)][0] * p[t][1]
+                             for t in range(len(p))) / 2 for p in pv))
+            dm = diem_trong(pv[0])[0] or (cx, cy)
+            v = {"pts": pv, "loops": s["vung"], "m2": ra_m2(dt), "diem": dm,
+                 "kt": tuple(ra_mm(t) for t in kich_thuoc([p for l in pv for p in l])), "ten": ""}
+            if s["m2"] - v["m2"] > 0.005:
+                bo_x.append((s, v))
+            nguon = "dấu X shaft opening"
+        else:
+            v = {"pts": [s["pts"]], "loops": [s["loops"]], "m2": s["m2"], "diem": (cx, cy), "kt": s["kt"], "ten": ""}
+            nguon = "vòng shaft opening"
         if da_lam(v):
             da_co += 1
             continue
-        v["nguon"] = "vòng shaft opening"
+        v["nguon"] = nguon
         se_ve.append(v)
         if v["kt"][0] > O_LON_MM:
             xem_lai.append(v)
@@ -1652,6 +1928,10 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         bao_cao.append("KHÔNG VẼ %d vòng shaft opening ngoài khu nhà (ngoài khung các ô kín, vd. lỗ mở nắp hầm ngoài sân – "
                        "Cần xác nhận lại): %s" % (len(sh_ngoai), "; ".join("%.2f m2 %dx%d tại %s" % (
                            s["m2"], round(s["kt"][0]), round(s["kt"][1]), toa_do(s["c"])) for s in sh_ngoai)))
+    if bo_x:
+        bao_cao.append("Bo theo DẤU X (nhỏ hơn vòng shaft opening) %d vòng: %s" % (len(bo_x), "; ".join(
+            "vòng %dx%d %.2f m2 → %dx%d %.2f m2 tại %s" % (round(s["kt"][0]), round(s["kt"][1]), s["m2"], round(v["kt"][0]),
+                                                           round(v["kt"][1]), v["m2"], toa_do(s["c"])) for s, v in bo_x)))
     if sh_lon:
         bao_cao.append("KHÔNG VẼ %d vòng shaft opening lớn hơn %g m2 (lỗ mở thông tầng?, Cần xác nhận lại): %s" % (
             len(sh_lon), DT_CO_BANG_CHUNG_M2, "; ".join("%.2f m2 tại %s" % (s["m2"], toa_do(s["c"])) for s in sh_lon)))
@@ -1668,7 +1948,8 @@ def tim_truc(view, lv, da_lam, viec, ghi_them):
         with open(os.path.join(THU_MUC, "ngan_chay_vung.json"), "w", encoding="utf-8") as f:
             json.dump([{"m2": round(v["m2"], 3), "kt": [round(t) for t in v["kt"]], "nguon": v.get("nguon", ""),
                         "pts": [[(round(ra_mm(p[0])), round(ra_mm(p[1]))) for p in l] for l in v["pts"]]}
-                       for v in room_hkt + khe + [v for v in se_ve if v["nguon"] in ("khung X CAD", "vòng shaft opening")]],
+                       for v in room_hkt + khe + [v for v in se_ve if v["nguon"] in (
+                           "khung X CAD", "vòng shaft opening", "dấu X shaft opening")]],
                       f, ensure_ascii=False)
     except Exception:
         pass

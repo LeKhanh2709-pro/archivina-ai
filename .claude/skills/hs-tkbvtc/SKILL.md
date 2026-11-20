@@ -138,6 +138,14 @@ Python có Pillow + numpy (máy này `<gốc>\_tools\venv`), không gắn cứng
     bằng `RevitLinkType.LoadFrom` sau khi mở; kết quả ghi trong `mo.txt`.
   - Thử G19 Side: Tầng 1 13 vách → VKT1-01…10 + 1 vách lấy T1-VK.04.2; tag 16 / 16 vách bằng Mark.
   - Mark mới chỉ nằm trên BẢN SAO link: muốn dùng thật thì người dùng đặt Mark trong file link thật (`Cần xác nhận lại`).
+  - **Bản chép link cũ dần** (G19 Side 2026-11-20: chép 16/11, KTS sửa tiếp trên ổ A: tới 20/11 → tầng 1 chống thấm lệch 30 – 45 mm
+    so với link người dùng thấy, vách kính đổi dài, số VKT dịch 1 số). Trước mỗi lượt dùng bản chép: so `LastWriteTime` bản ổ A:
+    với bản chép (đọc ổ A: phải hỏi người dùng, quy tắc 7); mới hơn thì xin chép lại → `dat_mark_vk` lại → chạy. Dấu hiệu nhận ra
+    trên ảnh người dùng: nét kết cấu (link nạp thẳng ổ A:) trùng, nét kiến trúc lệch.
+  - Soát đường bo chống thấm (và vùng hatch khác bám tường) bằng NÉT REVIT VẼ, không bằng toạ độ tính lại: script
+    `_tmp\hs_agent\02_G19_Side\viec\xuat_dxf_chong_tham.py` (che_do script: DXF view gộp link) + `soi_dxf_chong_tham.py`
+    (ngoài Revit: A-WALL / S-COLS = mặt thô, A-WALL-FNSH = trát / ốp; OK / LẤN / HỤT / TRỐNG mỗi 25 mm, ảnh từng phòng) +
+    `ghep_truoc_sau.py`.
 - Chi tiết cửa chạy chậm trên model nhiều link (G19 Side 242 link instance: ~3 phút / cửa, vách kính 5 – 8 phút, càng về
   sau càng chậm vì mỗi lần tạo view Revit cập nhật đồ hoạ mọi section đã tạo). Bài học 2026-11-16 (lần `lan\07` chạy 3 giờ,
   17 tờ, mất hết vì chưa lưu):
