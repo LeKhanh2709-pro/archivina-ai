@@ -42,12 +42,20 @@ Chưa thử trên máy khác (`Cần xác nhận lại`).
 Python có Pillow + numpy (máy này `<gốc>\_tools\venv`), không gắn cứng đường dẫn (tìm theo `__file__`), không ghi đè
 (file đã có thì thêm `_2`). Không cần Revit, nên chạy được cả lúc một chuỗi phiên nền đang chạy.
 - `ke_hoach.py <phuong_an.json> [--khao-sat <khao_sat.json>]` → `ke_hoach.md/json` cạnh phương án.
-  - Cấp cao: mỗi loại = thử 1 tầng → soát → duyệt → các tầng còn lại. Các bước gắn nhãn [TỰ ĐỘNG] / [CLAUDE SOÁT] / [NGƯỜI DÙNG].
+  - Cấp cao = các LƯỢT (người dùng chốt 2026-11-19, thay cho "thử 1 tầng → các tầng còn lại"): mỗi lượt trọn 1 nút cho
+    mọi tầng → soát → duyệt đúng mới sang lượt sau; thứ tự cố định `LUOT` = Chống thấm → Ngăn cháy lan → Định vị cửa +
+    Chi tiết cửa (chung 1 lượt) → Định vị lan can, louver; nút không có trong phương án thì bỏ lượt đó. Các bước gắn nhãn
+    [TỰ ĐỘNG] / [CLAUDE SOÁT] / [NGƯỜI DÙNG].
   - Xem trước: chỗ `<…>` / `[Chờ bổ sung]` còn trong phương án; mặt bằng nguồn thiếu; template thiếu hoặc khoá tỉ lệ khác
     yêu cầu; khung tên / giai đoạn / hạng mục chưa có; tờ số hiệu đã có view; tầng ≥ 2 view đích mà thiếu `view_dich`.
     Luật view đích chép theo `arv_ho_so_duyet.view_dich`.
   - Từ chối chạy khi phương án nằm trong thư mục skill.
-- `ke_hoach.py … --tao-viec <Nút> thu|con_lai --mo <.rvt> [--thu-tang <view>] [--nap-lai-link <json>] [--them-viec '<json>']`
+- `ke_hoach.py … --tao-luot <số lượt | tên 1 nút của lượt> --mo <.rvt> [--nap-lai-link <json>] [--them-viec '<json>']`
+  → 1 chuỗi phiên cho cả lượt (mọi tầng; lượt 3: phiên TagCua trước rồi các phiên ChiTietCua, phiên sau mở file phiên
+  trước lưu), tên `NN_<Nút>_luot<k>[_n]`. Thử 2026-11-19 trên bản chép `phuong_an_03_day_du.json` của G19 Side: 4 lượt,
+  lượt 3 = 1 phiên tag cửa 4 tầng + 6 phiên chi tiết cửa.
+- `ke_hoach.py … --tao-viec <Nút> thu|con_lai|tat_ca --mo <.rvt> [--thu-tang <view>] [--nap-lai-link <json>] [--them-viec '<json>']`
+  (riêng 1 nút, khi người dùng bảo làm riêng; `tat_ca` = mọi tầng)
   - Chi tiết cửa chia ≤ 7 cửa / mục, ≤ 2 mục / phiên (`--nhom-cua`, `--muc-moi-phien`); nút khác 1 phiên.
   - Ghi `phuong_an_NN_*.json`, `viec\NN_*.json` + `NN_*_lan2.json`, `viec\chuoi_NN_MM.ps1` (phiên không ra file → chạy lại
     đúng 1 lần, vẫn không ra → dừng chuỗi), `viec\khoi_dong_chuoi_NN_MM.ps1` (log vào `lan\`). Số NN tiếp số lớn nhất trong

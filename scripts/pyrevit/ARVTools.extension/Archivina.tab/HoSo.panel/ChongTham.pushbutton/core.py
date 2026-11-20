@@ -114,6 +114,14 @@ QUET_TUONG = True
 QUET_O_LUOI_MM = 20.0     # cạnh ô lưới quét
 QUET_LOI_MONG_MM = 30.0   # tường lõi mỏng hơn (ốp, hoàn thiện, kính tắm mỏng) không coi là vách
 QUET_NOI_HO_MM = 400.0    # đầu tường hở cách tường khác tới mức này thì nối (như Revit khép room)
+# Bo vào TƯỜNG THÔ (người dùng 2026-11-19, ảnh WC G19 Side: "phải bo cả vào lớp trát của tường, bo vào lớp tường thô"):
+# dải chặn khi quét = các lớp THÔ của tường – bỏ lớp chức năng Finish1 / Finish2 / Membrane và lớp có vật liệu trát / ốp
+# (không theo ranh giới lõi khai trong kiểu tường: kiểu khai lớp trát trong lõi thì bản cũ bo vào mặt trát). Tường chỉ có lớp
+# hoàn thiện (tường trát / ốp vẽ riêng) không chặn. Chỗ nối tường chỉ kéo dải tới mặt thô của tường kia (bản cũ kéo nửa bề
+# dày cả lớp trát → đường bo lồi 7 – 15 mm qua lớp trát ở chỗ vách ngăn nối chữ T). Mỗi cạnh bo bám TỪNG ĐOẠN mặt thô gần
+# nhất (≤ 1 ô lưới), 2 tường thẳng hàng lệch mặt thì có bậc.
+LOP_HOAN_THIEN = ("Finish1", "Finish2", "Membrane")
+VL_HOAN_THIEN = ("trat", "plaster", "gach op", "gachop", "op lat", "oplat", "render")
 DT_LOGIA_TOI_DA_M2 = 15.0  # khoang lô gia nhận theo cửa / lan can lớn hơn thì không nhận
 DT_LOGIA_TOI_THIEU_M2 = 1.5  # nhỏ hơn là khe giữa lan can và mép sàn / mặt dựng (G19 Side Tầng 2: 2 khe 0,1 m2)
 TU_KHOA_CUA_LOGIA = ("logia", "lo gia", "ban cong")   # tên family / kiểu / Type Comments cửa ra lô gia (vd. "Lam Thép Logia")
@@ -1214,8 +1222,28 @@ def q_mat_day(e, opt):
     return kq
 
 
+def q_la_hoan_thien(w, l):
+    """Lớp trát / ốp / màng: chức năng Finish1 / Finish2 / Membrane, hoặc vật liệu tên có trát / plaster / ốp lát."""
+    try:
+        if str(l.Function) in LOP_HOAN_THIEN:
+            return True
+    except Exception:
+        pass
+    try:
+        m = w.Document.GetElement(l.MaterialId) if l.MaterialId is not None and l.MaterialId.Value > 0 else None
+        if m is not None:
+            t = khong_dau(m.Name).replace("_", " ")
+            if any(k in t for k in VL_HOAN_THIEN):
+                return True
+    except Exception:
+        pass
+    return False
+
+
 def q_loi_tuong(w):
-    """Đường tim DẢI LÕI của tường thẳng: (A, B, bề dày lõi, bề dày tường); None nếu tường cong / không có cấu tạo lớp"""
+    """Đường tim DẢI THÔ của tường thẳng (từ lớp thô đầu tới lớp thô cuối, bỏ lớp trát / ốp 2 bên – 2026-11-19, trước đó
+    theo ranh giới lõi của kiểu tường): (A, B, bề dày thô, bề dày tường); "trat" nếu tường chỉ có lớp hoàn thiện (tường
+    trát / ốp vẽ riêng – không chặn); None nếu tường cong / không có cấu tạo lớp"""
     cv = w.Location.Curve
     if cv.GetType().Name != "Line":
         return None
@@ -1223,33 +1251,69 @@ def q_loi_tuong(w):
     if cau_tao is None:
         return None
     lop = list(cau_tao.GetLayers())
-    i0, i1 = cau_tao.GetFirstCoreLayerIndex(), cau_tao.GetLastCoreLayerIndex()
-    if not lop or i0 < 0 or i1 < i0:
+    if not lop:
         return None
+    tho = [i for i, l in enumerate(lop) if l.Width > 1e-9 and not q_la_hoan_thien(w, l)]
+    if not tho:
+        return "trat"
+    i0, i1 = tho[0], tho[-1]
     W = w.Width
     ngoai = sum(l.Width for l in lop[:i0])
     cw = sum(l.Width for l in lop[i0:i1 + 1])
-    tam_loi = W / 2 - ngoai - cw / 2
-    k = w.get_Parameter(BuiltInParameter.WALL_KEY_REF_PARAM).AsInteger()
-    dinh_vi = {0: 0.0, 1: tam_loi, 2: W / 2, 3: -W / 2, 4: W / 2 - ngoai, 5: W / 2 - ngoai - cw}.get(k, 0.0)
+    tam_tho = W / 2 - ngoai - cw / 2               # tâm dải thô so với tâm tường, theo hướng ngoài (Orientation)
+    # Location.Curve của tường LUÔN là tim tường (Wall Centerline), KHÔNG theo tham số Location Line (2026-11-20: so mặt khối
+    # thật của 454 tường G19 Side – mọi tường đối xứng ±W/2 quanh đường này dù Location Line là Core Face Interior / Exterior,
+    # Core Centerline…). Bản cũ dời dải theo Location Line (WALL_KEY_REF_PARAM) → dải lệch tới nửa bề dày tường (WB 15-95
+    # Core Face: 55 mm) → đường bo dừng trước mặt tường thô (người dùng khoanh ảnh WC 2026-11-19 / 20).
     o = w.Orientation
-    d = tam_loi - dinh_vi
+    d = tam_tho
     A, B = cv.GetEndPoint(0), cv.GetEndPoint(1)
     return ((A.X + o.X * d, A.Y + o.Y * d), (B.X + o.X * d, B.Y + o.Y * d), cw, W)
 
 
-def q_keo_noi(w, dau_i):
-    """Nửa bề dày lớn nhất của tường nối ở đầu dau_i → kéo dải lõi cho kín góc nối"""
+def q_khoa_noi(w, e):
+    """Khoá (như Id.Value của QuetTuong) của phần tử e lấy từ get_ElementsAtJoin của tường w. Tường link: _LkViTri đã bọc
+    phần tử nối thành LkPT (Id = id giả) nên dùng thẳng Id.Value như tường model chính."""
+    return e.Id.Value
+
+
+def q_keo_noi(w, dau_i, P, u, cw, loi, trat):
+    """Kéo dài dải thô ở đầu dau_i (điểm P trên tim dải thô, hướng ra ngoài u) cho kín góc nối (2026-11-19): tới MẶT THÔ
+    xa của tường nối cắt ngang (không kéo qua lớp trát của nó – bản cũ kéo nửa bề dày cả lớp trát nên đường bo lồi 7 – 15 mm
+    ở chỗ vách ngăn nối chữ T); tường nối thẳng hàng: nửa ô lưới nếu dải này không rộng hơn; tường trát / ốp vẽ riêng: không
+    kéo; tường nối không rõ cấu tạo (vách kính, tường cong…): nửa bề dày tường đó như bản cũ."""
     kq = 0.0
     try:
-        for e in w.Location.get_ElementsAtJoin(dau_i):
-            if e.Id.Value != w.Id.Value:
-                try:
-                    kq = max(kq, e.Width / 2)
-                except Exception:
-                    pass
+        ds = list(w.Location.get_ElementsAtJoin(dau_i))
     except Exception:
-        pass
+        return 0.0
+    for e in ds:
+        try:
+            k = q_khoa_noi(w, e)
+        except Exception:
+            continue
+        if k == w.Id.Value or k in trat:
+            continue
+        t = loi.get(k)
+        if t is None:
+            try:
+                kq = max(kq, e.Width / 2)
+            except Exception:
+                pass
+            continue
+        ax, ay, bx, by, cwe = t
+        L = math.hypot(bx - ax, by - ay)
+        if L < 1e-9:
+            continue
+        nx_, ny_ = -(by - ay) / L, (bx - ax) / L
+        kk = u[0] * nx_ + u[1] * ny_
+        if abs(kk) < 0.3:                      # nối thẳng hàng
+            if cw <= cwe + 1e-9:
+                kq = max(kq, mm(QUET_O_LUOI_MM) / 2)
+            continue
+        s = (P[0] - ax) * nx_ + (P[1] - ay) * ny_
+        tt = ((cwe / 2 if kk > 0 else -cwe / 2) - s) / kk
+        kq = max(kq, min(tt, mm(1000)))
     return kq
 
 
@@ -1292,23 +1356,37 @@ class QuetTuong(object):
         c = mm(QUET_O_LUOI_MM)
         self.c = c
         mat, loi, bo_mong, n_kinh = [], {}, 0, 0
+        trat, cho_dai = set(), []        # tường chỉ có lớp hoàn thiện (không chặn); tường thô chờ dựng dải (sau khi đủ `loi`)
         id_tuong = set(w.Id.Value for w in chi_tuong)
+        # ARV_DUMP_VAT_CHAN (chỉ để thử, 2026-11-20): ghi mọi vật chặn (loại, đối tượng, đa giác) để vẽ hình xem vì sao biên
+        # dừng ở đâu – quet_phong_uot ghi ra JSON.
+        self.dbg = [] if os.environ.get("ARV_DUMP_VAT_CHAN") else None
 
-        def dai(ds, nua):      # dải dọc đường gấp khúc, nửa bề rộng nua
+        def ghi(f, loai, e=None):
+            mat.append(f)
+            if self.dbg is not None:
+                try:
+                    nhan = u"%s | %s : %s | %s" % (e.Category.Name, ten_family(e), ten_kieu(e), e.Id.Value) if e is not None \
+                        else u""
+                except Exception:
+                    nhan = u"?"
+                self.dbg.append((loai, nhan, f))
+
+        def dai(ds, nua, loai="dai", e=None):      # dải dọc đường gấp khúc, nửa bề rộng nua
             for a, b in zip(ds, ds[1:]):
                 L = math.hypot(b.X - a.X, b.Y - a.Y)
                 if L < 1e-6:
                     continue
                 nx_, ny_ = -(b.Y - a.Y) / L * nua, (b.X - a.X) / L * nua
-                mat.append([[xoay(p) for p in ((a.X + nx_, a.Y + ny_), (b.X + nx_, b.Y + ny_),
-                                               (b.X - nx_, b.Y - ny_), (a.X - nx_, a.Y - ny_))]])
+                ghi([[xoay(p) for p in ((a.X + nx_, a.Y + ny_), (b.X + nx_, b.Y + ny_),
+                                        (b.X - nx_, b.Y - ny_), (a.X - nx_, a.Y - ny_))]], loai, e)
 
         for e in tuong:
             la_tuong = e.Id.Value in id_tuong
             if la_tuong:
                 try:
                     if e.WallType.Kind == WallKind.Curtain:     # vách kính: chặn theo tim (tấm kính mỏng hơn ô lưới)
-                        dai(q_diem_duong(e.Location.Curve), max(e.Width, 1.5 * c) / 2)
+                        dai(q_diem_duong(e.Location.Curve), max(e.Width, 1.5 * c) / 2, "vach_kinh", e)
                         n_kinh += 1
                         continue
                 except Exception:
@@ -1317,27 +1395,39 @@ class QuetTuong(object):
                 tt = q_loi_tuong(e) if la_tuong else None
             except Exception:
                 tt = None
+            if tt == "trat":                     # tường trát / ốp vẽ riêng: không chặn (bo xuyên tới tường thô phía sau)
+                trat.add(e.Id.Value)
+                continue
             if tt is not None:
                 (ax, ay), (bx, by), cw, W = tt
                 if cw < mm(QUET_LOI_MONG_MM):
                     bo_mong += 1
                     continue
-                L = math.hypot(bx - ax, by - ay)
-                if L < 1e-6:
+                if math.hypot(bx - ax, by - ay) < 1e-6:
                     continue
-                ux, uy = (bx - ax) / L, (by - ay) / L
                 loi[e.Id.Value] = (ax, ay, bx, by, cw)
-                ka, kb = q_keo_noi(e, 0), q_keo_noi(e, 1)
-                pa, pb = (ax - ux * ka, ay - uy * ka), (bx + ux * kb, by + uy * kb)
-                nx_, ny_ = -uy * cw / 2, ux * cw / 2
-                mat.append([[xoay(p) for p in ((pa[0] + nx_, pa[1] + ny_), (pb[0] + nx_, pb[1] + ny_),
-                                               (pb[0] - nx_, pb[1] - ny_), (pa[0] - nx_, pa[1] - ny_))]])
+                cho_dai.append(e)
                 continue
             try:
                 for vong in q_mat_day(e, opt):
-                    mat.append([[xoay(p) for p in v] for v in vong])
+                    ghi([[xoay(p) for p in v] for v in vong], "mat_day", e)
             except Exception:
                 pass
+        # dải thô từng tường, kéo kín góc nối tới mặt thô của tường nối (cần đủ `loi` của mọi tường nên làm sau vòng trên)
+        for e in cho_dai:
+            ax, ay, bx, by, cw = loi[e.Id.Value]
+            L = math.hypot(bx - ax, by - ay)
+            ux, uy = (bx - ax) / L, (by - ay) / L
+            try:
+                ka = q_keo_noi(e, 0, (ax, ay), (-ux, -uy), cw, loi, trat)
+                kb = q_keo_noi(e, 1, (bx, by), (ux, uy), cw, loi, trat)
+            except Exception:
+                ka = kb = 0.0
+            pa, pb = (ax - ux * ka, ay - uy * ka), (bx + ux * kb, by + uy * kb)
+            nx_, ny_ = -uy * cw / 2, ux * cw / 2
+            ghi([[xoay(p) for p in ((pa[0] + nx_, pa[1] + ny_), (pb[0] + nx_, pb[1] + ny_),
+                                    (pb[0] - nx_, pb[1] - ny_), (pa[0] - nx_, pa[1] - ny_))]], "tuong_tho", e)
+        self.trat = len(trat)
         n_tuong_mat = len(mat)
         # Room Separation + lan can (không phải lan can cầu thang) trên tầng: vách mỏng 1,5 ô lưới
         n_rs = n_lc = 0
@@ -1351,7 +1441,7 @@ class QuetTuong(object):
                     continue
             except Exception:
                 continue
-            dai(q_diem_duong(cv), 0.75 * c)
+            dai(q_diem_duong(cv), 0.75 * c, "room_separation", e)
             n_rs += 1
         self.lan_can = []
         for e in list(FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StairsRailing)
@@ -1366,7 +1456,7 @@ class QuetTuong(object):
             except Exception:
                 continue
             for ds in duong:
-                dai(ds, 0.75 * c)
+                dai(ds, 0.75 * c, "lan_can", e)
             self.lan_can.append((e, duong))
             n_lc += 1
         # cửa đi / cửa sổ KHÔNG nằm trong tường (đặt rời) + Generic Model tên lam / louver / lan can: chặn theo khung bao.
@@ -1391,12 +1481,13 @@ class QuetTuong(object):
                         continue
                 except Exception:
                     continue
-                mat.append([[xoay(p) for p in ((bb.Min.X, bb.Min.Y), (bb.Max.X, bb.Min.Y), (bb.Max.X, bb.Max.Y),
-                                               (bb.Min.X, bb.Max.Y))]])
+                ghi([[xoay(p) for p in ((bb.Min.X, bb.Min.Y), (bb.Max.X, bb.Min.Y), (bb.Max.X, bb.Max.Y),
+                                        (bb.Min.X, bb.Max.Y))]], "dat_roi", e)
                 n_roi += 1
-        self.bao = ("dải lõi %d tường (bỏ %d tường lõi < %g mm), %d vách kính, %d mặt cột / vách khác, %d Room Separation, "
-                    "%d lan can, %d cửa / lam đặt rời" % (len(loi), bo_mong, QUET_LOI_MONG_MM, n_kinh,
-                                                          n_tuong_mat - len(loi) - n_kinh, n_rs, n_lc, n_roi))
+        self.bao = ("dải tường thô (bỏ lớp trát / ốp) %d tường (bỏ %d tường thô < %g mm, %d tường chỉ có lớp trát / ốp), "
+                    "%d vách kính, %d mặt cột / vách khác, %d Room Separation, %d lan can, %d cửa / lam đặt rời" % (
+                        len(loi), bo_mong, QUET_LOI_MONG_MM, len(trat), n_kinh, n_tuong_mat - len(loi) - n_kinh, n_rs,
+                        n_lc, n_roi))
         self.rong = not mat
         if not mat:
             return
@@ -1433,6 +1524,13 @@ class QuetTuong(object):
 
         for f in mat:
             to(f)
+        dbg = self.dbg
+
+        def to_noi(f):          # tô ô nối đầu tường hở (ghi vào ARV_DUMP_VAT_CHAN nếu bật)
+            to(f)
+            if dbg is not None:
+                dbg.append(("noi_ho", u"", f))
+
         # nối đầu tường hở ≤ QUET_NOI_HO_MM theo phương tường (như Revit khép room qua khe)
         so_noi = 0
         dau = []
@@ -1457,7 +1555,7 @@ class QuetTuong(object):
                     continue
                 nx_, ny_ = -uy * ww / 2, ux * ww / 2
                 ex, ey = cx + ux * (cham + c), cy + uy * (cham + c)
-                to([[xoay(v) for v in ((cx + nx_, cy + ny_), (ex + nx_, ey + ny_), (ex - nx_, ey - ny_), (cx - nx_, cy - ny_))]])
+                to_noi([[xoay(v) for v in ((cx + nx_, cy + ny_), (ex + nx_, ey + ny_), (ex - nx_, ey - ny_), (cx - nx_, cy - ny_))]])
                 so_noi += 1
         G = mm(QUET_NOI_HO_MM)
         for m in range(len(dau)):
@@ -1473,7 +1571,7 @@ class QuetTuong(object):
                     if u1 * u2 + v1 * v2 > 0.98 and abs(lech_truc) <= max(w1, w2) / 2 + c and \
                             (w1 + w2) / 2 < mieng <= G + (w1 + w2) / 2:
                         k_ = 1.5 * c
-                        to([[xoay(p) for p in ((x1, y1), (x2, y2), (x2 - u2 * k_, y2 - v2 * k_), (x1 - u1 * k_, y1 - v1 * k_))]])
+                        to_noi([[xoay(p) for p in ((x1, y1), (x2, y2), (x2 - u2 * k_, y2 - v2 * k_), (x1 - u1 * k_, y1 - v1 * k_))]])
                         so_noi += 1
                     continue
                 t1 = ((x2 - x1) * (-v2) - (y2 - y1) * (-u2)) / det
@@ -1486,7 +1584,7 @@ class QuetTuong(object):
                     e_ = t + wk / 2
                     nx_, ny_ = -v * ww / 2, u * ww / 2
                     ex, ey = x + u * e_, y + v * e_
-                    to([[xoay(p) for p in ((x + nx_, y + ny_), (ex + nx_, ey + ny_), (ex - nx_, ey - ny_), (x - nx_, y - ny_))]])
+                    to_noi([[xoay(p) for p in ((x + nx_, y + ny_), (ex + nx_, ey + ny_), (ex - nx_, ey - ny_), (x - nx_, y - ny_))]])
                 so_noi += 1
         self.so_noi = so_noi
         # dải ô trống theo hàng + hợp nhất 4 hướng
@@ -1616,14 +1714,21 @@ class QuetTuong(object):
         canh = []
         for k in range(n):
             a, b = P[k], P[(k + 1) % n]
-            if abs(a[0] - b[0]) < 1e-9:
-                lo, hi = min(a[1], b[1]), max(a[1], b[1])
-                ds = [m[0] for m in self.mep_doc if abs(m[0] - a[0]) <= c * 1.01 and min(hi, m[2]) - max(lo, m[1]) > c / 2]
-                canh.append(("d", min(ds, key=lambda t: abs(t - a[0])) if ds else a[0]))
+            if abs(a[0] - b[0]) < 1e-9:        # cạnh đứng: toạ độ x theo từng đoạn, nối nhau bằng bậc ngang
+                canh += self._chia("d", "n", self.mep_doc, a[0], a[1], b[1])
             else:
-                lo, hi = min(a[0], b[0]), max(a[0], b[0])
-                ds = [m[0] for m in self.mep_ngang if abs(m[0] - a[1]) <= c * 1.01 and min(hi, m[2]) - max(lo, m[1]) > c / 2]
-                canh.append(("n", min(ds, key=lambda t: abs(t - a[1])) if ds else a[1]))
+                canh += self._chia("n", "d", self.mep_ngang, a[1], a[0], b[0])
+        # 2 phần tử liền cùng loại (bậc trùng góc) → giữ phần tử sau
+        gon_ = []
+        for e_ in canh:
+            if gon_ and gon_[-1][0] == e_[0]:
+                gon_[-1] = e_
+            else:
+                gon_.append(e_)
+        while len(gon_) > 1 and gon_[0][0] == gon_[-1][0]:
+            gon_[0] = gon_.pop()
+        canh = gon_
+        n = len(canh)
         kq_ = []
         for k in range(n):
             e1, e2 = canh[k - 1], canh[k]
@@ -1644,6 +1749,58 @@ class QuetTuong(object):
                     doi = True
                     break
         return kq_
+
+    def _chia(self, loai, loai_noi, ds_mep, toa_do, tu, den):
+        """1 cạnh lưới (song song trục `loai`, ở toạ độ toa_do, chạy từ `tu` tới `den`) → [(loại, toạ độ), …] theo chiều đi:
+        mỗi đoạn bám MÉP VÁCH gần nhất phủ đoạn đó (trong 1 ô lưới), đổi mép thì chèn bậc (loai_noi) tại chỗ đổi
+        (2026-11-19: 2 tường thẳng hàng lệch mặt thô 8 mm thì bản cũ bo 1 đường thẳng theo mép tường đầu). Đoạn ngắn hơn
+        nửa ô lưới nhập vào đoạn kề; đoạn không có mép phủ lấy theo đoạn kề."""
+        c = self.c
+        lo, hi = min(tu, den), max(tu, den)
+        ung = [m for m in ds_mep if abs(m[0] - toa_do) <= c * 1.01 and min(hi, m[2]) - max(lo, m[1]) > 1e-9]
+        if not ung:
+            return [(loai, toa_do)]
+        moc = sorted(set([lo, hi] + [p for m in ung for p in (m[1], m[2]) if lo < p < hi]))
+        doan = []
+        for p, q in zip(moc, moc[1:]):
+            if q - p < 1e-9:
+                continue
+            phu = [m[0] for m in ung if m[1] <= p + 1e-9 and m[2] >= q - 1e-9]
+            doan.append([min(phu, key=lambda t: abs(t - toa_do)) if phu else None, p, q])
+
+        def gop(ds):
+            kq = []
+            for d_ in ds:
+                if kq and kq[-1][0] == d_[0]:
+                    kq[-1][2] = d_[2]
+                else:
+                    kq.append(list(d_))
+            return kq
+
+        # đoạn không có mép phủ: theo đoạn kề dài hơn (không có thì theo lưới)
+        for i, d_ in enumerate(doan):
+            if d_[0] is None:
+                ke = [x for x in (doan[i - 1] if i > 0 else None, doan[i + 1] if i + 1 < len(doan) else None)
+                      if x is not None and x[0] is not None]
+                d_[0] = max(ke, key=lambda x: x[2] - x[1])[0] if ke else toa_do
+        doan = gop(doan)
+        doi = True
+        while doi and len(doan) > 1:
+            doi = False
+            for i, d_ in enumerate(doan):
+                if d_[2] - d_[1] < c / 2:
+                    ke = [x for x in (doan[i - 1] if i > 0 else None, doan[i + 1] if i + 1 < len(doan) else None) if x]
+                    d_[0] = max(ke, key=lambda x: x[2] - x[1])[0]
+                    doan = gop(doan)
+                    doi = True
+                    break
+        if den < tu:
+            doan.reverse()
+        kq = [(loai, doan[0][0])]
+        for i in range(1, len(doan)):
+            kq.append((loai_noi, doan[i][1] if den > tu else doan[i][2]))
+            kq.append((loai, doan[i][0]))
+        return kq
 
 
 def quet_phong_uot(view, lv, z, ho, cua, phong, can_xem):
@@ -1756,6 +1913,26 @@ def quet_phong_uot(view, lv, z, ho, cua, phong, can_xem):
     bao_cao.append("   Quét tường nhận: WC %d khoang (%d / %d thiết bị), lô gia %d khoang (theo cửa lô gia / lan can sát ngoài "
                    "nhà) – Cần xác nhận lại trên ảnh" % (len(moi), n_tb, len(ho), n_lg))
     can_xem.extend(ho_lg)
+    if qt.dbg is not None:          # chỉ khi thử (ARV_DUMP_VAT_CHAN = thư mục): vật chặn + biên phòng ướt (mm, toạ độ model)
+        try:
+            import io
+            import json
+            import re
+            cs_, sn_ = qt.cs, qt.sn
+            ve = lambda p: [round(ra_mm(p[0] * cs_ - p[1] * sn_), 1), round(ra_mm(p[0] * sn_ + p[1] * cs_), 1)]
+            d_ = os.environ["ARV_DUMP_VAT_CHAN"]
+            os.makedirs(d_, exist_ok=True)
+            ten_f = re.sub(r"[^0-9A-Za-z_-]+", "_", khong_dau(view.Name))[:60]
+            with io.open(os.path.join(d_, "vat_chan_%s.json" % ten_f), "w", encoding="utf-8") as f_:
+                f_.write(json.dumps({"view": view.Name, "vat_chan": [
+                    {"loai": l_, "nhan": n_, "vong": [[ve(p) for p in v] for v in f]} for l_, n_, f in qt.dbg],
+                    "phong": [{"nguon": p_["nguon"], "logia": p_.get("logia", ""),
+                               "pts": [[[round(ra_mm(q[0]), 1), round(ra_mm(q[1]), 1)] for q in vv] for vv in
+                                       (p_["pts"] if p_["pts"] and isinstance(p_["pts"][0][0], (list, tuple)) else [p_["pts"]])]}
+                              for p_ in phong]}, ensure_ascii=False))
+            bao_cao.append("ARV_DUMP_VAT_CHAN: %d vật chặn → %s" % (len(qt.dbg), d_))
+        except Exception:
+            bao_cao.append("ARV_DUMP_VAT_CHAN lỗi: %s" % traceback.format_exc().splitlines()[-1])
     if os.environ.get("ARV_DUMP_QUET") and ho_cua:     # chỉ khi thử: lưới quét + đối tượng quanh cửa lô gia hở → JSON
         try:
             q_dump(qt, view, lv, ho_cua, os.environ["ARV_DUMP_QUET"])

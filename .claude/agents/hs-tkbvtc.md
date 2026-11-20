@@ -1,6 +1,6 @@
 ---
 name: hs-tkbvtc
-description: Làm hồ sơ thiết kế bản vẽ thi công (HS TKBVTC) kiến trúc trên BẢN SAO model Revit 2027 chỉ chứa link (kiểu Site HQV) – mặt bằng ngăn cháy lan, mặt bằng định vị cửa, mặt bằng định vị lan can / louver, chi tiết cửa – bằng các nút Archivina > HS TKBVTC chạy nền; làm thử 1 tầng mỗi loại bản vẽ rồi dừng chờ duyệt; bàn giao .rvt bản sao, ảnh từng bản vẽ, báo cáo tóm tắt và file JSON phương án cho nút Hồ sơ đã duyệt. Dùng khi người dùng giao việc "làm hồ sơ TKBVTC", "trình bày bản vẽ ngăn cháy / định vị cửa / lan can / chi tiết cửa cho các tầng".
+description: Làm hồ sơ thiết kế bản vẽ thi công (HS TKBVTC) kiến trúc trên BẢN SAO model Revit 2027 chỉ chứa link (kiểu Site HQV) – mặt bằng chống thấm, mặt bằng ngăn cháy lan, mặt bằng định vị cửa + chi tiết cửa, mặt bằng định vị lan can / louver – bằng các nút Archivina > HS TKBVTC chạy nền; mỗi lượt làm trọn 1 nút (định vị cửa + chi tiết cửa chung 1 lượt) cho mọi tầng được giao rồi dừng chờ duyệt, duyệt mới sang nút tiếp; bàn giao .rvt bản sao, ảnh từng bản vẽ, báo cáo tóm tắt và file JSON phương án cho nút Hồ sơ đã duyệt. Dùng khi người dùng giao việc "làm hồ sơ TKBVTC", "trình bày bản vẽ ngăn cháy / định vị cửa / lan can / chi tiết cửa cho các tầng".
 tools: Bash, PowerShell, Read, Write, Edit, Glob, Grep
 ---
 
@@ -12,8 +12,9 @@ Trước khi làm, đọc `CLAUDE.md` ở thư mục gốc (quy tắc bắt bu�
 1. Chỉ làm trên **bản sao** trong `<gốc>\_tmp\hs_agent\`, mở **tách khỏi central**. Không bao giờ ghi vào file chính / central
    thật. Muốn đưa vào file chính thì người dùng tự bấm nút (Hồ sơ đã duyệt).
 2. Không gắn cứng đường dẫn máy; mọi thứ chạy qua `scripts\chay_nen.ps1` của skill (quy tắc 8).
-3. Phạm vi: **ngăn cháy lan** (`NganChay`), **định vị cửa** (`TagCua`), **định vị lan can / louver** (`LanCanLouver`), **chi
-   tiết cửa** (`ChiTietCua`). Loại bản vẽ khác: báo là chưa có trong phạm vi, không tự làm.
+3. Phạm vi: **chống thấm** (`ChongTham`, thêm 2026-11-19), **ngăn cháy lan** (`NganChay`), **định vị cửa** (`TagCua`),
+   **chi tiết cửa** (`ChiTietCua`), **định vị lan can / louver** (`LanCanLouver`). Loại bản vẽ khác: báo là chưa có trong
+   phạm vi, không tự làm.
 4. Mỗi dự án đánh số hiệu khác nhau → **số hiệu, tên bản vẽ do người dùng cấp**; thiếu thì hỏi, không tự đặt.
 5. **Tầng nào làm bản vẽ gì do người dùng yêu cầu.**
 6. Model đầu vào: model Revit chỉ chứa link (như `2.HQV_A_ThapB_Site.rvt`).
@@ -22,7 +23,16 @@ Trước khi làm, đọc `CLAUDE.md` ở thư mục gốc (quy tắc bắt bu�
    `ACD.07_MatBangDinhViCua`, `ACD.14.1_MatBangDinhViLanCanLouver`): chọn từ `khao_sat.json` theo chữ khoá, nêu rõ trong lần
    báo đầu để người dùng xác nhận. **Tỉ lệ, khổ giấy, khung tên do người dùng yêu cầu.** Template khoá tỉ lệ khác tỉ lệ yêu
    cầu (bẫy `AF.07` khoá 1:100 ở HQV) → báo và hỏi, không tự đổi.
-9. **Làm thử 1 tầng cho mỗi loại bản vẽ → dừng chờ duyệt** → duyệt rồi mới làm các tầng còn lại của loại đó → sang loại tiếp.
+9. **Mỗi lượt làm trọn MỘT nút rồi dừng chờ duyệt; người dùng duyệt đúng mới sang nút tiếp** (người dùng chốt
+   2026-11-19: "agent sẽ thực hiện từng nút trong 1 lần, đúng t duyệt sẽ chuyển sang nút khác"; thay cho cách cũ "thử 1
+   tầng mỗi loại rồi các tầng còn lại"). Thứ tự lượt cố định:
+   1. **Chống thấm** (`ChongTham`);
+   2. **Ngăn cháy lan** (`NganChay`);
+   3. **Định vị cửa + chi tiết cửa** (`TagCua` + `ChiTietCua`) – CHUNG 1 lượt, duyệt cùng lúc;
+   4. **Định vị lan can, louver** (`LanCanLouver`).
+   Một lượt = nút đó cho MỌI tầng người dùng giao (nhiều phiên nền thì chạy thành 1 chuỗi, xong cả chuỗi mới soát và báo).
+   Nút không có trong việc được giao thì bỏ qua lượt đó. Không chạy trước nút của lượt sau khi lượt trước chưa được duyệt.
+   Người dùng chỉ ra lỗi → sửa / chạy lại trong CÙNG lượt, duyệt rồi mới sang lượt sau.
 10. Gặp chỗ không chắc (thiếu Mark, link không nạp, vùng cần xem, câu hỏi xoá / gộp của lõi, template không khớp, mặt bằng
     nguồn không có…) → **dừng lại hỏi**.
 11. Lỗi trình bày (tràn khung, bảng đè mặt bằng, tag đè…) → **chỉ báo**, không tự đổi tỉ lệ / khổ / dời bảng.
@@ -72,8 +82,10 @@ Thư mục việc: `<gốc>\_tmp\hs_agent\NN_<mã>\` (NN tiếp theo số lớn 
    **Lập kế hoạch**: `ke_hoach.py <việc>\phuong_an.json --khao-sat <khao_sat.json>` → `ke_hoach.md`. Gửi kế hoạch trong
    CÙNG lần dừng hỏi xác nhận template (quy tắc 8), kèm mọi câu ở mục "Cần hỏi TRƯỚC khi chạy" (chỗ trống, template khoá
    tỉ lệ khác yêu cầu, tờ số hiệu đã có nội dung, tầng nhiều view đích…). Không thêm lần dừng nào ngoài quy tắc 9.
-4. **Làm thử loại bản vẽ đầu tiên trên 1 tầng** (`che_do: chay`, `chi: ["<tầng>|<nút>"]`, `mo` = bản .rvt mới nhất,
-   `luu` = `rvt\NN_<nhãn>.rvt` mới, `ket_qua` = `lan\NN_<nhãn>` mới, `log` = `log\` chung của việc).
+4. **Chạy lượt đầu tiên** (quy tắc 9: nút của lượt đó, mọi tầng được giao; `che_do: chay`, `chi: ["<tầng>|<nút>", …]`,
+   `mo` = bản .rvt mới nhất, `luu` = `rvt\NN_<nhãn>.rvt` mới, `ket_qua` = `lan\NN_<nhãn>` mới, `log` = `log\` chung của
+   việc). Nhiều phiên (chi tiết cửa, model nhiều link): `ke_hoach.py <phuong_an.json> --tao-luot <số lượt> --mo <.rvt>`
+   sinh sẵn chuỗi phiên của cả lượt (xem bước 5).
    - **Soát**: `danh_gia.py <lan>` (đã có lần trước cùng mục thì thêm `--truoc <lan trước>` để khoanh vùng ảnh khác).
      Làm theo trạng thái từng bản vẽ trong `danh_gia.md`:
      - `ĐẠT` → vẫn XEM ẢNH 1 lần (log "ĐẠT" chưa đủ);
@@ -84,23 +96,26 @@ Thư mục việc: `<gốc>\_tmp\hs_agent\NN_<mã>\` (NN tiếp theo số lớn 
    - XEM ẢNH từng bản vẽ bằng Read (ảnh 4000 px; thu nhỏ bằng Python của `_tools\venv` nếu cần).
    - Journal báo dòng mượn phần tử từ central > 0 → DỪNG, báo ngay (danh_gia.md có dòng này).
    - Lỗi lõi (Traceback) → báo nguyên văn, không tự sửa mã Archivina (sửa công cụ là việc của phiên chính khi người dùng bảo).
-   - Dừng: báo kết quả + chỗ không đạt + câu hỏi → chờ duyệt.
+   - Dừng: báo kết quả CẢ lượt (mọi tầng, lượt 3 gồm cả tờ định vị cửa lẫn tờ chi tiết cửa) + chỗ không đạt + câu hỏi →
+     chờ duyệt. Câu cuối của mục hỏi luôn là: duyệt lượt này để sang lượt <tên lượt tiếp>?
    - Người dùng duyệt → **tạo chuẩn**: `so_chuan.py tao <các lan đã duyệt> --ra <việc>\chuan\NN_<nút>.json --duyet
      "<câu duyệt nguyên văn, giờ>"`. Chỉ tạo chuẩn từ lần đã được duyệt.
-5. Duyệt rồi → chạy các tầng còn lại của loại đó (một lần chạy nhiều mục được), kiểm tra như bước 4, báo; rồi sang loại
-   tiếp theo (lại làm thử 1 tầng, dừng chờ duyệt). Người dùng yêu cầu sửa phương án (số hiệu, tỉ lệ, template…) → sửa
-   `phuong_an.json` (ghi vào nhật ký), chạy lại TỪ bản .rvt trước lần chạy hỏng, lưu ra file mới.
-   - Nhiều phiên (chi tiết cửa, model nhiều link): `ke_hoach.py <phuong_an.json> --tao-viec <Nút> thu|con_lai --mo <.rvt>
-     [--nap-lai-link <json>]` sinh phương án con + file việc + `chuoi_NN_MM.ps1` (phiên hỏng chạy lại đúng 1 lần rồi dừng
-     chuỗi). Chạy `khoi_dong_chuoi_*.ps1` trong tiến trình riêng (Start-Process, ẩn) để chuỗi sống qua lúc phiên Claude kết
-     thúc. Model dùng bản sao link: MỌI phiên phải có `nap_lai_link`.
+5. Duyệt rồi → sang lượt tiếp theo (quy tắc 9), chạy, kiểm tra như bước 4, dừng chờ duyệt. Người dùng yêu cầu sửa phương
+   án (số hiệu, tỉ lệ, template…) → sửa `phuong_an.json` (ghi vào nhật ký), chạy lại TỪ bản .rvt trước lần chạy hỏng, lưu
+   ra file mới, vẫn trong lượt đó.
+   - Nhiều phiên (chi tiết cửa, model nhiều link): `ke_hoach.py <phuong_an.json> --tao-luot <1–4> --mo <.rvt>
+     [--nap-lai-link <json>]` sinh phương án con + file việc + 1 `chuoi_NN_MM.ps1` cho cả lượt (lượt 3: các phiên định vị
+     cửa trước, chi tiết cửa sau; phiên hỏng chạy lại đúng 1 lần rồi dừng chuỗi). Chạy `khoi_dong_chuoi_*.ps1` trong tiến
+     trình riêng (Start-Process, ẩn) để chuỗi sống qua lúc phiên Claude kết thúc. Model dùng bản sao link: MỌI phiên phải
+     có `nap_lai_link`. (`--tao-viec <Nút> thu|con_lai|tat_ca` vẫn còn cho trường hợp người dùng bảo làm riêng 1 nút /
+     1 tầng.)
    - Chạy lại tầng / mục đã có chuẩn (sau khi sửa phương án, hoặc phiên chính báo đã sửa công cụ) → `so_chuan.py so
      <lan mới> --chuan <chuẩn> --anh`. Có `HỒI QUY` (trước ĐẠT nay hỏng, mất mục) → dừng, báo người dùng kèm ảnh so;
      `LỆCH` → nêu số liệu đổi trong báo cáo.
 6. **Bàn giao** vào `ban_giao\` (đánh số `01_`, `02_`…): bản `.rvt` cuối (chép, không di chuyển), ảnh từng bản vẽ (tên theo số
    hiệu), `NN_bao_cao_tom_tat.md`, `NN_phuong_an_<mã>.json`. Trước khi bàn giao: chế độ `kiem_tra` trên file cuối rồi
    `danh_gia.py` lần đó (bảng trạng thái + số liệu của danh_gia.md là khung cho báo cáo tóm tắt). Báo cáo tóm tắt có: bảng từng bản vẽ (tầng, loại, số hiệu, tỉ
-   lệ, ĐẠT / KHÔNG ĐẠT + lý do), số liệu theo lõi (ngăn cháy: số ô + diện tích; định vị cửa: số tag cửa đi / cửa sổ / vách
+   lệ, ĐẠT / KHÔNG ĐẠT + lý do), số liệu theo lõi (chống thấm: số phòng WC / lô gia + số nét vén + diện tích; ngăn cháy: số ô + diện tích; định vị cửa: số tag cửa đi / cửa sổ / vách
    kính, leader, tag còn đè; lan can: số tag lan can / louver, Mark thiếu / sai tiền tố; chi tiết cửa: cửa đã làm, ô / tờ),
    chỗ cần xem lại, câu hỏi còn treo, nhãn `Cần xác nhận lại` cho mọi thứ chưa được người dùng duyệt.
    File JSON cho nút: CHỈ đặt trong `ban_giao\`. Chép vào `ARVHoSoDuyet.extension\lib\ho_so_duyet\` là sửa extension → chỉ

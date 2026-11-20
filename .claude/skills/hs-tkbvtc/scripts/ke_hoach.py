@@ -1,19 +1,24 @@
 # -*- coding: utf-8 -*-
 """Lập kế hoạch 2 cấp cho 1 việc HS TKBVTC (ý tưởng high-level / low-level planner của BIMgent), chạy NGOÀI Revit.
 
-Cấp cao: thứ tự loại bản vẽ × tầng theo quy tắc 9 của agent (mỗi loại: làm thử 1 tầng → DỪNG duyệt → các tầng còn lại).
+Cấp cao: các LƯỢT theo quy tắc 9 của agent (người dùng chốt 2026-11-19: mỗi lượt làm trọn 1 nút cho mọi tầng được giao →
+DỪNG duyệt → duyệt đúng mới sang lượt sau; thứ tự cố định Chống thấm → Ngăn cháy lan → Định vị cửa + Chi tiết cửa (chung 1
+lượt) → Định vị lan can, louver; trước đó là "thử 1 tầng mỗi loại rồi các tầng còn lại").
 Mỗi bước gắn nhãn ai làm: [TỰ ĐỘNG] chạy nút trong phiên nền · [CLAUDE SOÁT] danh_gia.py + xem ảnh · [NGƯỜI DÙNG] duyệt / trả lời.
-Cấp thấp: chia phiên (chi tiết cửa ≤ 7 cửa / mục, ≤ 2 mục / phiên – bài học G19 Side 16/11), và với --tao-viec thì sinh
-sẵn phương án con + file việc + chuỗi phiên (.ps1, phiên hỏng thì chạy lại ĐÚNG 1 lần từ bản .rvt trước rồi mới dừng).
+Cấp thấp: chia phiên (chi tiết cửa ≤ 7 cửa / mục, ≤ 2 mục / phiên – bài học G19 Side 16/11), và với --tao-luot / --tao-viec
+thì sinh sẵn phương án con + file việc + chuỗi phiên (.ps1, phiên hỏng thì chạy lại ĐÚNG 1 lần từ bản .rvt trước rồi mới dừng).
 Xem trước khi làm (khi có --khao-sat): mặt bằng nguồn có không, template có / khoá tỉ lệ khác yêu cầu không, khung tên,
 giai đoạn, hạng mục, tờ số hiệu đã có (trống / đã có nội dung), tầng có nhiều view đích → câu hỏi trước khi chạy.
 
   python ke_hoach.py <phuong_an.json> [--khao-sat <khao_sat.json>]
         → <thư mục việc>\\ke_hoach.md + ke_hoach.json (thư mục việc = thư mục chứa phương án; không ghi đè)
-  python ke_hoach.py <phuong_an.json> --tao-viec <Nút> thu|con_lai --mo <.rvt bắt đầu>
-        [--thu-tang <view>] [--nap-lai-link <file json {tên link: bản sao}>] [--them-viec '<json gộp vào mỗi file việc>']
+  python ke_hoach.py <phuong_an.json> --tao-luot <số lượt trong ke_hoach.md | tên 1 nút của lượt> --mo <.rvt bắt đầu>
+        [--nap-lai-link <file json {tên link: bản sao}>] [--them-viec '<json gộp vào mỗi file việc>']
         [--nhom-cua 7] [--muc-moi-phien 2]
-        → phương án con, viec\\NN_*.json (+ NN_*_lan2.json), viec\\chuoi_NN_MM.ps1 + khoi_dong_chuoi_NN_MM.ps1
+        → 1 chuỗi phiên cho CẢ lượt (mọi tầng; lượt định vị cửa + chi tiết cửa: phiên TagCua trước, ChiTietCua sau)
+  python ke_hoach.py <phuong_an.json> --tao-viec <Nút> thu|con_lai|tat_ca --mo <.rvt bắt đầu> [--thu-tang <view>] …
+        → riêng 1 nút (thu = 1 tầng, con_lai = các tầng trừ tầng thử, tat_ca = mọi tầng) – khi người dùng bảo làm riêng
+  Cả hai sinh: phương án con, viec\\NN_*.json (+ NN_*_lan2.json), viec\\chuoi_NN_MM.ps1 + khoi_dong_chuoi_NN_MM.ps1
 Đánh số NN tiếp theo số lớn nhất đang có trong viec\\, rvt\\, lan\\ (quy tắc 3). Không chạy gì, chỉ ghi file.
 """
 import argparse
@@ -27,7 +32,10 @@ import unicodedata
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import soat_chung as sc  # noqa: E402
 
-THU_TU_NUT = ["NganChay", "TagCua", "LanCanLouver", "ChiTietCua", "ChongTham"]
+# Lượt cố định (người dùng chốt 2026-11-19): mỗi lượt trọn 1 nút (định vị cửa + chi tiết cửa chung 1 lượt), duyệt mới sang
+# lượt sau. Nút lạ (không có ở đây) mỗi nút 1 lượt, xếp cuối.
+LUOT = [["ChongTham"], ["NganChay"], ["TagCua", "ChiTietCua"], ["LanCanLouver"]]
+THU_TU_NUT = [n for l in LUOT for n in l]
 TEN_NUT = {"NganChay": u"Ngăn cháy lan", "TagCua": u"Định vị + tag cửa", "LanCanLouver": u"Định vị lan can, louver",
            "ChiTietCua": u"Chi tiết cửa", "ChongTham": u"Chống thấm"}
 # như arv_ho_so_duyet.view_dich: chữ khoá trong tên view hoặc tên template của mặt bằng cùng tầng; Định vị + tag cửa
@@ -59,14 +67,29 @@ def tim_cho_trong(o, duong=u""):
     return ds
 
 
-def thu_tu_nut(P):
+def cac_luot(P):
+    """[[nút, …] mỗi lượt] theo LUOT, chỉ giữ nút có trong phương án (thứ tự khoá "nut" của phương án KHÔNG đổi lượt)."""
     co = []
     for mb in P.get("mat_bang") or []:
         for n in mb.get("viec") or {}:
             if n not in co:
                 co.append(n)
-    goi = [n for n in (P.get("nut") or {}) if n in co]
-    return goi + [n for n in THU_TU_NUT if n in co and n not in goi] + [n for n in co if n not in goi and n not in THU_TU_NUT]
+    ds = [[n for n in l if n in co] for l in LUOT]
+    return [l for l in ds if l] + [[n] for n in co if n not in THU_TU_NUT]
+
+
+def tim_luot(P, chon):
+    """chon = số lượt (1…) như ke_hoach.md, hoặc tên 1 nút của lượt → (số lượt, [nút])."""
+    ds = cac_luot(P)
+    if re.match(r"^\d+$", str(chon)):
+        k = int(chon)
+        if not 1 <= k <= len(ds):
+            raise ValueError(u"Phương án có %d lượt, không có lượt %s" % (len(ds), chon))
+        return k, ds[k - 1]
+    for k, l in enumerate(ds, 1):
+        if chon in l:
+            return k, l
+    raise ValueError(u"Không có lượt nào chứa nút '%s' (các lượt: %s)" % (chon, u" | ".join(u"+".join(l) for l in ds)))
 
 
 def muc_cua_nut(P, nut):
@@ -146,22 +169,23 @@ def chia_phien(P, nut, idx, nhom_cua, muc_moi_phien):
     return [muc[k:k + n] for k in range(0, len(muc), n)]
 
 
-def lap(P, KS, nhom_cua=7, muc_moi_phien_cua=2, thu_tang=None):
+def lap(P, KS, nhom_cua=7, muc_moi_phien_cua=2):
     hoi, bao = xem_truoc(P, KS)
     hoi = [u"Phương án còn chỗ trống %s = %s" % (d, v) for d, v in tim_cho_trong(P)] + hoi
     buoc = []
-    for nut in thu_tu_nut(P):
-        ds = muc_cua_nut(P, nut)
-        if not ds:
-            continue
-        i_thu = next((i for i, mb in ds if thu_tang and mb.get("view") == thu_tang), ds[0][0])
-        con = [i for i, _ in ds if i != i_thu]
-        mpp = muc_moi_phien_cua if nut == "ChiTietCua" else 0
-        ph_thu = chia_phien(P, nut, [i_thu], nhom_cua, mpp)
-        ph_con = chia_phien(P, nut, con, nhom_cua, mpp) if con else []
-        buoc.append({"nut": nut, "ten": TEN_NUT.get(nut, nut), "thu": P["mat_bang"][i_thu]["view"],
-                     "con_lai": [P["mat_bang"][i]["view"] for i in con], "phien_thu": len(ph_thu), "phien_con_lai": len(ph_con),
-                     "muc_thu": sum(len(p) for p in ph_thu), "muc_con_lai": sum(len(p) for p in ph_con)})
+    for k, luot in enumerate(cac_luot(P), 1):
+        ct = []
+        for nut in luot:
+            ds = muc_cua_nut(P, nut)
+            ph = chia_phien(P, nut, [i for i, _ in ds], nhom_cua, muc_moi_phien_cua if nut == "ChiTietCua" else 0)
+            tang = []
+            for _, mb in ds:  # chi tiết cửa có thể chia 1 tầng thành nhiều mục → tầng chỉ ghi 1 lần
+                if mb["view"] not in tang:
+                    tang.append(mb["view"])
+            ct.append({"nut": nut, "ten": TEN_NUT.get(nut, nut), "tang": tang,
+                       "phien": len(ph), "muc": sum(len(p) for p in ph)})
+        buoc.append({"luot": k, "nut": luot, "ten": u" + ".join(TEN_NUT.get(n, n) for n in luot), "chi_tiet": ct,
+                     "phien": sum(c["phien"] for c in ct), "muc": sum(c["muc"] for c in ct)})
     return {"hoi_truoc": hoi, "bao": bao, "buoc": buoc}
 
 
@@ -177,24 +201,31 @@ def md(KH, P):
         L.append(u"## Ghi nhận khi xem trước model")
         L += [u"- %s" % b for b in KH["bao"]]
         L.append(u"")
-    L.append(u"## Các bước")
+    L.append(u"## Các lượt")
+    L.append(u"Mỗi lượt làm trọn nút của lượt cho MỌI tầng được giao rồi DỪNG chờ duyệt; duyệt đúng mới sang lượt sau "
+             u"(quy tắc 9 của agent).")
+    L.append(u"")
+    n_luot = len(KH["buoc"])
     k = 0
     for b in KH["buoc"]:
-        k += 1
-        L.append(u"### %d. %s" % (k, b["ten"]))
-        L.append(u"- %d.1 **[TỰ ĐỘNG]** Làm thử tầng **%s** – %d mục / %d phiên." % (k, b["thu"], b["muc_thu"], b["phien_thu"]))
-        L.append(u"- %d.2 **[CLAUDE SOÁT]** `danh_gia.py` lần chạy thử; xem ảnh từng tờ; lỗi phiên thì chạy lại theo luật "
-                 u"trong danh_gia (tối đa theo `goi_y_sua.json`)." % k)
-        L.append(u"- %d.3 **[NGƯỜI DÙNG]** Duyệt tầng thử. Duyệt xong: `so_chuan.py tao` từ lần thử (ghi câu duyệt)." % k)
-        if b["con_lai"]:
-            L.append(u"- %d.4 **[TỰ ĐỘNG]** Các tầng còn lại: %s – %d mục / %d phiên%s." % (
-                k, u", ".join(b["con_lai"]), b["muc_con_lai"], b["phien_con_lai"],
-                u" (chuỗi phiên, mỗi phiên lưu file mới)" if b["phien_con_lai"] > 1 else u""))
-            L.append(u"- %d.5 **[CLAUDE SOÁT]** `danh_gia.py` từng phiên; chạy lại tầng thử (nếu có) thì `so_chuan.py so` "
-                     u"với chuẩn của bước %d.3." % (k, k))
-            L.append(u"- %d.6 **[NGƯỜI DÙNG]** Duyệt các tầng còn lại." % k)
-    k += 1
-    L.append(u"### %d. Bàn giao" % k)
+        k = b["luot"]
+        L.append(u"### Lượt %d. %s" % (k, b["ten"]))
+        s = 0
+        for c in b["chi_tiet"]:
+            s += 1
+            L.append(u"- %d.%d **[TỰ ĐỘNG]** %s: %d tầng (%s) – %d mục / %d phiên." % (
+                k, s, c["ten"], len(c["tang"]), u", ".join(c["tang"]), c["muc"], c["phien"]))
+        L.append(u"  Lệnh sinh chuỗi: `ke_hoach.py <phuong_an.json> --tao-luot %d --mo <.rvt mới nhất>` – %d phiên%s." % (
+            k, b["phien"], u", chạy 1 chuỗi, mỗi phiên lưu file mới" if b["phien"] > 1 else u""))
+        L.append(u"- %d.%d **[CLAUDE SOÁT]** `danh_gia.py` từng phiên của lượt; xem ảnh từng tờ; lỗi phiên thì chạy lại theo "
+                 u"luật trong danh_gia (tối đa theo `goi_y_sua.json`); chạy lại mục đã có chuẩn thì `so_chuan.py so`." % (
+                     k, s + 1))
+        L.append(u"- %d.%d **[NGƯỜI DÙNG]** Duyệt CẢ lượt%s. Chưa đúng: sửa / chạy lại trong lượt này. Duyệt đúng: "
+                 u"`so_chuan.py tao` (ghi câu duyệt) → %s." % (
+                     k, s + 2,
+                     u" (cả tờ %s)" % u" lẫn tờ ".join(c["ten"].lower() for c in b["chi_tiet"]) if len(b["chi_tiet"]) > 1
+                     else u"", u"sang lượt %d" % (k + 1) if k < n_luot else u"bàn giao"))
+    L.append(u"### Bàn giao (sau khi lượt cuối được duyệt)")
     L.append(u"- **[TỰ ĐỘNG]** chế độ `kiem_tra` trên file cuối (ảnh + kiểm tra MỌI tờ) → **[CLAUDE SOÁT]** `danh_gia.py` → "
              u"bàn giao theo bước 6 của agent.")
     return u"\n".join(L) + u"\n"
@@ -218,24 +249,41 @@ def ten_an_toan(s):
     return re.sub(r"[^A-Z0-9]+", "_", s).strip("_")[:24] or "TANG"
 
 
-def tao_viec(P, p_phuong_an, nut, giai_doan, mo, thu_tang, nap_lai_link, them, nhom_cua, muc_moi_phien_cua):
+def tao_viec(P, p_phuong_an, ds_nut, giai_doan, mo, thu_tang, nap_lai_link, them, nhom_cua, muc_moi_phien_cua,
+             nhan_gd=None):
+    """ds_nut: 1 nút (--tao-viec) hoặc các nút của 1 lượt (--tao-luot, giai_doan tat_ca) → 1 chuỗi phiên, các phiên nối
+    nhau theo thứ tự nút. nhan_gd: chữ giai đoạn trong tên file (mặc định = giai_doan; --tao-luot dùng luotN)."""
     job = os.path.dirname(os.path.abspath(p_phuong_an))
     for d in ("viec", "rvt", "lan", "log"):
         os.makedirs(os.path.join(job, d), exist_ok=True)
-    ds = muc_cua_nut(P, nut)
-    if not ds:
-        raise ValueError(u"Phương án không có mục %s" % nut)
-    i_thu = next((i for i, mb in ds if thu_tang and mb.get("view") == thu_tang), ds[0][0])
-    idx = [i_thu] if giai_doan == "thu" else [i for i, _ in ds if i != i_thu]
-    if not idx:
-        raise ValueError(u"Không còn tầng nào cho giai đoạn %s" % giai_doan)
-    phien = chia_phien(P, nut, idx, nhom_cua, muc_moi_phien_cua if nut == "ChiTietCua" else 0)
+    if isinstance(ds_nut, str):
+        ds_nut = [ds_nut]
+    nhan_gd = nhan_gd or giai_doan
+    phien = []  # [(nút, [(chỉ số mat_bang gốc, mb con), …]), …]
+    for nut in ds_nut:
+        ds = muc_cua_nut(P, nut)
+        if not ds:
+            raise ValueError(u"Phương án không có mục %s" % nut)
+        i_thu = next((i for i, mb in ds if thu_tang and mb.get("view") == thu_tang), ds[0][0])
+        if giai_doan == "thu":
+            idx = [i_thu]
+        elif giai_doan == "con_lai":
+            idx = [i for i, _ in ds if i != i_thu]
+        else:
+            idx = [i for i, _ in ds]
+        if not idx:
+            raise ValueError(u"%s: không còn tầng nào cho giai đoạn %s" % (nut, giai_doan))
+        phien += [(nut, ph) for ph in chia_phien(P, nut, idx, nhom_cua, muc_moi_phien_cua if nut == "ChiTietCua" else 0)]
+    dem = {}
+    for nut, _ in phien:
+        dem[nut] = dem.get(nut, 0) + 1
     nn = so_tiep(job)
     j = lambda *a: os.path.join(job, *a).replace("\\", "/")
-    ds_viec, truoc = [], mo.replace("\\", "/")
-    for k, ph in enumerate(phien):
+    ds_viec, truoc, thu_tu = [], mo.replace("\\", "/"), {}
+    for k, (nut, ph) in enumerate(phien):
         so = u"%02d" % (nn + k)
-        nhan = u"%s_%s_%s" % (so, nut, giai_doan if len(phien) == 1 else u"%s%d" % (giai_doan, k + 1))
+        thu_tu[nut] = thu_tu.get(nut, 0) + 1
+        nhan = u"%s_%s_%s" % (so, nut, nhan_gd if dem[nut] == 1 else u"%s_%d" % (nhan_gd, thu_tu[nut]))
         if len(set(i for i, _ in ph)) == 1:
             nhan += u"_" + ten_an_toan(P["mat_bang"][ph[0][0]]["view"])
         q = dict(P)
@@ -264,7 +312,8 @@ def tao_viec(P, p_phuong_an, nut, giai_doan, mo, thu_tang, nap_lai_link, them, n
     ten_c = u"chuoi_%02d_%02d" % (nn, nn + len(phien) - 1)
     pc = j("viec", ten_c + u".ps1")
     L = [u"# Chuỗi %d phiên %s (%s) sinh bằng ke_hoach.py. Mỗi phiên mở file phiên trước lưu ra; phiên không ra file thì "
-         u"chạy lại ĐÚNG 1 lần (cùng file mở, kết quả _lan2), vẫn không ra thì DỪNG chuỗi." % (len(phien), nut, giai_doan),
+         u"chạy lại ĐÚNG 1 lần (cùng file mở, kết quả _lan2), vẫn không ra thì DỪNG chuỗi." % (
+             len(phien), u" + ".join(ds_nut), nhan_gd),
          u"$cn = '%s'" % CHAY_NEN.replace("'", "''"),
          u"$tham = @{ ChoToiDa = 9000; KhongTienTrien = 120; JournalDung = 30 }   # bảng có tên (mảng thì PS 5.1 hiểu sai)"]
     for pv, pv2, luu, n in ds_viec:
@@ -296,7 +345,9 @@ def main():
     ap.add_argument("--thu-tang")
     ap.add_argument("--nhom-cua", type=int, default=7)
     ap.add_argument("--muc-moi-phien", type=int, default=2, help=u"chi tiết cửa: số mục / phiên")
-    ap.add_argument("--tao-viec", nargs=2, metavar=("NUT", "thu|con_lai"))
+    ap.add_argument("--tao-luot", metavar="SO_LUOT|NUT",
+                    help=u"sinh 1 chuỗi phiên cho cả lượt (mọi tầng): số lượt như ke_hoach.md hoặc tên 1 nút của lượt")
+    ap.add_argument("--tao-viec", nargs=2, metavar=("NUT", "thu|con_lai|tat_ca"))
     ap.add_argument("--mo")
     ap.add_argument("--nap-lai-link")
     ap.add_argument("--them-viec")
@@ -307,29 +358,42 @@ def main():
     if os.path.normcase(job).startswith(os.path.normcase(sc.SKILL)):
         ap.error(u"Phương án nằm trong thư mục skill – chép sang thư mục việc (<gốc>\\_tmp\\hs_agent\\NN_<mã>\\) rồi chạy, "
                  u"kế hoạch / file việc được ghi cạnh phương án.")
-    if g.tao_viec:
+    if g.tao_luot and g.tao_viec:
+        ap.error(u"chỉ dùng một trong --tao-luot / --tao-viec")
+    if g.tao_luot or g.tao_viec:
         if not g.mo:
-            ap.error(u"--tao-viec cần --mo <.rvt bắt đầu>")
-        if g.tao_viec[1] not in ("thu", "con_lai"):
-            ap.error(u"giai đoạn là thu hoặc con_lai")
+            ap.error(u"--tao-luot / --tao-viec cần --mo <.rvt bắt đầu>")
         nl = sc.doc_json(g.nap_lai_link) if g.nap_lai_link else None
-        kq = tao_viec(P, g.phuong_an, g.tao_viec[0], g.tao_viec[1], g.mo, g.thu_tang, nl,
-                      json.loads(g.them_viec) if g.them_viec else None, g.nhom_cua, g.muc_moi_phien)
+        them = json.loads(g.them_viec) if g.them_viec else None
+        if g.tao_luot:
+            try:
+                k, luot = tim_luot(P, g.tao_luot)
+            except ValueError as e:
+                ap.error(str(e))
+            print(u"Lượt %d: %s (mọi tầng)" % (k, u" + ".join(TEN_NUT.get(n, n) for n in luot)))
+            kq = tao_viec(P, g.phuong_an, luot, "tat_ca", g.mo, None, nl, them, g.nhom_cua, g.muc_moi_phien,
+                          nhan_gd=u"luot%d" % k)
+        else:
+            if g.tao_viec[1] not in ("thu", "con_lai", "tat_ca"):
+                ap.error(u"giai đoạn là thu, con_lai hoặc tat_ca")
+            kq = tao_viec(P, g.phuong_an, g.tao_viec[0], g.tao_viec[1], g.mo, g.thu_tang, nl, them, g.nhom_cua,
+                          g.muc_moi_phien)
         for p in kq["phien"]:
             print(u"  %s (%d mục) → %s" % (os.path.basename(p["viec"]), p["so_muc"], os.path.basename(p["luu"])))
         print(u"Chuỗi:", kq["chuoi"])
         print(u"Khởi động (tiến trình riêng):", kq["khoi_dong"])
         return 0
-    KH = lap(P, KS, g.nhom_cua, g.muc_moi_phien, g.thu_tang)
+    KH = lap(P, KS, g.nhom_cua, g.muc_moi_phien)
     pj, pm = sc.file_moi(os.path.join(job, "ke_hoach.json")), sc.file_moi(os.path.join(job, "ke_hoach.md"))
     sc.ghi_json(pj, KH)
     sc.ghi_chu(pm, md(KH, P))
-    print(u"%d câu hỏi trước khi chạy, %d bước" % (len(KH["hoi_truoc"]), len(KH["buoc"])))
+    print(u"%d câu hỏi trước khi chạy, %d lượt" % (len(KH["hoi_truoc"]), len(KH["buoc"])))
     for h in KH["hoi_truoc"]:
         print(u"  ?", h)
     for b in KH["buoc"]:
-        print(u"  %s: thử %s (%d phiên) → còn lại %d tầng (%d phiên)" % (b["ten"], b["thu"], b["phien_thu"],
-                                                                     len(b["con_lai"]), b["phien_con_lai"]))
+        print(u"  Lượt %d – %s: %d mục / %d phiên (%s)" % (
+            b["luot"], b["ten"], b["muc"], b["phien"],
+            u"; ".join(u"%s %d tầng" % (c["ten"], len(c["tang"])) for c in b["chi_tiet"])))
     print(u"Ghi:", pm)
     return 1 if KH["hoi_truoc"] else 0
 

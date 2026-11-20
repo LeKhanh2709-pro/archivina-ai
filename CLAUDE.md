@@ -231,6 +231,30 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     dựng hình view TẦNG 4-32 ở phiên vẽ 4 tầng liền (có .dmp, chưa rõ nguyên nhân; chia phiên thì qua). Bàn giao bản đủ v3
     `_tmp\hs_agent\02_G19_Side\ban_giao\24_*.rvt` + `28_*.pdf`. Người dùng chưa duyệt ảnh, chưa bấm trên model thật
     (`Cần xác nhận lại`).
+  - **Bo vào TƯỜNG THÔ, phủ lớp trát** (người dùng 2026-11-19 tối, ảnh 1 WC G19 Side: "đường bo chống thấm vẫn còn bo sai
+    nhiều … phải bo cả vào lớp trát của tường, bo vào lớp tường thô"). Soi bản v6 (`_tmp\hs_agent\02_G19_Side\viec\
+    soi_tuong_chong_tham*.py` + `ve_hinh_wc.py`: so từng cạnh biên Filled Region với lớp của tường link song song, vẽ hình
+    từng WC): tầng 3 / 4-32 33 / 428 cạnh còn trên lớp trát, tầng 1 1 chỗ lồi 70 mm. `QuetTuong` sửa 3 chỗ: (1) dải chặn =
+    lớp THÔ (`q_la_hoan_thien`: bỏ Finish1 / Finish2 / Membrane + vật liệu tên có trát / plaster / ốp lát – `LOP_HOAN_THIEN`,
+    `VL_HOAN_THIEN`), không theo ranh giới lõi khai trong kiểu tường; tường chỉ có lớp hoàn thiện không chặn; (2) `q_keo_noi`
+    kéo dải ở chỗ nối chỉ tới MẶT THÔ xa của tường nối (bản cũ kéo nửa bề dày cả trát → lồi 7 – 15 mm ở chỗ vách ngăn nối chữ
+    T); bẫy: `_LkViTri.get_ElementsAtJoin` đã trả `LkPT` (Id giả) – dùng thẳng `Id.Value`; (3) `_chia`: mỗi cạnh lưới bám
+    TỪNG ĐOẠN mép vách gần nhất (≤ 1 ô), đổi mép thì có bậc. Bàn giao tối 19/11 `ban_giao\44_*.rvt` – `46_*.md` VẪN SAI
+    (người dùng 2026-11-20, ảnh góc hộp kỹ thuật + nét đỏ: "còn sai rất nhiều … rất nhiều vị trí chưa bo vào lớp tường thô").
+    **Nguyên nhân gốc (2026-11-20): `Location.Curve` của tường LUÔN là tim tường, KHÔNG theo tham số Location Line**
+    (`WALL_KEY_REF_PARAM`) – so mặt khối thật 454 tường G19 Side (`viec\soi_tuong_hinh.py`): mọi tường đối xứng ±W/2 quanh
+    đường này. Lõi cũ dời dải lõi / dải thô theo Location Line → lệch tới W/2 (WB 15-95 đặt theo mặt lõi: 55 mm; vách KC
+    150 – 200 mm). Script soi tối 19/11 dùng cùng công thức nên báo "đúng" → **kiểm vị trí tường phải theo mặt khối thật**
+    (`soi_tuong_chong_tham_2.py` đã sửa) và kiểm phía mặt ngoài bằng `HostObjectUtils.GetSideFaces(…, Exterior)`
+    (`soi_mat_ngoai.py`: 160 / 160 ở +Orientation). Sửa `q_loi_tuong`: tâm dải thô = tim + (W/2 − lớp ngoài − dày thô / 2)
+    theo Orientation. Biến thử `ARV_DUMP_VAT_CHAN` = ghi mọi vật chặn khi quét ra JSON (`viec\ve_vat_chan.py`). Chạy lại từ
+    rvt\60 (phiên 75 – 77): 4 tờ ĐẠT, tầng 1 5 WC / 30 nét / 25,7 m², tầng 3, 4-32 59 phòng / 424 nét / 212,0 m²; soi theo
+    mặt khối thật tầng 1 23 / 23 cạnh đúng, tầng 3 291 đúng / 2 dải 144 × 50 mm ở góc vách KC (`Cần xác nhận lại`); file 44
+    đo lại: tầng 1 0 / 21 đúng, tầng 3 182 / 298. Nút sinh lại 2026-11-20 08:47, `.dyn` chưa sinh lại; bản trước
+    `_backup\ChongTham_VeVenChanTuong_20261119_2024_truoc_tuong_tho.py` (+ thư mục nút). Hướng room (CoreBoundary) chưa
+    đổi. Bàn giao `ban_giao\47_*.rvt` – `49_*.md` (lượt 1, chưa có ngăn cháy / lan can vẽ lại). **`NganChay_TrucHKT.py` +
+    `LoMo_ShaftOpening.py` cùng công thức dời theo Location Line – chưa sửa** (lượt 2). Revit phải Reload pyRevit; người
+    dùng chưa duyệt (`Cần xác nhận lại`).
 - **Hỏi View template + Tỉ lệ, KHÔNG tự tạo template** (người dùng yêu cầu 2026-11-05, áp cho 5 nút Chống thấm, Ngăn cháy
   lan, Định vị + tag cửa, Định vị lan can louver, Tường xây):
   - Hộp thoại `arv_hoi_sheet._bang(tpl_view=...)` thêm 2 ô ngay sau ô "Đặt lên bản vẽ": View template (template mặt bằng
@@ -373,6 +397,17 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
     máy tắt đột ngột (Kernel-Power 41) → chia 3 lần bấm, mỗi lần lưu file. Bàn giao bản đủ v5
     `_tmp\hs_agent\02_G19_Side\ban_giao\34_*_v5.rvt` – `38_*_v5.pdf` (kèm chống thấm, ngăn cháy lan Tầng 3 / 4 nay 55 ô /
     19,7 m², lan can louver vẽ lại). Người dùng chưa duyệt (`Cần xác nhận lại`).
+    **Tờ vách kính XẾP LIỀN** (người dùng 2026-11-19 chiều "XẾP CHẶT VÁCH KÍNH HƠN"; chi tiết + bẫy trong skill mục 12):
+    `XEP_LIEN_VK` – tờ vách kính không kẻ sẵn lưới 6 ô, mỗi vách rộng theo cụm view (lọt 1 ô thì đúng 1 ô, to hơn thì cụm +
+    8 mm lề mỗi bên), 1 – 2 hàng, xếp tiếp theo thứ tự Mark vào tờ vách kính cuối của tầng; nét chia mỗi vách gom group
+    `ARV_ChiTietCua_LuoiVK <tờ> <Mark>`, lần bấm sau dò lại khối theo các nét đó (nét `<Invisible lines>` vẫn in ra khi xuất
+    ảnh tờ, và `Category.GetCategory(OST_InvisibleLines)` trả None trên Revit 2027.3 – không dùng). Tờ cửa giữ lưới 6 ô.
+    Thử nền bản sao file mẫu vách kính (`_tmp\ctcua_tach_vk\`, lượt 08 / 09): 7 vách → 4 tờ, lần bấm 2 xếp tiếp tờ cũ. Chạy lại
+    G19 Side (phiên 59 – 64 từ rvt\05, 13:56 – 19:57; 60b lần 1 treo ở bước mở file 67 phút → tắt phiên, lần 2 bình thường): 13
+    vách kính → 9 tờ A_TC.14.01 – 04, 06 – 10, cửa đi / cửa sổ → 14.11 – 13; mặt bằng như v5; kiểm tra 29 tờ 19 ĐẠT (lỗi như
+    v5). Nút sinh lại 2026-11-19 ~13:55, `.dyn` chưa sinh lại; bản trước `_backup\ChiTietCua_TuDong_20261119_1339_truoc_xep_lien_vk.py`
+    (+ thư mục nút). Bàn giao bản đủ v6 `ban_giao\39_*_v6.rvt` – `43_*_v6.pdf`. Revit phải Reload pyRevit; người dùng chưa duyệt
+    (`Cần xác nhận lại`).
   - Người dùng chưa bấm thử, chưa duyệt (`Cần xác nhận lại`).
 - `ThongKeCua_TuDong.dyn` (2026-11-04, skill `thong-ke-cua-revit`, quy tắc + cách thử xem skill): người dùng yêu cầu
   "1 bảng thống kê các cửa có trong mặt bằng đó, cửa trùng hiện 1 lần", nút riêng.
@@ -635,9 +670,17 @@ Các bản đã cài trên máy này: **Revit 2027.3** (kiểm 2026-10-27; khôn
 - **Agent `hs-tkbvtc`** (người dùng yêu cầu 2026-11-15 "tạo agent làm HS TKBVTC", trả lời 15 câu hỏi; quy tắc đã chốt ghi
   trong `.claude\agents\hs-tkbvtc.md`, công cụ trong skill `.claude\skills\hs-tkbvtc\`):
   - Subagent của Claude Code: làm trên bản sao model chỉ chứa link, phạm vi ngăn cháy lan / định vị cửa / định vị lan can
-    louver / chi tiết cửa; làm thử 1 tầng mỗi loại rồi dừng chờ duyệt; chỗ không chắc thì dừng hỏi; lỗi trình bày chỉ báo;
+    louver / chi tiết cửa (+ chống thấm từ 2026-11-19); chỗ không chắc thì dừng hỏi; lỗi trình bày chỉ báo;
     bàn giao .rvt + ảnh + báo cáo tóm tắt + JSON phương án. Subagent không hỏi trực tiếp được → kết thúc lượt bằng mục
     `## CẦN NGƯỜI DÙNG TRẢ LỜI`, phiên chính chuyển lời rồi gửi câu trả lời tiếp cho agent đó (SendMessage).
+  - **Mỗi lượt trọn 1 nút, duyệt đúng mới sang nút tiếp** (người dùng chốt 2026-11-19: "agent sẽ thực hiện từng nút trong 1
+    lần, đúng t duyệt sẽ chuyển sang nút khác"; thay cho "làm thử 1 tầng mỗi loại rồi các tầng còn lại"). Thứ tự lượt:
+    (1) Chống thấm → (2) Ngăn cháy lan → (3) Định vị cửa + Chi tiết cửa CHUNG 1 lượt → (4) Định vị lan can, louver. Một lượt
+    = nút đó cho mọi tầng được giao (nhiều phiên thì 1 chuỗi), xong mới soát + báo; lỗi thì sửa / chạy lại trong lượt đó.
+    Áp cả khi phiên chính tự chạy chuỗi HS TKBVTC. Công cụ: `ke_hoach.py` lập kế hoạch theo lượt (`LUOT`), `--tao-luot <k>`
+    sinh 1 chuỗi cho cả lượt (`--tao-viec … thu|con_lai|tat_ca` vẫn còn). Sửa file agent / SKILL.md / `ke_hoach.py` 2026-11-19
+    20:10, bản trước `_backup\*_20261119_2008_truoc_tung_nut.*`; thử `ke_hoach.py` trên bản chép phương án G19 Side (4 lượt,
+    chuỗi lượt 3 = 1 phiên tag cửa + 6 phiên chi tiết cửa), chưa chạy việc thật theo cách này.
   - Chạy nền: `scripts\chay_nen.ps1 -Viec <json>` → journal mở `ext\mo_dau.rvt` (dự án trống tự tạo) → nút thử `Mo`
     (IronPython, mở file đích bằng API, workshared thì `DetachAndPreserveWorksets` = tách central, journal báo 0 dòng mượn)
     → nút `Chay` (CPython, `chay_hs.py`: khảo sát / chạy nút theo phương án qua thư viện nút Hồ sơ đã duyệt / kiểm tra bản
